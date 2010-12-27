@@ -53,6 +53,7 @@
     <Compile Include="Messaging\IConsumer.cs" />
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\ThreadInfo.cs" />
+    <Compile Include="Messaging\Messages\FailMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -64,5 +65,6 @@
     <Folder Include="Projects\Writers\" />
     <Folder Include="Projects\Readers\" />
     <Folder Include="Messaging\" />
+    <Folder Include="Messaging\Messages\" />
   </ItemGroup>
 </Project>
