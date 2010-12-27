@@ -1,0 +1,4 @@
+/home/ack/src/OpenIDENet/OpenIDENet/bin/AutoTest.Net/OpenIDENet.dll.mdb
+/home/ack/src/OpenIDENet/OpenIDENet/bin/AutoTest.Net/OpenIDENet.dll
+/home/ack/src/OpenIDENet/OpenIDENet/obj/x86/Debug/OpenIDENet.dll
+/home/ack/src/OpenIDENet/OpenIDENet/obj/x86/Debug/OpenIDENet.dll.mdb

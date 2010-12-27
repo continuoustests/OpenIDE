@@ -36,6 +36,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Projects\Project.cs" />
+    <Compile Include="Projects\IProject.cs" />
+    <Compile Include="Projects\IFile.cs" />
+    <Compile Include="Projects\Parsers\IParseProject.cs" />
+    <Compile Include="Projects\Appenders\IAppendFiles.cs" />
+    <Compile Include="Versioning\VS2010.cs" />
+    <Compile Include="Versioning\IAmVisualStudioVersion.cs" />
+    <Compile Include="Projects\Appenders\VS2010FileAppender.cs" />
+    <Compile Include="Projects\Writers\IWriteProjectFiles.cs" />
+    <Compile Include="Projects\Readers\IReadProjectFiles.cs" />
+    <Compile Include="Projects\Readers\DefaultReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Projects\" />
+    <Folder Include="Projects\Parsers\" />
+    <Folder Include="Projects\Appenders\" />
+    <Folder Include="Versioning\" />
+    <Folder Include="Projects\" />
+    <Folder Include="Projects\Writers\" />
+    <Folder Include="Projects\Readers\" />
+  </ItemGroup>
 </Project>
