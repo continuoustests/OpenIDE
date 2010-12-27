@@ -48,6 +48,11 @@
     <Compile Include="Projects\Writers\IWriteProjectFiles.cs" />
     <Compile Include="Projects\Readers\IReadProjectFiles.cs" />
     <Compile Include="Projects\Readers\DefaultReader.cs" />
+    <Compile Include="Messaging\MessageBus.cs" />
+    <Compile Include="Messaging\IMessageBus.cs" />
+    <Compile Include="Messaging\IConsumer.cs" />
+    <Compile Include="Messaging\IMessage.cs" />
+    <Compile Include="Messaging\ThreadInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -58,5 +63,6 @@
     <Folder Include="Projects\" />
     <Folder Include="Projects\Writers\" />
     <Folder Include="Projects\Readers\" />
+    <Folder Include="Messaging\" />
   </ItemGroup>
 </Project>
