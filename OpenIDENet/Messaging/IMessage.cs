@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDENet
+namespace OpenIDENet.Messaging
 {
 	public interface IMessage
     {
