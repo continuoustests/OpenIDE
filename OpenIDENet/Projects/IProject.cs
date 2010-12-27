@@ -4,8 +4,8 @@ namespace OpenIDENet.Projects
 {
 	public interface IProject
 	{
-		string Name { get; }
-		IEnumerable<IFile> Files { get; }
+		string Fullpath { get; }
+		string Xml { get; }
 	}
 }
 

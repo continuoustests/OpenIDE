@@ -4,9 +4,13 @@ namespace OpenIDENet.Projects
 {
 	public class Project : IProject
 	{
-		private List<IFile> _files = new List<IFile>();
+		public string Fullpath { get; private set; }
+		public string Xml { get; private set; }
 		
-		public string Name { get; private set; }
-		public IEnumerable<IFile> Files { get { return _files; } }
+		public Project(string fullPath, string xml)
+		{
+			Fullpath = fullPath;
+			Xml = xml;
+		}
 	}
 }

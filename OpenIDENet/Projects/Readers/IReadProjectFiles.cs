@@ -1,10 +1,10 @@
 using System;
 using OpenIDENet.Versioning;
-namespace OpenIDENet.Readers
+namespace OpenIDENet.Projects.Readers
 {
 	public interface IReadProjectFiles<T> where T : IAmVisualStudioVersion
 	{
-		string Read(string fullPath);
+		IProject Read(string fullPath);
 	}
 }
 

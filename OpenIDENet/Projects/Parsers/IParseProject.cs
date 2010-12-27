@@ -4,6 +4,6 @@ namespace OpenIDENet.Projects.Parsers
 {
 	public interface IParseProject<T> where T : IAmVisualStudioVersion
 	{
-		IProject Parse(string fullPath);
+		IProject Parse(string xml);
 	}
 }

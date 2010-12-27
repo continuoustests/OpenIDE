@@ -1,13 +1,13 @@
 using System;
 using OpenIDENet.Versioning;
 using System.IO;
-namespace OpenIDENet.Readers
+namespace OpenIDENet.Projects.Readers
 {
 	public class DefaultReader : IReadProjectFiles<VS2010>
 	{
-		public string Read(string fullPath)
+		public IProject Read(string fullPath)
 		{
-			return File.ReadAllText(fullPath);
+			return new Project(fullPath, File.ReadAllText(fullPath));
 		}
 	}
 }

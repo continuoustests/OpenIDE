@@ -1,6 +1,6 @@
 using System;
 using OpenIDENet.Versioning;
-namespace OpenIDENet.Writers
+namespace OpenIDENet.Projects.Writers
 {
 	public interface IWriteProjectFiles<T> where T : IAmVisualStudioVersion
 	{
