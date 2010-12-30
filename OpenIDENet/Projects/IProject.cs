@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using OpenIDENet.Versioning;
 namespace OpenIDENet.Projects
 {
 	public interface IProject
 	{
 		string Fullpath { get; }
-		string Xml { get; }
+		object Content { get; }
 		bool IsModified { get; }
 		
-		void SetXml(string xml);
+		void SetContent(object content);
 	}
 }
 

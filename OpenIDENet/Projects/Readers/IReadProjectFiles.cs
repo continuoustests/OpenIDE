@@ -2,8 +2,9 @@ using System;
 using OpenIDENet.Versioning;
 namespace OpenIDENet.Projects.Readers
 {
-	public interface IReadProjectFiles<T> where T : IAmVisualStudioVersion
+	public interface IReadProjectsFor
 	{
+		bool SupportsVersion<T>();
 		IProject Read(string fullPath);
 	}
 }

@@ -8,22 +8,36 @@ using System.IO;
 using System.Xml.Schema;
 namespace OpenIDENet.Projects.Appenders
 {
-	public class VS2010FileAppender : IAppendFiles<VS2010>
+	public class VS2010FileAppender : IAppendCompiledFilesFor
 	{
 		private IMessageBus _bus;
+		private IFS _fs;
 		private XmlNamespaceManager _nsManager = null;
 		
-		public VS2010FileAppender(IMessageBus bus)
+		public VS2010FileAppender(IMessageBus bus, IFS fs)
 		{
 			_bus = bus;
+			_fs = fs;
+		}
+		
+		public bool SupportsVersion<T>()
+		{
+			return typeof(T).Equals(typeof(VS2010));
 		}
 		
 		public void Append(IProject project, string file)
 		{
 			var document = new XmlDocument();
-			if (!tryOpen(document, project.Xml))
+			if (!tryOpen(document, project.Content.ToString()))
 			{
 				_bus.Publish(new FailMessage(string.Format("Could not append file. Invalid project file {0}", project.Fullpath)));
+				return;
+			}
+			
+			file = Path.GetFullPath(file);
+			if (!_fs.FileExists(file))
+			{
+				_bus.Publish(new FailMessage(string.Format("Could not append unexisting file {0}", file)));
 				return;
 			}
 			
@@ -34,7 +48,7 @@ namespace OpenIDENet.Projects.Appenders
 			if (node == null)
 				return;
 			appendFile(document, node, relativePath);
-			project.SetXml(document.OuterXml);
+			project.SetContent(document.OuterXml);
 		}
 			    
 		private bool exists(XmlDocument document, string file)

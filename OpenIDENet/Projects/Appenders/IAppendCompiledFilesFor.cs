@@ -2,8 +2,9 @@ using System;
 using OpenIDENet.Versioning;
 namespace OpenIDENet.Projects.Appenders
 {
-	public interface IAppendFiles<T> where T : IAmVisualStudioVersion
+	public interface IAppendCompiledFilesFor
 	{
+		bool SupportsVersion<T>();
 		void Append(IProject project, string file);
 	}
 }

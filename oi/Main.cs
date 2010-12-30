@@ -4,6 +4,9 @@ using OpenIDENet.Projects.Readers;
 using OpenIDENet.Projects.Appenders;
 using OpenIDENet.Projects.Writers;
 using OpenIDENet.Messaging;
+using OpenIDENet.FileSystem;
+using OpenIDENet.Bootstrapping;
+using OpenIDENet.Versioning;
 
 namespace oi
 {
@@ -17,12 +20,13 @@ namespace oi
 				return;
 			
 			Console.WriteLine("About to add {0}", args[1]);
-			var reader = new DefaultReader();
-			var project = reader.Read("test.csproj");
-			var appender = new VS2010FileAppender(new MessageBus());
-			appender.Append(project, args[1]);
-			var writer = new DefaultWriter();
-			writer.Write(project);
+			Bootstrapper.Initialize();
+			var with = Bootstrapper.Resolve<IResolveProjectVersion>().ResolveFor("test.csproj");
+			if (with == null)
+				return;
+			var project = with.Reader().Read("test.csproj");
+			with.CompiledFileAppender().Append(project, args[1]);
+			with.Writer().Write(project);
 		}
 	}
 }

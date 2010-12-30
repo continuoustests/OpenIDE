@@ -1,7 +1,7 @@
 using System;
 namespace OpenIDENet.Versioning
 {
-	public interface IAmVisualStudioVersion
+	public interface IAmProjectVersion
 	{
 		bool IsValid(string projecFile);
 	}

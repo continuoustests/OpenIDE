@@ -5,21 +5,21 @@ namespace OpenIDENet.Projects
 	public class Project : IProject
 	{
 		public string Fullpath { get; private set; }
-		public string Xml { get; private set; }
+		public object Content { get; private set; }
 		public bool IsModified { get; private set; }
 		
 		public Project(string fullPath, string xml)
 		{
 			Fullpath = fullPath;
-			Xml = xml;
+			Content = xml;
 		}
 		
-		public void SetXml(string xml)
+		public void SetContent(object content)
 		{
-			if (Xml.Equals(xml))
+			if (Content.Equals(content))
 				return;
 			IsModified = true;
-			Xml = xml;
+			Content = content;
 		}
 	}
 }

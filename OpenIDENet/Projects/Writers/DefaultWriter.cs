@@ -4,14 +4,19 @@ using System.IO;
 using System.Xml;
 namespace OpenIDENet.Projects.Writers
 {
-	public class DefaultWriter : IWriteProjectFiles<VS2010>
+	public class DefaultWriter : IWriteProjectFileToDiskFor
 	{
+		public bool SupportsVersion<T>()
+		{
+			return typeof(T).Equals(typeof(VS2010));
+		}
+		
 		public void Write(IProject project)
 		{
 			if (project.IsModified)
 			{
 				var xml = new XmlDocument();
-				xml.LoadXml(project.Xml);
+				xml.LoadXml(project.Content.ToString());
 				XmlWriterSettings settings = new XmlWriterSettings();
 				settings.Indent = true;
 				settings.NewLineChars = Environment.NewLine;
