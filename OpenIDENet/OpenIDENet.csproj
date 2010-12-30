@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -54,6 +55,8 @@
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\ThreadInfo.cs" />
     <Compile Include="Messaging\Messages\FailMessage.cs" />
+    <Compile Include="FileSystem\PathExtensions.cs" />
+    <Compile Include="Projects\Writers\DefaultWriter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -66,5 +69,6 @@
     <Folder Include="Projects\Readers\" />
     <Folder Include="Messaging\" />
     <Folder Include="Messaging\Messages\" />
+    <Folder Include="FileSystem\" />
   </ItemGroup>
 </Project>

@@ -6,10 +6,19 @@ namespace OpenIDENet.Projects
 	{
 		public string Fullpath { get; private set; }
 		public string Xml { get; private set; }
+		public bool IsModified { get; private set; }
 		
 		public Project(string fullPath, string xml)
 		{
 			Fullpath = fullPath;
+			Xml = xml;
+		}
+		
+		public void SetXml(string xml)
+		{
+			if (Xml.Equals(xml))
+				return;
+			IsModified = true;
 			Xml = xml;
 		}
 	}
