@@ -7,6 +7,7 @@ using OpenIDENet.Messaging;
 using OpenIDENet.FileSystem;
 using OpenIDENet.Bootstrapping;
 using OpenIDENet.Versioning;
+using OpenIDENet.Files;
 
 namespace oi
 {
@@ -14,19 +15,22 @@ namespace oi
 	{
 		public static void Main(string[] args)
 		{
-			if (args.Length != 2)
-				return;
-			if (!args[0].Equals("add"))
+			if (args.Length == 0)
 				return;
 			
-			Console.WriteLine("About to add {0}", args[1]);
 			Bootstrapper.Initialize();
-			var with = Bootstrapper.Resolve<IResolveProjectVersion>().ResolveFor("test.csproj");
-			if (with == null)
-				return;
-			var project = with.Reader().Read("test.csproj");
-			with.CompiledFileAppender().Append(project, args[1]);
-			with.Writer().Write(project);
+			var execute = Bootstrapper.GetDispatcher();
+			execute.For(args[0], getCommandArguments(args));
+		}
+		
+		private static string[] getCommandArguments(string[] args)
+		{
+			if (args.Length == 1)
+				return new string[] {};
+			string[] newArgs = new string[args.Length - 1];
+			for (int i = 1; i < args.Length; i++)
+				newArgs[i - 1] = args[i];
+			return newArgs;
 		}
 	}
 }

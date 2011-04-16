@@ -6,7 +6,7 @@ namespace OpenIDENet.Projects.Writers
 {
 	public class DefaultWriter : IWriteProjectFileToDiskFor
 	{
-		public bool SupportsVersion<T>()
+		public bool SupportsProject<T>() where T : IAmProjectVersion
 		{
 			return typeof(T).Equals(typeof(VS2010));
 		}

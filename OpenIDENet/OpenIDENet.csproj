@@ -48,10 +48,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Projects\Project.cs" />
     <Compile Include="Projects\IProject.cs" />
-    <Compile Include="Projects\IFile.cs" />
-    <Compile Include="Projects\Parsers\IParseProject.cs" />
     <Compile Include="Versioning\VS2010.cs" />
-    <Compile Include="Projects\Appenders\VS2010FileAppender.cs" />
     <Compile Include="Projects\Readers\IReadProjectFiles.cs" />
     <Compile Include="Projects\Readers\DefaultReader.cs" />
     <Compile Include="Messaging\MessageBus.cs" />
@@ -62,7 +59,6 @@
     <Compile Include="Messaging\Messages\FailMessage.cs" />
     <Compile Include="FileSystem\PathExtensions.cs" />
     <Compile Include="Projects\Writers\DefaultWriter.cs" />
-    <Compile Include="Projects\Appenders\IAppendCompiledFilesFor.cs" />
     <Compile Include="Versioning\IAmProjectVersion.cs" />
     <Compile Include="Projects\Writers\IWriteProjectFileToDiskFor.cs" />
     <Compile Include="FileSystem\IFS.cs" />
@@ -73,11 +69,29 @@
     <Compile Include="Bootstrapping\Bootstrapper.cs" />
     <Compile Include="Versioning\IProvideVersionedTypes.cs" />
     <Compile Include="Versioning\VersionedTypeProvider.cs" />
+    <Compile Include="Projects\Appenders\VSFileAppender.cs" />
+    <Compile Include="Projects\Appenders\IAppendFiles.cs" />
+    <Compile Include="Files\IFile.cs" />
+    <Compile Include="Files\CompileFile.cs" />
+    <Compile Include="Files\IResolveFileTypes.cs" />
+    <Compile Include="Files\VSFileTypeResolver.cs" />
+    <Compile Include="Projects\ILocateClosestProject.cs" />
+    <Compile Include="Projects\ProjectCrawler.cs" />
+    <Compile Include="Arguments\CommandDispatcher.cs" />
+    <Compile Include="Arguments\ICommandHandler.cs" />
+    <Compile Include="Arguments\Handlers\AddFileHandler.cs" />
+    <Compile Include="Exceptions\InvalidArgumentsException.cs" />
+    <Compile Include="Arguments\ProviderSettings.cs" />
+    <Compile Include="Arguments\Handlers\NewClassHandler.cs" />
+    <Compile Include="Projects\ProjectType.cs" />
+    <Compile Include="Arguments\Handlers\RemoveFileHandler.cs" />
+    <Compile Include="Projects\Removers\IRemoveFiles.cs" />
+    <Compile Include="Projects\Removers\DefaultRemover.cs" />
+    <Compile Include="Arguments\Handlers\DeleteFileHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Projects\" />
-    <Folder Include="Projects\Parsers\" />
     <Folder Include="Projects\Appenders\" />
     <Folder Include="Versioning\" />
     <Folder Include="Projects\" />
@@ -87,5 +101,11 @@
     <Folder Include="Messaging\Messages\" />
     <Folder Include="FileSystem\" />
     <Folder Include="Bootstrapping\" />
+    <Folder Include="Files\" />
+    <Folder Include="Arguments\" />
+    <Folder Include="Arguments\Handlers\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Arguments\Handlers\" />
+    <Folder Include="Projects\Removers\" />
   </ItemGroup>
 </Project>

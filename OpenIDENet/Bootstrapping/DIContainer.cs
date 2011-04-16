@@ -8,6 +8,11 @@ using OpenIDENet.Projects.Appenders;
 using OpenIDENet.Projects.Readers;
 using OpenIDENet.Projects.Writers;
 using OpenIDENet.Versioning;
+using OpenIDENet.Files;
+using OpenIDENet.Projects;
+using OpenIDENet.Arguments;
+using OpenIDENet.Arguments.Handlers;
+using OpenIDENet.Projects.Removers;
 namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
@@ -22,12 +27,19 @@ namespace OpenIDENet.Bootstrapping
 		public void Configure()
 		{
 			_container.Kernel.Resolver.AddSubResolver(new ArrayResolver(_container.Kernel));
-			_container.Register(Component.For<IFS>().ImplementedBy<FS>())
+			_container.Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<RemoveFileHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewClassHandler>())
+					  .Register(Component.For<IFS>().ImplementedBy<FS>())
 					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
+					  .Register(Component.For<ILocateClosestProject>().ImplementedBy<ProjectLocator>())
 					  .Register(Component.For<IResolveProjectVersion>().ImplementedBy<ProjectVersionResolver>())
 					  
 					  .Register(Component.For<IReadProjectsFor>().ImplementedBy<DefaultReader>())
-					  .Register(Component.For<IAppendCompiledFilesFor>().ImplementedBy<VS2010FileAppender>())
+					  .Register(Component.For<IResolveFileTypes>().ImplementedBy<VSFileTypeResolver>())
+					  .Register(Component.For<IAppendFiles>().ImplementedBy<VSFileAppender>())
+					  .Register(Component.For<IRemoveFiles>().ImplementedBy<DefaultRemover>())
 					  .Register(Component.For<IWriteProjectFileToDiskFor>().ImplementedBy<DefaultWriter>())
 					
 					  .Register(Component.For<IProvideVersionedTypes>().ImplementedBy<VersionedTypeProvider<VS2010>>());

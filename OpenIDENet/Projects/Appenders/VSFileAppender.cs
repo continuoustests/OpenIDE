@@ -4,28 +4,34 @@ using System.Xml;
 using OpenIDENet.Messaging;
 using OpenIDENet.Messaging.Messages;
 using OpenIDENet.FileSystem;
+using OpenIDENet.Files;
 using System.IO;
 using System.Xml.Schema;
 namespace OpenIDENet.Projects.Appenders
 {
-	public class VS2010FileAppender : IAppendCompiledFilesFor
+	public class VSFileAppender : IAppendFiles
 	{
 		private IMessageBus _bus;
 		private IFS _fs;
 		private XmlNamespaceManager _nsManager = null;
 		
-		public VS2010FileAppender(IMessageBus bus, IFS fs)
+		public VSFileAppender(IMessageBus bus, IFS fs)
 		{
 			_bus = bus;
 			_fs = fs;
 		}
 		
-		public bool SupportsVersion<T>()
+		public bool SupportsProject<T>() where T : IAmProjectVersion
 		{
 			return typeof(T).Equals(typeof(VS2010));
 		}
 		
-		public void Append(IProject project, string file)
+		public bool SupportsFile(IFile file)
+		{
+			return file.GetType().Equals(typeof(CompileFile));
+		}
+		
+		public void Append(IProject project, IFile file)
 		{
 			var document = new XmlDocument();
 			if (!tryOpen(document, project.Content.ToString()))
@@ -34,14 +40,13 @@ namespace OpenIDENet.Projects.Appenders
 				return;
 			}
 			
-			file = Path.GetFullPath(file);
-			if (!_fs.FileExists(file))
+			if (!_fs.FileExists(file.Fullpath))
 			{
-				_bus.Publish(new FailMessage(string.Format("Could not append unexisting file {0}", file)));
+				_bus.Publish(new FailMessage(string.Format("Could not append unexisting file {0}", file.Fullpath)));
 				return;
 			}
 			
-			var relativePath = PathExtensions.GetRelativePath(project.Fullpath, file);
+			var relativePath = PathExtensions.GetRelativePath(project.Fullpath, file.Fullpath).Replace("/", "\\");
 			if (exists(document, relativePath))
 				return;
 			var node = getCompileItemGroup(document, project.Fullpath);

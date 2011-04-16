@@ -1,7 +1,10 @@
 using System;
+using OpenIDENet.Arguments;
+using OpenIDENet.Versioning;
+using OpenIDENet.Projects;
 namespace OpenIDENet.Bootstrapping
 {
-	public static class Bootstrapper
+	static class Bootstrapper
 	{
 		private static DIContainer _container;
 		
@@ -11,14 +14,9 @@ namespace OpenIDENet.Bootstrapping
 			_container.Configure();
 		}
 		
-		public static T Resolve<T>()
+		public static CommandDispatcher GetDispatcher()
 		{
-			return _container.Resolve<T>();
-		}
-		
-		public static T[] ResolveAll<T>()
-		{
-			return _container.ResolveAll<T>();
+			return new CommandDispatcher(_container.ResolveAll<ICommandHandler>(), _container.Resolve<ILocateClosestProject>(), _container.Resolve<IResolveProjectVersion>());
 		}
 	}
 }

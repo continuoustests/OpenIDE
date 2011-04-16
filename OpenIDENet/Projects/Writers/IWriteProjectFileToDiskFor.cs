@@ -4,7 +4,7 @@ namespace OpenIDENet.Projects.Writers
 {
 	public interface IWriteProjectFileToDiskFor
 	{
-		bool SupportsVersion<T>();
+		bool SupportsProject<T>() where T : IAmProjectVersion;
 		void Write(IProject project);
 	}
 }

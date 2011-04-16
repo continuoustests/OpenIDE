@@ -5,9 +5,12 @@ using OpenIDENet.FileSystem;
 using OpenIDENet.Messaging;
 using OpenIDENet.Versioning;
 using OpenIDENet.Projects.Readers;
-using OpenIDENet.Projects.Parsers;
 using OpenIDENet.Projects.Appenders;
 using OpenIDENet.Projects.Writers;
+using OpenIDENet.Files;
+using OpenIDENet.Projects;
+using OpenIDENet.Arguments;
+using OpenIDENet.Projects.Removers;
 
 namespace OpenIDENet.Tests
 {
@@ -20,14 +23,19 @@ namespace OpenIDENet.Tests
 			var container = new DIContainer();
 			container.Configure();
 			
+			Assert.That(container.ResolveAll<ICommandHandler>().Length, Is.EqualTo(4));
+			
 			Assert.That(container.Resolve<IFS>(), Is.InstanceOf<IFS>());
 			Assert.That(container.Resolve<IMessageBus>(), Is.InstanceOf<IMessageBus>());
+			Assert.That(container.Resolve<ILocateClosestProject>(), Is.InstanceOf<ILocateClosestProject>());
 			Assert.That(container.Resolve<IResolveProjectVersion>(), Is.InstanceOf<IResolveProjectVersion>());
 			
 			Assert.That(container.ResolveAll<IProvideVersionedTypes>().Length, Is.EqualTo(1));
 			
 			Assert.That(container.ResolveAll<IReadProjectsFor>().Length, Is.EqualTo(1));
-			Assert.That(container.ResolveAll<IAppendCompiledFilesFor>().Length, Is.EqualTo(1));
+			Assert.That(container.ResolveAll<IResolveFileTypes>().Length, Is.EqualTo(1));
+			Assert.That(container.ResolveAll<IAppendFiles>().Length, Is.EqualTo(1));
+			Assert.That(container.ResolveAll<IRemoveFiles>().Length, Is.EqualTo(1));
 			Assert.That(container.ResolveAll<IWriteProjectFileToDiskFor>().Length, Is.EqualTo(1));
 		}
 	}

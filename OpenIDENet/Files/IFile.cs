@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDENet.Projects
+namespace OpenIDENet.Files
 {
 	public interface IFile
 	{

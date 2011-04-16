@@ -9,6 +9,8 @@ namespace OpenIDENet.Projects
 		object Content { get; }
 		bool IsModified { get; }
 		
+		ProjectSettings Settings { get; }
+		
 		void SetContent(object content);
 	}
 }

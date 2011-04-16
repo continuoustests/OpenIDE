@@ -50,6 +50,10 @@
     <Compile Include="FileSystem\PathExtensionsTests.cs" />
     <Compile Include="Bootstrapping\DIContainerTests.cs" />
     <Compile Include="Versioning\VS2010Tests.cs" />
+    <Compile Include="Arguments\CommandDispatcherTests.cs" />
+    <Compile Include="Files\ComplieFileTests.cs" />
+    <Compile Include="Projects\Readers\DefaultReaderTests.cs" />
+    <Compile Include="Projects\Removers\DefaultRemoverTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Projects\" />
@@ -58,6 +62,10 @@
     <Folder Include="FileSystem\" />
     <Folder Include="Bootstrapping\" />
     <Folder Include="Versioning\" />
+    <Folder Include="Files\" />
+    <Folder Include="Arguments\" />
+    <Folder Include="Projects\Readers\" />
+    <Folder Include="Projects\Removers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIDENet\OpenIDENet.csproj">
