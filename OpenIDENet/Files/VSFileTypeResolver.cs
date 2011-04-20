@@ -10,7 +10,7 @@ namespace OpenIDENet.Files
 			return typeof(T).Equals(typeof(VS2010));
 		}
 		
-		public IFile Resolve (string fullPath)
+		public IFile Resolve(string fullPath)
 		{
 			var extension = Path.GetExtension(fullPath);
 			if (CompileFile.SupportsExtension(extension))

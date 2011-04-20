@@ -54,6 +54,7 @@
     <Compile Include="Files\ComplieFileTests.cs" />
     <Compile Include="Projects\Readers\DefaultReaderTests.cs" />
     <Compile Include="Projects\Removers\DefaultRemoverTests.cs" />
+    <Compile Include="EditorEngineIntegration\EngineLocatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Projects\" />
@@ -66,6 +67,7 @@
     <Folder Include="Arguments\" />
     <Folder Include="Projects\Readers\" />
     <Folder Include="Projects\Removers\" />
+    <Folder Include="EditorEngineIntegration\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIDENet\OpenIDENet.csproj">

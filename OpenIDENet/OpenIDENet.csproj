@@ -82,12 +82,19 @@
     <Compile Include="Arguments\Handlers\AddFileHandler.cs" />
     <Compile Include="Exceptions\InvalidArgumentsException.cs" />
     <Compile Include="Arguments\ProviderSettings.cs" />
-    <Compile Include="Arguments\Handlers\NewClassHandler.cs" />
     <Compile Include="Projects\ProjectType.cs" />
     <Compile Include="Arguments\Handlers\RemoveFileHandler.cs" />
     <Compile Include="Projects\Removers\IRemoveFiles.cs" />
     <Compile Include="Projects\Removers\DefaultRemover.cs" />
     <Compile Include="Arguments\Handlers\DeleteFileHandler.cs" />
+    <Compile Include="Arguments\Handlers\VeiHandler.cs" />
+    <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
+    <Compile Include="EditorEngineIntegration\Client.cs" />
+    <Compile Include="EditorEngineIntegration\IClient.cs" />
+    <Compile Include="EditorEngineIntegration\IEngineLocator.cs" />
+    <Compile Include="Arguments\Handlers\EditorHandler.cs" />
+    <Compile Include="EditorEngineIntegration\Instance.cs" />
+    <Compile Include="Arguments\Handlers\NewHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -107,5 +114,6 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Arguments\Handlers\" />
     <Folder Include="Projects\Removers\" />
+    <Folder Include="EditorEngineIntegration\" />
   </ItemGroup>
 </Project>

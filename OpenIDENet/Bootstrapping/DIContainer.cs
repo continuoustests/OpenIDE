@@ -13,6 +13,7 @@ using OpenIDENet.Projects;
 using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
 using OpenIDENet.Projects.Removers;
+using OpenIDENet.EditorEngineIntegration;
 namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
@@ -27,10 +28,12 @@ namespace OpenIDENet.Bootstrapping
 		public void Configure()
 		{
 			_container.Kernel.Resolver.AddSubResolver(new ArrayResolver(_container.Kernel));
-			_container.Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
+			_container.Register(Component.For<ICommandHandler>().ImplementedBy<VeiHandler>())
+				      .Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<RemoveFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewClassHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewHandler>())
 					  .Register(Component.For<IFS>().ImplementedBy<FS>())
 					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
 					  .Register(Component.For<ILocateClosestProject>().ImplementedBy<ProjectLocator>())
@@ -42,7 +45,9 @@ namespace OpenIDENet.Bootstrapping
 					  .Register(Component.For<IRemoveFiles>().ImplementedBy<DefaultRemover>())
 					  .Register(Component.For<IWriteProjectFileToDiskFor>().ImplementedBy<DefaultWriter>())
 					
-					  .Register(Component.For<IProvideVersionedTypes>().ImplementedBy<VersionedTypeProvider<VS2010>>());
+					  .Register(Component.For<IProvideVersionedTypes>().ImplementedBy<VersionedTypeProvider<VS2010>>())
+			
+					  .Register(Component.For<ILocateEditorEngine>().ImplementedBy<EngineLocator>());
 		}
 		
 		public T Resolve<T>()

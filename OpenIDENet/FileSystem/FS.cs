@@ -9,6 +9,11 @@ namespace OpenIDENet.FileSystem
             return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);
         }
 
+		public string[] ReadLines(string path)
+		{
+			return File.ReadAllLines(path);
+		}
+		
         public string ReadFileAsText(string path)
         {
             using (var reader = new StreamReader(path))
@@ -30,6 +35,11 @@ namespace OpenIDENet.FileSystem
 		public void WriteAllText(string file, string text)
 		{
 			File.WriteAllText(file, text);
+		}
+		
+		public void DeleteFile(string file)
+		{
+			File.Delete(file);
 		}
 	}
 }

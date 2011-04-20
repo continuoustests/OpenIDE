@@ -1,12 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="OpenIDENet/Projects/ProjectCrawler.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="OpenIDENet/Arguments/Handlers/NewHandler.cs" ctype="Workbench">
     <Files>
-      <File FileName="OpenIDENet/Arguments/Handlers/AddFileHandler.cs" Line="19" Column="4" />
-      <File FileName="OpenIDENet/Arguments/Handlers/NewClassHandler.cs" Line="30" Column="45" />
-      <File FileName="oi/Main.cs" Line="35" Column="3" />
-      <File FileName="OpenIDENet/Projects/ProjectCrawler.cs" Line="20" Column="41" />
-      <File FileName="OpenIDENet/Arguments/CommandDispatcher.cs" Line="37" Column="56" />
+      <File FileName="OpenIDENet/Arguments/Handlers/NewHandler.cs" Line="130" Column="1" />
+      <File FileName="OpenIDENet/Arguments/CommandDispatcher.cs" Line="13" Column="2" />
+      <File FileName="OpenIDENet/Files/CompileFile.cs" Line="13" Column="3" />
+      <File FileName="OpenIDENet/Bootstrapping/DIContainer.cs" Line="34" Column="86" />
+      <File FileName="OpenIDENet.Tests/Bootstrapping/DIContainerTests.cs" Line="27" Column="76" />
+      <File FileName="OpenIDENet/Files/VSFileTypeResolver.cs" Line="16" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -14,24 +15,16 @@
           <Node name="oi" expanded="True" />
           <Node name="OpenIDENet" expanded="True">
             <Node name="Arguments" expanded="True">
-              <Node name="Handlers" expanded="True" />
+              <Node name="Handlers" expanded="True">
+                <Node name="NewHandler.cs" selected="True" />
+              </Node>
             </Node>
             <Node name="Bootstrapping" expanded="True" />
-            <Node name="FileSystem" expanded="True" />
-            <Node name="Projects" expanded="True">
-              <Node name="Appenders" expanded="True" />
-              <Node name="Readers" expanded="True" />
-              <Node name="ProjectCrawler.cs" selected="True" />
-            </Node>
-            <Node name="Versioning" expanded="True" />
+            <Node name="EditorEngineIntegration" expanded="True" />
+            <Node name="Files" expanded="True" />
           </Node>
           <Node name="OpenIDENet.Tests" expanded="True">
-            <Node name="Arguments" expanded="True" />
             <Node name="Bootstrapping" expanded="True" />
-            <Node name="Projects" expanded="True">
-              <Node name="Appenders" expanded="True" />
-              <Node name="Readers" expanded="True" />
-            </Node>
           </Node>
         </State>
       </Pad>
