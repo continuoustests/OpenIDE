@@ -29,6 +29,8 @@ xbuild OpenIDENet.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration
 cp $BINARYDIR/Castle.* $DEPLOYDIR/
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
 cp $BINARYDIR/OpenIDENet.dll $DEPLOYDIR/
+cp $ROOT/initialize.rb $DEPLOYDIR/initialize.rb
 cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
 cp -r $LIB/AutoTest.Net/* $DEPLOYDIR/AutoTest.Net
 cp -r $ROOT/templates/* $DEPLOYDIR/templates
+

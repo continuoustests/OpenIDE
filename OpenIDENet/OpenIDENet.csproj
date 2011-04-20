@@ -87,7 +87,6 @@
     <Compile Include="Projects\Removers\IRemoveFiles.cs" />
     <Compile Include="Projects\Removers\DefaultRemover.cs" />
     <Compile Include="Arguments\Handlers\DeleteFileHandler.cs" />
-    <Compile Include="Arguments\Handlers\VeiHandler.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
     <Compile Include="EditorEngineIntegration\Client.cs" />
     <Compile Include="EditorEngineIntegration\IClient.cs" />

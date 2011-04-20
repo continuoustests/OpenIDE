@@ -28,8 +28,7 @@ namespace OpenIDENet.Bootstrapping
 		public void Configure()
 		{
 			_container.Kernel.Resolver.AddSubResolver(new ArrayResolver(_container.Kernel));
-			_container.Register(Component.For<ICommandHandler>().ImplementedBy<VeiHandler>())
-				      .Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
+			_container.Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<RemoveFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())

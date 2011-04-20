@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OpenIDENet.EditorEngineIntegration;
 using System.Diagnostics;
 using System.IO;
@@ -28,6 +29,7 @@ namespace OpenIDENet.Arguments.Handlers
 			if (instance == null)
 				instance = startInstance();
 			instance.Start(arguments[0].Trim());
+			runInitScript();
 		}
 		
 		private Instance startInstance()
@@ -42,6 +44,21 @@ namespace OpenIDENet.Arguments.Handlers
 			proc.Start();
 			Thread.Sleep(500);
 			return _editorFactory.GetInstance(Environment.CurrentDirectory);
+		}
+		
+		private void runInitScript()
+		{
+			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var initscript = Directory.GetFiles(appdir, "initialize.*").FirstOrDefault();
+			if (initscript == null)
+				return;
+			var proc = new Process();
+			proc.StartInfo = new ProcessStartInfo(initscript, "\"" + Environment.CurrentDirectory + "\"");
+			proc.StartInfo.CreateNoWindow = true;
+			proc.StartInfo.UseShellExecute = true;
+			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			proc.StartInfo.WorkingDirectory = appdir;
+			proc.Start();
 		}
 	}
 }
