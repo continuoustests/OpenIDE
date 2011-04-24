@@ -25,6 +25,7 @@ namespace OpenIDENet.Tests.EditorEngineIntegration
 		[Test]
 		public void Should_not_match_paths_below_suggested_path()
 		{
+			_fs.Stub(x => x.DirectoryExists(Path.Combine(Path.GetTempPath(), "EditorEngine"))).Return(true);
 			_client.Stub(x => x.IsConnected).Return(true);
 			_fs.Stub(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid")).Return(new string[] { "123.pid", "2345.pid", "8754.pid" });
 			_fs.Stub(x => x.ReadLines("123.pid")).Return(new string[] { "/some/path/here/too", "234" });
@@ -38,6 +39,7 @@ namespace OpenIDENet.Tests.EditorEngineIntegration
 		[Test]
 		public void Should_match_paths_equal_to_suggested_path()
 		{
+			_fs.Stub(x => x.DirectoryExists(Path.Combine(Path.GetTempPath(), "EditorEngine"))).Return(true);
 			_client.Stub(x => x.IsConnected).Return(true);
 			_fs.Stub(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid")).Return(new string[] { "123.pid", "2345.pid", "8754.pid" });
 			_fs.Stub(x => x.ReadLines("123.pid")).Return(new string[] { "/some/path/here/too", "234" });
@@ -54,6 +56,7 @@ namespace OpenIDENet.Tests.EditorEngineIntegration
 		[Test]
 		public void Should_match_paths_at_a_lower_level_than_suggested_path()
 		{
+			_fs.Stub(x => x.DirectoryExists(Path.Combine(Path.GetTempPath(), "EditorEngine"))).Return(true);
 			_client.Stub(x => x.IsConnected).Return(true);
 			_fs.Stub(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid")).Return(new string[] { "123.pid", "2345.pid", "8754.pid" });
 			_fs.Stub(x => x.ReadLines("123.pid")).Return(new string[] { "/some/path/here/too", "234" });
@@ -70,6 +73,7 @@ namespace OpenIDENet.Tests.EditorEngineIntegration
 		[Test]
 		public void Should_matching_on_two_paths_choose_closest_path()
 		{
+			_fs.Stub(x => x.DirectoryExists(Path.Combine(Path.GetTempPath(), "EditorEngine"))).Return(true);
 			_client.Stub(x => x.IsConnected).Return(true);
 			_fs.Stub(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid")).Return(new string[] { "123.pid", "2345.pid", "8754.pid" });
 			_fs.Stub(x => x.ReadLines("123.pid")).Return(new string[] { "/some/path", "234" });
@@ -86,6 +90,7 @@ namespace OpenIDENet.Tests.EditorEngineIntegration
 		[Test]
 		public void Should_not_pick_instances_where_it_cannot_connect_to_host()
 		{
+			_fs.Stub(x => x.DirectoryExists(Path.Combine(Path.GetTempPath(), "EditorEngine"))).Return(true);
 			_fs.Stub(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid")).Return(new string[] { "123.pid" });
 			_fs.Stub(x => x.ReadLines("123.pid")).Return(new string[] { "/some/path/here", "234" });
 			var instance = _locator.GetInstance("/some/path/here");
@@ -96,11 +101,20 @@ namespace OpenIDENet.Tests.EditorEngineIntegration
 		[Test]
 		public void Should_delete_files_where_it_cannot_connect_to_host()
 		{
+			_fs.Stub(x => x.DirectoryExists(Path.Combine(Path.GetTempPath(), "EditorEngine"))).Return(true);
 			_fs.Stub(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid")).Return(new string[] { "123.pid" });
 			_fs.Stub(x => x.ReadLines("123.pid")).Return(new string[] { "/some/path/here", "234" });
 			_locator.GetInstance("/some/path/here");
 			
 			_fs.AssertWasCalled(x => x.DeleteFile("123.pid"));
+		}
+		
+		[Test]
+		public void Should_not_find_editor_if_editor_engine_temp_directory_does_not_exist()
+		{
+			_locator.GetInstance("/some/path/here");
+			
+			_fs.AssertWasNotCalled(x => x.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid"));
 		}
 	}
 }

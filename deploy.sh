@@ -21,6 +21,9 @@ rm -r $DEPLOYDIR/*
 mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/AutoTest.Net
 mkdir $DEPLOYDIR/templates
+mkdir $DEPLOYDIR/ContinuousTests
+chmod +x $LIB/ContinuousTests/AutoTest.VM.exe
+chmod +x $LIB/ContinuousTests/ContinuousTests.exe
 
 echo $BINARYDIR
 
@@ -32,5 +35,6 @@ cp $BINARYDIR/OpenIDENet.dll $DEPLOYDIR/
 cp $ROOT/initialize.rb $DEPLOYDIR/initialize.rb
 cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
 cp -r $LIB/AutoTest.Net/* $DEPLOYDIR/AutoTest.Net
+cp -r $LIB/ContinuousTests/* $DEPLOYDIR/ContinuousTests
 cp -r $ROOT/templates/* $DEPLOYDIR/templates
 

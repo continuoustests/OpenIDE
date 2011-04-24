@@ -1,26 +1,25 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="OpenIDENet/Arguments/Handlers/EditorHandler.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="OpenIDENet.Tests/EditorEngineIntegration/EngineLocatorTests.cs" ctype="Workbench">
     <Files>
-      <File FileName="OpenIDENet/Arguments/Handlers/EditorHandler.cs" Line="36" Column="4" />
-      <File FileName="OpenIDENet/Arguments/Handlers/NewHandler.cs" Line="71" Column="53" />
-      <File FileName="OpenIDENet/Bootstrapping/DIContainer.cs" Line="31" Column="14" />
-      <File FileName="OpenIDENet.Tests/Arguments/CommandDispatcherTests.cs" Line="68" Column="1" />
+      <File FileName="OpenIDENet/EditorEngineIntegration/EngineLocator.cs" Line="42" Column="43" />
+      <File FileName="OpenIDENet.Tests/EditorEngineIntegration/EngineLocatorTests.cs" Line="120" Column="2" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="oi" expanded="True" />
           <Node name="OpenIDENet" expanded="True">
-            <Node name="Arguments" expanded="True">
-              <Node name="Handlers" expanded="True">
-                <Node name="EditorHandler.cs" selected="True" />
-              </Node>
-            </Node>
+            <Node name="Arguments" expanded="True" />
             <Node name="Bootstrapping" expanded="True" />
+            <Node name="EditorEngineIntegration" expanded="True" />
           </Node>
           <Node name="OpenIDENet.Tests" expanded="True">
             <Node name="Arguments" expanded="True" />
+            <Node name="Bootstrapping" expanded="True" />
+            <Node name="EditorEngineIntegration" expanded="True">
+              <Node name="EngineLocatorTests.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

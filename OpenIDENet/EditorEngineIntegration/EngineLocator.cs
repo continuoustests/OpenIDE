@@ -27,13 +27,16 @@ namespace OpenIDENet.EditorEngineIntegration
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			foreach (var file in _fs.GetFiles(Path.Combine(Path.GetTempPath(), "EditorEngine"), "*.pid"))
+			var dir = Path.Combine(Path.GetTempPath(), "EditorEngine");
+			if (_fs.DirectoryExists(dir))
 			{
-				var instance = Instance.Get(ClientFactory, file, _fs.ReadLines(file));
-				if (instance != null)
-					yield return instance;
+				foreach (var file in _fs.GetFiles(dir, "*.pid"))
+				{
+					var instance = Instance.Get(ClientFactory, file, _fs.ReadLines(file));
+					if (instance != null)
+						yield return instance;
+				}
 			}
-				
 		}
 		
 		private bool canConnectTo(Instance info)
