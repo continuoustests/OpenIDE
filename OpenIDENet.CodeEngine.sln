@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDENet.CodeEngine", "OpenIDENet.CodeEngine\OpenIDENet.CodeEngine.csproj", "{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDENet.CodeEngine.Core", "OpenIDENet.CodeEngine.Core\OpenIDENet.CodeEngine.Core.csproj", "{412B1F88-3F13-4473-8D71-AD719634F152}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75989E79-9474-47B2-8348-679F5A30BBC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDENet.CodeEngine.Core.Tests", "OpenIDENet.CodeEngine.Core.Tests\OpenIDENet.CodeEngine.Core.Tests.csproj", "{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Debug|x86.Build.0 = Debug|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Release|x86.ActiveCfg = Release|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Release|x86.Build.0 = Release|Any CPU
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Debug|x86.ActiveCfg = Debug|x86
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Debug|x86.Build.0 = Debug|x86
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Release|x86.ActiveCfg = Release|x86
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Release|x86.Build.0 = Release|x86
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Debug|x86.Build.0 = Debug|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2} = {75989E79-9474-47B2-8348-679F5A30BBC1}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = OpenIDENet.CodeEngine\OpenIDENet.CodeEngine.csproj
+	EndGlobalSection
+EndGlobal

@@ -18,16 +18,6 @@ namespace OpenIDENet.Tests
 		}
 		
 		[Test]
-		public void Should_not_recognize_vs_2008_project()
-		{
-			var file = Path.GetTempFileName();
-			File.WriteAllText(file, "<ProductVersion>8.0.30703</ProductVersion>");
-			var ver = new VS2010();
-			Assert.That(ver.IsValid(file), Is.False);
-			File.Delete(file);
-		}
-		
-		[Test]
 		public void Should_not_recognize_non_existent_file()
 		{
 			var file = Path.GetTempFileName();

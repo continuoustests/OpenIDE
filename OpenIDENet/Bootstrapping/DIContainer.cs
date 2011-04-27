@@ -14,6 +14,7 @@ using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
 using OpenIDENet.Projects.Removers;
 using OpenIDENet.EditorEngineIntegration;
+using OpenIDENet.CodeEngineIntegration;
 namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
@@ -33,6 +34,7 @@ namespace OpenIDENet.Bootstrapping
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineHandler>())
 					  .Register(Component.For<IFS>().ImplementedBy<FS>())
 					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
 					  .Register(Component.For<ILocateClosestProject>().ImplementedBy<ProjectLocator>())
@@ -46,7 +48,8 @@ namespace OpenIDENet.Bootstrapping
 					
 					  .Register(Component.For<IProvideVersionedTypes>().ImplementedBy<VersionedTypeProvider<VS2010>>())
 			
-					  .Register(Component.For<ILocateEditorEngine>().ImplementedBy<EngineLocator>());
+					  .Register(Component.For<ILocateEditorEngine>().ImplementedBy<EngineLocator>())
+					  .Register(Component.For<ICodeEngineLocator>().ImplementedBy<CodeEngineDispatcher>());
 		}
 		
 		public T Resolve<T>()

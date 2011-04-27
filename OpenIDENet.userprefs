@@ -1,25 +1,30 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="OpenIDENet.Tests/EditorEngineIntegration/EngineLocatorTests.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="OpenIDENet/Arguments/Handlers/EditorHandler.cs" ctype="Workbench">
     <Files>
-      <File FileName="OpenIDENet/EditorEngineIntegration/EngineLocator.cs" Line="42" Column="43" />
-      <File FileName="OpenIDENet.Tests/EditorEngineIntegration/EngineLocatorTests.cs" Line="120" Column="2" />
+      <File FileName="OpenIDENet/Arguments/Handlers/CodeEngineHandler.cs" Line="27" Column="1" />
+      <File FileName="OpenIDENet/Arguments/Handlers/EditorHandler.cs" Line="32" Column="20" />
+      <File FileName="OpenIDENet.Tests/Bootstrapping/DIContainerTests.cs" Line="35" Column="52" />
+      <File FileName="OpenIDENet/Bootstrapping/DIContainer.cs" Line="38" Column="59" />
+      <File FileName="OpenIDENet/CodeEngineIntegration/Instance.cs" Line="20" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="oi" expanded="True" />
           <Node name="OpenIDENet" expanded="True">
-            <Node name="Arguments" expanded="True" />
+            <Node name="Arguments" expanded="True">
+              <Node name="Handlers" expanded="True">
+                <Node name="EditorHandler.cs" selected="True" />
+              </Node>
+            </Node>
             <Node name="Bootstrapping" expanded="True" />
+            <Node name="CodeEngineIntegration" expanded="True" />
             <Node name="EditorEngineIntegration" expanded="True" />
           </Node>
           <Node name="OpenIDENet.Tests" expanded="True">
-            <Node name="Arguments" expanded="True" />
             <Node name="Bootstrapping" expanded="True" />
-            <Node name="EditorEngineIntegration" expanded="True">
-              <Node name="EngineLocatorTests.cs" selected="True" />
-            </Node>
+            <Node name="EditorEngineIntegration" expanded="True" />
           </Node>
         </State>
       </Pad>

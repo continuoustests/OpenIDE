@@ -94,6 +94,9 @@
     <Compile Include="Arguments\Handlers\EditorHandler.cs" />
     <Compile Include="EditorEngineIntegration\Instance.cs" />
     <Compile Include="Arguments\Handlers\NewHandler.cs" />
+    <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
+    <Compile Include="CodeEngineIntegration\Instance.cs" />
+    <Compile Include="Arguments\Handlers\CodeEngineHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -114,5 +117,6 @@
     <Folder Include="Arguments\Handlers\" />
     <Folder Include="Projects\Removers\" />
     <Folder Include="EditorEngineIntegration\" />
+    <Folder Include="CodeEngineIntegration\" />
   </ItemGroup>
 </Project>

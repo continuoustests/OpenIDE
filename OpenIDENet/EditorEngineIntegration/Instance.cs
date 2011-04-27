@@ -43,6 +43,11 @@ namespace OpenIDENet.EditorEngineIntegration
 			send(string.Format("goto {0}|{1}|{2}", file, line, column));
 		}
 		
+		public void SetFocus()
+		{
+			send("setfocus");
+		}
+		
 		private void send(string message)
 		{
 			var client = _clientFactory.Invoke();

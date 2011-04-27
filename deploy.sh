@@ -19,15 +19,17 @@ fi
 rm -r $BINARYDIR/*
 rm -r $DEPLOYDIR/*
 mkdir $DEPLOYDIR/EditorEngine
+mkdir $DEPLOYDIR/CodeEngine
 mkdir $DEPLOYDIR/AutoTest.Net
 mkdir $DEPLOYDIR/templates
 mkdir $DEPLOYDIR/ContinuousTests
-chmod +x $LIB/ContinuousTests/AutoTest.VM.exe
+chmod +x $LIB/ContinuousTests/AutoTest.*.exe
 chmod +x $LIB/ContinuousTests/ContinuousTests.exe
 
 echo $BINARYDIR
 
 xbuild OpenIDENet.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
+xbuild OpenIDENet.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
 
 cp $BINARYDIR/Castle.* $DEPLOYDIR/
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
@@ -37,4 +39,7 @@ cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
 cp -r $LIB/AutoTest.Net/* $DEPLOYDIR/AutoTest.Net
 cp -r $LIB/ContinuousTests/* $DEPLOYDIR/ContinuousTests
 cp -r $ROOT/templates/* $DEPLOYDIR/templates
+cp $ROOT/oi/oi $DEPLOYDIR/oi
+cp $BINARYDIR/OpenIDENet.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDENet.CodeEngine.exe
+cp $BINARYDIR/OpenIDENet.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDENet.CodeEngine.Core.dll
 

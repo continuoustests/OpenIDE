@@ -59,7 +59,7 @@ namespace OpenIDENet.Arguments.Handlers
 			Console.WriteLine("Full path {0}", template.File.Fullpath);
 			Console.WriteLine("");
 			
-			gotoFile(template.File.Fullpath, location);
+			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
 		}
 		
 		private Template pickTemplate(string templateName, ProjectType type)
@@ -109,12 +109,13 @@ namespace OpenIDENet.Arguments.Handlers
 			return string.Format("{0}.{1}", project.Settings.DefaultNamespace, relativePath.Replace(Path.DirectorySeparatorChar.ToString(), "."));
 		}
 		
-		private void gotoFile(string file, string location)
+		private void gotoFile(string file, int line, int column, string location)
 		{
 			var instance = _editorFactory.GetInstance(location);
 			if (instance == null)
 				return;
-			instance.GoTo(file, 0, 0);
+			instance.GoTo(file, line, column);
+			instance.SetFocus();
 		}
 	}
 	
@@ -124,11 +125,15 @@ namespace OpenIDENet.Arguments.Handlers
 		private string _file;
 		
 		public IFile File { get; private set; }
+		public int Line { get; private set; }
+		public int Column { get; private set; }
 		
 		public Template(string file, OpenIDENet.Files.IResolveFileTypes fileTypeResolver)
 		{
 			_fileTypeResolver = fileTypeResolver;
 			_file = file;
+			Line = 0;
+			Column = 0;
 		}
 		
 		public void Run(string location, string itemName, string nameSpace, IProject project, string[] arguments)
@@ -152,6 +157,7 @@ namespace OpenIDENet.Arguments.Handlers
 				var content = run(string.Format("\"{0}\" \"{1}\" \"{2}\"", itemName, nameSpace, tempFile));
 				System.IO.File.Delete(tempFile);
 				System.IO.File.WriteAllText(filename, content);
+				getPositionInfo();
 			}
 			catch (Exception ex)
 			{
@@ -178,6 +184,21 @@ namespace OpenIDENet.Arguments.Handlers
 				writer.WriteEndElement();
 			}
 			return sb.ToString();
+		}
+		
+		private void getPositionInfo()
+		{
+			try
+			{
+				var positionString = run("get_position").Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+				Line = int.Parse(positionString[0]);
+				Column = int.Parse(positionString[1]);
+			}
+			catch
+			{
+				Line = 0;
+				Column = 0;
+			}
 		}
 		
 		private string run(string arguments)

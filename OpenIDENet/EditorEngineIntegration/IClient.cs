@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDENet
+namespace OpenIDENet.EditorEngineIntegration
 {
 	public interface IClient
 	{

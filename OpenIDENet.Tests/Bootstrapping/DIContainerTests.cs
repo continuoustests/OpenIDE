@@ -12,6 +12,7 @@ using OpenIDENet.Projects;
 using OpenIDENet.Arguments;
 using OpenIDENet.Projects.Removers;
 using OpenIDENet.EditorEngineIntegration;
+using OpenIDENet.CodeEngineIntegration;
 
 namespace OpenIDENet.Tests
 {
@@ -24,13 +25,14 @@ namespace OpenIDENet.Tests
 			var container = new DIContainer();
 			container.Configure();
 			
-			Assert.That(container.ResolveAll<ICommandHandler>().Length, Is.EqualTo(5));
+			Assert.That(container.ResolveAll<ICommandHandler>().Length, Is.EqualTo(6));
 			
 			Assert.That(container.Resolve<IFS>(), Is.InstanceOf<IFS>());
 			Assert.That(container.Resolve<IMessageBus>(), Is.InstanceOf<IMessageBus>());
 			Assert.That(container.Resolve<ILocateClosestProject>(), Is.InstanceOf<ILocateClosestProject>());
 			Assert.That(container.Resolve<IResolveProjectVersion>(), Is.InstanceOf<IResolveProjectVersion>());
 			Assert.That(container.Resolve<ILocateEditorEngine>(), Is.InstanceOf<ILocateEditorEngine>());
+			Assert.That(container.Resolve<ICodeEngineLocator>(), Is.InstanceOf<ICodeEngineLocator>());
 			
 			Assert.That(container.ResolveAll<IProvideVersionedTypes>().Length, Is.EqualTo(1));
 			
