@@ -1,1 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?><Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  <PropertyGroup>    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>    <ProductVersion>9.0.21022</ProductVersion>    <SchemaVersion>2.0</SchemaVersion>    <ProjectGuid>{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}</ProjectGuid>    <OutputType>Library</OutputType>    <RootNamespace>OpenIDENet.CodeEngine.Core.Tests</RootNamespace>    <AssemblyName>OpenIDENet.CodeEngine.Core.Tests</AssemblyName>    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>  </PropertyGroup>  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">    <DebugSymbols>true</DebugSymbols>    <DebugType>full</DebugType>    <Optimize>false</Optimize>    <OutputPath>bin\Debug</OutputPath>    <DefineConstants>DEBUG</DefineConstants>    <ErrorReport>prompt</ErrorReport>    <WarningLevel>4</WarningLevel>    <ConsolePause>false</ConsolePause>  </PropertyGroup>  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">    <DebugType>none</DebugType>    <Optimize>false</Optimize>    <OutputPath>bin\Release</OutputPath>    <ErrorReport>prompt</ErrorReport>    <WarningLevel>4</WarningLevel>    <ConsolePause>false</ConsolePause>  </PropertyGroup>  <ItemGroup>    <Reference Include="System" />    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">      <SpecificVersion>False</SpecificVersion>      <HintPath>..\lib\NUnit\nunit.framework.dll</HintPath>    </Reference>  </ItemGroup>  <ItemGroup>    <Compile Include="AssemblyInfo.cs" />    <Compile Include="Crawlers\SolutionReaderTests.cs" />    <Compile Include="FileSystem\PathParserTests.cs" />    <Compile Include="Crawlers\CSharpCrawlerTests.cs" />  </ItemGroup>  <ItemGroup>    <Folder Include="Caching\" />    <Folder Include="Crawlers\" />    <Folder Include="TestResources\" />    <Folder Include="FileSystem\" />  </ItemGroup>  <ItemGroup>    <None Include="TestResources\VSSolutionFile.sln">      <CopyToOutputDirectory>Always</CopyToOutputDirectory>    </None>  </ItemGroup>  <ItemGroup>    <ProjectReference Include="..\OpenIDENet.CodeEngine.Core\OpenIDENet.CodeEngine.Core.csproj">      <Project>{412B1F88-3F13-4473-8D71-AD719634F152}</Project>      <Name>OpenIDENet.CodeEngine.Core</Name>    </ProjectReference>  </ItemGroup>  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /></Project>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OpenIDENet.CodeEngine.Core.Tests</RootNamespace>
+    <AssemblyName>OpenIDENet.CodeEngine.Core.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NUnit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Crawlers\SolutionReaderTests.cs" />
+    <Compile Include="FileSystem\PathParserTests.cs" />
+    <Compile Include="Crawlers\CSharpCrawlerTests.cs" />
+    <Compile Include="Crawlers\CSharpDefaultFileParserTests.cs" />
+    <Compile Include="Crawlers\CSharpCommentParserTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Caching\" />
+    <Folder Include="Crawlers\" />
+    <Folder Include="TestResources\" />
+    <Folder Include="FileSystem\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestResources\VSSolutionFile.sln">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\DefaultCSharp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\FunctionsCSharp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\CSharpComments.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenIDENet.CodeEngine.Core\OpenIDENet.CodeEngine.Core.csproj">
+      <Project>{412B1F88-3F13-4473-8D71-AD719634F152}</Project>
+      <Name>OpenIDENet.CodeEngine.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

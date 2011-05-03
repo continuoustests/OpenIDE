@@ -2,10 +2,15 @@
 
 working_directory = ARGV[0]
 
-Thread.new do
+t1 = Thread.new do
      %x[mono ./CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}"]
 end
-Thread.new do
+t2 = Thread.new do
      %x[mono ./ContinuousTests/ContinuousTests.exe "#{working_directory}"]
 end
 #%x[./AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"]
+
+sleep 5
+t1.kill
+t2.kill
+

@@ -1,0 +1,14 @@
+using System;
+namespace OpenIDENet.CodeEngine.Core.Tests
+{
+	/*public class CSharpComments
+	{
+		public CSharpComments()
+		{
+		}
+	}*/
+	
+	/* public class InComment { } */ public class BehindComment { }
+	public class InFronOfCOmment { } /* public class ClassBehind { } */
+}
+

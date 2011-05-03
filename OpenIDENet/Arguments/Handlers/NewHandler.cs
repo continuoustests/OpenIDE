@@ -40,7 +40,11 @@ namespace OpenIDENet.Arguments.Handlers
 				return;
 			
 			var with = (IProvideVersionedTypes) provider.TypesProvider;
+			if (with == null)
+				return;
 			var project = with.Reader().Read(provider.ProjectFile);
+			if (project == null)
+				return;
 			
 			var template = pickTemplate(arguments[0], project.Settings.Type);
 			if (template == null)
@@ -91,7 +95,11 @@ namespace OpenIDENet.Arguments.Handlers
 			var dir = Path.GetDirectoryName(className).Trim();
 			if (dir.Length == 0)
 				return Environment.CurrentDirectory;
-			return dir;
+			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
+				return Path.Combine(Environment.CurrentDirectory, dir);
+			if (Directory.Exists(dir))
+				return dir;
+			return Environment.CurrentDirectory;
 		}
 		
 		private string getFileName(string className, string location, IProject project)

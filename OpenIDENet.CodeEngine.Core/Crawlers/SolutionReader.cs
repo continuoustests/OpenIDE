@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenIDENet.CodeEngine.Core.FileSystem;
+using OpenIDENet.CodeEngine.Core.Caching;
 
 namespace OpenIDENet.CodeEngine.Core.Crawlers
 {

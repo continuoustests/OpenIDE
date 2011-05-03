@@ -15,6 +15,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
 		private ITypeCache _cache;
 		private Action<string, int, int> _action;
 		private Action _cancelAction;
+		private Timer _timer;
 		
         public TypeSearchForm(ITypeCache cache, Action<string, int, int> action, Action cancelAction)
         {
@@ -23,7 +24,24 @@ namespace OpenIDENet.CodeEngine.Core.UI
 			_cache = cache;
 			_action = action;
 			_cancelAction = cancelAction;
+			writeStatistics();
+			_timer = new Timer();
+			_timer.Interval = 1000;
+			_timer.Tick += Handle_timerTick;
+			_timer.Enabled = true;
         }
+
+        void Handle_timerTick (object sender, EventArgs e)
+        {
+			writeStatistics();
+        }
+		
+		void writeStatistics()
+		{
+			var text = string.Format("Projects: {3}, Files: {0}, Namespaces: {1}, Types: {2}", _cache.FileCount, _cache.NamespaceCount, _cache.TypeCount, _cache.ProjectCount);
+			if (labelInfo.Text != text)
+        		labelInfo.Text = text;
+		}
 		
 		void HandleHandleFormClosing (object sender, FormClosingEventArgs e)
         {
