@@ -40,8 +40,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("TestFile"));
 			Assert.That(ns.Signature, Is.EqualTo("MyFirstNS"));
 			Assert.That(ns.Name, Is.EqualTo("MyFirstNS"));
-			Assert.That(ns.Offset, Is.EqualTo(26));
-			Assert.That(ns.Line, Is.EqualTo(3));
+			Assert.That(ns.Offset, Is.EqualTo(11));
+			Assert.That(ns.Line, Is.EqualTo(1));
 			Assert.That(ns.Column, Is.EqualTo(11));
 		}
 
@@ -52,7 +52,7 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace1"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace1"));
-			Assert.That(ns.Offset, Is.EqualTo(26));
+			Assert.That(ns.Offset, Is.EqualTo(28));
 			Assert.That(ns.Line, Is.EqualTo(3));
 			Assert.That(ns.Column, Is.EqualTo(11));
 		}
@@ -65,7 +65,7 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.AVerySimpleClass"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
-			Assert.That(cls.Offset, Is.EqualTo(48));
+			Assert.That(cls.Offset, Is.EqualTo(52));
 			Assert.That(cls.Line, Is.EqualTo(5));
 			Assert.That(cls.Column, Is.EqualTo(8));
 		}
@@ -90,8 +90,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace2"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace2"));
-			Assert.That(ns.Offset, Is.EqualTo(91));
-			Assert.That(ns.Line, Is.EqualTo(11));
+			Assert.That(ns.Offset, Is.EqualTo(137));
+			Assert.That(ns.Line, Is.EqualTo(15));
 			Assert.That(ns.Column, Is.EqualTo(1));
 		}
 		
@@ -103,8 +103,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace2.MyClass2"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace2"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass2"));
-			Assert.That(cls.Offset, Is.EqualTo(122));
-			Assert.That(cls.Line, Is.EqualTo(15));
+			Assert.That(cls.Offset, Is.EqualTo(172));
+			Assert.That(cls.Line, Is.EqualTo(19));
 			Assert.That(cls.Column, Is.EqualTo(2));
 		}
 		
@@ -115,8 +115,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace3"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace3"));
-			Assert.That(ns.Offset, Is.EqualTo(150));
-			Assert.That(ns.Line, Is.EqualTo(20));
+			Assert.That(ns.Offset, Is.EqualTo(205));
+			Assert.That(ns.Line, Is.EqualTo(24));
 			Assert.That(ns.Column, Is.EqualTo(11));
 		}
 		
@@ -128,8 +128,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace3.MyClass3"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace3"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass3"));
-			Assert.That(cls.Offset, Is.EqualTo(180));
-			Assert.That(cls.Line, Is.EqualTo(20));
+			Assert.That(cls.Offset, Is.EqualTo(235));
+			Assert.That(cls.Line, Is.EqualTo(24));
 			Assert.That(cls.Column, Is.EqualTo(41));
 		}
 		
@@ -140,8 +140,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace4"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace4"));
-			Assert.That(ns.Offset, Is.EqualTo(216));
-			Assert.That(ns.Line, Is.EqualTo(26));
+			Assert.That(ns.Offset, Is.EqualTo(277));
+			Assert.That(ns.Line, Is.EqualTo(30));
 			Assert.That(ns.Column, Is.EqualTo(5));
 		}
 		
@@ -153,8 +153,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace4.MyClass4"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace4"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass4"));
-			Assert.That(cls.Offset, Is.EqualTo(262));
-			Assert.That(cls.Line, Is.EqualTo(35));
+			Assert.That(cls.Offset, Is.EqualTo(332));
+			Assert.That(cls.Line, Is.EqualTo(39));
 			Assert.That(cls.Column, Is.EqualTo(6));
 		}
 		
@@ -166,8 +166,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyStruct1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyStruct1"));
-			Assert.That(str.Offset, Is.EqualTo(317));
-			Assert.That(str.Line, Is.EqualTo(41));
+			Assert.That(str.Offset, Is.EqualTo(393));
+			Assert.That(str.Line, Is.EqualTo(45));
 			Assert.That(str.Column, Is.EqualTo(9));
 		}
 		
@@ -179,8 +179,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyEnum1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyEnum1"));
-			Assert.That(str.Offset, Is.EqualTo(341));
-			Assert.That(str.Line, Is.EqualTo(45));
+			Assert.That(str.Offset, Is.EqualTo(421));
+			Assert.That(str.Line, Is.EqualTo(49));
 			Assert.That(str.Column, Is.EqualTo(7));
 		}
 		
@@ -192,8 +192,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(iface.Signature, Is.EqualTo("MyNamespace5.MyInterface1"));
 			Assert.That(iface.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(iface.Name, Is.EqualTo("MyInterface1"));
-			Assert.That(iface.Offset, Is.EqualTo(384));
-			Assert.That(iface.Line, Is.EqualTo(50));
+			Assert.That(iface.Offset, Is.EqualTo(469));
+			Assert.That(iface.Line, Is.EqualTo(54));
 			Assert.That(iface.Column, Is.EqualTo(12));
 		}
 		

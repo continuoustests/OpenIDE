@@ -5,6 +5,8 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 {
 	public class CSharpCodeNavigator
 	{
+        private Action _beginningOfBody;
+        private Action _endOfBody;
 		private int _offset = 0;
 		private char[] _chars;
 		private int _line;
@@ -12,7 +14,6 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		private char _last;
 		private char _beforeLast;
 		private List<Word> _words;
-		private string _lineContent;
 		private List<string> _lines;
 		private Word _word;
 		private Word _lastWord;
@@ -24,10 +25,12 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		public int Offset { get { return _offset - 1; } }
 		public int Line { get { return _line; } }
 		public int Column { get { return _column; } }
-		
-		public CSharpCodeNavigator(char[] chars)
+
+        public CSharpCodeNavigator(char[] chars, Action beginningOfBody, Action endOfBody)
 		{
 			_chars = chars;
+            _beginningOfBody = beginningOfBody;
+            _endOfBody = endOfBody;
 			_offset = 0;
 			_line = 0;
 			_column = 0;
@@ -66,17 +69,14 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				{
 					if (!signature.HasPosition())
 						signature.SetPosition(word);
-					signature.Text += word.Text + ".";
+					signature.Text += signature.Text == "" ? word.Text : "." + word.Text;
 				}
-				if (c == '{')
-				{
-					if (signature.Text.Length > 0)
-					{
-						signature.Text = signature.Text.Substring(0, signature.Text.Length - 2);
-						return signature;
-					}
-					return null;
-				}
+                if (c == '{')
+                {
+                    if (signature.Text.Length > 0)
+                        return signature;
+                    return null;
+                }
 			}
 			return null;
 		}
@@ -89,6 +89,10 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				_line++;
 				_column = 0;
 			}
+            if (c == '}')
+                _endOfBody();
+            if (c == '{')
+                _beginningOfBody();
 			if (!_word.HasPosition() && !c.Equals(' ') && !c.Equals('\t'))
 			{
 				_word.Offset = _offset + 1;
@@ -126,25 +130,25 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		private bool isEndOfLine(char c)
 		{
 			return (Environment.NewLine.Length == 1 && Environment.NewLine.Equals(c.ToString())) || 
-				   (Environment.NewLine.Length == 2 && Environment.NewLine.Equals((_last + c).ToString()));
+				   (Environment.NewLine.Length == 2 && Environment.NewLine.Equals(_last.ToString() + c.ToString()));
 		}
 		
 		private bool isNewLine()
 		{
 			return (Environment.NewLine.Length == 1 && Environment.NewLine.Equals(_last.ToString())) || 
 				   (Environment.NewLine.Length == 2 && 
-				   	Environment.NewLine.Equals((_beforeLast + _last).ToString()));
+				   	Environment.NewLine.Equals(_beforeLast.ToString() + _last.ToString()));
 		}
 		
 		private bool isComment(char c)
 		{
-			var current = (_last + c).ToString();
+			var current = _last.ToString() + c.ToString();
 			return current == "//" || current == "/*";
 		}
 		
 		private void fastForwardToEndOfComment()
 		{
-			var comment = (_last + _chars[_offset]).ToString();
+			var comment = _last.ToString() + _chars[_offset].ToString();
 			char c = _chars[_offset];
 			while (true)
 			{
@@ -153,7 +157,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 					break;
 				c = _chars[_offset];
 				if ((comment == "//" && isEndOfLine(c)) ||
-					(comment == "/*" && (_last + c).ToString() == "*/"))
+					(comment == "/*" && _last.ToString() + c.ToString() == "*/"))
 					break;
 			}
 		}
