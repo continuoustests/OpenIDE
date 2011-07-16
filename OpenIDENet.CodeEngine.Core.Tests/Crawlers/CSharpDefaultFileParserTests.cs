@@ -28,6 +28,24 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 		}
 		
 		[Test]
+		public void Should_find_basic_namespace()
+		{
+			var cache = new Fake_CacheBuilder();
+			_parser = new CSharpFileParser(cache);
+			_parser.ParseFile("TestFile", () =>
+				{
+					return "namespace MyFirstNS {}";
+				});
+			var ns = cache.Namespaces.ElementAt(0);
+			Assert.That(ns.Fullpath, Is.EqualTo("TestFile"));
+			Assert.That(ns.Signature, Is.EqualTo("MyFirstNS"));
+			Assert.That(ns.Name, Is.EqualTo("MyFirstNS"));
+			Assert.That(ns.Offset, Is.EqualTo(26));
+			Assert.That(ns.Line, Is.EqualTo(3));
+			Assert.That(ns.Column, Is.EqualTo(11));
+		}
+
+		[Test]
 		public void Should_find_namespace()
 		{
 			var ns = _cache.Namespaces.Where(x => x.Name.Equals("MyNamespace1")).FirstOrDefault();
@@ -40,7 +58,20 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 		}
 		
 		[Test]
-		public void Should_find_classes()
+		public void Should_find_class()
+		{
+			var cls = _cache.Classes.Where(x => x.Name.Equals("AVerySimpleClass")).FirstOrDefault();
+			Assert.That(cls.Fullpath, Is.EqualTo("file1"));
+			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.AVerySimpleClass"));
+			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
+			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
+			Assert.That(cls.Offset, Is.EqualTo(48));
+			Assert.That(cls.Line, Is.EqualTo(5));
+			Assert.That(cls.Column, Is.EqualTo(8));
+		}
+		
+		[Test]
+		public void Should_find_inherited_class()
 		{
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass1")).FirstOrDefault();
 			Assert.That(cls.Fullpath, Is.EqualTo("file1"));

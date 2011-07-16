@@ -4,22 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 namespace OpenIDENet.CodeEngine.Core.Crawlers
 {
+	enum Location
+	{
+		Root,
+		Namespace,
+		Class,
+		Struct,
+		Enum,
+		Method
+	}
+	
 	public class CSharpFileParser
 	{
 		private object _padLock = new object();
 		private ICacheBuilder _builder;
-		
-		private List<KeyValuePair<int, char>> _closures;
-		private int _offset;
-		private int _lineIndex;
-		private string _line;
 		private string _file;
-		private string _currentNamespace = "";
-		private int _currentCurly;
-		private int _commentStart = -1;
-		private int _commentEnd = -1;
 		private string _content;
-		private string[] _lines;
+		private Location _location;
+		private CSharpCodeNavigator _navigator;
+		
+		private Namespace _currentNamespace = null;
 		
 		public CSharpFileParser(ICacheBuilder builder)
 		{
@@ -31,40 +35,101 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			lock (_padLock)
 			{
 				_builder.AddFile(file);
-				_offset = 0;
-				_closures = new List<KeyValuePair<int, char>>();
 				_file = file;
 				_content = getContent();
-				_lines = _content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+				_location = Location.Root;
+				_currentNamespace = null;
+				_navigator = new CSharpCodeNavigator(_content.ToCharArray());
 				parse();
 			}
 		}
 		
 		private void parse()
 		{
-			for (int i = 0; i < _lines.Length; i++)
+			Word word;
+			while ((word = _navigator.GetWord()) != null)
 			{
-				_lineIndex = i;
-				_line = _lines[i];
-				handleComments();
-				getClosures();
-				handle();
-				_offset += _line.Length + Environment.NewLine.Length;
+				if (_location == Location.Root)
+					whenInRoot(word);
+				else if (_location == Location.Namespace)
+					whenInNamespace(word);
+				//else if (_location == Location.Class)
+				//	handleClass(word);
+				//else if (_location == Location.Struct)
+				//else if (_location == Location.Enum)
+				//else if (_location == Location.Method)
 			}
 		}
 		
-		private void handleComments()
+		private void whenInRoot(Word word)
+		{
+			if (word.Text == "namespace")
+				handleNamespace(word);
+		}
+
+		private void whenInNamespace(Word word)
+		{
+			if (word.Text == "class")
+				handleClass(word);
+				
+		}
+
+		private void handleNamespace(Word word)
+		{
+			var signature = _navigator.CollectSignature();
+			var ns = new Namespace(
+				_file,
+				signature.Text,
+				signature.Offset,
+				signature.Line,
+				signature.Column);
+			_builder.AddNamespace(ns);
+			_currentNamespace = ns;
+			_location = Location.Namespace;
+		}
+		
+		private void handleClass(Word word)
+		{
+			var signature = _navigator.CollectSignature();
+			var ns = "";
+			if (_currentNamespace != null)
+				ns = _currentNamespace.Name;
+			_builder.AddClass(
+				new Class(
+					_file,
+					ns,
+					signature.Text,
+					signature.Offset,
+					signature.Line,
+					signature.Column));
+			_location = Location.Class;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*private void handleComments()
 		{
 			if (_commentStart == -1)
 			{
-				_commentStart = _line.IndexOf("/*");
-				_commentEnd = _line.IndexOf("*/");
+				//_commentStart = _line.IndexOf("/*");
+				_commentEnd = _line.IndexOf("* /");
 			}
 			else
 			{
 				if (_commentEnd == -1)
 				{
-					_commentEnd = _line.IndexOf("*/");
+					_commentEnd = _line.IndexOf("* /");
 					if (_commentEnd != -1)
 						_commentStart = _line.IndexOf("/*", _commentEnd);
 				}
@@ -192,7 +257,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		private void extractType(Keyword keyword, string chunk, Action<string, int, int, int> action)
 		{
 			/*try
-			{*/
+			{* /
 				var typeName = trim(chunk.Substring(keyword.Index + keyword.Pattern.Length, chunk.Length - (keyword.Index + keyword.Pattern.Length)), keyword.Pattern);	
 				var start = chunk.IndexOf(typeName, keyword.Index);
 				var column = start;
@@ -222,7 +287,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				sb.AppendLine("----------------------------------------------------");
 				using (var writer = new System.IO.StreamWriter("/home/ack/tmp/run_output_code_engine.txt", true))
 					writer.WriteLine(sb.ToString());
-			}*/
+			}* /
 		}
 		
 		private string getClosure(int offset)
@@ -234,7 +299,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			var text = _content.Substring(start, offset - start);
 			var lineComment = text.LastIndexOf("//");
 			var multiLineCommentStart = text.LastIndexOf("/*");
-			var multiLineCommentEnd = text.LastIndexOf("*/");
+			var multiLineCommentEnd = text.LastIndexOf("* /");
 			var maxInt = new int[] {lineComment, multiLineCommentStart, multiLineCommentEnd}.Max();
 			if (maxInt != -1)
 				return text.Substring(maxInt, text.Length - maxInt);
@@ -279,10 +344,10 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		
 		private bool isBetweenMultilineComments(string text, int index)
 		{
-			var start = text.LastIndexOf("/*", index);
+			var start = text.LastIndexOf("/ *", index);
 			if (start == -1)
 				return false;
-			return text.LastIndexOf("*/", index) < start;
+			return text.LastIndexOf("* /", index) < start;
 		}
 		
 		private bool isInsideString(string text, int index)
@@ -343,7 +408,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			return lineCount;
 		}
 		
-		private class Keyword { public int Index; public string Pattern; };
+		private class Keyword { public int Index; public string Pattern; };*/
 	}
 }
 

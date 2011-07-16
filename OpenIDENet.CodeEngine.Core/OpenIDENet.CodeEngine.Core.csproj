@@ -67,6 +67,7 @@
     <Compile Include="Caching\Struct.cs" />
     <Compile Include="Caching\Enum.cs" />
     <Compile Include="Caching\Interface.cs" />
+    <Compile Include="Crawlers\CSharpCodeNavigator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Caching\" />

@@ -2,6 +2,10 @@ using System;
 
 namespace MyNamespace1
 {
+	class AVerySimpleClass
+	{
+	}
+	
 	class MyClass1 : MyClass1Base
 	{
 	}
