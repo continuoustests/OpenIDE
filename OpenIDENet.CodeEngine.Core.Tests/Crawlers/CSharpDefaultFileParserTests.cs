@@ -52,9 +52,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace1"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace1"));
-			Assert.That(ns.Offset, Is.EqualTo(28));
+			xPlatformAssert(ns.Offset, 26, 28);
 			Assert.That(ns.Line, Is.EqualTo(3));
-			Assert.That(ns.Column, Is.EqualTo(11));
+			Assert.That(ns.Column, Is.EqualTo(10));
 		}
 		
 		[Test]
@@ -65,9 +65,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.AVerySimpleClass"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
-			Assert.That(cls.Offset, Is.EqualTo(52));
+			xPlatformAssert(cls.Offset, 48, 52);
 			Assert.That(cls.Line, Is.EqualTo(5));
-			Assert.That(cls.Column, Is.EqualTo(8));
+			Assert.That(cls.Column, Is.EqualTo(7));
 		}
 		
 		[Test]
@@ -78,9 +78,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.MyClass1"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass1"));
-			Assert.That(cls.Offset, Is.EqualTo(88));
+			xPlatformAssert(cls.Offset, 80, 88);
 			Assert.That(cls.Line, Is.EqualTo(9));
-			Assert.That(cls.Column, Is.EqualTo(8));
+			Assert.That(cls.Column, Is.EqualTo(7));
 		}
 		
 		[Test]
@@ -90,9 +90,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace2"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace2"));
-			Assert.That(ns.Offset, Is.EqualTo(137));
+			xPlatformAssert(ns.Offset, 123, 137);
 			Assert.That(ns.Line, Is.EqualTo(15));
-			Assert.That(ns.Column, Is.EqualTo(1));
+			Assert.That(ns.Column, Is.EqualTo(0));
 		}
 		
 		[Test]
@@ -103,9 +103,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace2.MyClass2"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace2"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass2"));
-			Assert.That(cls.Offset, Is.EqualTo(172));
+			xPlatformAssert(cls.Offset, 154, 172);
 			Assert.That(cls.Line, Is.EqualTo(19));
-			Assert.That(cls.Column, Is.EqualTo(2));
+			Assert.That(cls.Column, Is.EqualTo(1));
 		}
 		
 		[Test]
@@ -115,9 +115,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace3"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace3"));
-			Assert.That(ns.Offset, Is.EqualTo(205));
+			xPlatformAssert(ns.Offset, 182, 205);
 			Assert.That(ns.Line, Is.EqualTo(24));
-			Assert.That(ns.Column, Is.EqualTo(11));
+			Assert.That(ns.Column, Is.EqualTo(10));
 		}
 		
 		[Test]
@@ -128,9 +128,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace3.MyClass3"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace3"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass3"));
-			Assert.That(cls.Offset, Is.EqualTo(235));
+			xPlatformAssert(cls.Offset, 212, 235);
 			Assert.That(cls.Line, Is.EqualTo(24));
-			Assert.That(cls.Column, Is.EqualTo(41));
+			Assert.That(cls.Column, Is.EqualTo(40));
 		}
 		
 		[Test]
@@ -140,9 +140,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(ns.Fullpath, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace4"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace4"));
-			Assert.That(ns.Offset, Is.EqualTo(277));
+			xPlatformAssert(ns.Offset, 248, 277);
 			Assert.That(ns.Line, Is.EqualTo(30));
-			Assert.That(ns.Column, Is.EqualTo(5));
+			Assert.That(ns.Column, Is.EqualTo(4));
 		}
 		
 		[Test]
@@ -153,9 +153,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace4.MyClass4"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace4"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass4"));
-			Assert.That(cls.Offset, Is.EqualTo(332));
+			xPlatformAssert(cls.Offset, 294, 332);
 			Assert.That(cls.Line, Is.EqualTo(39));
-			Assert.That(cls.Column, Is.EqualTo(6));
+			Assert.That(cls.Column, Is.EqualTo(5));
 		}
 		
 		[Test]
@@ -166,9 +166,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyStruct1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyStruct1"));
-			Assert.That(str.Offset, Is.EqualTo(393));
+			xPlatformAssert(str.Offset, 349, 393);
 			Assert.That(str.Line, Is.EqualTo(45));
-			Assert.That(str.Column, Is.EqualTo(9));
+			Assert.That(str.Column, Is.EqualTo(8));
 		}
 		
 		[Test]
@@ -179,9 +179,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyEnum1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyEnum1"));
-			Assert.That(str.Offset, Is.EqualTo(421));
+			xPlatformAssert(str.Offset, 373, 421);
 			Assert.That(str.Line, Is.EqualTo(49));
-			Assert.That(str.Column, Is.EqualTo(7));
+			Assert.That(str.Column, Is.EqualTo(6));
 		}
 		
 		[Test]
@@ -192,9 +192,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(iface.Signature, Is.EqualTo("MyNamespace5.MyInterface1"));
 			Assert.That(iface.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(iface.Name, Is.EqualTo("MyInterface1"));
-			Assert.That(iface.Offset, Is.EqualTo(469));
+			xPlatformAssert(iface.Offset, 416, 469);
 			Assert.That(iface.Line, Is.EqualTo(54));
-			Assert.That(iface.Column, Is.EqualTo(12));
+			Assert.That(iface.Column, Is.EqualTo(11));
 		}
 		
 		[Test]
@@ -218,6 +218,14 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 		private string getContent()
 		{
 			return File.ReadAllText(Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "TestResources"), "DefaultCSharp.txt"));
+		}
+
+		private void xPlatformAssert(int column, int expectedNix, int expectedWin)
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+				Assert.That(column, Is.EqualTo(expectedNix));
+			else
+				Assert.That(column, Is.EqualTo(expectedWin));
 		}
 	}
 }

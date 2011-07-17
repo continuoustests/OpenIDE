@@ -14,9 +14,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		private char _last;
 		private char _beforeLast;
 		private List<Word> _words;
-		private List<string> _lines;
 		private Word _word;
-		private Word _lastWord;
 		private char[] _operators = new char[] 
 			{'[',']','(',')','.',':','+','-','*','/','%','&','|','^','!','~','=','<','>','?','+','-'};
         private char[] _bodySeparators = new char[]
@@ -40,8 +38,6 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			_beforeLast = ' ';
 			_words = new List<Word>();
 			_word = new Word();
-			_lastWord = null;
-			_lines = new List<string>();
 		}
 		
 		public Word GetWord()
@@ -97,7 +93,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			if (isNewLine())
 			{
 				_line++;
-				_column = 0;
+				_column = -1;
 			}
             if (c == '}')
                 _endOfBody();
@@ -119,10 +115,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
                     _word.SyntaxOperator = c;
 
                 if (_word.Text.Length > 0 || isWhitespace)
-                {
-                    _lastWord = _word;
                     _words.Add(_word);
-                }
                 word = _word;
                 _word = new Word();
             }
@@ -163,7 +156,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			while (true)
 			{
 				prepare(c);
-				if (_offset > _chars.Length)
+				if (_offset > (_chars.Length - 1))
 					break;
 				c = _chars[_offset];
 				if ((comment == "//" && isEndOfLine(c)) ||

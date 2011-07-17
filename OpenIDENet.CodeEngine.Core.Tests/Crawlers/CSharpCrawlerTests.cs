@@ -22,13 +22,21 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cache.Classes.Count, Is.GreaterThan(0));
 			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Crawlers"));
 			Assert.That(cache.Namespaces[0].Line, Is.EqualTo(5));
-			Assert.That(cache.Namespaces[0].Column, Is.EqualTo(11));
+			xPlatformAssert(cache.Namespaces[0].Column, 10, 11);
 			Assert.That(cache.Classes[0].Name, Is.EqualTo("SolutionReaderTests"));
 			Assert.That(cache.Classes[0].Signature, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Crawlers.SolutionReaderTests"));
 			Assert.That(cache.Classes[0].Line, Is.EqualTo(8));
-			Assert.That(cache.Classes[0].Column, Is.EqualTo(15));
+			Assert.That(cache.Classes[0].Column, Is.EqualTo(14));
 			
 			Assert.That(cache.Classes.Exists(x => x.Name.Equals("Fake_CacheBuilder")), Is.True);
+		}
+
+		private void xPlatformAssert(int column, int expectedNix, int expectedWin)
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+				Assert.That(column, Is.EqualTo(expectedNix));
+			else
+				Assert.That(column, Is.EqualTo(expectedWin));
 		}
 	}
 	
