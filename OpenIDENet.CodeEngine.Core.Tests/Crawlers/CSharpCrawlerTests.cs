@@ -18,7 +18,7 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			var cache = new Fake_CacheBuilder();
 			new CSharpCrawler(cache)
 				.InitialCrawl(new CrawlOptions(new PathParser(string.Format("..{0}..{0}", Path.DirectorySeparatorChar)).ToAbsolute(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))));
-			Thread.Sleep(300);
+			Thread.Sleep(1500);
 			Assert.That(cache.Classes.Count, Is.GreaterThan(0));
 			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Crawlers"));
 			Assert.That(cache.Namespaces[0].Line, Is.EqualTo(5));

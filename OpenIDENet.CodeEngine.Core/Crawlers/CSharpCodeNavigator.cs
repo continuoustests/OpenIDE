@@ -17,11 +17,13 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		private List<string> _lines;
 		private Word _word;
 		private Word _lastWord;
-		private char[] _endOfWordChars = new char[] 
-			{'[',']','(',')','.',':','+','-','*','/','%','&','|','^','!','~','=','<','>','?','+','-', ' '};
-		private char[] _separators = new char[]
-			{'{','}',';'};
-		
+		private char[] _operators = new char[] 
+			{'[',']','(',')','.',':','+','-','*','/','%','&','|','^','!','~','=','<','>','?','+','-'};
+        private char[] _bodySeparators = new char[]
+            { '{', '}', ';' };
+		private char[] _whitespace = new char[]
+            {'\r','\n',' ','\t'};
+
 		public int Offset { get { return _offset - 1; } }
 		public int Line { get { return _line; } }
 		public int Column { get { return _column; } }
@@ -67,9 +69,17 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				var word = prepare(c);
 				if (word != null && word.Text.Length > 0)
 				{
+                    var wordChar = ' ';
+                    if (word.Text.Length == 1)
+                        wordChar = word.Text.ToCharArray()[0];
 					if (!signature.HasPosition())
 						signature.SetPosition(word);
-					signature.Text += signature.Text == "" ? word.Text : "." + word.Text;
+                    if (word.Text.Length == 1 && _operators.Contains(wordChar))
+                        signature.Text += word.Text;
+                    else if (word.SyntaxOperator != ' ' && !_bodySeparators.Contains(word.SyntaxOperator))
+                        signature.Text += word.Text + word.SyntaxOperator;
+                    else if (!_bodySeparators.Contains(wordChar))
+					    signature.Text += word.Text;
 				}
                 if (c == '{')
                 {
@@ -99,27 +109,27 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				_word.Line = _line + 1;
 				_word.Column = _column + 1;
 			}
-			if (c.Equals('\r') ||
-				c.Equals('\n') ||
-				c.Equals(' ') || 
-				c.Equals('\t') || 
-				_separators.Contains(c) ||
-				_endOfWordChars.Contains(c))
-			{
-				if (_word.Text.Length > 0 &&
-					_word.Text != " " && 
-					_word.Text != "\t" && 
-					!c.Equals('\r') && 
-					!c.Equals('\n'))
-				{
-					_lastWord = _word;
-					_words.Add(_word);
-				}
-				word = _word;
-				_word = new Word();
-			}
-			else
-				_word.Text += c;
+            var isEndOfWord = _bodySeparators.Contains(c) || _operators.Contains(c);
+            var isWhitespace = _whitespace.Contains(c);
+            if (isEndOfWord || isWhitespace)
+            {
+                if (_word.Text.Length == 0 && isEndOfWord)
+                    _word.Text = c.ToString();
+                if (isEndOfWord)
+                    _word.SyntaxOperator = c;
+
+                if (_word.Text.Length > 0 || isWhitespace)
+                {
+                    _lastWord = _word;
+                    _words.Add(_word);
+                }
+                word = _word;
+                _word = new Word();
+            }
+            else
+            {
+                _word.Text += c;
+            }
 			_beforeLast = _last;
 			_last = c;
 			_column++;
@@ -169,6 +179,8 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		public int Line { get; set; }
 		public int Column { get; set; }
 		public string Text { get; set; }
+
+        public char SyntaxOperator { get; set; }
 		
 		public Word()
 		{
@@ -176,6 +188,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			Line = -1;
 			Column = -1;
 			Text = "";
+            SyntaxOperator = ' ';
 		}
 		
 		public bool HasPosition()

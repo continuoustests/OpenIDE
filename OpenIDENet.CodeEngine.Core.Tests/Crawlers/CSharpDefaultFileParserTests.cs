@@ -78,8 +78,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.MyClass1"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass1"));
-			Assert.That(cls.Offset, Is.EqualTo(48));
-			Assert.That(cls.Line, Is.EqualTo(5));
+			Assert.That(cls.Offset, Is.EqualTo(88));
+			Assert.That(cls.Line, Is.EqualTo(9));
 			Assert.That(cls.Column, Is.EqualTo(8));
 		}
 		

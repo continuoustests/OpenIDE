@@ -118,7 +118,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				new Class(
 					_file,
 					ns,
-					signature.Text,
+					getNameFromSignature(signature.Text),
 					signature.Offset,
 					signature.Line,
 					signature.Column));
@@ -135,7 +135,7 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
                 new Interface(
                     _file,
                     ns,
-                    signature.Text,
+                    getNameFromSignature(signature.Text),
                     signature.Offset,
                     signature.Line,
                     signature.Column));
@@ -173,6 +173,13 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
                     signature.Offset,
                     signature.Line,
                     signature.Column));
+        }
+
+        private string getNameFromSignature(string signature)
+        {
+            if (signature.IndexOf(":") != -1)
+                return signature.Substring(0, signature.IndexOf(":"));
+            return signature;
         }
 
         private void suggestLocation(Location location)
