@@ -1,1 +1,1 @@
-oi.exe %1
+oi.exe %*
