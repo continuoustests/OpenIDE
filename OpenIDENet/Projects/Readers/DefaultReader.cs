@@ -32,7 +32,7 @@ namespace OpenIDENet.Projects.Readers
 			var document = new XmlDocument();
 			if (tryOpen(document, content))
 			{
-				var node = document.SelectSingleNode("b:Project/b:PropertyGroup/b:RootNamespace", _nsManager);
+                var node = document.SelectSingleNode(nsPrefix("||NS||Project/||NS||PropertyGroup/||NS||RootNamespace"), _nsManager);
 				if (node != null)
 					ns = node.InnerText;
 			}
@@ -57,6 +57,14 @@ namespace OpenIDENet.Projects.Readers
 				return false;
 			}
 		}
+
+        private string nsPrefix(string text)
+        {
+            if (_nsManager == null)
+                return text.Replace("||NS||", "");
+            else
+                return text.Replace("||NS||", "b:");
+        }
 	}
 }
 

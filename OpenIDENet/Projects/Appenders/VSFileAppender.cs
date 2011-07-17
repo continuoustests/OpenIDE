@@ -58,13 +58,13 @@ namespace OpenIDENet.Projects.Appenders
 			    
 		private bool exists(XmlDocument document, string file)
 		{
-			var node = document.SelectSingleNode(string.Format("b:Project/b:ItemGroup/b:Compile[contains(@Include,'{0}')]", file), _nsManager);
+            var node = document.SelectSingleNode(nsPrefix(string.Format("||NS||Project/||NS||ItemGroup/||NS||Compile[contains(@Include,'{0}')]", file)), _nsManager);
 			return node != null;
 		}
 		
 		private XmlNode getCompileItemGroup(XmlDocument document, string project)
 		{
-			var node = document.SelectSingleNode("b:Project/b:ItemGroup/b:Compile", _nsManager);
+            var node = document.SelectSingleNode(nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Compile"), _nsManager);
 			if (node == null)
 				node = createCompileGroup(document);
 			else
@@ -94,7 +94,7 @@ namespace OpenIDENet.Projects.Appenders
 		
 		private XmlNode createCompileGroup(XmlDocument document)
 		{
-			var element = document.SelectSingleNode("b:Project", _nsManager);
+            var element = document.SelectSingleNode(nsPrefix("||NS||Project"), _nsManager);
 			
 			if (element == null)
 				return null;
@@ -111,6 +111,14 @@ namespace OpenIDENet.Projects.Appenders
 			node.Attributes.Append(fileAttribute);
 			parent.AppendChild(node);
 		}
+
+        private string nsPrefix(string text)
+        {
+            if (_nsManager == null)
+                return text.Replace("||NS||", "");
+            else
+                return text.Replace("||NS||", "b:");
+        }
 	}
 }
 

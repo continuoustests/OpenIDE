@@ -6,7 +6,7 @@ using System.IO;
 
 namespace OpenIDENet.Arguments
 {
-	class CommandDispatcher
+	class CommandDispatcher : OpenIDENet.Arguments.ICommandDispatcher
 	{
 		private ICommandHandler[] _handlers;
 		private ILocateClosestProject _projectResolver;
