@@ -8,8 +8,9 @@ namespace OpenIDENet.Versioning
 		{
 			if (!File.Exists(projecFile))
 				return false;
-			return File.ReadAllText(projecFile).Contains("<ProductVersion>9.0.") ||
-				File.ReadAllText(projecFile).Contains("<ProductVersion>8.0.");
+			var content = File.ReadAllText(projecFile);
+			return content.Contains("<ProductVersion>9.0.") ||
+				content.Contains("<ProductVersion>8.0.");
 		}
 	}
 }

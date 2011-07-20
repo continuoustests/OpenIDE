@@ -13,11 +13,13 @@ namespace OpenIDENet.Projects
         public string Locate(string directory)
         {
 			var path = Path.GetFullPath(directory);
-            if (!Directory.Exists(path))
-                return null;
 			var extensions = new List<string>();
 			extensions.Add(CSHARP_PROJECT_EXTENTION);
 			extensions.Add(VB_PROJECT_EXTENTION);
+			if (File.Exists(path) && extensions.Contains(Path.GetExtension(path)))
+				return directory;
+			if (!Directory.Exists(path))
+                return null;
             return locateNearestProjectFile(path, extensions);
         }
 

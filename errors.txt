@@ -1,0 +1,12 @@
+OpenIDENet errors 
+
+ack@svein-arne-xps:~/src/OpenIDENet$ Could not set X locale modifiers
+
+Unhandled Exception: System.NullReferenceException: Object reference not set to an instance of an object
+  at OpenIDENet.CodeEngine.Core.ChangeTrackers.CSharpFileTracker.handle (System.IO.FileSystemEventArgs file) [0x00000] in <filename unknown>:0 
+  at OpenIDENet.CodeEngine.Core.ChangeTrackers.CSharpFileTracker.<handleChanges>m__18 (System.IO.FileSystemEventArgs x) [0x00000] in <filename unknown>:0 
+  at System.Collections.Generic.List`1[System.IO.FileSystemEventArgs].ForEach (System.Action`1 action) [0x00000] in <filename unknown>:0 
+  at OpenIDENet.CodeEngine.Core.ChangeTrackers.CSharpFileTracker.handleChanges (System.Collections.Generic.Stack`1 buffer) [0x00000] in <filename unknown>:0 
+  at OpenIDENet.CodeEngine.Core.ChangeTrackers.FileChangeTracker.startChangeHandler (System.Object state) [0x00000] in <filename unknown>:0 
+
+

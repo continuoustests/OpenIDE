@@ -1,4 +1,5 @@
 using System;
+using OpenIDENet.Projects;
 using OpenIDENet.Projects.Readers;
 using OpenIDENet.Projects.Appenders;
 using OpenIDENet.Projects.Writers;
@@ -14,14 +15,22 @@ namespace OpenIDENet.Versioning
 		private IAppendFiles[] _compiledFileAppenders;
 		private IRemoveFiles[] _compiledFileRemovers;
 		private IWriteProjectFileToDiskFor[] _writers;
+		private IAddReference[] _referenceHandlers;
 		
-		public VersionedTypeProvider(IReadProjectsFor[] readers, IResolveFileTypes[] fileTypeResolvers, IAppendFiles[] compiledFileAppenders, IRemoveFiles[] compiledFileRemovers, IWriteProjectFileToDiskFor[] writers)
+		public VersionedTypeProvider(
+			IReadProjectsFor[] readers,
+			IResolveFileTypes[] fileTypeResolvers,
+			IAppendFiles[] compiledFileAppenders,
+			IRemoveFiles[] compiledFileRemovers,
+			IWriteProjectFileToDiskFor[] writers,
+			IAddReference[] referencehandlers)
 		{
 			_readers = readers;
 			_fileTypeResolvers = fileTypeResolvers;
 			_compiledFileAppenders = compiledFileAppenders;
 			_compiledFileRemovers = compiledFileRemovers;
 			_writers = writers;
+			_referenceHandlers = referencehandlers;
 		}
 		
 		public IReadProjectsFor Reader()
@@ -54,6 +63,16 @@ namespace OpenIDENet.Versioning
 			return null;
 		}
 		
+		public IAddReference ReferencerFor(IFile file)
+		{
+			foreach (var appender in _referenceHandlers)
+			{
+				if (appender.SupportsProject<T>() && appender.SupportsFile(file))
+					return appender;
+			}
+			return null;
+		}
+
 		public IRemoveFiles FileRemoverFor(IFile file)
 		{
 			foreach (var remover in _compiledFileRemovers)

@@ -1,4 +1,5 @@
 using System;
+using OpenIDENet.Projects;
 using OpenIDENet.Projects.Readers;
 using OpenIDENet.Projects.Appenders;
 using OpenIDENet.Projects.Writers;
@@ -13,5 +14,6 @@ namespace OpenIDENet.Versioning
 		IAppendFiles FileAppenderFor(IFile file);
 		IRemoveFiles FileRemoverFor(IFile file);
 		IWriteProjectFileToDiskFor Writer();
+		IAddReference ReferencerFor(IFile file);
 	}
 }

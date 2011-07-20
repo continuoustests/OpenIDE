@@ -39,6 +39,11 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 		
 		private void handle(FileSystemEventArgs file)
 		{
+			if (file == null)
+			{
+				Console.WriteLine("FS args is null???");
+				return;
+			}
 			var extension = Path.GetExtension(file.FullPath).ToLower();
 			if (extension == null)
 				return;

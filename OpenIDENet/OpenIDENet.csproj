@@ -120,6 +120,11 @@
     <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
     <Compile Include="CodeEngineIntegration\Instance.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineHandler.cs" />
+    <Compile Include="Arguments\Handlers\ReferenceHandler.cs" />
+    <Compile Include="Projects\IAddReference.cs" />
+    <Compile Include="Projects\Referencers\AssemblyReferencer.cs" />
+    <Compile Include="Files\AssemblyFile.cs" />
+    <Compile Include="Projects\ProjectXML.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
