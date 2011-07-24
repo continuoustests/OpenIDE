@@ -10,6 +10,8 @@ using System.Xml;
 using System.Text;
 using System.Diagnostics;
 using OpenIDENet.EditorEngineIntegration;
+using OpenIDENet.Files;
+
 namespace OpenIDENet.Arguments.Handlers
 {
 	class NewHandler : ICommandHandler
@@ -19,7 +21,7 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		public string Command { get { return "new"; } }
 		
-		public NewHandler(OpenIDENet.Files.IResolveFileTypes fileTypeResolver, ILocateEditorEngine editorFactory)
+		public NewHandler(IResolveFileTypes fileTypeResolver, ILocateEditorEngine editorFactory)
 		{
 			_fileTypeResolver = fileTypeResolver;
 			_editorFactory = editorFactory;
@@ -99,6 +101,7 @@ namespace OpenIDENet.Arguments.Handlers
 				return Path.Combine(Environment.CurrentDirectory, dir);
 			if (Directory.Exists(dir))
 				return dir;
+
 			return Environment.CurrentDirectory;
 		}
 		

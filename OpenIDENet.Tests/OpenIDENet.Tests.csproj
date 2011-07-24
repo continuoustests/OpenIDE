@@ -78,6 +78,7 @@
     <Compile Include="Projects\Removers\DefaultRemoverTests.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocatorTests.cs" />
     <Compile Include="Arguments\Handlers\ReferenceHandlerTests.cs" />
+    <Compile Include="Arguments\Handlers\NewHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

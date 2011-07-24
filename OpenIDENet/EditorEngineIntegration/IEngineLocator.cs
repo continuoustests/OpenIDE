@@ -1,7 +1,7 @@
 using System;
 namespace OpenIDENet.EditorEngineIntegration
 {
-	interface ILocateEditorEngine
+	public interface ILocateEditorEngine
 	{
 		Instance GetInstance(string path);
 	}
