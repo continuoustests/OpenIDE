@@ -2,7 +2,7 @@ using System;
 using OpenIDENet.Versioning;
 namespace OpenIDENet.Arguments
 {
-	class ProviderSettings
+	public class ProviderSettings
 	{
 		public string ProjectFile { get; private set; }
 		public IProvideVersionedTypes TypesProvider { get; private set; }

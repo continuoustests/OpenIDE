@@ -10,56 +10,66 @@ using System.Xml;
 using System.Text;
 using System.Diagnostics;
 using OpenIDENet.EditorEngineIntegration;
-using OpenIDENet.Files;
 
 namespace OpenIDENet.Arguments.Handlers
 {
 	class NewHandler : ICommandHandler
 	{
+		private IProjectHandler _project;
 		private ILocateEditorEngine _editorFactory;
 		private OpenIDENet.Files.IResolveFileTypes _fileTypeResolver;
+		// Check explanation by OverrideTemplatePicker
+		private Func<string, ProjectType, INewTemplate> _pickTemplate;
 		
 		public string Command { get { return "new"; } }
 		
 		public NewHandler(IResolveFileTypes fileTypeResolver, ILocateEditorEngine editorFactory)
 		{
+			_pickTemplate = pickTemplate;
 			_fileTypeResolver = fileTypeResolver;
 			_editorFactory = editorFactory;
+			_project = new ProjectHandler();
+		}
+		
+		// Yeah.. abstraction for not having to dick arround with templates and other file access
+		// stuff in tests.
+		// Shut it or make something better! ;)
+		public void OverrideProjectHandler(IProjectHandler handler)
+		{
+			_project = handler;
+		}
+		public void OverrideTemplatePicker(Func<string, ProjectType, INewTemplate> picker)
+		{
+			_pickTemplate = picker;
 		}
 		
 		public void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("Invalid number of arguments. Usage: new {template name} {item name} {template arguments}");
+				Console.WriteLine("Invalid number of arguments. " +
+					"Usage: new {template name} {item name} {template arguments}");
 				return;
 			}
 			
 			var className = getFileName(arguments[1]);
 			var location = getLocation(arguments[1]);
-			var provider = getTypesProviderByLocation(location);
-			if (provider == null)
+			if (!_project.Read(location, getTypesProviderByLocation))
 				return;
 			
-			var with = (IProvideVersionedTypes) provider.TypesProvider;
-			if (with == null)
-				return;
-			var project = with.Reader().Read(provider.ProjectFile);
-			if (project == null)
-				return;
-			
-			var template = pickTemplate(arguments[0], project.Settings.Type);
+			var template = _pickTemplate(arguments[0], _project.Type);
 			if (template == null)
 			{
 				Console.WriteLine("No template with the name {0} exists.", arguments[0]);
 				return;
 			}
-			var ns = getNamespace(location, project);
-			template.Run(location, className, ns, project, getArguments(arguments));
+			var ns = getNamespace(location, _project.Fullpath, _project.DefaultNamespace);
+			template.Run(location, className, ns, _project.Fullpath, _project.Type, getArguments(arguments));
 			if (template.File == null)
 				return;
-			with.FileAppenderFor(template.File).Append(project, template.File);
-			with.Writer().Write(project);
+			
+			_project.AppendFile(template.File);
+			_project.Write();
 			
 			Console.WriteLine("Created class {0}.{1}", ns, className);
 			Console.WriteLine("Full path {0}", template.File.Fullpath);
@@ -68,13 +78,19 @@ namespace OpenIDENet.Arguments.Handlers
 			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
 		}
 		
-		private Template pickTemplate(string templateName, ProjectType type)
+		private INewTemplate pickTemplate(string templateName, ProjectType type)
 		{
-			var templateDir = Path.Combine(Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "templates"), type.ToString().ToLower()), "new");
-			var template = Directory.GetFiles(templateDir, string.Format("{0}.*", templateName)).FirstOrDefault();
+			var templateDir = 
+				Path.Combine(
+					Path.Combine(
+						Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+						"templates"),
+					type.ToString().ToLower()), "new");
+			var template = 
+				Directory.GetFiles(templateDir, string.Format("{0}.*", templateName)).FirstOrDefault();
 			if (template == null)
 				return null;
-			return new Template(template, _fileTypeResolver);
+			return new NewTemplate(template, _fileTypeResolver);
 		}
 		
 		private string[] getArguments(string[] args)
@@ -101,8 +117,12 @@ namespace OpenIDENet.Arguments.Handlers
 				return Path.Combine(Environment.CurrentDirectory, dir);
 			if (Directory.Exists(dir))
 				return dir;
+			
+			if (!Path.IsPathRooted(dir))
+				dir = Path.Combine(Environment.CurrentDirectory, dir);
+			Directory.CreateDirectory(dir);
 
-			return Environment.CurrentDirectory;
+			return dir;
 		}
 		
 		private string getFileName(string className, string location, IProject project)
@@ -111,13 +131,15 @@ namespace OpenIDENet.Arguments.Handlers
 			return fileName + CompileFile.DefaultExtensionFor(project.Settings.Type);
 		}
 		
-		private string getNamespace(string location, IProject project)
+		private string getNamespace(string location, string project, string defaultNamespace)
 		{
-			var projectLocation = Path.GetDirectoryName(project.Fullpath);
+			var projectLocation = Path.GetDirectoryName(project);
 			var relativePath = PathExtensions.GetRelativePath(projectLocation, location);
 			if (relativePath.Length == 0 || relativePath.Equals(location))
-				return project.Settings.DefaultNamespace;
-			return string.Format("{0}.{1}", project.Settings.DefaultNamespace, relativePath.Replace(Path.DirectorySeparatorChar.ToString(), "."));
+				return defaultNamespace;
+			return string.Format("{0}.{1}",
+				defaultNamespace,
+				relativePath.Replace(Path.DirectorySeparatorChar.ToString(), "."));
 		}
 		
 		private void gotoFile(string file, int line, int column, string location)
@@ -130,7 +152,22 @@ namespace OpenIDENet.Arguments.Handlers
 		}
 	}
 	
-	class Template
+	public interface INewTemplate
+	{
+		IFile File { get; }
+		int Line { get; }
+		int Column { get; }
+		
+		void Run(
+			string location,
+			string itemName,
+			string nameSpace,
+			string projectPath,
+			ProjectType projectType,
+			string[] arguments);
+	}
+
+	class NewTemplate : INewTemplate
 	{
 		private OpenIDENet.Files.IResolveFileTypes _fileTypeResolver;
 		private string _file;
@@ -139,7 +176,7 @@ namespace OpenIDENet.Arguments.Handlers
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 		
-		public Template(string file, OpenIDENet.Files.IResolveFileTypes fileTypeResolver)
+		public NewTemplate(string file, OpenIDENet.Files.IResolveFileTypes fileTypeResolver)
 		{
 			_fileTypeResolver = fileTypeResolver;
 			_file = file;
@@ -147,11 +184,18 @@ namespace OpenIDENet.Arguments.Handlers
 			Column = 0;
 		}
 		
-		public void Run(string location, string itemName, string nameSpace, IProject project, string[] arguments)
+		public void Run(
+			string location,
+			string itemName,
+			string nameSpace,
+			string projectPath,
+			ProjectType projectType,
+			string[] arguments)
 		{
 			try
 			{
-				var filename = Path.Combine(location, string.Format("{0}{1}", itemName, run("get_file_extension")));
+				var filename = 
+					Path.Combine(location, string.Format("{0}{1}", itemName, run("get_file_extension")));
 				if (System.IO.File.Exists(filename))
 				{
 					Console.WriteLine("File already exists {0}", filename);
@@ -162,7 +206,7 @@ namespace OpenIDENet.Arguments.Handlers
 				if (File == null)
 					return;
 				
-				var xml = getXml(location, project, arguments);
+				var xml = getXml(location, projectPath, projectType, arguments);
 				var tempFile = Path.GetTempFileName();
 				System.IO.File.WriteAllText(tempFile, xml);
 				var content = run(string.Format("\"{0}\" \"{1}\" \"{2}\"", itemName, nameSpace, tempFile));
@@ -177,7 +221,11 @@ namespace OpenIDENet.Arguments.Handlers
 			}
 		}
 		
-		private string getXml(string filename, IProject project, string[] arguments)
+		private string getXml(
+			string filename,
+			string projectPath,
+			ProjectType projectType,
+			string[] arguments)
 		{
 			var sb = new StringBuilder();
 			using (var writer = XmlWriter.Create(sb))
@@ -186,8 +234,8 @@ namespace OpenIDENet.Arguments.Handlers
 				writer.WriteStartElement("parameters");
 					writer.WriteElementString("fullpath", filename);
 					writer.WriteStartElement("project");
-						writer.WriteElementString("fullpath", project.Fullpath);
-						writer.WriteElementString("type", project.Settings.Type.ToString());
+						writer.WriteElementString("fullpath", projectPath);
+						writer.WriteElementString("type", projectType.ToString());
 					writer.WriteEndElement();
 					writer.WriteStartElement("custom_parameters");
 						arguments.ToList().ForEach(x => writer.WriteElementString("parameter", x));
@@ -201,7 +249,8 @@ namespace OpenIDENet.Arguments.Handlers
 		{
 			try
 			{
-				var positionString = run("get_position").Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+				var positionString = run("get_position")
+					.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 				Line = int.Parse(positionString[0]);
 				Column = int.Parse(positionString[1]);
 			}

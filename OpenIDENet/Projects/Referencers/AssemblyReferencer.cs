@@ -70,12 +70,6 @@ namespace OpenIDENet.Projects.Referencers
 				if (attr.InnerText.Contains(path))
 					return true;
 			}
-			
-			/*var node = _document
-				.SelectSingleNode(
-					nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Reference[contains(@Include,'{0}*')]", path),
-					_nsManager);*/
-			//return node != null;
 			return false;
 		}
 
