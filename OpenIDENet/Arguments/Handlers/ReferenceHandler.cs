@@ -5,18 +5,22 @@ using OpenIDENet.FileSystem;
 using OpenIDENet.Versioning;
 using OpenIDENet.Projects.Readers;
 using OpenIDENet.Files;
+using OpenIDENet.Projects;
 
 namespace OpenIDENet.Arguments.Handlers
 {
 	class ReferenceHandler : ICommandHandler
 	{
+		private IProjectHandler _project = new ProjectHandler();
+
 		public string Command { get { return "reference"; } }
 
 		public void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("The handler needs the full path to the reference. Usage: reference {assembly/project} {project to add reference to");
+				Console.WriteLine("The handler needs the full path to the reference. " +
+								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
 
@@ -24,22 +28,15 @@ namespace OpenIDENet.Arguments.Handlers
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("The project do add this reference to does not exist. Usage: reference {assembly/project} {project to add reference to");
+				Console.WriteLine("The project do add this reference to does not exist. " +
+								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
-
-			var provider = getTypesProviderByLocation(projectFile);
-			if (provider == null)
-				return;
 			
-			var with = (IProvideVersionedTypes) provider.TypesProvider;
-			if (with == null)
+			if (!_project.Read(projectFile, getTypesProviderByLocation))
 				return;
-			var project = with.Reader().Read(provider.ProjectFile);
-			if (project == null)
-				return;
-			with.ReferencerFor(file).Reference(project, file);
-			with.Writer().Write(project);
+			_project.Reference(file);
+			_project.Write();
 
 			Console.WriteLine("Added reference {0} to {1}", file, projectFile);
 		}
