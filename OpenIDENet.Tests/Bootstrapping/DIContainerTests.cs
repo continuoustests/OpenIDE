@@ -40,7 +40,7 @@ namespace OpenIDENet.Tests
 			Assert.That(container.ResolveAll<IResolveFileTypes>().Length, Is.EqualTo(1));
 			Assert.That(container.ResolveAll<IAppendFiles>().Length, Is.EqualTo(1));
 			Assert.That(container.ResolveAll<IRemoveFiles>().Length, Is.EqualTo(1));
-			Assert.That(container.ResolveAll<IAddReference>().Length, Is.EqualTo(1));
+			Assert.That(container.ResolveAll<IAddReference>().Length, Is.EqualTo(2));
 			Assert.That(container.ResolveAll<IWriteProjectFileToDiskFor>().Length, Is.EqualTo(1));
 		}
 	}

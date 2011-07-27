@@ -126,6 +126,8 @@
     <Compile Include="Files\AssemblyFile.cs" />
     <Compile Include="Projects\ProjectXML.cs" />
     <Compile Include="Projects\ProjectHandler.cs" />
+    <Compile Include="Projects\Referencers\ProjectReferencer.cs" />
+    <Compile Include="Files\ProjectFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

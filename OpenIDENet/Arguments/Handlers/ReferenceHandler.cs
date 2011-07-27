@@ -23,8 +23,13 @@ namespace OpenIDENet.Arguments.Handlers
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
-
-			var file = new AssemblyFile(getFile(arguments[0]));
+			
+			var fullpath = getFile(arguments[0]);
+			IFile file;
+			if (ProjectFile.Supports(fullpath))
+				file = new ProjectFile(fullpath);
+			else
+				file = new AssemblyFile(fullpath);
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{

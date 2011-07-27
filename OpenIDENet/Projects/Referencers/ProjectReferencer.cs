@@ -8,12 +8,12 @@ using OpenIDENet.Messaging.Messages;
 
 namespace OpenIDENet.Projects.Referencers
 {
-	public class AssemblyReferencer : ProjectXML, IAddReference
+	public class ProjectReferencer : ProjectXML, IAddReference
 	{
 		private IFS _fs;
-		
-		public AssemblyReferencer(IFS fs, IMessageBus bus) : 
-			base (bus)
+
+		public ProjectReferencer(IFS fs, IMessageBus bus)
+			: base(bus)
 		{
 			_fs = fs;
 		}
@@ -25,7 +25,7 @@ namespace OpenIDENet.Projects.Referencers
 
 		public bool SupportsFile(IFile file)
 		{
-			return file.GetType().Equals(typeof(AssemblyFile));
+			return file.GetType().Equals(typeof(ProjectFile));
 		}
 		
 		public void Reference(IProject project, IFile file)
@@ -34,7 +34,7 @@ namespace OpenIDENet.Projects.Referencers
 			{
 				_bus.Publish(
 					new FailMessage(
-						string.Format("Could not reference unexisting assembly {0}", file.Fullpath)));
+						string.Format("Could not reference unexisting project {0}", file.Fullpath)));
 				return;
 			}
 
@@ -49,7 +49,7 @@ namespace OpenIDENet.Projects.Referencers
 				return;
 			
 			var parent = getReferenceGroup(project.Fullpath);
-			var node = _document.CreateNode(XmlNodeType.Element, "Reference", parent.NamespaceURI);
+			var node = _document.CreateNode(XmlNodeType.Element, "ProjectReference", parent.NamespaceURI);
 			var fileAttribute = _document.CreateAttribute("Include");
 			fileAttribute.Value = relativePath;
 			node.Attributes.Append(fileAttribute);
@@ -61,7 +61,7 @@ namespace OpenIDENet.Projects.Referencers
 		{
 			var nodes = _document
 				.SelectNodes(
-					nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Reference", path), _nsManager);
+					nsPrefix("||NS||Project/||NS||ItemGroup/||NS||ProjectReference", path), _nsManager);
 			foreach (XmlNode node in nodes)
 			{
 				var attr = node.Attributes["Include"];
@@ -76,7 +76,8 @@ namespace OpenIDENet.Projects.Referencers
 		private XmlNode getReferenceGroup(string project)
 		{
             var node = _document
-				.SelectSingleNode(nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Reference"), _nsManager);
+				.SelectSingleNode(
+					nsPrefix("||NS||Project/||NS||ItemGroup/||NS||ProjectReference"), _nsManager);
 			if (node == null)
 				node = createReferenceGroup(_document);
 			else

@@ -48,6 +48,7 @@ namespace OpenIDENet.Bootstrapping
 					  .Register(Component.For<IAppendFiles>().ImplementedBy<VSFileAppender>())
 					  .Register(Component.For<IRemoveFiles>().ImplementedBy<DefaultRemover>())
 					  .Register(Component.For<IAddReference>().ImplementedBy<AssemblyReferencer>())
+					  .Register(Component.For<IAddReference>().ImplementedBy<ProjectReferencer>())
 					  .Register(Component.For<IWriteProjectFileToDiskFor>().ImplementedBy<DefaultWriter>())
 					
 					  .Register(Component.For<IProvideVersionedTypes>().ImplementedBy<VersionedTypeProvider<VS2010>>())
