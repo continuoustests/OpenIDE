@@ -20,6 +20,12 @@ from any location. The environment.rb script will be what starts up with oi.
 In there you can choose to start either ContinuousTests or AutoTest.Net for
 handling automatic builds and test runs.
 
+Below you will read about commands using templates. Templates are any executable
+file or script that conforms to a set of rules like what they write to the console
+or what arguments they support. To add a new command for commands supporting templates
+just drop an executable script in there where the name of the script will become the
+command.
+
 To start navigate to the source folder you want to work with and execute the following
 command (replace vim with any editor supported by EditorEngine):
 oi editor vim
