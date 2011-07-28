@@ -1,0 +1,54 @@
+OpenIDENet
+
+OpenIDENet EditorEngine is an open source project maintained by the ContinuousTests
+team www.continuoustests.com. The purpose of this tool is to provide a basic set of
+IDE type features around you favorite editor like type search, project file management
+and more.
+
+As the project is in it's early stages it is only tested and run on Linux. It currently
+supports type search and basic project management.
+To connect to the editors OpenIDENet uses EditorEngine, another open source project
+maintained by ContinuousTests. Builds and tests are handled by AutoTest.Net or
+ContinuousTests which are also maintained by ContinuousTests.
+
+Getting started
+To deploy use deploy.sh/deploy.bat depending on the platform you are on. After
+deployment the binaries end up in your ReleaseBinaries folder. First thing to
+note is the oi and environment.rb files. oi is a shortcut for using oi.exe.
+What we usually do is to add our oi folder to PATH so we can use the oi script
+from any location. The environment.rb script will be what starts up with oi.
+In there you can choose to start either ContinuousTests or AutoTest.Net for
+handling automatic builds and test runs.
+
+To start navigate to the source folder you want to work with and execute the following
+command (replace vim with any editor supported by EditorEngine):
+oi editor vim
+
+Now inside gvim it has hooked F8 to deal with keys:
+	<F8>-t => Opens type search
+	<F8>-j => Opens AutoTest.Net\ContinuousTests
+
+There are also several commands for handling projects. These can be executed without
+first hooking up to the editor through "oi editor vim".
+
+Create (uses any template under templates/default/)
+Create a c# project at the specified location
+oi create library SomeProject/SomeProject.csproj
+
+Add existing file
+oi addfile SomeProject/NotYetAddedFile.cs
+
+Remove file from project
+oi removefile SomeProject/SomeFile.cs
+
+Delete file and remove from project
+oi deletefile SomeProject/SomeFile.cs
+
+New (uses any template under templates/{type}/new)
+oi new interface SomeProject/IANewClass
+oi new class SomeProject/ANewClass
+oi new fixture SomeProject/ANewClassTests
+
+Reference\Dereference adds or removes project and assembly references to and from projects
+oi reference lib/NUnit/nunit.framework.dll SomeProject/SomeProject.csproj
+oi dereference lib/NUnit/nunit.framework.dll SomeProject/SomeProject.csproj
