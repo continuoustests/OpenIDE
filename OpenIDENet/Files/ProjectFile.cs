@@ -11,8 +11,8 @@ namespace OpenIDENet.Files
 		{
 			Fullpath = Path.GetFullPath(fullpath);
 		}
-
-		public static bool Supports(string fullpath)
+		
+		public static bool SupportsExtension(string fullpath)
 		{
 			var extension = Path.GetExtension(fullpath).ToLower();
 			return extension == ".csproj" ||

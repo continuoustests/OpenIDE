@@ -26,7 +26,7 @@ namespace OpenIDENet.Arguments.Handlers
 			
 			var fullpath = getFile(arguments[0]);
 			IFile file;
-			if (ProjectFile.Supports(fullpath))
+			if (ProjectFile.SupportsExtension(fullpath))
 				file = new ProjectFile(fullpath);
 			else
 				file = new AssemblyFile(fullpath);

@@ -235,7 +235,7 @@ namespace OpenIDENet.Arguments.Handlers
 					writer.WriteElementString("fullpath", filename);
 					writer.WriteStartElement("project");
 						writer.WriteElementString("fullpath", projectPath);
-						writer.WriteElementString("type", projectType.ToString());
+						writer.WriteElementString("type", projectType.ToString().ToLower());
 					writer.WriteEndElement();
 					writer.WriteStartElement("custom_parameters");
 						arguments.ToList().ForEach(x => writer.WriteElementString("parameter", x));

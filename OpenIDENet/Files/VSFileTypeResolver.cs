@@ -15,6 +15,10 @@ namespace OpenIDENet.Files
 			var extension = Path.GetExtension(fullPath);
 			if (CompileFile.SupportsExtension(extension))
 				return new CompileFile(fullPath);
+			if (AssemblyFile.SupportsExtension(extension))
+				return new AssemblyFile(fullPath);
+			if (ProjectFile.SupportsExtension(extension))
+				return new ProjectFile(fullPath);
 			return null;
 		}
 	}

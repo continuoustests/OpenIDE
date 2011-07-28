@@ -38,6 +38,7 @@ namespace OpenIDENet.Bootstrapping
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<ReferenceHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<CreateHandler>())
 					  .Register(Component.For<IFS>().ImplementedBy<FS>())
 					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
 					  .Register(Component.For<ILocateClosestProject>().ImplementedBy<ProjectLocator>())
