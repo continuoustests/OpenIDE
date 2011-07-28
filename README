@@ -12,6 +12,7 @@ maintained by ContinuousTests. Builds and tests are handled by AutoTest.Net or
 ContinuousTests which are also maintained by ContinuousTests.
 
 Getting started
+Intro: http://www.continuoustests.com/OpenIDENet-intro.ogv
 To deploy use deploy.sh/deploy.bat depending on the platform you are on. After
 deployment the binaries end up in your ReleaseBinaries folder. First thing to
 note is the oi and environment.rb files. oi is a shortcut for using oi.exe.
