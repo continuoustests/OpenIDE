@@ -15,5 +15,6 @@ namespace OpenIDENet.Versioning
 		IRemoveFiles FileRemoverFor(IFile file);
 		IWriteProjectFileToDiskFor Writer();
 		IAddReference ReferencerFor(IFile file);
+		IRemoveReference DereferencerFor(IFile file);
 	}
 }

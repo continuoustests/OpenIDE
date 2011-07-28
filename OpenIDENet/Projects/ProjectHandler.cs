@@ -14,6 +14,7 @@ namespace OpenIDENet.Projects
 		bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation);
 		void AppendFile(IFile file);
 		void Reference(IFile file);
+		void Dereference(IFile file);
 		void Write();
 	}
 
@@ -48,6 +49,11 @@ namespace OpenIDENet.Projects
 		public void Reference(IFile file)
 		{
 			_with.ReferencerFor(file).Reference(_project, file);	
+		}
+
+		public void Dereference(IFile file)
+		{
+			_with.DereferencerFor(file).Dereference(_project, file);
 		}
 
 		public void Write()

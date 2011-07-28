@@ -25,7 +25,7 @@ namespace OpenIDENet.Tests
 			var container = new DIContainer();
 			container.Configure();
 			
-			Assert.That(container.ResolveAll<ICommandHandler>().Length, Is.EqualTo(8));
+			Assert.That(container.ResolveAll<ICommandHandler>().Length, Is.EqualTo(9));
 			
 			Assert.That(container.Resolve<IFS>(), Is.InstanceOf<IFS>());
 			Assert.That(container.Resolve<IMessageBus>(), Is.InstanceOf<IMessageBus>());
@@ -41,6 +41,7 @@ namespace OpenIDENet.Tests
 			Assert.That(container.ResolveAll<IAppendFiles>().Length, Is.EqualTo(1));
 			Assert.That(container.ResolveAll<IRemoveFiles>().Length, Is.EqualTo(1));
 			Assert.That(container.ResolveAll<IAddReference>().Length, Is.EqualTo(2));
+			Assert.That(container.ResolveAll<IRemoveReference>().Length, Is.EqualTo(2));
 			Assert.That(container.ResolveAll<IWriteProjectFileToDiskFor>().Length, Is.EqualTo(1));
 		}
 	}

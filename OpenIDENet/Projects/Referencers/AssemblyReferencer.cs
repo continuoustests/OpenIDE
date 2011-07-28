@@ -1,5 +1,6 @@
 using System;
 using System.Xml;
+using System.Collections.Generic;
 using OpenIDENet.Versioning;
 using OpenIDENet.Files;
 using OpenIDENet.FileSystem;
@@ -8,7 +9,7 @@ using OpenIDENet.Messaging.Messages;
 
 namespace OpenIDENet.Projects.Referencers
 {
-	public class AssemblyReferencer : ProjectXML, IAddReference
+	public class AssemblyReferencer : ProjectXML, IAddReference, IRemoveReference
 	{
 		private IFS _fs;
 		
@@ -56,6 +57,19 @@ namespace OpenIDENet.Projects.Referencers
 			parent.AppendChild(node);
 			project.SetContent(_document.OuterXml);
 		}
+		
+		public void Dereference(IProject project, IFile file)
+		{
+			if (!tryOpen(project.Content.ToString()))
+				return;
+			
+			var relativePath = PathExtensions.GetRelativePath(
+				project.Fullpath,
+				file.Fullpath).Replace("/", "\\");
+			
+			removeReferences(relativePath);
+			project.SetContent(_document.OuterXml);
+		}
 
 		private bool alreadyReferenced(string path)
 		{
@@ -71,6 +85,21 @@ namespace OpenIDENet.Projects.Referencers
 					return true;
 			}
 			return false;
+		}
+		
+		private void removeReferences(string name)
+		{
+			var nodes = _document
+				.SelectNodes(
+					nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Reference", name), _nsManager);
+			foreach (XmlNode node in nodes)
+			{
+				var attr = node.Attributes["Include"];
+				if (attr == null)
+					continue;
+				if (attr.InnerText.Contains(name))
+					node.ParentNode.RemoveChild(node);
+			}
 		}
 
 		private XmlNode getReferenceGroup(string project)

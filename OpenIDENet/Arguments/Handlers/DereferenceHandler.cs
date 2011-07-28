@@ -9,18 +9,18 @@ using OpenIDENet.Projects;
 
 namespace OpenIDENet.Arguments.Handlers
 {
-	class ReferenceHandler : ICommandHandler
+	class DereferenceHandler : ICommandHandler
 	{
 		private IProjectHandler _project = new ProjectHandler();
 
-		public string Command { get { return "reference"; } }
+		public string Command { get { return "dereference"; } }
 
 		public void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
 		{
 			if (arguments.Length != 2)
 			{
 				Console.WriteLine("The handler needs the full path to the reference. " +
-								  "Usage: reference {assembly/project} {project to add reference to");
+								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
 			
@@ -33,17 +33,17 @@ namespace OpenIDENet.Arguments.Handlers
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("The project to add this reference to does not exist. " +
-								  "Usage: reference {assembly/project} {project to add reference to");
+				Console.WriteLine("The project to remove this reference for does not exist. " +
+								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
 			
 			if (!_project.Read(projectFile, getTypesProviderByLocation))
 				return;
-			_project.Reference(file);
+			_project.Dereference(file);
 			_project.Write();
 
-			Console.WriteLine("Added reference {0} to {1}", file, projectFile);
+			Console.WriteLine("Rereferenced {0} from {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)
