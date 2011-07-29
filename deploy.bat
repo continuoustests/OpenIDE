@@ -24,10 +24,10 @@ xcopy %BINARYDIR%\Castle*.* %DEPLOYDIR%
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
 copy %BINARYDIR%\OpenIDENet.dll %DEPLOYDIR%\OpenIDENet.dll
 copy %ROOT%\initialize.rb %DEPLOYDIR%\initialize.rb
-xcopy /S /I %LIB%\EditorEngine %DEPLOYDIR%\EditorEngine
-xcopy /S /I %LIB%\AutoTest.Net %DEPLOYDIR%\AutoTest.Net
-xcopy /S /I %LIB%\ContinuousTests %DEPLOYDIR%\ContinuousTests
-xcopy /S /I %ROOT%\templates %DEPLOYDIR%\templates
+xcopy /S /I /E %LIB%\EditorEngine %DEPLOYDIR%\EditorEngine
+xcopy /S /I /E %LIB%\AutoTest.Net %DEPLOYDIR%\AutoTest.Net
+xcopy /S /I /E %LIB%\ContinuousTests %DEPLOYDIR%\ContinuousTests
+xcopy /S /I /E %ROOT%\templates %DEPLOYDIR%\templates
 copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDENet.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.exe
 copy %BINARYDIR%\OpenIDENet.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.Core.dll
