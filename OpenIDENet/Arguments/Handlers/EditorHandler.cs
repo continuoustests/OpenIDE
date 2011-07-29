@@ -42,8 +42,14 @@ namespace OpenIDENet.Arguments.Handlers
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
 			proc.Start();
-			Thread.Sleep(500);
-			return _editorFactory.GetInstance(Environment.CurrentDirectory);
+            var timeout = DateTime.Now.AddSeconds(5);
+            while (DateTime.Now < timeout)
+            {
+                if (_editorFactory.GetInstance(Environment.CurrentDirectory) != null)
+                    break;
+                Thread.Sleep(50);
+            }
+            return _editorFactory.GetInstance(Environment.CurrentDirectory);
 		}
 		
 		private void runInitScript()
