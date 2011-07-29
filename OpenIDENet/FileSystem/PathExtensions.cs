@@ -58,7 +58,7 @@ namespace OpenIDENet.FileSystem
 		private static int checkRecursiveLevels(string templateDir, string fullPathFile, int level)
 		{
 			var dir = Path.GetDirectoryName(templateDir);
-			if (dir.Length == 0)
+			if (dir == null || dir.Length == 0)
 				return -1;
 			if (fullPathFile.Substring(0, dir.Length).Equals(dir))
 				return level;
