@@ -16,6 +16,10 @@ IF EXIST %DEPLOYDIR% (
 mkdir %DEPLOYDIR%
 
 mkdir %DEPLOYDIR%\CodeEngine
+mkdir %DEPLOYDIR%\EditorEngine
+mkdir %DEPLOYDIR%\AutoTest.Net
+mkdir %DEPLOYDIR%\ContinuousTests
+mkdir %DEPLOYDIR%\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild

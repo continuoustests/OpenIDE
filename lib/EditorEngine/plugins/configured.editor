@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<editor>
+	<launch>
+		<executable>C:\Program Files (x86)\Notepad++\notepad++.exe</executable>
+		<parameters></parameters>
+	</launch>
+	<alive>
+		<executable>tasklist</executable>
+		<parameters>/FI "IMAGENAME eq notepad++.exe"</parameters>
+		<text_to_look_for>notepad++.exe</text_to_look_for>
+	</alive>
+	<goto>
+		<executable>C:\Program Files (x86)\Notepad++\notepad++.exe</executable>
+		<parameters>"{0}" -n{1}</parameters>
+	</goto>
+	<setfocus>
+		<executable>C:\Program Files (x86)\Notepad++\notepad++.exe</executable>
+		<parameters></parameters>
+	</setfocus>
+</editor>
