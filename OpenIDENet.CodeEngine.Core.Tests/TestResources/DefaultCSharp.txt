@@ -58,4 +58,27 @@ namespace MyNamespace5
 	public abstract class GenericClass<TSomething, TCommand>
 	{
 	}
+
+	class Program
+    {
+        public void get()
+        {
+        	string.Format("Test (Thread: {0}}", bleh);
+        }
+
+		public void ifdef
+		{
+			try {
+				bleh
+#if NET_2_0
+			} catch {
+				throw;
+			}
+#else
+			} catch (Exception ex) {
+				Log.Write(ex);
+			}
+#endif
+		}
+	}
 }

@@ -217,7 +217,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 		
 		private string getContent()
 		{
-			return File.ReadAllText(Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "TestResources"), "DefaultCSharp.txt"));
+			return File.ReadAllText(
+				Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "TestResources"),
+				"DefaultCSharp.txt"));
 		}
 
 		private void xPlatformAssert(int column, int expectedNix, int expectedWin)

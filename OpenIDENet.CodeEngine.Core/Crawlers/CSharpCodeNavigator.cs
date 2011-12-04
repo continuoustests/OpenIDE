@@ -1,12 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenIDENet.CodeEngine.Core.Logging;
 namespace OpenIDENet.CodeEngine.Core.Crawlers
 {
+	public enum IfDef
+	{
+		If,
+		Else,
+		EndIf
+	}
+
 	public class CSharpCodeNavigator
 	{
         private Action _beginningOfBody;
         private Action _endOfBody;
+		private Action<IfDef> _ifDef;
 		private int _offset = 0;
 		private char[] _chars;
 		private int _line;
@@ -26,11 +35,12 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		public int Line { get { return _line; } }
 		public int Column { get { return _column; } }
 
-        public CSharpCodeNavigator(char[] chars, Action beginningOfBody, Action endOfBody)
+        public CSharpCodeNavigator(char[] chars, Action beginningOfBody, Action endOfBody, Action<IfDef> ifDef)
 		{
 			_chars = chars;
             _beginningOfBody = beginningOfBody;
             _endOfBody = endOfBody;
+			_ifDef = ifDef;
 			_offset = 0;
 			_line = 0;
 			_column = 0;
@@ -42,19 +52,40 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		
 		public Word GetWord()
 		{
-			while (_offset < _chars.Length)
-			{
-				var c = _chars[_offset];
-				if (isComment(c))
-					fastForwardToEndOfComment();
-				var word = prepare(c);
-				if (word != null)
-					return word;
+			try {
+				while (_offset < _chars.Length)
+				{
+					var c = _chars[_offset];
+					if (isComment(c))
+						fastForwardToEndOfComment();
+					if (isString(c))
+						fastForwardToEndOfString();
+					var word = prepare(c);
+					if (word != null)
+						return word;
+				}
+				return null;
+			} catch {
+				Logger.Write("GetWord failed while on line {0} and column {1}",
+					_line,
+					_column);
+				throw;
 			}
-			return null;
 		}
 		
 		public Word CollectSignature()
+		{
+			try {
+				return collectSignature();
+			} catch {
+				Logger.Write("GetWord failed while on line {0} and column {1}",
+					_line,
+					_column);
+				throw;
+			}
+		}
+
+		private Word collectSignature()
 		{
 			var signature = new Word();
 			while (_offset < _chars.Length)
@@ -62,8 +93,9 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 				var c = _chars[_offset];
 				if (isComment(c))
 					fastForwardToEndOfComment();
-				var word = prepare(c);
-				if (word != null && word.Text.Length > 0)
+				var word = prepare(c);			
+
+				if (isValidWord(word))
 				{
                     var wordChar = ' ';
                     if (word.Text.Length == 1)
@@ -85,55 +117,111 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
                 }
 			}
 			return null;
+		}	
+
+		private bool isValidWord(Word word)
+		{
+			return word != null && word.Text.Length > 0;
 		}
-		
+
 		private Word prepare(char c)
+		{
+			return prepare(c, false);
+		}
+
+		private Word prepare(char c, bool isFastForward)
 		{
 			Word word = null;
 			if (isNewLine())
-			{
-				_line++;
-				_column = -1;
-			}
-            if (c == '}')
-                _endOfBody();
-            if (c == '{')
-                _beginningOfBody();
-			if (!_word.HasPosition() && !c.Equals(' ') && !c.Equals('\t'))
-			{
-				_word.Offset = _offset + 1;
-				_word.Line = _line + 1;
-				_word.Column = _column + 1;
-			}
-            var isEndOfWord = _bodySeparators.Contains(c) || _operators.Contains(c);
-            var isWhitespace = _whitespace.Contains(c);
-            if (isEndOfWord || isWhitespace)
-            {
-                if (_word.Text.Length == 0 && isEndOfWord)
-                    _word.Text = c.ToString();
-                if (isEndOfWord)
-                    _word.SyntaxOperator = c;
+				moveToNextLine();	
 
-                if (_word.Text.Length > 0 || isWhitespace)
-                    _words.Add(_word);
-                word = _word;
-                _word = new Word();
-            }
-            else
-            {
-                _word.Text += c;
-            }
+			if (!isFastForward)
+			{
+	            if (c == '}')
+    	            _endOfBody();
+        	    if (c == '{')
+            	    _beginningOfBody();
+
+				if (isBeginningOfWord(c))
+					initializeWord();
+
+    	        var isEndOfWord = _bodySeparators.Contains(c) || _operators.Contains(c);
+        	    var isWhitespace = _whitespace.Contains(c);
+            	if (isEndOfWord || isWhitespace)
+	            	word = finalizeWord(isEndOfWord, isWhitespace, c);
+    	        else
+            	    _word.Text += c;
+			}
+			stepOneForward(c);
+			if (isIfDef(word))
+				notifyAboutIfDef(word);
+			return word;
+		}
+
+		private void stepOneForward(char c)
+		{
 			_beforeLast = _last;
 			_last = c;
 			_column++;
-			_offset++;
+			_offset++;	
+		}
+
+		private bool isIfDef(Word word)
+		{	
+			if (word == null)
+				return false;
+			return word.Text.StartsWith("#if") ||
+				   word.Text.StartsWith("#else") ||
+				   word.Text.StartsWith("#endif");
+		}
+
+		private void notifyAboutIfDef(Word word)
+		{
+			if (word.Text.StartsWith("#if"))
+				_ifDef(IfDef.If);
+			else if (word.Text.StartsWith("#else"))
+				_ifDef(IfDef.Else);
+			else if (word.Text.StartsWith("#endif"))
+				_ifDef(IfDef.EndIf);
+		}
+
+		private void moveToNextLine()
+		{
+			_line++;
+			_column = -1;
+		}
+
+		private bool isBeginningOfWord(char c)
+		{
+			return !_word.HasPosition() && !c.Equals(' ') && !c.Equals('\t');
+		}
+
+		private void initializeWord()
+		{
+			_word.Offset = _offset + 1;
+			_word.Line = _line + 1;
+			_word.Column = _column + 1;
+		}
+
+		private Word finalizeWord(bool isEndOfWord, bool isWhitespace, char c)
+		{
+			if (_word.Text.Length == 0 && isEndOfWord)
+   	            _word.Text = c.ToString();
+       	    if (isEndOfWord)
+           	    _word.SyntaxOperator = c;
+
+            if (_word.Text.Length > 0 || isWhitespace)
+   	            _words.Add(_word);
+       	    var word = _word.Clone();
+           	_word = new Word();
 			return word;
 		}
 		
 		private bool isEndOfLine(char c)
 		{
 			return (Environment.NewLine.Length == 1 && Environment.NewLine.Equals(c.ToString())) || 
-				   (Environment.NewLine.Length == 2 && Environment.NewLine.Equals(_last.ToString() + c.ToString()));
+				   (Environment.NewLine.Length == 2 && 
+				   		Environment.NewLine.Equals(_last.ToString() + c.ToString()));
 		}
 		
 		private bool isNewLine()
@@ -155,12 +243,32 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			char c = _chars[_offset];
 			while (true)
 			{
-				prepare(c);
+				prepare(c, true);
 				if (_offset > (_chars.Length - 1))
 					break;
 				c = _chars[_offset];
 				if ((comment == "//" && isEndOfLine(c)) ||
 					(comment == "/*" && _last.ToString() + c.ToString() == "*/"))
+					break;
+			}
+		}
+
+		private bool isString(char c)
+		{
+			return c == '"' || c == '\'';
+		}
+		
+		private void fastForwardToEndOfString()
+		{
+			char c = _chars[_offset];
+			while (true)
+			{
+				prepare(c, true);
+				if (_offset > (_chars.Length - 1))
+					break;
+				c = _chars[_offset];
+				if ((c == '"' && _last != '\\') ||
+					(c == '\'' && _last != '\\'))
 					break;
 			}
 		}
@@ -194,6 +302,15 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			Offset = word.Offset;
 			Line = word.Line;
 			Column = word.Column;
+		}
+
+		public Word Clone()
+		{
+			var word = new Word();
+			word.SetPosition(this);
+			word.Text = Text;
+			word.SyntaxOperator = SyntaxOperator;
+			return word;
 		}
 	}
 }

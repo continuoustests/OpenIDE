@@ -16,6 +16,12 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 		Method
 	}
 
+	class LocationHierarchyActivity
+	{
+		public bool Push { get; set; }
+		public Location Location { get; set; }
+	}
+
     public class CSharpFileParser
     {
         private object _padLock = new object();
@@ -25,6 +31,8 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
         private Location _suggestedLocation = Location.Unknown;
         private Location _currentLocation;
         private Stack<Location> _locationHierarchy = new Stack<Location>();
+		private List<LocationHierarchyActivity> _locationHierarchyActivity = 
+													new List<LocationHierarchyActivity>();
         private CSharpCodeNavigator _navigator;
 
         private Namespace _currentNamespace = null;
@@ -48,16 +56,44 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
                     () =>
                     {
                         _locationHierarchy.Push(_currentLocation);
+						_locationHierarchyActivity.Add(
+							new LocationHierarchyActivity() { Push = true, Location = _currentLocation });
                         _currentLocation = _suggestedLocation;
                         _suggestedLocation = Location.Unknown;
                     },
                     () =>
-                    {
+					{
                         _currentLocation = _locationHierarchy.Pop();
-                    });
+						_locationHierarchyActivity.Add(
+							new LocationHierarchyActivity() { Push = false, Location = _currentLocation });
+					},
+					(ifdef) =>
+						positionForIfDef(ifdef));
                 parse();
             }
         }
+
+		private void positionForIfDef(IfDef ifdef)
+		{
+			if (ifdef == IfDef.If)
+				_locationHierarchyActivity = new List<LocationHierarchyActivity>();
+			else if (ifdef == IfDef.Else)
+				revertLocationHierarchy();
+		}
+
+		private void revertLocationHierarchy()
+		{
+			_locationHierarchyActivity.Reverse();
+			_locationHierarchyActivity
+				.ForEach(activity =>
+					{
+						if (activity.Push)
+							_locationHierarchy.Pop();
+						else
+							_locationHierarchy.Push(activity.Location);
+					});
+			_locationHierarchyActivity = new List<LocationHierarchyActivity>();
+		}
 
         private void parse()
         {

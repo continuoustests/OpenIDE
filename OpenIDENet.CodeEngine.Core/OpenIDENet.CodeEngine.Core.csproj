@@ -91,6 +91,9 @@
     <Compile Include="Caching\Enum.cs" />
     <Compile Include="Caching\Interface.cs" />
     <Compile Include="Crawlers\CSharpCodeNavigator.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

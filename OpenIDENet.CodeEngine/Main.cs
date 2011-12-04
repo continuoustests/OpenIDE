@@ -6,6 +6,7 @@ using OpenIDENet.CodeEngine.Core.Endpoints;
 using System.IO;
 using System.Threading;
 using OpenIDENet.CodeEngine.Core.ChangeTrackers;
+using OpenIDENet.CodeEngine.Core.Logging;
 
 namespace OpenIDENet.CodeEngine
 {
@@ -19,6 +20,7 @@ namespace OpenIDENet.CodeEngine
 			if (!Directory.Exists(path) && !File.Exists(path))
 				return;
 			
+			Logger.Assign(new FileLogger());
 			var options = new CrawlOptions(path);
 			var cache = new TypeCache();
 			var wather = new CSharpFileTracker();

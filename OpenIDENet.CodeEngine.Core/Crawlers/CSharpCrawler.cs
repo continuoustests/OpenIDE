@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using OpenIDENet.CodeEngine.Core.Logging;
 namespace OpenIDENet.CodeEngine.Core.Crawlers
 {
 	public class CSharpCrawler : ICrawler
@@ -46,7 +47,17 @@ namespace OpenIDENet.CodeEngine.Core.Crawlers
 			if (!_builder.ProjectExists(project))
 				_builder.AddProject(project);
 			var files = new ProjectReader(project.Fullpath).ReadFiles();
-			files.ForEach(x => new CSharpFileParser(_builder).ParseFile(x, () => { return File.ReadAllText(x); }));
+			files.ForEach(x => {
+					try
+					{
+						new CSharpFileParser(_builder).ParseFile(x, () => { return File.ReadAllText(x); });
+					}
+					catch (Exception ex)
+					{
+						Logger.Write("Failed to parse " + x);
+						Logger.Write(ex);
+					}
+				});
 			
 		}
 	}
