@@ -33,7 +33,11 @@ oi editor vim
 
 Now inside gvim it has hooked F8 to deal with keys:
 	<F8>-t => Opens type search
+		map <C-S-t> :nbkey t<cr>
+		imap <C-S-t> <Esc>:nbkey t<cr>
 	<F8>-j => Opens AutoTest.Net\ContinuousTests
+		map <C-S-j> :nbkey j<cr>
+		imap <C-S-j> <Esc>:nbkey j<cr>
 
 There are also several commands for handling projects. These can be executed without
 first hooking up to the editor through "oi editor vim".
