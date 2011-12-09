@@ -32,9 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileExplorer));
             this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.treeViewFiles = new System.Windows.Forms.TreeView();
-            this.labelInfo = new System.Windows.Forms.Label();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.labelInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxSearch
@@ -46,6 +46,7 @@
             this.textBoxSearch.Size = new System.Drawing.Size(347, 20);
             this.textBoxSearch.TabIndex = 0;
             this.textBoxSearch.TextChanged += new System.EventHandler(this.textBoxSearch_TextChanged);
+            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
             // 
             // treeViewFiles
             // 
@@ -63,15 +64,12 @@
             this.treeViewFiles.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeViewFiles_BeforeExpand);
             this.treeViewFiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewFiles_AfterSelect);
             this.treeViewFiles.DoubleClick += new System.EventHandler(this.treeViewFiles_DoubleClick);
+            this.treeViewFiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeViewFiles_KeyDown);
             // 
-            // labelInfo
+            // contextMenuStripRightClick
             // 
-            this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelInfo.Location = new System.Drawing.Point(2, 458);
-            this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(331, 16);
-            this.labelInfo.TabIndex = 2;
+            this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
+            this.contextMenuStripRightClick.Size = new System.Drawing.Size(61, 4);
             // 
             // imageList
             // 
@@ -84,10 +82,14 @@
             this.imageList.Images.SetKeyName(4, "Files-Font-icon.png");
             this.imageList.Images.SetKeyName(5, "documents-icon.png");
             // 
-            // contextMenuStripRightClick
+            // labelInfo
             // 
-            this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
-            this.contextMenuStripRightClick.Size = new System.Drawing.Size(61, 4);
+            this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelInfo.Location = new System.Drawing.Point(2, 458);
+            this.labelInfo.Name = "labelInfo";
+            this.labelInfo.Size = new System.Drawing.Size(331, 16);
+            this.labelInfo.TabIndex = 2;
             // 
             // FileExplorer
             // 

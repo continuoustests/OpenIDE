@@ -62,7 +62,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
             node.ImageIndex = image;
             node.SelectedImageIndex = image;
             node.Tag = result;
-            if (result.Type != FileFindResultType.File)
+            if (isDirectory(result))
                 node.Nodes.Add("");
         }
 
@@ -82,8 +82,8 @@ namespace OpenIDENet.CodeEngine.Core.UI
             var result = (FileFindResult)e.Node.Tag;
             if (result.Type == FileFindResultType.Directory)
                 addSubNodes(_cache.GetFilesInDirectory(result.File), e.Node);
-            if (result.Type == FileFindResultType.Project)
-                addSubNodes(_cache.GetFilesInProject(result.File), e.Node);
+            //if (result.Type == FileFindResultType.Project)
+            //    addSubNodes(_cache.GetFilesInProject(result.File), e.Node);
             if (result.Type == FileFindResultType.DirectoryInProject)
                 addSubNodes(_cache.GetFilesInProject(result.File, result.ProjectPath), e.Node);
         }
@@ -118,6 +118,60 @@ namespace OpenIDENet.CodeEngine.Core.UI
                 e.Handled = true;
                 Close();
             }
+        }
+
+        private void treeViewFiles_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (treeViewFiles.SelectedNode.Tag == null)
+                    return;
+                var result = (FileFindResult)treeViewFiles.SelectedNode.Tag;
+                if (result.Type == FileFindResultType.Project || result.Type == FileFindResultType.File)
+                {
+                    _action(result.File, 0, 0);
+                    Close();
+                }
+            }
+            if (e.Control && e.KeyCode == Keys.F)
+            {
+                textBoxSearch.SelectAll();
+                textBoxSearch.Focus();
+            }
+            if (e.KeyCode.Equals(Keys.K))
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                System.Windows.Forms.SendKeys.Send("{UP}");
+                return;
+            }
+            if (e.KeyCode.Equals(Keys.J))
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                System.Windows.Forms.SendKeys.Send("{DOWN}");
+                return;
+            }
+
+            if (e.KeyCode.Equals(Keys.H))
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                System.Windows.Forms.SendKeys.Send("{LEFT}");
+                return;
+            }
+
+            if (e.KeyCode.Equals(Keys.L))
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                System.Windows.Forms.SendKeys.Send("{RIGHT}");
+                return;
+            }
+        }
+
+        private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
+        {
         }
     }
 }
