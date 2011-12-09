@@ -60,6 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Caching\Search\FileFinder.cs" />
+    <Compile Include="Caching\Search\FileFindResult.cs" />
+    <Compile Include="Caching\Search\HierarchyBuilder.cs" />
     <Compile Include="Crawlers\CSharpCrawler.cs" />
     <Compile Include="Caching\ICacheBuilder.cs" />
     <Compile Include="Crawlers\ICrawler.cs" />
@@ -77,6 +80,12 @@
     <Compile Include="EditorEngine\EditorEngineLocator.cs" />
     <Compile Include="Endpoints\Tcp\SocketClient.cs" />
     <Compile Include="EditorEngine\Instance.cs" />
+    <Compile Include="UI\FileExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\FileExplorer.Designer.cs">
+      <DependentUpon>FileExplorer.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TypeSearchForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,6 +123,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\TypeSearchForm.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\FileExplorer.resx">
+      <DependentUpon>FileExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ok.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

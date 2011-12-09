@@ -33,6 +33,8 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 			var message = EditorEngineMessage.New(e.Message);
 			if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "t")
 				goToType();
+            if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "e")
+                explore();
 			else if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "nobuffers")
 				goToType();
 		}
@@ -48,6 +50,12 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 			var form = new TypeSearchForm(_cache, (file, line, column) => { _editor.GoTo(file, line, column); }, () => { _editor.SetFocus(); });
 			form.ShowDialog();
 		}
+
+        private void explore()
+        {
+            var form = new FileExplorer(_cache, (file, line, column) => { _editor.GoTo(file, line, column); }, () => { _editor.SetFocus(); });
+            form.ShowDialog();
+        }
 		
 		public void Run(string cmd)
 		{

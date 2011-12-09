@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenIDENet.CodeEngine.Core.Caching.Search;
 namespace OpenIDENet.CodeEngine.Core.Caching
 {
 	public interface ITypeCache
@@ -10,6 +11,10 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		int TypeCount { get; }
 		
 		List<ICodeType> Find(string name);
-	}
+        List<FileFindResult> FindFiles(string searchString);
+        List<FileFindResult> GetFilesInDirectory(string directory);
+        List<FileFindResult> GetFilesInProject(string project);
+        List<FileFindResult> GetFilesInProject(string project, string path);
+    }
 }
 

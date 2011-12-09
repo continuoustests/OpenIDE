@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -57,18 +57,19 @@
       <HintPath>..\lib\NUnit\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Caching\HierarchyBuilderTests.cs" />
+    <Compile Include="Caching\TypeCacheTests.cs" />
     <Compile Include="Crawlers\SolutionReaderTests.cs" />
     <Compile Include="FileSystem\PathParserTests.cs" />
     <Compile Include="Crawlers\CSharpCrawlerTests.cs" />
     <Compile Include="Crawlers\CSharpDefaultFileParserTests.cs" />
     <Compile Include="Crawlers\CSharpCommentParserTests.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Caching\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="TestResources\VSSolutionFile.sln">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

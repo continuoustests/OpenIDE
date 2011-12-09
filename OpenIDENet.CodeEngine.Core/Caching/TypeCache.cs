@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenIDENet.CodeEngine.Core.Caching.Search;
+using System.IO;
 namespace OpenIDENet.CodeEngine.Core.Caching
 {
 	public class TypeCache : ICacheBuilder, ITypeCache
@@ -27,7 +29,33 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 			lock (_enums) { results.AddRange(_enums.Where(x => x.Name.ToLower().Contains(name.ToLower())).Cast<ICodeType>()); }
 			return results.OrderBy(x => nameSort(x.Name, name)).ToList();
 		}
-		
+
+        public List<FileFindResult> FindFiles(string searchString)
+        {
+            return new FileFinder(_files, _projects).Find(searchString);
+        }
+
+        public List<FileFindResult> GetFilesInDirectory(string directory)
+        {
+            return new HierarchyBuilder(_files, _projects).GetNextStep(directory);
+        }
+
+        public List<FileFindResult> GetFilesInProject(string project)
+        {
+            var prj = GetProject(project);
+            if (prj == null)
+                return new List<FileFindResult>();
+            return new HierarchyBuilder().GetNextStepInProject(prj);
+        }
+
+        public List<FileFindResult> GetFilesInProject(string project, string path)
+        {
+            var prj = GetProject(project);
+            if (prj == null)
+                return new List<FileFindResult>();
+            return new HierarchyBuilder().GetNextStepInProject(prj, path);
+        }
+	
 		public bool ProjectExists(Project project)
 		{
 			return _projects.Exists(x => x.Fullpath.Equals(project.Fullpath));
@@ -160,6 +188,6 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 				return 7;
 			return 8;
 		}
-	}
+    }
 }
 
