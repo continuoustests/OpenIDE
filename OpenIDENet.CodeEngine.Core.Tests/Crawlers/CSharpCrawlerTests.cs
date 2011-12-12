@@ -20,13 +20,13 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 				.InitialCrawl(new CrawlOptions(new PathParser(string.Format("..{0}..{0}", Path.DirectorySeparatorChar)).ToAbsolute(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))));
 			Thread.Sleep(1500);
 			Assert.That(cache.Classes.Count, Is.GreaterThan(0));
-			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Crawlers"));
-			Assert.That(cache.Namespaces[0].Line, Is.EqualTo(5));
+			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Caching"));
+			Assert.That(cache.Namespaces[0].Line, Is.EqualTo(10));
 			xPlatformAssert(cache.Namespaces[0].Column, 10, 11);
-			Assert.That(cache.Classes[0].Name, Is.EqualTo("SolutionReaderTests"));
-			Assert.That(cache.Classes[0].Signature, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Crawlers.SolutionReaderTests"));
-			Assert.That(cache.Classes[0].Line, Is.EqualTo(8));
-			Assert.That(cache.Classes[0].Column, Is.EqualTo(14));
+			Assert.That(cache.Classes[0].Name, Is.EqualTo("HierarchyBuilderTests"));
+			Assert.That(cache.Classes[0].Signature, Is.EqualTo("OpenIDENet.CodeEngine.Core.Tests.Caching.HierarchyBuilderTests"));
+			Assert.That(cache.Classes[0].Line, Is.EqualTo(13));
+			Assert.That(cache.Classes[0].Column, Is.EqualTo(17));
 			
 			Assert.That(cache.Classes.Exists(x => x.Name.Equals("Fake_CacheBuilder")), Is.True);
 		}

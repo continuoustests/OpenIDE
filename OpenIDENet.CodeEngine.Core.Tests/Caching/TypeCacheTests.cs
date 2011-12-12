@@ -32,9 +32,6 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Caching
             cache.AddFile(to("/Some/Path/File2.cs"));
             cache.AddFile(to("/Some/Path/In/AnotherpathPlace/File2.cs"));
 
-            var form = new OpenIDENet.CodeEngine.Core.UI.FileExplorer(cache, null, () => { });
-            form.ShowDialog();
-
             var verifier = new ResultVerifier(cache.FindFiles("Path"));
             verifier.VerifyCount(2);
             verifier.Verify(0, FileFindResultType.Directory, to("/Some/Path"));

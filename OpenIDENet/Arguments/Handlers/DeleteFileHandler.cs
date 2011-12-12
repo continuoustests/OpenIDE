@@ -4,6 +4,14 @@ namespace OpenIDENet.Arguments.Handlers
 {
 	class DeleteFileHandler : ICommandHandler
 	{
+		public CommandHandlerParameters Usage {
+			get {
+				return new CommandHandlerParameters()
+					.Add("deletefile", "Removes a file from the closest project and deletes it")
+					.Add("FILE_TO_DELETE", "Relative or full path to the file to delete");
+			}
+		}
+
 		public string Command { get { return "deletefile"; } }
 		
 		public void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)

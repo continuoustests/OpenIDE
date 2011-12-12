@@ -97,6 +97,8 @@ namespace OpenIDENet.CodeEngine.Core.UI
         private void FileExplorer_FormClosing(object sender, FormClosingEventArgs e)
         {
             _cancelAction();
+			Visible = false;
+			Dispose();
         }
 
         private void treeViewFiles_DoubleClick(object sender, EventArgs e)
@@ -105,17 +107,13 @@ namespace OpenIDENet.CodeEngine.Core.UI
                 return;
             var result = (FileFindResult)treeViewFiles.SelectedNode.Tag;
             if (result.Type == FileFindResultType.Project || result.Type == FileFindResultType.File)
-            {
                 _action(result.File, 0, 0);
-                Close();
-            }
         }
 
         private void FileExplorer_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                e.Handled = true;
                 Close();
             }
         }
@@ -128,10 +126,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
                     return;
                 var result = (FileFindResult)treeViewFiles.SelectedNode.Tag;
                 if (result.Type == FileFindResultType.Project || result.Type == FileFindResultType.File)
-                {
                     _action(result.File, 0, 0);
-                    Close();
-                }
             }
             if (e.Control && e.KeyCode == Keys.F)
             {

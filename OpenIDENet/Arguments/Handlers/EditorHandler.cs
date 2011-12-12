@@ -11,6 +11,14 @@ namespace OpenIDENet.Arguments.Handlers
 	{
 		private ILocateEditorEngine _editorFactory;
 		
+		public CommandHandlerParameters Usage {
+			get {
+				return new CommandHandlerParameters()
+					.Add("editor", "Starts the editor of your choice depending on the plugins available")
+					.Add("PLUGIN_NAME", "The name of the plugin to launch");
+			}
+		}
+
 		public string Command { get { return "editor"; } }
 		
 		public EditorHandler(ILocateEditorEngine editorFactory)

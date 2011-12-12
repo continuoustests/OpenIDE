@@ -21,6 +21,16 @@ namespace OpenIDENet.Arguments.Handlers
 		// Check explanation by OverrideTemplatePicker
 		private Func<string, ProjectType, INewTemplate> _pickTemplate;
 		
+		public CommandHandlerParameters Usage {
+			get {
+				return new CommandHandlerParameters()
+					.Add("new", "Uses the new template to create what ever specified by the template"
+						new CommandHandlerParameters()
+							.Add("bleh"))
+					Add sub templates
+			}
+		}
+		
 		public string Command { get { return "new"; } }
 		
 		public NewHandler(IResolveFileTypes fileTypeResolver, ILocateEditorEngine editorFactory)

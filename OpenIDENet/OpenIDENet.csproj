@@ -131,6 +131,7 @@
     <Compile Include="Arguments\Handlers\CreateHandler.cs" />
     <Compile Include="Projects\IRemoveReference.cs" />
     <Compile Include="Arguments\Handlers\DereferenceHandler.cs" />
+    <Compile Include="Arguments\CommandHandlerParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
