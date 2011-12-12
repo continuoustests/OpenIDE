@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<editor>
+	<launch>
+		<executable>C:\Program Files (x86)\IDM Computer Solutions\UltraEdit\Uedit32.exe</executable>
+		<parameters></parameters>
+	</launch>
+	<alive>
+		<executable>tasklist</executable>
+		<parameters>/FI "IMAGENAME eq Uedit32.exe"</parameters>
+		<text_to_look_for>Uedit32.exe</text_to_look_for>
+	</alive>
+	<goto>
+		<executable>C:\Program Files (x86)\IDM Computer Solutions\UltraEdit\Uedit32.exe</executable>
+		<parameters>"{0}/{1}/{2}"</parameters>
+	</goto>
+	<setfocus>
+		<executable>C:\Program Files (x86)\IDM Computer Solutions\UltraEdit\Uedit32.exe</executable>
+		<parameters></parameters>
+	</setfocus>
+</editor>

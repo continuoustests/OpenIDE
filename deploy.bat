@@ -3,7 +3,7 @@
 SET ROOT=%~d0%~p0%
 SET BINARYDIR="%ROOT%build_output"
 SET DEPLOYDIR="%ROOT%ReleaseBinaries"
-SET LIB="%DIR%lib"
+SET LIB="%ROOT%lib"
 
 IF EXIST %BINARYDIR% (
   rmdir /Q /S %BINARYDIR%
