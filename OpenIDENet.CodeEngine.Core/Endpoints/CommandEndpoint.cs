@@ -14,11 +14,13 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 		private Editor _editor;
 		private ITypeCache _cache;
 		private string _instanceFile;
+		private Action<string, ITypeCache, Editor> _onCommand;
 		
 		public bool IsAlive { get { return _editor.IsConnected; } }
 		
-		public CommandEndpoint(string editorKey, ITypeCache cache)
+		public CommandEndpoint(string editorKey, ITypeCache cache, Action<string, ITypeCache, Editor> onCommand)
 		{
+			_onCommand = onCommand;
 			_cache = cache;
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
@@ -32,30 +34,18 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 		{
 			var message = EditorEngineMessage.New(e.Message);
 			if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "t")
-				goToType();
+				_onCommand("gototype", _cache, _editor);
             if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "e")
-                explore();
+                _onCommand("explore", _cache, _editor);
 			else if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "nobuffers")
-				goToType();
+				_onCommand("gototype", _cache, _editor);
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
 			if (e.Message == "GoToType")
-				goToType();
+				_onCommand("gototype", _cache, _editor);
 		}
-		
-		private void goToType()
-		{
-			var form = new TypeSearchForm(_cache, (file, line, column) => { _editor.GoTo(file, line, column); }, () => { _editor.SetFocus(); });
-			form.ShowDialog();
-		}
-
-        private void explore()
-        {
-            var form = new FileExplorer(_cache, (file, line, column) => { _editor.GoTo(file, line, column); }, () => { _editor.SetFocus(); });
-            form.ShowDialog();
-        }
 		
 		public void Run(string cmd)
 		{

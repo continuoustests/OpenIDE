@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading;
 using OpenIDENet.CodeEngine.Core.ChangeTrackers;
 using OpenIDENet.CodeEngine.Core.Logging;
+using OpenIDENet.CodeEngine.Core.UI;
+using OpenIDENet.CodeEngine.Core.EditorEngine;
 
 namespace OpenIDENet.CodeEngine
 {
@@ -27,11 +29,31 @@ namespace OpenIDENet.CodeEngine
 			wather.Start(options.Directory, cache);
 			new CSharpCrawler(cache).InitialCrawl(options);
 			
-			var endpoint = new CommandEndpoint(options.Directory, cache);
+			var endpoint = new CommandEndpoint(options.Directory, cache, handleMessage);
 			endpoint.Start(path);
 			while (endpoint.IsAlive)
 				Thread.Sleep(100);
 		}
+
+		private static void handleMessage(string message, ITypeCache cache, Editor editor)
+		{
+			if (message == "gototype")
+				goToType(cache, editor);
+			if (message == "explore")
+				explore(cache, editor);
+		}
+
+		private static void goToType(ITypeCache cache, Editor editor)
+		{
+			var form = new TypeSearchForm(cache, (file, line, column) => { editor.GoTo(file, line, column); }, () => { editor.SetFocus(); });
+			form.ShowDialog();
+		}
+
+        private static void explore(ITypeCache cache, Editor editor)
+        {
+            var form = new FileExplorer(cache, (file, line, column) => { editor.GoTo(file, line, column); }, () => { editor.SetFocus(); });
+            form.ShowDialog();
+        }
 	}
 }
 
