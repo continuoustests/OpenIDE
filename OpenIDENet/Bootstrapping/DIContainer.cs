@@ -31,15 +31,18 @@ namespace OpenIDENet.Bootstrapping
 		public void Configure()
 		{
 			_container.Kernel.Resolver.AddSubResolver(new ArrayResolver(_container.Kernel));
-			_container.Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
+			_container
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineGoToHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineExploreHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<CreateHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<RemoveFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<ReferenceHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DereferenceHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CreateHandler>())
+
 					  .Register(Component.For<IFS>().ImplementedBy<FS>())
 					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
 					  .Register(Component.For<ILocateClosestProject>().ImplementedBy<ProjectLocator>())

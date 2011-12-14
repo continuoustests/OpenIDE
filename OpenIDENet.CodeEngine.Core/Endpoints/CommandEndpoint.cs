@@ -45,6 +45,8 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 		{
 			if (e.Message == "GoToType")
 				_onCommand("gototype", _cache, _editor);
+			if (e.Message == "Explore")
+				_onCommand("explore", _cache, _editor);
 		}
 		
 		public void Run(string cmd)

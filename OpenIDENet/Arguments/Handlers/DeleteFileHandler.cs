@@ -1,14 +1,19 @@
 using System;
 using System.IO;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class DeleteFileHandler : ICommandHandler
 	{
-		public CommandHandlerParameters Usage {
+		public CommandHandlerParameter Usage {
 			get {
-				return new CommandHandlerParameters()
-					.Add("deletefile", "Removes a file from the closest project and deletes it")
-					.Add("FILE_TO_DELETE", "Relative or full path to the file to delete");
+				var usage = new CommandHandlerParameter(
+					SupportedLanguage.CSharp,
+					CommandType.FileCommand,
+					"deletefile",
+					"Removes a file from the closest project and deletes it");
+				usage.Add("FILE_TO_DELETE", "Relative or full path to the file to delete");
+				return usage;
 			}
 		}
 

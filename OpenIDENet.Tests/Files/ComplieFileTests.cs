@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using OpenIDENet.Files;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Tests.Files
 {
 	[TestFixture]
@@ -9,7 +10,7 @@ namespace OpenIDENet.Tests.Files
 		[Test]
 		public void Should_know_default_file_type_for_csharp_projects()
 		{
-			Assert.That(CompileFile.DefaultExtensionFor(ProjectType.CSharp), Is.EqualTo(".cs"));
+			Assert.That(CompileFile.DefaultExtensionFor(SupportedLanguage.CSharp), Is.EqualTo(".cs"));
 		}
 		
 		[Test]

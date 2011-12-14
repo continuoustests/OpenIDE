@@ -5,6 +5,7 @@ using Rhino.Mocks;
 using OpenIDENet.FileSystem;
 using System.Text;
 using OpenIDENet.Projects;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Tests
 {
 	[TestFixture]
@@ -23,7 +24,7 @@ namespace OpenIDENet.Tests
 		[Test]
 		public void Should_parse_project_type()
 		{
-			Assert.That(_project.Settings.Type, Is.EqualTo(ProjectType.CSharp));
+			Assert.That(_project.Settings.Type, Is.EqualTo(SupportedLanguage.CSharp));
 		}
 		
 		[Test]

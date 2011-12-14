@@ -6,12 +6,27 @@ using OpenIDENet.Versioning;
 using OpenIDENet.Projects.Readers;
 using OpenIDENet.Files;
 using OpenIDENet.Projects;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Arguments.Handlers
 {
 	class DereferenceHandler : ICommandHandler
 	{
 		private IProjectHandler _project = new ProjectHandler();
+		
+		public CommandHandlerParameter Usage {
+			get {
+				var usage = new CommandHandlerParameter(
+					SupportedLanguage.All,
+					CommandType.ProjectCommand,
+					Command,
+					"Dereferences a project/assembly from given project");
+				usage
+					.Add("REFERENCE", "Path to the reference to remove")
+						.Add("PROJECT", "Project to remove the reference from");
+				return usage;
+			}
+		}
 
 		public string Command { get { return "dereference"; } }
 

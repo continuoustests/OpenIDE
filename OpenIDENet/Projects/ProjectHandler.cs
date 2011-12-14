@@ -2,13 +2,14 @@ using System;
 using OpenIDENet.Files;
 using OpenIDENet.Arguments;
 using OpenIDENet.Versioning;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Projects
 {
 	public interface IProjectHandler
 	{
 		string Fullpath { get; }
-		ProjectType Type { get; }
+		SupportedLanguage Type { get; }
 		string DefaultNamespace { get; }
 
 		bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation);
@@ -25,7 +26,7 @@ namespace OpenIDENet.Projects
 		private IProvideVersionedTypes _with;
 		
 		public string Fullpath { get { return _project.Fullpath; } }
-		public ProjectType Type { get { return _project.Settings.Type; } }
+		public SupportedLanguage Type { get { return _project.Settings.Type; } }
 		public string DefaultNamespace { get { return _project.Settings.DefaultNamespace; } }
 
 		public bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation)

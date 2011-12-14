@@ -4,6 +4,7 @@ using OpenIDENet.Arguments;
 using OpenIDENet.Versioning;
 using OpenIDENet.Projects;
 using Rhino.Mocks;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Tests
 {
 	[TestFixture]
@@ -46,6 +47,12 @@ namespace OpenIDENet.Tests
 	{
 		private bool _wasExecuted = false;
 		
+		public CommandHandlerParameter Usage {
+			get {
+				return new CommandHandlerParameter(SupportedLanguage.CSharp, CommandType.FileCommand, "", "");
+			}
+		}
+
 		public string Command { get { return "MyCommand"; } }
 		
 		public void Execute(string[] arguments, Func<string, ProviderSettings> with)

@@ -5,17 +5,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
 	{
 		private ILocateEditorEngine _editorFactory;
 		
-		public CommandHandlerParameters Usage {
+		public CommandHandlerParameter Usage {
 			get {
-				return new CommandHandlerParameters()
-					.Add("editor", "Starts the editor of your choice depending on the plugins available")
-					.Add("PLUGIN_NAME", "The name of the plugin to launch");
+				var usage = new CommandHandlerParameter(
+					SupportedLanguage.All,
+					CommandType.Run,
+					Command,
+					"Starts the editor of your choice depending on the plugins available.");
+				usage.Add("PLUGIN_NAME", "The name of the plugin to launch");
+				return usage;
 			}
 		}
 

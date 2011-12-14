@@ -10,6 +10,11 @@ if ARGV[0] == 'get_position'
 	exit
 end
 
+if ARGV[0] == 'get_definition'
+	puts "Creates a new C# library project"
+	exit
+end
+
 def getProjectConent(name)
 	content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project DefaultTargets=\"Build\" ToolsVersion=\"3.5\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">

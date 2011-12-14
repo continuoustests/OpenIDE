@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Files
 {
 	public class CompileFile : IFile
@@ -17,9 +18,9 @@ namespace OpenIDENet.Files
 			return extension.Equals(".cs");
 		}
 		
-		public static string DefaultExtensionFor(ProjectType type)
+		public static string DefaultExtensionFor(SupportedLanguage type)
 		{
-			if (type == ProjectType.CSharp)
+			if (type == SupportedLanguage.CSharp)
 				return ".cs";
 			throw new Exception(string.Format("Unhandled project type {0}", type.ToString()));
 		}

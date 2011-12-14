@@ -37,6 +37,11 @@ namespace OpenIDENet.CodeEngineIntegration
 		{
 			send("GoToType");
 		}
+
+		public void Explore()
+		{
+			send("Explore");
+		}
 		
 		private void send(string message)
 		{

@@ -3,6 +3,7 @@ using OpenIDENet.Versioning;
 using System.IO;
 using OpenIDENet.FileSystem;
 using System.Xml;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Projects.Readers
 {
 	public class DefaultReader : IReadProjectsFor
@@ -37,7 +38,7 @@ namespace OpenIDENet.Projects.Readers
 					ns = node.InnerText;
 			}
 			
-			return new ProjectSettings(ProjectType.CSharp, ns);
+			return new ProjectSettings(SupportedLanguage.CSharp, ns);
 		}
 		
 		private bool tryOpen(XmlDocument document, string xml)

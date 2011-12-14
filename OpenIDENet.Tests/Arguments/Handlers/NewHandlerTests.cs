@@ -9,6 +9,7 @@ using OpenIDENet.Versioning;
 using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
 using OpenIDENet.EditorEngineIntegration;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Tests.Arguments.Handlers
 {
@@ -45,7 +46,7 @@ namespace OpenIDENet.Tests.Arguments.Handlers
 		{
 			_newHandler.Execute(new string[] { "class", "somefile" }, null);
 			_template.AssertWasCalled(
-				x => x.Run("", "", "", "", ProjectType.CSharp, null),
+				x => x.Run("", "", "", "", SupportedLanguage.CSharp, null),
 				x => x.IgnoreArguments());
 		}
 

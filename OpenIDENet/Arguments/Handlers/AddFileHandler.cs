@@ -1,14 +1,19 @@
 using System;
 using OpenIDENet.Versioning;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class AddFileHandler : ICommandHandler
 	{
-		public CommandHandlerParameters Usage {
+		public CommandHandlerParameter Usage {
 			get {
-				return new CommandHandlerParameters()
-					.Add("addfile", "Adds a file to the closest project")
-					.Add("FILE_TO_ADD", "Relative or full path to the file to add");
+				var usage = new CommandHandlerParameter(
+					SupportedLanguage.CSharp,
+					CommandType.FileCommand,
+					"addfile",
+					"Adds a file to the closest project");
+				usage.Add("FILE_TO_ADD", "Relative or full path to the file to add");
+				return usage;
 			}
 		}
 

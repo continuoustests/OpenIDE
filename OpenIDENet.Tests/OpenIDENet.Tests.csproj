@@ -79,6 +79,7 @@
     <Compile Include="EditorEngineIntegration\EngineLocatorTests.cs" />
     <Compile Include="Arguments\Handlers\ReferenceHandlerTests.cs" />
     <Compile Include="Arguments\Handlers\NewHandlerTests.cs" />
+    <Compile Include="Arguments\Handlers\TemplateDefinitionParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

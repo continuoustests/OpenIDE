@@ -10,6 +10,11 @@ if ARGV[0] == 'get_position'
 	exit
 end
 
+if ARGV[0] == 'get_definition'
+	puts "Creates an empty NUnit test fixture for C#"
+	exit
+end
+
 classname = ARGV[0]
 classToTest = classname.gsub('Tests', '')
 instanceName = "_#{classToTest[0].downcase}#{classToTest[1..(classToTest.length - 1)]}"

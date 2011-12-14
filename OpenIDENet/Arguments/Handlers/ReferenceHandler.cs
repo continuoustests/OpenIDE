@@ -6,12 +6,27 @@ using OpenIDENet.Versioning;
 using OpenIDENet.Projects.Readers;
 using OpenIDENet.Files;
 using OpenIDENet.Projects;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Arguments.Handlers
 {
 	class ReferenceHandler : ICommandHandler
 	{
 		private IProjectHandler _project = new ProjectHandler();
+		
+		public CommandHandlerParameter Usage {
+			get {
+				var usage = new CommandHandlerParameter(
+					SupportedLanguage.CSharp,
+					CommandType.ProjectCommand,
+					Command,
+					"Adds a reference to a project file");
+				usage
+					.Add("REFERENCE", "The path to the project or assembly to be referenced")
+						.Add("PROJECT", "The path to the project to add the reference to");
+				return usage;
+			}
+		}
 
 		public string Command { get { return "reference"; } }
 

@@ -10,6 +10,7 @@ using System.Xml;
 using System.Text;
 using System.Diagnostics;
 using OpenIDENet.EditorEngineIntegration;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Arguments.Handlers
 {
@@ -19,16 +20,45 @@ namespace OpenIDENet.Arguments.Handlers
 		private ILocateEditorEngine _editorFactory;
 		private OpenIDENet.Files.IResolveFileTypes _fileTypeResolver;
 		// Check explanation by OverrideTemplatePicker
-		private Func<string, ProjectType, INewTemplate> _pickTemplate;
+		private Func<string, SupportedLanguage, INewTemplate> _pickTemplate;
 		
-		public CommandHandlerParameters Usage {
+		public CommandHandlerParameter Usage {
 			get {
-				return new CommandHandlerParameters()
-					.Add("new", "Uses the new template to create what ever specified by the template"
-						new CommandHandlerParameters()
-							.Add("bleh"))
-					Add sub templates
+				try {
+					var usage = new CommandHandlerParameter(
+						SupportedLanguage.CSharp,
+						CommandType.Run,
+						"new",
+						"Uses the new template to create what ever specified by the template");
+				
+					getTemplates(SupportedLanguage.CSharp).ToList()
+						.ForEach(x => 
+							{
+								var command = getUsage(x);
+								if (command != null)
+									usage.Add(command);
+							});
+					return usage;
+				} catch {
+					return null;
+				}
 			}
+		}
+
+		private BaseCommandHandlerParameter getUsage(string template)
+		{
+			var name = Path.GetFileNameWithoutExtension(template);
+			var definition = new NewTemplate(template, null).GetUsageDefinition();
+			var parser = new TemplateDefinitionParser();
+			var usage = parser.Parse(name, definition);
+			if (usage == null)
+				return null;
+			var fileParam = new BaseCommandHandlerParameter("FILE", "Path to the file to be create");
+			usage.Parameters.ToList()
+				.ForEach(x => fileParam.Add(x));
+			usage = new BaseCommandHandlerParameter(usage.Name, usage.Description);
+			usage.Add(fileParam);
+			return usage;
 		}
 		
 		public string Command { get { return "new"; } }
@@ -48,7 +78,7 @@ namespace OpenIDENet.Arguments.Handlers
 		{
 			_project = handler;
 		}
-		public void OverrideTemplatePicker(Func<string, ProjectType, INewTemplate> picker)
+		public void OverrideTemplatePicker(Func<string, SupportedLanguage, INewTemplate> picker)
 		{
 			_pickTemplate = picker;
 		}
@@ -88,7 +118,15 @@ namespace OpenIDENet.Arguments.Handlers
 			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
 		}
 		
-		private INewTemplate pickTemplate(string templateName, ProjectType type)
+		private INewTemplate pickTemplate(string templateName, SupportedLanguage type)
+		{
+			var template = getTemplates(type).FirstOrDefault(x => x.StartsWith(templateName + "."));
+			if (template == null)
+				return null;
+			return new NewTemplate(template, _fileTypeResolver);
+		}
+		
+		private string[] getTemplates(SupportedLanguage type)
 		{
 			var templateDir = 
 				Path.Combine(
@@ -96,13 +134,9 @@ namespace OpenIDENet.Arguments.Handlers
 						Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 						"templates"),
 					type.ToString().ToLower()), "new");
-			var template = 
-				Directory.GetFiles(templateDir, string.Format("{0}.*", templateName)).FirstOrDefault();
-			if (template == null)
-				return null;
-			return new NewTemplate(template, _fileTypeResolver);
+			return Directory.GetFiles(templateDir);
 		}
-		
+
 		private string[] getArguments(string[] args)
 		{
 			if (args.Length == 1)
@@ -173,7 +207,7 @@ namespace OpenIDENet.Arguments.Handlers
 			string itemName,
 			string nameSpace,
 			string projectPath,
-			ProjectType projectType,
+			SupportedLanguage projectType,
 			string[] arguments);
 	}
 
@@ -193,13 +227,18 @@ namespace OpenIDENet.Arguments.Handlers
 			Line = 0;
 			Column = 0;
 		}
+
+		public string GetUsageDefinition()
+		{
+			return run("get_definition");
+		}
 		
 		public void Run(
 			string location,
 			string itemName,
 			string nameSpace,
 			string projectPath,
-			ProjectType projectType,
+			SupportedLanguage projectType,
 			string[] arguments)
 		{
 			try
@@ -234,7 +273,7 @@ namespace OpenIDENet.Arguments.Handlers
 		private string getXml(
 			string filename,
 			string projectPath,
-			ProjectType projectType,
+			SupportedLanguage projectType,
 			string[] arguments)
 		{
 			var sb = new StringBuilder();

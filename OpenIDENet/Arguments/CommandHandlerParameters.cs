@@ -1,61 +1,71 @@
 using System;
 using System.Collections.Generic;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Arguments
 {
-	public class CommandHandlerParameters
+	public class BaseCommandHandlerParameter
 	{
-		private List<CommandHandlerParameter> _parameters;
+		protected List<BaseCommandHandlerParameter> _parameters;
+		
+		public string Name { get; private set; }
+		public string Description { get; private set; }
+		public bool Required { get; private set; }
+		public IEnumerable<BaseCommandHandlerParameter> Parameters { get { return _parameters; } }
 
-		public CommandHandlerParameter[] Parameters { get { return _parameters; } }
-
-		public CommandHandlerParameters()
+		public BaseCommandHandlerParameter(string name, string description)
 		{
-			_parameters = new List<CommandHandlerParameter>();
+			Name = name;
+			Description = description;
+			Required = true;
+			_parameters = new List<BaseCommandHandlerParameter>();
 		}
 
-		public CommandHandlerParameters Add(string name, string description)
+		public BaseCommandHandlerParameter IsOptional()
 		{
-			_parameters.Add(new CommandHandlerParameter()
-				{
-					Name = name,
-					Description = description,
-					Required = true,
-					Parameters = null
-				});
+			Required = false;
 			return this;
 		}
 
-		public CommandHandlerParameters Add(string name, string description, CommandHandlerParameters parameters)
+		public BaseCommandHandlerParameter Add(string name, string description)
 		{
-			_parameters.Add(new CommandHandlerParameter()
-				{
-					Name = name,
-					Description = description,
-					Required = true,
-					Parameters = parameters
-				});
-			return this;
+			var parameter = new BaseCommandHandlerParameter(name, description);
+			_parameters.Add(parameter);
+			return parameter;
+		}
+		
+		public BaseCommandHandlerParameter Add(BaseCommandHandlerParameter parameter)
+		{
+			_parameters.Add(parameter);
+			return parameter;
 		}
 
-		public CommandHandlerParameters AddOptional(string name, string description)
+		public BaseCommandHandlerParameter Insert(string name, string description)
 		{
-			_parameters.Add(new CommandHandlerParameter()
-				{
-					Name = name,
-					Description = description,
-					Required = false,
-					Parameters = null
-				});
-			return this;
+			var parameter = new BaseCommandHandlerParameter(name, description);
+			_parameters.Insert(0, parameter);
+			return parameter;
 		}
 	}
 
-	public class CommandHandlerParameter
+	public class CommandHandlerParameter : BaseCommandHandlerParameter
 	{
-		public string Name { get; set; }
-		public string Description { get; set; }
-		public bool Required { get; set; }
-		public CommandHandlerParameters Parameters { get; set; }
+		public SupportedLanguage Language { get; private set; }
+		public CommandType Type { get; private set; }
+
+		public CommandHandlerParameter(SupportedLanguage language, CommandType type, string name, string description) :
+			base(name, description)
+		{
+			Language = language;
+			Type = type;
+		}
+	}
+
+	public enum CommandType
+	{
+		Initialization,
+		FileCommand,
+		ProjectCommand,
+		Run
 	}
 }

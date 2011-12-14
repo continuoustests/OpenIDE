@@ -3,7 +3,7 @@ using OpenIDENet.Languages;
 using OpenIDENet.CodeEngineIntegration;
 namespace OpenIDENet.Arguments.Handlers
 {
-	class CodeEngineGoToHandler : ICommandHandler
+	class CodeEngineExploreHandler : ICommandHandler
 	{
 		private ICodeEngineLocator _codeEngineFactory;
 		
@@ -12,26 +12,26 @@ namespace OpenIDENet.Arguments.Handlers
 				var usage = new CommandHandlerParameter(
 					SupportedLanguage.CSharp,
 					CommandType.FileCommand,
-					"gototype",
-					"Launches the type search window");
+					Command,
+					"Launches the file explorer window");
 				return usage;
 			}
 		}
 
-		public string Command { get { return "gototype"; } }
+		public string Command { get { return "explore"; } }
 		
-		public CodeEngineGoToHandler(ICodeEngineLocator codeEngineFactory)
+		public CodeEngineExploreHandler(ICodeEngineLocator codeEngineFactory)
 		{
 			_codeEngineFactory = codeEngineFactory;
 		}
 		
 		public void Execute (string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
 		{
-			Console.WriteLine("Handling go to type");
+			Console.WriteLine("Handling explore");
 			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
 			if (instance == null)
 				return;
-			instance.GoToType();
+			instance.Explore();
 		}
 	}
 }

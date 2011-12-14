@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Diagnostics;
+using System.Collections.Generic;
 using OpenIDENet.Projects;
 using OpenIDENet.EditorEngineIntegration;
+using OpenIDENet.Languages;
 
 namespace OpenIDENet.Arguments.Handlers
 {
@@ -14,6 +16,45 @@ namespace OpenIDENet.Arguments.Handlers
 	{
 		private OpenIDENet.Files.IResolveFileTypes _fileTypeResolver;
 		private ILocateEditorEngine _editorFactory; 
+		
+		public CommandHandlerParameter Usage {
+			get {
+				try {
+					var usage = new CommandHandlerParameter(
+						SupportedLanguage.All,
+						CommandType.ProjectCommand,
+						Command,
+						"Uses the create template to create what ever project related specified by the template");
+				
+					getTemplates().ToList()
+						.ForEach(x => 
+							{
+								var command = getUsage(x);
+								if (command != null)
+									usage.Add(command);
+							});
+					return usage;
+				} catch {
+					return null;
+				}
+			}
+		}
+		
+		private BaseCommandHandlerParameter getUsage(string template)
+		{
+			var name = Path.GetFileNameWithoutExtension(template);
+			var definition = new CreateTemplate(template, null).GetUsageDefinition();
+			var parser = new TemplateDefinitionParser();
+			var usage = parser.Parse(name, definition);
+			if (usage == null)
+				return null;
+			var fileParam = new BaseCommandHandlerParameter("ITEM_NAME", "The name of the Project/Item to create");
+			usage.Parameters.ToList()
+				.ForEach(x => fileParam.Add(x));
+			usage = new BaseCommandHandlerParameter(usage.Name, usage.Description);
+			usage.Add(fileParam);
+			return usage;
+		}
 
 		public string Command { get { return "create"; } }
 
@@ -50,6 +91,14 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		private ICreateTemplate pickTemplate(string templateName)
 		{
+			var template = getTemplates().FirstOrDefault(x => x.Equals("{0}." + templateName));
+			if (template == null)
+				return null;
+			return new CreateTemplate(template, _fileTypeResolver);
+		}
+
+		private IEnumerable<string> getTemplates()
+		{
 			var templateDir = 
 				System.IO.Path.Combine(
 					System.IO.Path.Combine(
@@ -57,13 +106,7 @@ namespace OpenIDENet.Arguments.Handlers
 							System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 						"templates"),
 					"default"), "create");
-			var template = 
-				System.IO.Directory.GetFiles(
-					templateDir,
-					string.Format("{0}.*", templateName)).FirstOrDefault();
-			if (template == null)
-				return null;
-			return new CreateTemplate(template, _fileTypeResolver);
+				return System.IO.Directory.GetFiles(templateDir);
 		}
 
 		private string getFile(string argument)
@@ -125,7 +168,12 @@ namespace OpenIDENet.Arguments.Handlers
 			_file = file;
 			_typeResolver = typeResolver;
 		}
-
+		
+		public string GetUsageDefinition()
+		{
+			return run("get_definition");
+		}
+		
 		public void Run(string projectPath, string[] arguments)
 		{
 			try

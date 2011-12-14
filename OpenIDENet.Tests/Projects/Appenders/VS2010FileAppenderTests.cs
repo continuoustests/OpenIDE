@@ -8,6 +8,7 @@ using System.IO;
 using Rhino.Mocks;
 using OpenIDENet.FileSystem;
 using OpenIDENet.Files;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Tests.Projects.Appenders
 {
 	[TestFixture]
@@ -121,7 +122,7 @@ namespace OpenIDENet.Tests.Projects.Appenders
 		
 		private Project getProject(string file, string content)
 		{
-			return new Project(file, content, new ProjectSettings(ProjectType.CSharp, ""));
+			return new Project(file, content, new ProjectSettings(SupportedLanguage.CSharp, ""));
 		}
 	}
 }

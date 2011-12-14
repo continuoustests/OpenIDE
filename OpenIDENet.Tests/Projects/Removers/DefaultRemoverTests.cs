@@ -8,6 +8,7 @@ using OpenIDENet.Projects;
 using System.IO;
 using OpenIDENet.FileSystem;
 using Rhino.Mocks;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Tests.Projects.Removers
 {
 	[TestFixture]
@@ -45,7 +46,7 @@ namespace OpenIDENet.Tests.Projects.Removers
 		
 		private Project getProject(string file, string content)
 		{
-			return new Project(file, content, new ProjectSettings(ProjectType.CSharp, ""));
+			return new Project(file, content, new ProjectSettings(SupportedLanguage.CSharp, ""));
 		}
 	}
 }

@@ -25,8 +25,7 @@ namespace OpenIDENet.Tests.Messaging
             var consumer = new Fake_Consumer();
             _bus.Register(consumer);
             _bus.Publish(new Fake_Message());
-            Thread.Sleep(100);
-            consumer.ShouldConsumeOneMessage();
+            consumer.ShouldConsumeOneMessageWithinOneSecond();
         }
     }
 }

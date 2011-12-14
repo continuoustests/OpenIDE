@@ -105,7 +105,6 @@
     <Compile Include="Arguments\Handlers\AddFileHandler.cs" />
     <Compile Include="Exceptions\InvalidArgumentsException.cs" />
     <Compile Include="Arguments\ProviderSettings.cs" />
-    <Compile Include="Projects\ProjectType.cs" />
     <Compile Include="Arguments\Handlers\RemoveFileHandler.cs" />
     <Compile Include="Projects\Removers\IRemoveFiles.cs" />
     <Compile Include="Projects\Removers\DefaultRemover.cs" />
@@ -132,6 +131,9 @@
     <Compile Include="Projects\IRemoveReference.cs" />
     <Compile Include="Arguments\Handlers\DereferenceHandler.cs" />
     <Compile Include="Arguments\CommandHandlerParameters.cs" />
+    <Compile Include="Arguments\Handlers\TemplateDefinitionParser.cs" />
+    <Compile Include="Languages\SupportedLanguages.cs" />
+    <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

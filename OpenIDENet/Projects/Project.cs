@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenIDENet.Languages;
 namespace OpenIDENet.Projects
 {
 	public class Project : IProject
@@ -28,10 +29,10 @@ namespace OpenIDENet.Projects
 	
 	public class ProjectSettings
 	{
-		public ProjectType Type { get; private set; }
+		public SupportedLanguage Type { get; private set; }
 		public string DefaultNamespace { get; private set; }
 		
-		public ProjectSettings(ProjectType type, string defaultNamespace)
+		public ProjectSettings(SupportedLanguage type, string defaultNamespace)
 		{
 			Type = type;
 			DefaultNamespace = defaultNamespace;
