@@ -10,10 +10,10 @@ namespace OpenIDENet.Arguments.Handlers
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.CSharp,
+					SupportedLanguage.All,
 					CommandType.FileCommand,
 					Command,
-					"Launches the file explorer window");
+					"Launches the code engines file explorer window");
 				return usage;
 			}
 		}
