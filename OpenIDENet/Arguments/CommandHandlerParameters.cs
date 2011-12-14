@@ -9,14 +9,15 @@ namespace OpenIDENet.Arguments
 		protected List<BaseCommandHandlerParameter> _parameters;
 		
 		public string Name { get; private set; }
-		public string Description { get; private set; }
+		private string _description = "";
+		public string Description { get { return GetDescription(""); } }
 		public bool Required { get; private set; }
 		public IEnumerable<BaseCommandHandlerParameter> Parameters { get { return _parameters; } }
 
 		public BaseCommandHandlerParameter(string name, string description)
 		{
 			Name = name;
-			Description = description;
+			_description = description;
 			Required = true;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
@@ -45,6 +46,11 @@ namespace OpenIDENet.Arguments
 			var parameter = new BaseCommandHandlerParameter(name, description);
 			_parameters.Insert(0, parameter);
 			return parameter;
+		}
+
+		public string GetDescription(string newline)
+		{
+			return _description.Replace("||newline||", newline);
 		}
 	}
 

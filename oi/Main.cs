@@ -60,7 +60,7 @@ namespace oi
 		private static void printCommand(CommandHandlerParameter command)
 		{
 			Console.WriteLine("");
-			Console.WriteLine("\t{0} ({1})", getDescription(command.Description, Environment.NewLine + "\t"), command.Language);
+			Console.WriteLine("\t{0} ({1})", command.GetDescription(Environment.NewLine + "\t"), command.Language);
 			Console.WriteLine("\t" + command.Name);
 		}
 
@@ -70,15 +70,10 @@ namespace oi
 			var name = parameter.Name;
 			if (!parameter.Required)
 				name = "[" + name + "]";
-			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, getDescription(parameter.Description, ""));
+			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, parameter.Description);
 			foreach (var child in parameter.Parameters)
 				printParameter(child, ref level);
 			level--;
-		}
-
-		private static string getDescription(string description, string newline)
-		{
-			return description.Replace("||newline||", newline);
 		}
 	}
 }
