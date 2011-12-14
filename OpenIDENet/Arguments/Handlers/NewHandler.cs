@@ -120,7 +120,8 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		private INewTemplate pickTemplate(string templateName, SupportedLanguage type)
 		{
-			var template = getTemplates(type).FirstOrDefault(x => x.StartsWith(templateName + "."));
+			var template = getTemplates(type)
+				.FirstOrDefault(x => x.Contains(Path.DirectorySeparatorChar + templateName + "."));
 			if (template == null)
 				return null;
 			return new NewTemplate(template, _fileTypeResolver);

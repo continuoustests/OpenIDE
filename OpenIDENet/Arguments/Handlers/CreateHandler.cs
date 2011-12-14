@@ -91,7 +91,8 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		private ICreateTemplate pickTemplate(string templateName)
 		{
-			var template = getTemplates().FirstOrDefault(x => x.Equals("{0}." + templateName));
+			var template = getTemplates()
+				.FirstOrDefault(x => x.Contains(Path.DirectorySeparatorChar + templateName + "."));
 			if (template == null)
 				return null;
 			return new CreateTemplate(template, _fileTypeResolver);

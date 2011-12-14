@@ -7,8 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
-using System.IO;
-using OpenIDENet.CodeEngine.Core.Caching.Search;
+using OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers;
 
 namespace OpenIDENet.CodeEngine.Core.UI
 {
@@ -17,6 +16,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
         private ITypeCache _cache;
 		private Action<string, int, int> _action;
 		private Action _cancelAction;
+		private ISearchHandler _handler;
 		
         public FileExplorer(ITypeCache cache, Action<string, int, int> action, Action cancelAction)
         {
@@ -25,73 +25,24 @@ namespace OpenIDENet.CodeEngine.Core.UI
 			_cache = cache;
 			_action = action;
 			_cancelAction = cancelAction;
+			_handler = new CacheSearchHandler(_cache, treeViewFiles);
         }
 
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            var files = _cache.FindFiles(textBoxSearch.Text.Trim());
-            treeViewFiles.Nodes.Clear();
-            listResult(files, treeViewFiles.Nodes, (result) => { return Path.GetFileName(result.File); });
-        }
-
-        private void listResult(List<FileFindResult> files, TreeNodeCollection nodes, Func<FileFindResult, string> getName)
-        {
-            files
-                .Where(x => isDirectory(x))
-                .OrderBy(x => getName(x)).ToList()
-                .ForEach(x => addNode(nodes, getName(x), x));
-            files
-                .Where(x => !isDirectory(x))
-                .OrderBy(x => getName(x)).ToList()
-                .ForEach(x => addNode(nodes, getName(x), x));
-        }
-
-        private static bool isDirectory(FileFindResult x)
-        {
-            return x.Type == FileFindResultType.Directory || x.Type == FileFindResultType.DirectoryInProject;
-        }
-
-        private void addNode(TreeNodeCollection nodes, string name, FileFindResult result)
-        {
-            int image = 0;
-            if (result.Type == FileFindResultType.File)
-                image = 4;
-            if (result.Type == FileFindResultType.Project)
-                image = 5;
-            var node = nodes.Add(name);
-            node.ImageIndex = image;
-            node.SelectedImageIndex = image;
-            node.Tag = result;
-            if (isDirectory(result))
-                node.Nodes.Add("");
+			_handler.ListFromSearch(textBoxSearch.Text.Trim());
         }
 
         private void treeViewFiles_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            var tag = e.Node.Tag;
-            if (tag == null)
-                return;
-            else if (tag.GetType().Equals(typeof(FileFindResult)))
-                labelInfo.Text = ((FileFindResult)tag).File;
+            var description = _handler.GetDescription(e.Node);
+			if (description != null)
+				labelInfo.Text = description;
         }
 
         private void treeViewFiles_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node.Nodes.Count != 1 && e.Node.Nodes[0].Tag != null)
-                return;
-            var result = (FileFindResult)e.Node.Tag;
-            if (result.Type == FileFindResultType.Directory)
-                addSubNodes(_cache.GetFilesInDirectory(result.File), e.Node);
-            //if (result.Type == FileFindResultType.Project)
-            //    addSubNodes(_cache.GetFilesInProject(result.File), e.Node);
-            if (result.Type == FileFindResultType.DirectoryInProject)
-                addSubNodes(_cache.GetFilesInProject(result.File, result.ProjectPath), e.Node);
-        }
-
-        private void addSubNodes(List<FileFindResult> files, TreeNode node)
-        {
-            node.Nodes.Clear();
-            listResult(files, node.Nodes, (result) => { return Path.GetFileName(result.File); });
+            _handler.BeforeExpand(e.Node);
         }
 
         private void FileExplorer_FormClosing(object sender, FormClosingEventArgs e)
@@ -103,11 +54,9 @@ namespace OpenIDENet.CodeEngine.Core.UI
 
         private void treeViewFiles_DoubleClick(object sender, EventArgs e)
         {
-            if (treeViewFiles.SelectedNode.Tag == null)
-                return;
-            var result = (FileFindResult)treeViewFiles.SelectedNode.Tag;
-            if (result.Type == FileFindResultType.Project || result.Type == FileFindResultType.File)
-                _action(result.File, 0, 0);
+			var position = _handler.PositionFromnode(treeViewFiles.SelectedNode);
+			if (position != null)
+	            _action(position.Fullpath, position.Line, position.Column);
         }
 
         private void FileExplorer_KeyDown(object sender, KeyEventArgs e)
@@ -122,11 +71,9 @@ namespace OpenIDENet.CodeEngine.Core.UI
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (treeViewFiles.SelectedNode.Tag == null)
-                    return;
-                var result = (FileFindResult)treeViewFiles.SelectedNode.Tag;
-                if (result.Type == FileFindResultType.Project || result.Type == FileFindResultType.File)
-                    _action(result.File, 0, 0);
+				var position = _handler.PositionFromnode(treeViewFiles.SelectedNode);
+				if (position != null)
+                    _action(position.Fullpath, position.Line, position.Column);
             }
             if (e.Control && e.KeyCode == Keys.F)
             {
@@ -163,6 +110,13 @@ namespace OpenIDENet.CodeEngine.Core.UI
                 System.Windows.Forms.SendKeys.Send("{RIGHT}");
                 return;
             }
+			if (e.Control && e.KeyCode == Keys.Up)
+			{
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+				_handler.OneUp(treeViewFiles.SelectedNode);
+				return;
+			}
         }
 
         private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
