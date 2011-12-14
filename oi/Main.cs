@@ -39,10 +39,9 @@ namespace oi
 
 		private static void printUsage()
 		{
-			Console.WriteLine();
-			Console.WriteLine("OpenIDENet is a language agnostic system that provides simple IDE features around your favorite text exitor");
-			Console.WriteLine("http://www.continuoustests.com, http://github.com/ContinuousTests/OpenIDENet");
-			Console.WriteLine();
+			Console.WriteLine("OpenIDE.Net v0.1");
+			Console.WriteLine("OpenIDE.Net is a cross language system that provides simple IDE features around your favorite text exitor.");
+			Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDENet)");
 			Console.WriteLine();
 			var level = 1;
 			var handlers = Bootstrapper.GetCommandHandlers();
@@ -61,7 +60,7 @@ namespace oi
 		private static void printCommand(CommandHandlerParameter command)
 		{
 			Console.WriteLine("");
-			Console.WriteLine("\t{0} ({1})", command.Description, command.Language);
+			Console.WriteLine("\t{0} ({1})", getDescription(command.Description, Environment.NewLine + "\t"), command.Language);
 			Console.WriteLine("\t" + command.Name);
 		}
 
@@ -71,11 +70,15 @@ namespace oi
 			var name = parameter.Name;
 			if (!parameter.Required)
 				name = "[" + name + "]";
-			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, parameter.Description);
-
+			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, getDescription(parameter.Description, ""));
 			foreach (var child in parameter.Parameters)
 				printParameter(child, ref level);
 			level--;
+		}
+
+		private static string getDescription(string description, string newline)
+		{
+			return description.Replace("||newline||", newline);
 		}
 	}
 }

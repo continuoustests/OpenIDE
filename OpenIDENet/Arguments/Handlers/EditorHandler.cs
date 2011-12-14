@@ -18,7 +18,10 @@ namespace OpenIDENet.Arguments.Handlers
 					SupportedLanguage.All,
 					CommandType.Run,
 					Command,
-					"Starts the editor of your choice depending on the plugins available.");
+					"Starts the editor of your choice depending on the plugins available in ||newline||" +
+					"addition to launching the code engine backend providing features like ||newline||" +
+					"type search and file explorer. It also initializes the system by running ||newline||" +
+					"whatever is specified in the initialize(.rb) script.");
 				usage.Add("PLUGIN_NAME", "The name of the plugin to launch");
 				return usage;
 			}
