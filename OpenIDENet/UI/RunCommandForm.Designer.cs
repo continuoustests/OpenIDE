@@ -29,72 +29,91 @@ namespace OpenIDENet.UI
         /// </summary>
         private void InitializeComponent()
         {
-			this.labelInfo = new System.Windows.Forms.Label();
-			this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.labelInfo = new System.Windows.Forms.Label();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.informationList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.labelDescription = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
-			
-			//
-			// labelInfo
-			//
-			this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelInfo.Location = new System.Drawing.Point(12, 2);
+            // 
+            // labelInfo
+            // 
+            this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelInfo.Location = new System.Drawing.Point(-85, 2);
             this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(760, 21);
+            this.labelInfo.Size = new System.Drawing.Size(745, 21);
             this.labelInfo.TabIndex = 3;
-			this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			//
-			// textBoxSearch
-			//
-			this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // textBoxSearch
+            // 
+            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(12, 25);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(760, 45);
+            this.textBoxSearch.Size = new System.Drawing.Size(595, 20);
             this.textBoxSearch.TabIndex = 1;
-			this.textBoxSearch.TextChanged += HandleTextBoxSearchhandleTextChanged;
-			this.textBoxSearch.KeyDown += HandleTextBoxSearchhandleKeyDown;
+            this.textBoxSearch.TextChanged += new System.EventHandler(this.textBoxSearch_TextChanged);
+            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
             // 
             // informationList
             // 
-            this.informationList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.informationList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.informationList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-            this.informationList.Location = new System.Drawing.Point(12, 57);
+            this.informationList.HideSelection = false;
+            this.informationList.Location = new System.Drawing.Point(12, 51);
+            this.informationList.MultiSelect = false;
             this.informationList.Name = "informationList";
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				this.informationList.Size = new System.Drawing.Size(760, 291);
-			else
-            	this.informationList.Size = new System.Drawing.Size(760, 304);
+            this.informationList.Size = new System.Drawing.Size(648, 166);
             this.informationList.TabIndex = 2;
             this.informationList.UseCompatibleStateImageBehavior = false;
             this.informationList.View = System.Windows.Forms.View.Details;
-			this.informationList.HideSelection = false;
-			this.informationList.MultiSelect = false;
+            this.informationList.SelectedIndexChanged += new System.EventHandler(this.informationList_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "Command Options";
-            this.columnHeader1.Width = 723;
+            this.columnHeader1.Width = 621;
             // 
-            // TypeSearchForm
+            // labelDescription
+            // 
+            this.labelDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelDescription.Location = new System.Drawing.Point(13, 224);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(647, 89);
+            this.labelDescription.TabIndex = 4;
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.button1.Location = new System.Drawing.Point(613, 25);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(47, 20);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Run";
+            this.button1.UseVisualStyleBackColor = false;
+            // 
+            // RunCommandForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 362);
-			this.Controls.Add(this.labelInfo);
-			this.Controls.Add(this.textBoxSearch);
+            this.ClientSize = new System.Drawing.Size(672, 322);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.labelInfo);
+            this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.informationList);
             this.KeyPreview = true;
             this.Name = "RunCommandForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Run Command";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.ResumeLayout(false);
             this.PerformLayout();
-			this.FormClosing += HandleHandleFormClosing;
 
         }
         #endregion
@@ -103,5 +122,7 @@ namespace OpenIDENet.UI
 		private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.ListView informationList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Label labelDescription;
+        private System.Windows.Forms.Button button1;
     }
 }

@@ -73,6 +73,12 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Projects\Project.cs" />
     <Compile Include="Projects\IProject.cs" />
+    <Compile Include="UI\RunCommandForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\RunCommandForm.designer.cs">
+      <DependentUpon>RunCommandForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Versioning\VS2010.cs" />
     <Compile Include="Projects\Readers\IReadProjectFiles.cs" />
     <Compile Include="Projects\Readers\DefaultReader.cs" />
@@ -137,8 +143,6 @@
     <Compile Include="Languages\SupportedLanguages.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
     <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
-    <Compile Include="UI\RunCommandForm.cs" />
-    <Compile Include="UI\RunCommandForm.Designer.cs" />
     <Compile Include="CommandBuilding\CommandBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -160,9 +164,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UI\" />
+    <EmbeddedResource Include="UI\RunCommandForm.resx">
+      <DependentUpon>RunCommandForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="UI\RunCommandForm.resx" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
