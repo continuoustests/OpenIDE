@@ -56,6 +56,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Core" />
     <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
       <SpecificVersion>False</SpecificVersion>
@@ -134,6 +136,10 @@
     <Compile Include="Arguments\Handlers\TemplateDefinitionParser.cs" />
     <Compile Include="Languages\SupportedLanguages.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
+    <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
+    <Compile Include="UI\RunCommandForm.cs" />
+    <Compile Include="UI\RunCommandForm.Designer.cs" />
+    <Compile Include="CommandBuilding\CommandBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -152,5 +158,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UI\RunCommandForm.resx" />
   </ItemGroup>
 </Project>

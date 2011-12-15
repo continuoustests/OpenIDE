@@ -80,6 +80,7 @@
     <Compile Include="Arguments\Handlers\ReferenceHandlerTests.cs" />
     <Compile Include="Arguments\Handlers\NewHandlerTests.cs" />
     <Compile Include="Arguments\Handlers\TemplateDefinitionParserTests.cs" />
+    <Compile Include="CommandBuilding\CommandBuilderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

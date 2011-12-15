@@ -42,6 +42,7 @@ namespace OpenIDENet.Bootstrapping
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<ReferenceHandler>())
 					  .Register(Component.For<ICommandHandler>().ImplementedBy<DereferenceHandler>())
+					  .Register(Component.For<ICommandHandler>().ImplementedBy<RunCommandHandler>())
 
 					  .Register(Component.For<IFS>().ImplementedBy<FS>())
 					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
