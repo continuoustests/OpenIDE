@@ -76,7 +76,7 @@
     <Compile Include="UI\RunCommandForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\RunCommandForm.designer.cs">
+    <Compile Include="UI\RunCommandForm.Designer.cs">
       <DependentUpon>RunCommandForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Versioning\VS2010.cs" />

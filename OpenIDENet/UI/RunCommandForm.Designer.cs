@@ -43,7 +43,7 @@ namespace OpenIDENet.UI
             this.labelInfo.Location = new System.Drawing.Point(-85, 2);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(745, 21);
-            this.labelInfo.TabIndex = 3;
+            this.labelInfo.TabIndex = 6;
             this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // textBoxSearch
@@ -68,7 +68,7 @@ namespace OpenIDENet.UI
             this.informationList.MultiSelect = false;
             this.informationList.Name = "informationList";
             this.informationList.Size = new System.Drawing.Size(648, 166);
-            this.informationList.TabIndex = 2;
+            this.informationList.TabIndex = 3;
             this.informationList.UseCompatibleStateImageBehavior = false;
             this.informationList.View = System.Windows.Forms.View.Details;
             this.informationList.SelectedIndexChanged += new System.EventHandler(this.informationList_SelectedIndexChanged);
@@ -94,7 +94,7 @@ namespace OpenIDENet.UI
             this.button1.Location = new System.Drawing.Point(613, 25);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(47, 20);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 2;
             this.button1.Text = "Run";
             this.button1.UseVisualStyleBackColor = false;
             // 
