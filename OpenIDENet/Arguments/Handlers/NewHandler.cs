@@ -28,7 +28,7 @@ namespace OpenIDENet.Arguments.Handlers
 					var usage = new CommandHandlerParameter(
 						SupportedLanguage.CSharp,
 						CommandType.Run,
-						"new",
+						Command,
 						"Uses the new template to create what ever specified by the template");
 				
 					getTemplates(SupportedLanguage.CSharp).ToList()
@@ -314,7 +314,10 @@ namespace OpenIDENet.Arguments.Handlers
 		private string run(string arguments)
 		{
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(_file, arguments);
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+			    proc.StartInfo = new ProcessStartInfo(_file, arguments);
+            else
+                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c " + _file + " " + arguments);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

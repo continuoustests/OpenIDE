@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using OpenIDENet.Arguments;
 using OpenIDENet.CommandBuilding;
 using System.IO;
+using System.Diagnostics;
 
 namespace OpenIDENet.UI
 {
@@ -18,24 +19,21 @@ namespace OpenIDENet.UI
 
 		private bool _directoryMode = false;
 		private string _lastDirectory = null;
+        private string _additionalParameters;
 
-        public RunCommandForm(string directory, CommandBuilder builder)
+        public RunCommandForm(string directory, string additionalParameters, CommandBuilder builder)
         {
             InitializeComponent();
             _directory = directory;
+            _additionalParameters = additionalParameters;
+            if (_additionalParameters == null)
+                _additionalParameters = "";
             _builder = builder;
             listOptions();
             if (informationList.Items.Count > 0)
                 informationList.Items[0].Selected = true;
             Text = "Running command from " + _directory;
-        }
-
-        private void listOptions()
-        {
-			
-            informationList.Items.Clear();
-            _builder.AvailableCommands.ToList()
-                .ForEach(x => informationList.Items.Add(x.Replace("/", " ").Trim()));
+            labelInfo.Text = "Already selected parameters: " + additionalParameters;
         }
 		
 		void HandleHandleFormClosing (object sender, FormClosingEventArgs e)
@@ -46,83 +44,91 @@ namespace OpenIDENet.UI
 
         private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Escape)
+                Close();
+            if (!selectFirstitem())
+                return;
+
 			if ((e.Control && e.KeyCode == Keys.N) || e.KeyCode == Keys.Enter)
-			{
-				if (informationList.Items.Count == 0)
-                    return;
-                if (informationList.SelectedItems.Count != 1)
-                    informationList.Items[0].Selected = true;
-
-				if (_directoryMode)
-				{
-					var dirContent = getContent();
-					var lookFor = Path.DirectorySeparatorChar;
-					if (dirContent.LastIndexOf(Path.DirectorySeparatorChar) < dirContent.LastIndexOf(' ') && (dirContent.Count(x => x.Equals('"')) % 2) == 0)
-						lookFor = ' ';
-					var dir = dirContent.Substring(dirContent.LastIndexOf(lookFor) + 1, dirContent.Length - (dirContent.LastIndexOf(lookFor) + 1));
-					var item = informationList.SelectedItems[0].Text;
-					if (item.StartsWith(dir) && item.Length > dir.Length)
-						textBoxSearch.SelectedText = item.Substring(dir.Length, item.Length - dir.Length);
-					else
-						textBoxSearch.SelectedText = item;
-					return;
-				}
-
-				var content = splitParams(informationList.SelectedItems[0].Text);
-                var text = splitParams(getContent());
-				var autocomplete = "";
-				for (int i = 0; i < content.Length; i++)
-				{
-					if (text.Length < (i + 1))
-					{
-						autocomplete = content[i];
-						break;
-					}
-					if (text[i] == content[i])
-						continue;
-					if (content[i].StartsWith(text[i]))
-					{
-						var selection = getContent();
-						var ending = " ";
-						if (selection.Length < textBoxSearch.Text.Length && textBoxSearch.Text.Substring(selection.Length, 1) == " ")
-							ending = "";
-						autocomplete = content[i].Substring(text[i].Length, content[i].Length - text[i].Length) + ending;
-						break;
-					}
-				}
-				if (autocomplete.Length > 0)
-					textBoxSearch.SelectedText = autocomplete;
-			}
+			    autoComplete();
 			else if (e.Control && e.KeyCode == Keys.Space)
 			{
 				if (_directoryMode)
 					return;
-				_directoryMode = true;
-				_lastDirectory = _directory;
-				listDirectories("");
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                listWorkingDirectory(e);
 			}
             else if (e.KeyCode == Keys.Down)
             {
-                if (informationList.Items.Count == 0)
-                    return;
-                if (informationList.SelectedItems.Count != 1)
-                    informationList.Items[0].Selected = true;
                 if (informationList.SelectedItems[0].Index < informationList.Items.Count - 1)
                     informationList.Items[informationList.SelectedItems[0].Index + 1].Selected = true;
             }
             else if (e.KeyCode == Keys.Up)
             {
-                if (informationList.Items.Count == 0)
-                    return;
-                if (informationList.SelectedItems.Count != 1)
-                    informationList.Items[0].Selected = true;
                 if (informationList.SelectedItems[0].Index != 0)
                     informationList.Items[informationList.SelectedItems[0].Index - 1].Selected = true;
             }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                Close();
-            }
+        }
+
+        private void autoComplete()
+        {
+            if (_directoryMode)
+                autoCompletePath();
+            else
+                autoCompleteCommand();
+        }
+
+        private void listWorkingDirectory(KeyEventArgs e)
+        {
+            _directoryMode = true;
+            _lastDirectory = _directory;
+            listDirectories("");
+        }
+
+        private void autoCompleteCommand()
+        {
+            var selection = informationList.SelectedItems[0].Text;
+            var autocomplete = new CommandAutoCompletion()
+                .AutoComplete(
+                    selection,
+                    getContent());
+            if (autocomplete.Length == 0)
+                return;
+            if (!commandEndsWithSpace(selection))
+                autocomplete += " ";
+            textBoxSearch.SelectedText = autocomplete;
+        }
+
+        private bool commandEndsWithSpace(string selection)
+        {
+            return selection.Length < textBoxSearch.Text.Length && textBoxSearch.Text.Substring(selection.Length, 1) == " ";
+        }
+
+        private void autoCompletePath()
+        {
+            textBoxSearch.SelectedText = 
+                new PathAutoCompletion()
+                    .AutoComplete(
+                        informationList.SelectedItems[0].Text,
+                        getContent());
+        }
+
+        private bool selectFirstitem()
+        {
+            if (informationList.Items.Count == 0)
+                return false;
+            if (informationList.SelectedItems.Count != 1)
+                informationList.Items[0].Selected = true;
+            return true;
+        }
+
+        private void listOptions()
+        {
+
+            informationList.Items.Clear();
+            _builder.AvailableCommands.ToList()
+                .ForEach(x => informationList.Items.Add(x.Replace("/", " ").Trim()));
         }
 
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
@@ -131,19 +137,7 @@ namespace OpenIDENet.UI
 			var lookfor = getLookForCharacter(textContent);
 			var text = getLastParameter(lookfor, textContent);
 
-			if ((textContent.EndsWith(lookfor) && (textContent.Count(x => x.Equals('"')) % 2) == 0) || textContent.Trim().Length == 0)
-				_directoryMode = false;
-
-			var dir = text;
-			if (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX)
-            	dir = text.TrimStart(new char[] { Path.DirectorySeparatorChar });
-            if (!Directory.Exists(dir) && text.StartsWith(Path.DirectorySeparatorChar.ToString()))
-                dir = Path.Combine(_directory, dir.TrimEnd(new char[] { Path.DirectorySeparatorChar }));
-            if (!dir.EndsWith(":") && Directory.Exists(dir))
-            {
-                _directoryMode = true;
-				_lastDirectory = dir;
-            }
+            var dir = preparePath(textContent, lookfor, text);
 			if (_directoryMode)
 			{
 				if (_lastDirectory == _directory)
@@ -151,52 +145,52 @@ namespace OpenIDENet.UI
 				listDirectories(dir);
 				return;
 			}
+            else
+            {
+                var path = "/" + textContent.Trim().Replace(' ', '/');
+                _builder.NavigateTo(path);
+                listOptions();
+            }
+        }
 
-            var path = "/" + textContent.Trim().Replace(' ', '/');
-            _builder.NavigateTo(path);
-            listOptions();
+        private string preparePath(string textContent, string lookfor, string text)
+        {
+            if ((textContent.EndsWith(lookfor) && (textContent.Count(x => x.Equals('"')) % 2) == 0) || textContent.Trim().Length == 0)
+                _directoryMode = false;
+
+            var dir = text;
+            if (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX)
+                dir = text.TrimStart(new char[] { Path.DirectorySeparatorChar });
+            if (!Directory.Exists(dir) && text.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                dir = Path.Combine(_directory, dir.TrimEnd(new char[] { Path.DirectorySeparatorChar }));
+            if (!dir.EndsWith(":") && Directory.Exists(dir))
+            {
+                _directoryMode = true;
+                _lastDirectory = dir;
+            }
+            return dir;
         }
 		
 		private void listDirectories(string filter)
 		{
 			informationList.Items.Clear();
             Directory.GetDirectories(_lastDirectory)
-				.Where(x => x.StartsWith(filter)).ToList()
+                .Where(x => matchPath(filter, x)).ToList()
                 .ForEach(x => getFileName(_lastDirectory, x, Path.DirectorySeparatorChar.ToString()));
             Directory.GetFiles(_lastDirectory)
-				.Where(x => x.StartsWith(filter)).ToList()
+                .Where(x => matchPath(filter, x)).ToList()
                 .ForEach(x => getFileName(_lastDirectory, x, ""));
 		}
 
-		private string[] splitParams(string content)
-		{
-			var list = new List<string>();
-			var separator = ' ';
-			var word = "";
-			for (int i = 0; i < content.Length; i++)
-			{
-				if (
-					(content[i] == ' ' && separator == ' ') ||
-					(content[i] == '"' && content[i] == '"') ||
-					(word.Length == 0 && content[i] == ' ') ||
-					(word.Length == 0 && content[i] == '"'))
-				{
-					if (word.Length > 0)
-					{
-						list.Add(word);
-					}
-					word = "";
-					separator = content[i];
-				}
-				else
-				{
-					word += content[i].ToString();
-				}
-			}
-			if (word.Length > 0)
-				list.Add(word);
-			return list.ToArray();
-		}
+        private static bool matchPath(string filter, string x)
+        {
+            if (filter.Length == 0)
+                return true;
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+                return x.StartsWith(filter);
+            else
+                return x.ToLower().StartsWith(filter.ToLower());
+        }
 
 		private string getContent()
 		{
@@ -250,6 +244,31 @@ namespace OpenIDENet.UI
             if (informationList.SelectedItems.Count == 0)
                 return;
             labelDescription.Text = _builder.Describe("/" + informationList.SelectedItems[0].Text.Replace(" ", "/"));
+        }
+
+        private string run(string arguments)
+        {
+            var proc = new Process();
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+                proc.StartInfo = new ProcessStartInfo("oi", _additionalParameters + arguments);
+            else
+                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c oi " + _additionalParameters + arguments);
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.Start();
+            var output = proc.StandardOutput.ReadToEnd();
+            proc.WaitForExit();
+            if (output.Length > Environment.NewLine.Length)
+                return output.Substring(0, output.Length - Environment.NewLine.Length);
+            return output;
+        }
+
+        private void buttonRun_Click(object sender, EventArgs e)
+        {
+            run(textBoxSearch.Text);
+            Close();
         }
     }
 }

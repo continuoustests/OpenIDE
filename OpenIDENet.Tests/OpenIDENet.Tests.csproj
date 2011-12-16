@@ -10,10 +10,8 @@
     <RootNamespace>OpenIDENet.Tests</RootNamespace>
     <AssemblyName>OpenIDENet.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -81,6 +79,9 @@
     <Compile Include="Arguments\Handlers\NewHandlerTests.cs" />
     <Compile Include="Arguments\Handlers\TemplateDefinitionParserTests.cs" />
     <Compile Include="CommandBuilding\CommandBuilderTests.cs" />
+    <Compile Include="CommandBuilding\CommandStringParserTests.cs" />
+    <Compile Include="CommandBuilding\CommandAutoCompletionTests.cs" />
+    <Compile Include="CommandBuilding\PathAutoCompletionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

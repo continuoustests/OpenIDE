@@ -10,10 +10,8 @@
     <RootNamespace>OpenIDENet</RootNamespace>
     <AssemblyName>OpenIDENet</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -144,6 +142,9 @@
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
     <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
     <Compile Include="CommandBuilding\CommandBuilder.cs" />
+    <Compile Include="CommandBuilding\CommandStringParser.cs" />
+    <Compile Include="CommandBuilding\CommandAutoCompletion.cs" />
+    <Compile Include="CommandBuilding\PathAutoCompletion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

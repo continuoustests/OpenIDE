@@ -34,15 +34,15 @@ namespace OpenIDENet.UI
             this.informationList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelDescription = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonRun = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // labelInfo
             // 
             this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelInfo.Location = new System.Drawing.Point(-85, 2);
+            this.labelInfo.Location = new System.Drawing.Point(12, 1);
             this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(745, 21);
+            this.labelInfo.Size = new System.Drawing.Size(648, 21);
             this.labelInfo.TabIndex = 6;
             this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -88,22 +88,22 @@ namespace OpenIDENet.UI
             this.labelDescription.Size = new System.Drawing.Size(647, 89);
             this.labelDescription.TabIndex = 4;
             // 
-            // button1
+            // buttonRun
             // 
-            this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.button1.Location = new System.Drawing.Point(613, 25);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(47, 20);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Run";
-            this.button1.UseVisualStyleBackColor = false;
+            this.buttonRun.Location = new System.Drawing.Point(613, 25);
+            this.buttonRun.Name = "buttonRun";
+            this.buttonRun.Size = new System.Drawing.Size(47, 20);
+            this.buttonRun.TabIndex = 2;
+            this.buttonRun.Text = "Run";
+            this.buttonRun.UseVisualStyleBackColor = false;
+            this.buttonRun.Click += new System.EventHandler(this.buttonRun_Click);
             // 
             // RunCommandForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(672, 322);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonRun);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.labelInfo);
             this.Controls.Add(this.textBoxSearch);
@@ -123,6 +123,6 @@ namespace OpenIDENet.UI
         private System.Windows.Forms.ListView informationList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.Label labelDescription;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonRun;
     }
 }

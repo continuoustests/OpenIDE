@@ -12,7 +12,7 @@ namespace OpenIDENet.Arguments.Handlers
 				var usage = new CommandHandlerParameter(
 					SupportedLanguage.All,
 					CommandType.FileCommand,
-					"gototype",
+					Command,
 					"Launches the code engines type search window");
 				return usage;
 			}

@@ -10,7 +10,7 @@ namespace OpenIDENet.Arguments.Handlers
 				var usage = new CommandHandlerParameter(
 					SupportedLanguage.CSharp,
 					CommandType.FileCommand,
-					"addfile",
+					Command,
 					"Adds a file to the closest project");
 				usage.Add("FILE_TO_ADD", "Relative or full path to the file to add");
 				return usage;

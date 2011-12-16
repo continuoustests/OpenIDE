@@ -10,7 +10,7 @@ namespace OpenIDENet.Arguments.Handlers
 				var usage = new CommandHandlerParameter(
 					SupportedLanguage.CSharp,
 					CommandType.FileCommand,
-					"deletefile",
+					Command,
 					"Removes a file from the closest project and deletes it");
 				usage.Add("FILE_TO_DELETE", "Relative or full path to the file to delete");
 				return usage;
