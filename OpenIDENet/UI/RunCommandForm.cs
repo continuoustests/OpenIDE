@@ -257,6 +257,7 @@ namespace OpenIDENet.UI
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.WorkingDirectory = _directory;
             proc.Start();
             var output = proc.StandardOutput.ReadToEnd();
             proc.WaitForExit();
