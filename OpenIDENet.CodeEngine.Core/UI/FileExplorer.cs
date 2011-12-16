@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers;
+using System.Diagnostics;
 
 namespace OpenIDENet.CodeEngine.Core.UI
 {
@@ -121,6 +122,11 @@ namespace OpenIDENet.CodeEngine.Core.UI
 
         private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
         {
+        }
+
+        private void runCommandToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _handler.Run(treeViewFiles.SelectedNode);
         }
     }
 }

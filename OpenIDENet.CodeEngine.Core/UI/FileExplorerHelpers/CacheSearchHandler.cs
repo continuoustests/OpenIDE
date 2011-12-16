@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Crawlers;
 using OpenIDENet.CodeEngine.Core.Caching.Search;
+using System.Diagnostics;
 
 namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
 {
@@ -73,6 +74,28 @@ namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
 				return new FilePosition(result.File, 0, 0);
 			return null;
 		}
+
+        public void Run(TreeNode node)
+        {
+            if (node.Tag == null)
+                return;
+            var result = (FileFindResult)node.Tag;
+            var directory = Path.GetDirectoryName(result.File);
+            if (result.Type == FileFindResultType.Directory || result.Type == FileFindResultType.DirectoryInProject)
+                directory = result.File;
+
+            var proc = new Process();
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+                proc.StartInfo = new ProcessStartInfo("oi", "run");
+            else
+                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c oi run");
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            proc.StartInfo.WorkingDirectory = directory;
+            proc.Start();
+            proc.WaitForExit();
+        }
 
 		private void listResult(
 			List<FileFindResult> files,

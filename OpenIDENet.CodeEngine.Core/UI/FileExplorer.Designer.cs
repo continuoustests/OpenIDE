@@ -35,12 +35,14 @@
             this.contextMenuStripRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.labelInfo = new System.Windows.Forms.Label();
+            this.runCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStripRightClick.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxSearch
             // 
-            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(5, 5);
             this.textBoxSearch.Name = "textBoxSearch";
             this.textBoxSearch.Size = new System.Drawing.Size(347, 20);
@@ -50,9 +52,9 @@
             // 
             // treeViewFiles
             // 
-            this.treeViewFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewFiles.ContextMenuStrip = this.contextMenuStripRightClick;
             this.treeViewFiles.ImageIndex = 0;
             this.treeViewFiles.ImageList = this.imageList;
@@ -68,8 +70,10 @@
             // 
             // contextMenuStripRightClick
             // 
+            this.contextMenuStripRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runCommandToolStripMenuItem});
             this.contextMenuStripRightClick.Name = "contextMenuStripRightClick";
-            this.contextMenuStripRightClick.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStripRightClick.Size = new System.Drawing.Size(153, 48);
             // 
             // imageList
             // 
@@ -84,12 +88,19 @@
             // 
             // labelInfo
             // 
-            this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.labelInfo.Location = new System.Drawing.Point(2, 458);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(331, 16);
             this.labelInfo.TabIndex = 2;
+            // 
+            // runCommandToolStripMenuItem
+            // 
+            this.runCommandToolStripMenuItem.Name = "runCommandToolStripMenuItem";
+            this.runCommandToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.runCommandToolStripMenuItem.Text = "Run Command";
+            this.runCommandToolStripMenuItem.Click += new System.EventHandler(this.runCommandToolStripMenuItem_Click);
             // 
             // FileExplorer
             // 
@@ -104,6 +115,7 @@
             this.Text = "Files";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FileExplorer_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FileExplorer_KeyDown);
+            this.contextMenuStripRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -116,5 +128,6 @@
         private System.Windows.Forms.Label labelInfo;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripRightClick;
+        private System.Windows.Forms.ToolStripMenuItem runCommandToolStripMenuItem;
     }
 }

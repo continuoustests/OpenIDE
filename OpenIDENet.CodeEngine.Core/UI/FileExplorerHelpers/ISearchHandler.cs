@@ -12,5 +12,6 @@ namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
 		void OneUp(TreeNode node);
 		void BeforeExpand(TreeNode node);
 		FilePosition PositionFromnode(TreeNode node);
+        void Run(TreeNode node);
 	}
 }
