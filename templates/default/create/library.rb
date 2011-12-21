@@ -51,9 +51,7 @@ def getProjectConent(name)
 		<Reference Include=\"System\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include=\"#{name}Service.cs\" />
-		<Compile Include=\"Program.cs\" />
-		<Compile Include=\"AssemblyInfo.cs\" />
+		<Compile Include=\"#{name}.cs\" />
 	</ItemGroup>
 	<Import Project=\"$(MSBuildBinPath)\\Microsoft.CSharp.targets\" />
 </Project>"
