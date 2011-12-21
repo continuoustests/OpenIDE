@@ -11,7 +11,7 @@ if ARGV[0] == 'get_position'
 end
 
 if ARGV[0] == 'get_definition'
-	puts "Creates a new C# library project"
+	puts "Creates a new C# windows service project"
 	exit
 end
 
@@ -23,8 +23,8 @@ def getProjectConent(name)
 		<Platform Condition=\" '$(Platform)' == '' \">AnyCPU</Platform>
 		<ProductVersion>9.0.21022</ProductVersion>
 		<SchemaVersion>2.0</SchemaVersion>
-		<ProjectGuid>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</ProjectGuid>
-		<OutputType>Library</OutputType>
+		<ProjectGuid>{FE73B0F1-8331-4F95-AC4E-3D114D93B97D}</ProjectGuid>
+		<OutputType>WinExe</OutputType>
 		<RootNamespace>#{name}</RootNamespace>
 		<AssemblyName>#{name}</AssemblyName>
 		<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -47,11 +47,18 @@ def getProjectConent(name)
 		<WarningLevel>4</WarningLevel>
 		<ConsolePause>false</ConsolePause>
 	</PropertyGroup>
+	<PropertyGroup>
+    	<StartupObject>#{name}.Program</StartupObject>
+	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include=\"System\" />
+		<Reference Include=\"System.ServiceProcess\" />
+		<Reference Include=\"System.Configuration.Install\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include=\"#{name}Service.cs\" />
+	    <Compile Include=\"#{name}Service.cs\">
+    	  <SubType>Component</SubType>
+	    </Compile>
 		<Compile Include=\"Program.cs\" />
 		<Compile Include=\"AssemblyInfo.cs\" />
 	</ItemGroup>
@@ -91,14 +98,71 @@ using System.Runtime.CompilerServices;
 	content
 end
 
+def getService(name)
+	content = "using System.ServiceProcess;
+namespace #{name}
+{
+	public class #{name}Service : ServiceBase
+	{
+		public #{name}Service()
+		{
+			ServiceName = \"#{name}\";
+		}
+
+		protected override void OnStart(string[] args)
+        {
+		}
+
+		protected override void OnStop()
+        {
+		}
+	}
+}
+"
+	content
+end
+
+def getProgram(name)
+	content = "using System;
+using System.ServiceProcess;
+
+namespace #{name}
+{
+	static class Program
+    {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        static void Main()
+        {
+			ServiceBase[] ServicesToRun;
+			ServicesToRun = new ServiceBase[] 
+			{ 
+				new #{name}Service()
+			};
+			ServiceBase.Run(ServicesToRun);
+		}
+	}
+}
+"
+	content
+end
+
+def write(filepath, contents)
+	File.open(filepath, "w") { |file|
+		file.puts contents 
+	}
+end
+
+def file_name(path, name)
+	File.join(File.dirname(path), name)
+end
+
 filepath = ARGV[0]
 project_name = File.basename(filepath, File.extname(filepath))
+write(filepath, getProjectConent(project_name))
 
-File.open(filepath, "w") { |file|
-	file.puts getProjectConent(project_name)
-}
+write(file_name(filepath, "AssemblyInfo.cs"), getAssemblyConent(project_name))
+write(file_name(filepath, project_name + "Service.cs"), getService(project_name))
+write(file_name(filepath, "Program.cs"), getProgram(project_name))
 
-assembly = File.join(File.dirname(filepath), "AssemblyInfo.cs")
-File.open(assembly, "w") { |file|
-	file.puts getAssemblyConent(project_name)
-}
