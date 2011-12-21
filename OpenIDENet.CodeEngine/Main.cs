@@ -37,6 +37,7 @@ namespace OpenIDENet.CodeEngine
         public TrayForm(string path)
         {
             _ctx = SynchronizationContext.Current;
+
             // Create a simple tray menu with only one item.
             trayMenu = new ContextMenu();
             trayMenu.MenuItems.Add("Exit", OnExit);
@@ -95,7 +96,10 @@ namespace OpenIDENet.CodeEngine
         {
             _ctx.Post((s) =>
                 {
-                    _exploreForm = new FileExplorer(cache, (file, line, column) => { editor.GoTo(file, line, column); }, () => { editor.SetFocus(); });
+                    _exploreForm = new FileExplorer(
+						cache,
+						(file, line, column) => { editor.GoTo(file, line, column); },
+						() => { editor.SetFocus(); });
                     _exploreForm.Show();
                     _exploreForm.BringToFront();
                 }, null);
@@ -103,6 +107,9 @@ namespace OpenIDENet.CodeEngine
 
         protected override void OnLoad(EventArgs e)
         {
+			WindowState = FormWindowState.Minimized;
+			Left = 15000;
+			Top = 15000;
             Visible = false; // Hide form window.
             ShowInTaskbar = false; // Remove from taskbar.
 
