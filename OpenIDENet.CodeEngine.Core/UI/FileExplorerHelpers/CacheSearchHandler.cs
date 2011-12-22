@@ -60,9 +60,19 @@ namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
                 return;
             var result = (FileFindResult)node.Tag;
             if (result.Type == FileFindResultType.Directory)
-                addSubNodes(_cache.GetFilesInDirectory(result.File), node.Nodes);
+			{
+                addSubNodes(
+					_cache.GetFilesInDirectory(result.File + Path.DirectorySeparatorChar.ToString()),
+					node.Nodes);
+			}
             if (result.Type == FileFindResultType.DirectoryInProject)
-                addSubNodes(_cache.GetFilesInProject(result.File, result.ProjectPath), node.Nodes);
+			{
+                addSubNodes(
+					_cache.GetFilesInProject(
+						result.File + Path.DirectorySeparatorChar.ToString(),
+						result.ProjectPath),
+					node.Nodes);
+			}
 		}
 
 		public FilePosition PositionFromnode(TreeNode node)
