@@ -54,6 +54,14 @@ namespace OpenIDENet.CodeEngine
             trayIcon.Visible = false;
             _path = path;
             new Thread(startEngine).Start();
+			Height = 0;
+			Width = 0;
+			ShowInTaskbar = false;
+			Visible = false;
+			MinimizeBox = false;
+			MaximizeBox = false;
+			ControlBox = false;
+			Opacity = 0;
         }
 
         private void startEngine()
@@ -85,7 +93,10 @@ namespace OpenIDENet.CodeEngine
         {
             _ctx.Post((s) =>
                 {
-                    _gotoType = new TypeSearchForm(cache, (file, line, column) => { editor.GoTo(file, line, column); }, () => { editor.SetFocus(); });
+                    _gotoType = new TypeSearchForm(
+						cache,
+						(file, line, column) => { editor.GoTo(file, line, column); },
+						() => { editor.SetFocus(); });
                     _gotoType.Show();
                     _gotoType.BringToFront();
                 }, null);
@@ -103,17 +114,6 @@ namespace OpenIDENet.CodeEngine
                     _exploreForm.Show();
                     _exploreForm.BringToFront();
                 }, null);
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-			WindowState = FormWindowState.Minimized;
-			Left = 15000;
-			Top = 15000;
-            Visible = false; // Hide form window.
-            ShowInTaskbar = false; // Remove from taskbar.
-
-            base.OnLoad(e);
         }
 
         private void OnExit(object sender, EventArgs e)
