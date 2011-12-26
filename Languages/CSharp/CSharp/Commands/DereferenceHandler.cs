@@ -15,7 +15,7 @@ namespace CSharp.Commands
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.All,
+					"All",
 					CommandType.ProjectCommand,
 					Command,
 					"Dereferences a project/assembly from given project");
@@ -30,7 +30,8 @@ namespace CSharp.Commands
 
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length != 2)
+			// TODO finish implementation
+			/*if (arguments.Length != 2)
 			{
 				Console.WriteLine("The handler needs the full path to the reference. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
@@ -56,7 +57,7 @@ namespace CSharp.Commands
 			_project.Dereference(file);
 			_project.Write();
 
-			Console.WriteLine("Rereferenced {0} from {1}", file, projectFile);
+			Console.WriteLine("Rereferenced {0} from {1}", file, projectFile);*/
 		}
 
 		private string getFile(string argument)

@@ -12,7 +12,7 @@ namespace CSharp.Projects.Writers
 			return typeof(T).Equals(typeof(VS2010));
 		}
 		
-		public void Write(IProject project)
+		public void Write(Project project)
 		{
 			if (project.IsModified)
 			{

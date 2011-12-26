@@ -6,7 +6,7 @@ namespace CSharp.Projects.Readers
 	public interface IReadProjectsFor
 	{
 		bool SupportsProject<T>() where T : IAmProjectVersion;
-		IProject Read(string fullPath);
+		Project Read(string fullPath);
 	}
 }
 

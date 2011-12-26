@@ -8,6 +8,6 @@ namespace CSharp.Projects
 	{
 		bool SupportsProject<T>() where T : IAmProjectVersion;
 		bool SupportsFile(IFile file);
-		void Reference(IProject project, IFile file);	
+		void Reference(Project project, IFile file);	
 	}
 }

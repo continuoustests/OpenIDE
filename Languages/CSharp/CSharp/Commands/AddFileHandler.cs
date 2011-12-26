@@ -19,7 +19,8 @@ namespace CSharp.Commands
 		
 		public void Execute(string[] arguments)
 		{
-			var provider = getTypesProviderByLocation(arguments[0]);
+			// TODO fix implementation
+			/*var provider = getTypesProviderByLocation(arguments[0]);
 			if (provider == null)
 				return;
 			var with = provider.TypesProvider;
@@ -28,7 +29,7 @@ namespace CSharp.Commands
 				return;
 			var project = with.Reader().Read(provider.ProjectFile);
 			with.FileAppenderFor(file).Append(project, file);
-			with.Writer().Write(project);
+			with.Writer().Write(project);*/
 		}
 	}
 }

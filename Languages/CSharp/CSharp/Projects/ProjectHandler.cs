@@ -7,10 +7,10 @@ namespace CSharp.Projects
 	public interface IProjectHandler
 	{
 		string Fullpath { get; }
-		SupportedLanguage Type { get; }
+		string Type { get; }
 		string DefaultNamespace { get; }
 
-		bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation);
+		bool Read(string location, Func<string> getTypesProviderByLocation);
 		void AppendFile(IFile file);
 		void Reference(IFile file);
 		void Dereference(IFile file);
@@ -19,15 +19,14 @@ namespace CSharp.Projects
 
 	class ProjectHandler : IProjectHandler
 	{
-		private IProject _project;
-		private ProviderSettings _provider;
+		private Project _project;
 		private IProvideVersionedTypes _with;
 		
 		public string Fullpath { get { return _project.Fullpath; } }
-		public SupportedLanguage Type { get { return _project.Settings.Type; } }
+		public string Type { get { return _project.Settings.Type; } }
 		public string DefaultNamespace { get { return _project.Settings.DefaultNamespace; } }
 
-		public bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation)
+		public bool Read(string location, Func<string> getTypesProviderByLocation)
 		{
 			_project = null;
 			_provider = getTypesProviderByLocation(location);

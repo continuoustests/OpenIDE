@@ -7,7 +7,7 @@ namespace CSharp.Projects.Appenders
 	{
 		bool SupportsProject<T>() where T : IAmProjectVersion;
 		bool SupportsFile(IFile file);
-		void Append(IProject project, IFile file);
+		void Append(Project project, IFile file);
 	}
 }
 

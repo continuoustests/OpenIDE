@@ -18,9 +18,9 @@ namespace CSharp.Files
 			return extension.Equals(".cs");
 		}
 		
-		public static string DefaultExtensionFor(SupportedLanguage type)
+		public static string DefaultExtensionFor(string type)
 		{
-			if (type == SupportedLanguage.CSharp)
+			if (type == "C#")
 				return ".cs";
 			throw new Exception(string.Format("Unhandled project type {0}", type.ToString()));
 		}

@@ -36,11 +36,6 @@ namespace CSharp.Crawlers
 
         private Namespace _currentNamespace = null;
 
-        public CSharpFileParser(ICacheBuilder builder)
-        {
-            _builder = builder;
-        }
-
         public void ParseFile(string file, Func<string> getContent)
         {
             lock (_padLock)

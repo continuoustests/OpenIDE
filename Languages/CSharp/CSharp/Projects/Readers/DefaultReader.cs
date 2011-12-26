@@ -21,13 +21,13 @@ namespace CSharp.Projects.Readers
 			return typeof(T).Equals(typeof(VS2010));
 		}
 		
-		public IProject Read(string fullPath)
+		public Project Read(string fullPath)
 		{
 			var content = _fs.ReadFileAsText(fullPath);
 			return new Project(Path.GetFullPath(fullPath), content, getSettings(content));
 		}
 		
-		private ProjectSettings getSettings(string content)
+		/*private ProjectSettings getSettings(string content)
 		{
 			var ns = "ns";
 			var document = new XmlDocument();
@@ -39,7 +39,7 @@ namespace CSharp.Projects.Readers
 			}
 			
 			return new ProjectSettings(SupportedLanguage.CSharp, ns);
-		}
+		}*/
 		
 		private bool tryOpen(XmlDocument document, string xml)
 		{

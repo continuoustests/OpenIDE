@@ -20,7 +20,8 @@ namespace CSharp.Commands
 		
 		public void Execute(string[] arguments)
 		{
-			var provider = getTypesProviderByLocation(arguments[0]);
+			// TODO fix implementation
+			/*var provider = getTypesProviderByLocation(arguments[0]);
 			if (provider == null)
 				return;
 			var with = provider.TypesProvider;
@@ -31,7 +32,7 @@ namespace CSharp.Commands
 			with.FileRemoverFor(file).Remove(project, file);
 			with.Writer().Write(project);
 			
-			File.Delete(file.Fullpath);
+			File.Delete(file.Fullpath);*/
 		}
 	}
 }

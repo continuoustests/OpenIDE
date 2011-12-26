@@ -9,7 +9,7 @@ namespace CSharp.Projects.Removers
 	{
 		bool SupportsProject<T>() where T : IAmProjectVersion;
 		bool SupportsFile(IFile file);
-		void Remove(IProject project, IFile file);
+		void Remove(Project project, IFile file);
 	}
 }
 

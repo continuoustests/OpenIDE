@@ -8,6 +8,7 @@ using System.Text;
 using System.Diagnostics;
 using CSharp.Projects;
 using CSharp.Files;
+using CSharp.FileSystem;
 
 namespace CSharp.Commands
 {
@@ -27,7 +28,7 @@ namespace CSharp.Commands
 						Command,
 						"Uses the new template to create what ever specified by the template");
 				
-					getTemplates(SupportedLanguage.CSharp).ToList()
+					getTemplates("C#").ToList()
 						.ForEach(x => 
 							{
 								var command = getUsage(x);
@@ -63,7 +64,6 @@ namespace CSharp.Commands
 		{
 			_pickTemplate = pickTemplate;
 			_fileTypeResolver = fileTypeResolver;
-			_editorFactory = editorFactory;
 			_project = new ProjectHandler();
 		}
 		
@@ -74,14 +74,15 @@ namespace CSharp.Commands
 		{
 			_project = handler;
 		}
-		public void OverrideTemplatePicker(Func<string, INewTemplate> picker)
+		public void OverrideTemplatePicker(Func<string, string, INewTemplate> picker)
 		{
 			_pickTemplate = picker;
 		}
 		
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length < 2)
+			// TODO Finish implementation
+			/*if (arguments.Length < 2)
 			{
 				Console.WriteLine("Invalid number of arguments. " +
 					"Usage: new {template name} {item name} {template arguments}");
@@ -111,10 +112,10 @@ namespace CSharp.Commands
 			Console.WriteLine("Full path {0}", template.File.Fullpath);
 			Console.WriteLine("");
 			
-			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
+			gotoFile(template.File.Fullpath, template.Line, template.Column, location);*/
 		}
 		
-		private INewTemplate pickTemplate(string templateName)
+		private INewTemplate pickTemplate(string templateName, string type)
 		{
 			var template = getTemplates(type)
 				.FirstOrDefault(x => x.Contains(Path.DirectorySeparatorChar + templateName + "."));
@@ -123,7 +124,7 @@ namespace CSharp.Commands
 			return new NewTemplate(template, _fileTypeResolver);
 		}
 		
-		private string[] getTemplates()
+		private string[] getTemplates(string type)
 		{
 			var templateDir = 
 				Path.Combine(
@@ -168,8 +169,9 @@ namespace CSharp.Commands
 		
 		private string getFileName(string className, string location, Project project)
 		{
+			// TODO figure out how to handle return fileName + CompileFile.DefaultExtensionFor(project.Settings.Type);
 			var fileName = Path.Combine(location, className);
-			return fileName + CompileFile.DefaultExtensionFor(project.Settings.Type);
+			return fileName + CompileFile.DefaultExtensionFor("Type from project");
 		}
 		
 		private string getNamespace(string location, string project, string defaultNamespace)

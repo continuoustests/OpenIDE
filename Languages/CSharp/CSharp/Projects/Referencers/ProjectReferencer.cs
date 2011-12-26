@@ -10,8 +10,7 @@ namespace CSharp.Projects.Referencers
 	{
 		private IFS _fs;
 
-		public ProjectReferencer(IFS fs, IMessageBus bus)
-			: base(bus)
+		public ProjectReferencer(IFS fs)
 		{
 			_fs = fs;
 		}
@@ -26,7 +25,7 @@ namespace CSharp.Projects.Referencers
 			return file.GetType().Equals(typeof(ProjectFile));
 		}
 		
-		public void Reference(IProject project, IFile file)
+		public void Reference(Project project, IFile file)
 		{
 			if (!_fs.FileExists(file.Fullpath))
 			{
@@ -55,7 +54,7 @@ namespace CSharp.Projects.Referencers
 			project.SetContent(_document.OuterXml);
 		}
 		
-		public void Dereference(IProject project, IFile file)
+		public void Dereference(Project project, IFile file)
 		{
 			if (!tryOpen(project.Content.ToString()))
 				return;

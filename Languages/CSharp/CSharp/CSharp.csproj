@@ -85,6 +85,12 @@
     <Compile Include="FileSystem\PathParser.cs" />
     <Compile Include="FileSystem\FS.cs" />
     <Compile Include="FileSystem\IFS.cs" />
+    <Compile Include="Crawlers\Class.cs" />
+    <Compile Include="Crawlers\Enum.cs" />
+    <Compile Include="Crawlers\Interface.cs" />
+    <Compile Include="Crawlers\Namespace.cs" />
+    <Compile Include="Crawlers\Struct.cs" />
+    <Compile Include="Crawlers\ICodeReference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
