@@ -25,7 +25,7 @@ namespace OpenIDENet.Arguments.Handlers
 			_codeEngineFactory = codeEngineFactory;
 		}
 		
-		public void Execute (string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
+		public void Execute (string[] arguments)
 		{
 			Console.WriteLine("Handling go to type");
 			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);

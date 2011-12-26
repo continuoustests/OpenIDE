@@ -1,14 +1,29 @@
 using System;
 namespace OpenIDENet.CodeEngine.Core
 {
-	public interface ICodeType
+	public interface ICodeReference
 	{
-		string Fullpath { get; }
+		string Type { get; }
+		string File { get; }
 		string Signature { get; }
 		string Name { get; }
 		int Offset { get; }
 		int Line { get; }
 		int Column { get; }
+	}
+
+	public class FilePosition
+	{
+		public string Fullpath { get; private set; }
+		public int Line { get; private set; }
+		public int Column { get; private set; }
+		
+		public FilePosition(string file, int line, int column)
+		{
+			Fullpath = file;
+			Line = line;
+			Column = column;
+		}
 	}
 }
 

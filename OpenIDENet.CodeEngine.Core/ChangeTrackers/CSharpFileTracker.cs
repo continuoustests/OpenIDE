@@ -3,7 +3,6 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using OpenIDENet.CodeEngine.Core.Caching;
-using OpenIDENet.CodeEngine.Core.Crawlers;
 using System.Linq;
 namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 {
@@ -47,13 +46,14 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 			var extension = Path.GetExtension(file.FullPath).ToLower();
 			if (extension == null)
 				return;
-			if (extension.Equals(".csproj"))
+			/*if (extension.Equals(".csproj"))
 				handleProject(file);
 			else if (extension.Equals(".cs"))
-				handleFile(file);
+				handleFile(file);*/
 		}
 		
-		private void handleProject(FileSystemEventArgs file)
+		// TODO file watcher handling must be sent to integration points
+		/*private void handleProject(FileSystemEventArgs file)
 		{
 			lock (_cache)
 			{
@@ -105,7 +105,7 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 			_cache.Invalidate(file.FullPath);
 			if (file.ChangeType != WatcherChangeTypes.Deleted)
 				new CSharpFileParser(_cache).ParseFile(file.FullPath, () => { return File.ReadAllText(file.FullPath); });
-		}
+		}*/
 	}
 }
 

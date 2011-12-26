@@ -1,8 +1,8 @@
 using System;
-using OpenIDENet.Versioning;
 namespace OpenIDENet.Arguments
 {
-	public class ProviderSettings
+	// TODO remove this class
+	/*public class ProviderSettings
 	{
 		public string ProjectFile { get; private set; }
 		public IProvideVersionedTypes TypesProvider { get; private set; }
@@ -13,5 +13,9 @@ namespace OpenIDENet.Arguments
 			TypesProvider = provider;
 		}
 	}
+
+	public interface IProvideVersionedTypes
+	{
+	}*/
 }
 

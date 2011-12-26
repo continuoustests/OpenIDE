@@ -34,7 +34,7 @@ namespace OpenIDENet.Arguments.Handlers
 			_editorFactory = editorFactory;
 		}
 		
-		public void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
+		public void Execute(string[] arguments)
 		{
 			if (arguments.Length != 1)
 			{

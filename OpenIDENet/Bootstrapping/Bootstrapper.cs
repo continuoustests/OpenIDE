@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenIDENet.Arguments;
-using OpenIDENet.Versioning;
-using OpenIDENet.Projects;
 namespace OpenIDENet.Bootstrapping
 {
 	public static class Bootstrapper
@@ -20,9 +18,7 @@ namespace OpenIDENet.Bootstrapping
 		public static ICommandDispatcher GetDispatcher()
 		{
 			return new CommandDispatcher(
-				_container.ResolveAll<ICommandHandler>(),
-				_container.Resolve<ILocateClosestProject>(),
-				_container.Resolve<IResolveProjectVersion>());
+				_container.ResolveAll<ICommandHandler>());
 		}
 
 		public static IEnumerable<ICommandHandler> GetCommandHandlers()

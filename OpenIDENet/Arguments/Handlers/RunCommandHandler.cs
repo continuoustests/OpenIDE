@@ -30,7 +30,7 @@ namespace OpenIDENet.Arguments.Handlers
             _commandHandlers = handlers;
         }
 
-		public void Execute (string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
+		public void Execute (string[] arguments)
 		{
 			var form = new RunCommandForm(Directory.GetCurrentDirectory(), "", new CommandBuilder(getHandlerParameters().Cast<BaseCommandHandlerParameter>()));
 			form.ShowDialog();

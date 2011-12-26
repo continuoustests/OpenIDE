@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using OpenIDENet.CodeEngine.Core.Crawlers;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Endpoints;
 using System.IO;
@@ -37,8 +36,15 @@ namespace OpenIDENet.CodeEngine
         public TrayForm(string path)
         {
             _ctx = SynchronizationContext.Current;
+            _path = path;
+            new Thread(startEngine).Start();
+			setupTray();
+			setupForm();
+        }
 
-            // Create a simple tray menu with only one item.
+		private void setupTray()
+		{
+			// Create a simple tray menu with only one item.
             trayMenu = new ContextMenu();
             trayMenu.MenuItems.Add("Exit", OnExit);
 
@@ -52,8 +58,10 @@ namespace OpenIDENet.CodeEngine
             // Add menu to tray icon and show it.
             trayIcon.ContextMenu = trayMenu;
             trayIcon.Visible = false;
-            _path = path;
-            new Thread(startEngine).Start();
+		}
+
+		private void setupForm()
+		{
 			Height = 0;
 			Width = 0;
 			ShowInTaskbar = false;
@@ -62,18 +70,15 @@ namespace OpenIDENet.CodeEngine
 			MaximizeBox = false;
 			ControlBox = false;
 			Opacity = 0;
-        }
+		}
 
         private void startEngine()
         {
             Logger.Assign(new FileLogger());
-            var options = new CrawlOptions(_path);
             var cache = new TypeCache();
-            var wather = new CSharpFileTracker();
-            wather.Start(options.Directory, cache);
-            new CSharpCrawler(cache).InitialCrawl(options);
+			// TODO set up crawling, file watching
 
-            var endpoint = new CommandEndpoint(options.Directory, cache, handleMessage);
+            var endpoint = new CommandEndpoint(_path, cache, handleMessage);
             endpoint.Start(_path);
             while (endpoint.IsAlive)
                 Thread.Sleep(100);

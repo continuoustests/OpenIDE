@@ -6,31 +6,18 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 	{
 		int ProjectCount { get; }
 		int FileCount { get; }
-		int NamespaceCount { get; }
-		int TypeCount { get; }
+		int CodeReferences { get; }
 		
 		bool ProjectExists(Project project);
-		void AddProject(Project project);
 		Project GetProject(string fullpath);
 		
 		bool FileExists(string file);
 		void Invalidate(string file);
-		void AddFile(string file);
 		
-		void AddNamespace(Namespace ns);
-		void AddNamespaces(IEnumerable<Namespace> namespaces);
-		
-		void AddClass(Class cls);
-		void AddClasses(IEnumerable<Class> classes);
-		
-		void AddInterface(Interface iface);
-		void AddInterfaces(IEnumerable<Interface> interfaces);
-		
-		void AddStruct(Struct str);
-		void AddStructs(IEnumerable<Struct> structs);
-		
-		void AddEnum(EnumType enu);
-		void AddEnums(IEnumerable<EnumType> enums);
+		void Add(Project project);
+		void Add(ProjectFile file);
+		void Add(ICodeReference reference);
+		void Add(IEnumerable<ICodeReference> references);
 	}
 }
 

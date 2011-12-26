@@ -8,10 +8,10 @@ namespace OpenIDENet.CodeEngine.Core.Caching.Search
 {
     class FileFinder
     {
-        private List<string> _files;
+        private List<ProjectFile> _files;
         private List<Project> _projects;
 
-        public FileFinder(List<string> files, List<Project> projects)
+        public FileFinder(List<ProjectFile> files, List<Project> projects)
         {
             _files = files;
             _projects = projects;
@@ -22,11 +22,11 @@ namespace OpenIDENet.CodeEngine.Core.Caching.Search
             pattern = pattern.ToLower();
             var list = new List<FileFindResult>();
             _projects
-                .Where(x => x.Fullpath.ToLower().Contains(pattern)).ToList()
-                .ForEach(x => addFile(list, FileFindResultType.Project, x.Fullpath, pattern));
+                .Where(x => x.File.ToLower().Contains(pattern)).ToList()
+                .ForEach(x => addFile(list, FileFindResultType.Project, x.File, pattern));
             _files
-                .Where(x => x.ToLower().Contains(pattern)).ToList()
-                .ForEach(x => addFile(list, FileFindResultType.File, x, pattern));
+                .Where(x => x.File.ToLower().Contains(pattern)).ToList()
+                .ForEach(x => addFile(list, FileFindResultType.File, x.File, pattern));
             return list;
         }
 

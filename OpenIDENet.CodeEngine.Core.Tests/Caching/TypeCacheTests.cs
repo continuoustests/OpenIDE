@@ -16,8 +16,8 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Caching
         public void When_searching_for_a_file_it_will_return()
         {
             var cache = new TypeCache();
-            cache.AddFile(to("/Some/Path/File1.cs"));
-            cache.AddFile(to("/Some/Path/File2.cs"));
+            cache.Add(toFile("/Some/Path/File1.cs"));
+            cache.Add(toFile("/Some/Path/File2.cs"));
 
             var verifier = new ResultVerifier(cache.FindFiles("File1"));
             verifier.VerifyCount(1);
@@ -28,9 +28,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Caching
         public void When_searching_for_a_file_it_will_return_the_files_with_the_lowest_hierarchical_level()
         {
             var cache = new TypeCache();
-            cache.AddFile(to("/Some/Path/File1.cs"));
-            cache.AddFile(to("/Some/Path/File2.cs"));
-            cache.AddFile(to("/Some/Path/In/AnotherpathPlace/File2.cs"));
+            cache.Add(toFile("/Some/Path/File1.cs"));
+            cache.Add(toFile("/Some/Path/File2.cs"));
+            cache.Add(toFile("/Some/Path/In/AnotherpathPlace/File2.cs"));
 
             var verifier = new ResultVerifier(cache.FindFiles("Path"));
             verifier.VerifyCount(2);
@@ -42,18 +42,28 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Caching
         public void When_searching_for_a_project_it_will_return()
         {
             var cache = new TypeCache();
-            cache.AddProject(new Project(to("/Some/Path/Project1.cs")));
-            cache.AddFile(to("/Some/Path/File2.cs"));
+            cache.Add(new Project(to("/Some/Path/Project1.cs")));
+            cache.Add(toFile("/Some/Path/File2.cs"));
 
             var verifier = new ResultVerifier(cache.FindFiles("Proj"));
             verifier.VerifyCount(1);
             verifier.Verify(0, FileFindResultType.Project, to("/Some/Path/Project1.cs"));
         }
-
-        private string to(string path)
+		
+		private ProjectFile toFile(string path)
         {
-            return path.Replace('/', Path.DirectorySeparatorChar);
+            return new ProjectFile(to(path), null);
         }
+		
+		private ProjectFile toFile(string path, string project)
+        {
+            return new ProjectFile(to(path), project);
+        }
+
+		private string to(string path)
+		{
+			return path.Replace('/', Path.DirectorySeparatorChar);
+		}
     }
 
     class ResultVerifier

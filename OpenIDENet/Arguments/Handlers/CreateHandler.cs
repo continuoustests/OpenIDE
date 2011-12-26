@@ -66,7 +66,7 @@ namespace OpenIDENet.Arguments.Handlers
 			_editorFactory = editorFactory;
 		}
 		
-		public void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProvider)
+		public void Execute(string[] arguments)
 		{
 			if (arguments.Length < 2)
 			{

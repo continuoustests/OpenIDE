@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
-using OpenIDENet.CodeEngine.Core.Crawlers;
 using OpenIDENet.CodeEngine.Core.Caching.Search;
 using System.Diagnostics;
 

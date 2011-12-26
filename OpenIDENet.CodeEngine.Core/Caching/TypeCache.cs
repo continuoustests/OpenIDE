@@ -7,27 +7,19 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 {
 	public class TypeCache : ICacheBuilder, ITypeCache
 	{
+		
+		
 		private List<Project> _projects = new List<Project>();
-		private List<string> _files = new List<string>();
-		private List<Namespace> _namespaces = new List<Namespace>();
-		private List<Class> _classes = new List<Class>();
-		private List<Interface> _interfaces = new List<Interface>();
-		private List<Struct> _structs = new List<Struct>();
-		private List<EnumType> _enums = new List<EnumType>();
+		private List<ProjectFile> _files = new List<ProjectFile>();
+		private List<ICodeReference> _codeReferences = new List<ICodeReference>();
 
 		public int ProjectCount { get { return _projects.Count; } }
 		public int FileCount { get { return _files.Count; } }
-		public int NamespaceCount { get { return _namespaces.Count; } }
-		public int TypeCount { get { return _classes.Count + _interfaces.Count + _structs.Count + _enums.Count; } }
+		public int CodeReferences { get { return _codeReferences.Count; } }
 		
-		public List<ICodeType> Find(string name)
+		public List<ICodeReference> Find(string name)
 		{
-			var results = new List<ICodeType>();
-			lock (_classes) { results.AddRange(_classes.Where(x => x.Name.ToLower().Contains(name.ToLower())).Cast<ICodeType>()); }
-			lock (_interfaces) { results.AddRange(_interfaces.Where(x => x.Name.ToLower().Contains(name.ToLower())).Cast<ICodeType>()); }
-			lock (_structs) { results.AddRange(_structs.Where(x => x.Name.ToLower().Contains(name.ToLower())).Cast<ICodeType>()); }
-			lock (_enums) { results.AddRange(_enums.Where(x => x.Name.ToLower().Contains(name.ToLower())).Cast<ICodeType>()); }
-			return results.OrderBy(x => nameSort(x.Name, name)).ToList();
+			return _codeReferences.OrderBy(x => nameSort(x.Name, name)).ToList();
 		}
 
         public List<FileFindResult> FindFiles(string searchString)
@@ -45,7 +37,7 @@ namespace OpenIDENet.CodeEngine.Core.Caching
             var prj = GetProject(project);
             if (prj == null)
                 return new List<FileFindResult>();
-            return new HierarchyBuilder().GetNextStepInProject(prj);
+            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj);
         }
 
         public List<FileFindResult> GetFilesInProject(string project, string path)
@@ -53,15 +45,15 @@ namespace OpenIDENet.CodeEngine.Core.Caching
             var prj = GetProject(project);
             if (prj == null)
                 return new List<FileFindResult>();
-            return new HierarchyBuilder().GetNextStepInProject(prj, path);
+            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj, path);
         }
 	
 		public bool ProjectExists(Project project)
 		{
-			return _projects.Exists(x => x.Fullpath.Equals(project.Fullpath));
+			return _projects.Exists(x => x.File.Equals(project.File));
 		}
 		
-		public void AddProject(Project project)
+		public void Add(Project project)
 		{
 			lock (_projects)
 			{
@@ -73,101 +65,41 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		{
 			lock (_projects)
 			{
-				return _projects.FirstOrDefault(x => x.Fullpath.Equals(fullpath));
+				return _projects.FirstOrDefault(x => x.File.Equals(fullpath));
 			}
 		}
 		
 		public bool FileExists(string file)
 		{
-			return _files.Contains(file);
+			return _files.Count(x => x.File.Equals(file)) != 0;
 		}
 		
 		public void Invalidate(string file)
 		{
 			lock (_files) {
-				lock (_namespaces) {
-					lock (_classes) {
-						lock (_interfaces) {
-							lock (_structs) {
-								lock (_enums) {
-									_files.Remove(file);
-									_namespaces.RemoveAll(x => x.Fullpath.Equals(file));
-									_classes.RemoveAll(x => x.Fullpath.Equals(file));
-									_interfaces.RemoveAll(x => x.Fullpath.Equals(file));
-									_structs.RemoveAll(x => x.Fullpath.Equals(file));
-									_enums.RemoveAll(x => x.Fullpath.Equals(file));
-								}
-							}
-						}
-					}
+				lock (_codeReferences) {
+					_files.RemoveAll(x => x.File.Equals(file));
+					_codeReferences.RemoveAll(x => x.File.Equals(file));
 				}
 			}
 		}
 		
-		public void AddFile(string file)
+		public void Add(ProjectFile file)
 		{
 			lock (_files)
 				_files.Add(file);
 		}
 		
-		public void AddNamespace (Namespace ns)
+		public void Add(ICodeReference reference)
 		{
-			lock (_namespaces)
-				_namespaces.Add(ns);
+			lock (_codeReferences)
+				_codeReferences.Add(reference);
 		}
 
-		public void AddNamespaces (IEnumerable<Namespace> namespaces)
+		public void Add(IEnumerable<ICodeReference> references)
 		{
-			lock (_namespaces)
-				_namespaces.AddRange(namespaces);
-		}
-
-		public void AddClass (Class cls)
-		{
-			lock (_classes)
-				_classes.Add(cls);
-		}
-
-		public void AddClasses (IEnumerable<Class> classes)
-		{
-			lock (_classes)
-				_classes.AddRange(classes);
-		}
-		
-		public void AddInterface(Interface iface)
-		{
-			lock (_interfaces)
-				_interfaces.Add(iface);
-		}
-		
-		public void AddInterfaces(IEnumerable<Interface> interfaces)
-		{
-			lock (_interfaces)
-				_interfaces.AddRange(interfaces);
-		}
-		
-		public void AddStruct(Struct str)
-		{
-			lock (_structs)
-				_structs.Add(str);
-		}
-			
-		public void AddStructs(IEnumerable<Struct> structs)
-		{
-			lock (_structs)
-				_structs.AddRange(structs);
-		}
-		
-		public void AddEnum(EnumType enu)
-		{
-			lock (_enums)
-				_enums.Add(enu);
-		}
-		
-		public void AddEnums(IEnumerable<EnumType> enums)
-		{
-			lock (_enums)
-				_enums.AddRange(enums);
+			lock (_codeReferences)
+				_codeReferences.AddRange(references);
 		}
 		
 		private int nameSort(string name, string compareString)

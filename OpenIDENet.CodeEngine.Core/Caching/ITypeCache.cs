@@ -7,10 +7,9 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 	{
 		int ProjectCount { get; }
 		int FileCount { get; }
-		int NamespaceCount { get; }
-		int TypeCount { get; }
+		int CodeReferences { get; }
 		
-		List<ICodeType> Find(string name);
+		List<ICodeReference> Find(string name);
         List<FileFindResult> FindFiles(string searchString);
         List<FileFindResult> GetFilesInDirectory(string directory);
         List<FileFindResult> GetFilesInProject(string project);
