@@ -12,17 +12,14 @@ namespace CSharp.Commands
 	{
 		private IProjectHandler _project = new ProjectHandler();
 		
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
-				var usage = new CommandHandlerParameter(
-					SupportedLanguage.CSharp,
-					CommandType.ProjectCommand,
-					Command,
-					"Adds a reference to a project file");
-				usage
-					.Add("REFERENCE", "The path to the project or assembly to be referenced")
-						.Add("PROJECT", "The path to the project to add the reference to");
-				return usage;
+				return
+					Command + "|\"Adds a reference to a project file\"" +
+						"REFERENCE|\"The path to the project or assembly to be referenced\"" +
+							"PROJECT|\"The path to the project to add the reference to\" end" +
+						"end" +
+					"end";
 			}
 		}
 
@@ -30,7 +27,8 @@ namespace CSharp.Commands
 
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length != 2)
+			// TODO fix implementation
+			/*if (arguments.Length != 2)
 			{
 				Console.WriteLine("The handler needs the full path to the reference. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
@@ -39,8 +37,8 @@ namespace CSharp.Commands
 			
 			var fullpath = getFile(arguments[0]);
 			IFile file;
-			if (ProjectFile.SupportsExtension(fullpath))
-				file = new ProjectFile(fullpath);
+			if (VSProjectFile.SupportsExtension(fullpath))
+				file = new VSProjectFile(fullpath);
 			else
 				file = new AssemblyFile(fullpath);
 			var projectFile = arguments[1];
@@ -71,7 +69,7 @@ namespace CSharp.Commands
 					filename);
 			if (Directory.Exists(dir))
 				return Path.Combine(dir, filename);
-			return Path.Combine(Environment.CurrentDirectory, filename);
+			return Path.Combine(Environment.CurrentDirectory, filename);*/
 		}
 	}
 }

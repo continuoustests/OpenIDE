@@ -37,7 +37,8 @@ namespace CSharp.Crawlers
 		
 		private void crawl(Project project)
 		{
-			if (!_builder.ProjectExists(project))
+			// TODO fix
+			/*if (!_builder.ProjectExists(project))
 				_builder.AddProject(project);
 			var files = new ProjectReader(project.Fullpath).ReadFiles();
 			files.ForEach(x => {
@@ -50,7 +51,7 @@ namespace CSharp.Crawlers
 						Logger.Write("Failed to parse " + x);
 						Logger.Write(ex);
 					}
-				});
+				});*/
 			
 		}
 	}

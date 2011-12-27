@@ -3,7 +3,8 @@ namespace CSharp.Crawlers
 {
 	public class Namespace : ICodeReference
 	{
-		public string Fullpath { get; private set; }
+		public string Type { get; private set; }
+		public string File { get; private set; }
 		public string Signature { get { return Name; } }
 		public string Name { get; private set; }
 		public int Offset { get; private set; }
@@ -12,7 +13,7 @@ namespace CSharp.Crawlers
 		
 		public Namespace(string file, string name, int offset, int line, int column)
 		{
-			Fullpath = file;
+			File = file;
 			Name = name;
 			Offset = offset;
 			Line = line;

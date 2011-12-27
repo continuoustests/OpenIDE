@@ -12,17 +12,14 @@ namespace CSharp.Commands
 	{
 		private IProjectHandler _project = new ProjectHandler();
 		
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
-				var usage = new CommandHandlerParameter(
-					"All",
-					CommandType.ProjectCommand,
-					Command,
-					"Dereferences a project/assembly from given project");
-				usage
-					.Add("REFERENCE", "Path to the reference to remove")
-						.Add("PROJECT", "Project to remove the reference from");
-				return usage;
+				return 
+					Command + "|\"Dereferences a project/assembly from given project\"" +
+						"REFERENCE|\"Path to the reference to remove\"" +
+							"PROJECT|\"Project to remove the reference from\"" +
+						"end" +
+					"end";
 			}
 		}
 

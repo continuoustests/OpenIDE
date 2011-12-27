@@ -14,7 +14,8 @@ namespace CSharp.Projects.Writers
 		
 		public void Write(Project project)
 		{
-			if (project.IsModified)
+			// TODO fix
+			/*if (project.IsModified)
 			{
 				var xml = new XmlDocument();
 				xml.LoadXml(project.Content.ToString());
@@ -25,7 +26,7 @@ namespace CSharp.Projects.Writers
 				{
 				    xml.Save(writer);
 				}
-			}
+			}*/
 		}
 	}
 }

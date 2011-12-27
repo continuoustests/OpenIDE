@@ -1,0 +1,22 @@
+OpenIDE.Net integrates with programming languages through both executable output and tcp communication.
+
+----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
+
+Getting command definitions for this language extension
+	PARAMETER:
+		get-command-definitions
+	
+	RESPONSE FORMAT:
+		// This is the definition response for the following commands:
+		// new file FILE_NAME
+		// new directory DIR_NAME
+
+		new|"Template command for new file"
+			file|"Creates a new file"
+				FILE_NAME|"The path/name of the file you want to create" end
+			end
+			directory|"Creates a new directory"
+				DIR_NAME|"Long description where every line
+							will be trimmed and new line is replaced by space" end
+			end
+		end

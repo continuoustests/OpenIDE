@@ -38,7 +38,8 @@ namespace CSharp.Crawlers
 
         public void ParseFile(string file, Func<string> getContent)
         {
-            lock (_padLock)
+			// TODO fix
+            /*lock (_padLock)
             {
                 _builder.AddFile(file);
                 _file = file;
@@ -211,7 +212,7 @@ namespace CSharp.Crawlers
 
         private void suggestLocation(Location location)
         {
-            _suggestedLocation = location;
+            _suggestedLocation = location;*/
         }
     }
 }

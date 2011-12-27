@@ -4,15 +4,11 @@ namespace CSharp.Commands
 {
 	class DeleteFileHandler : ICommandHandler
 	{
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
-				var usage = new CommandHandlerParameter(
-					"C#",
-					CommandType.FileCommand,
-					Command,
-					"Removes a file from the closest project and deletes it");
-				usage.Add("FILE_TO_DELETE", "Relative or full path to the file to delete");
-				return usage;
+				return Command + "\"Removes a file from the closest project and deletes it\"" +
+							"FILE_TO_DELETE|\"Relative or full path to the file to delete\" end" +
+					   "end";
 			}
 		}
 

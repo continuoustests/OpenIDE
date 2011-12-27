@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FFE638AF-5B7F-4C54-8255-2011DE5560D1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>CSharp</RootNamespace>
     <AssemblyName>CSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -91,6 +91,11 @@
     <Compile Include="Crawlers\Namespace.cs" />
     <Compile Include="Crawlers\Struct.cs" />
     <Compile Include="Crawlers\ICodeReference.cs" />
+    <Compile Include="Commands\TemplateDefinitionParser.cs" />
+    <Compile Include="FileSystem\PathExtensions.cs" />
+    <Compile Include="Commands\Dispatcher.cs" />
+    <Compile Include="Commands\CreateHandler.cs" />
+    <Compile Include="Commands\GetUsageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

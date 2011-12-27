@@ -1,8 +1,9 @@
 using System;
 using NUnit.Framework;
-using OpenIDENet.CodeEngine.Core.Crawlers;
+using CSharp.Crawlers;
 using System.IO;
-namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
+
+namespace CSharp.Tests.Crawlers
 {
 	[TestFixture]
 	public class SolutionReaderTests
@@ -19,9 +20,9 @@ namespace OpenIDENet.CodeEngine.Core.Tests.Crawlers
 		{
 			var projects = new SolutionReader(Path.Combine("TestResources", "VSSolutionFile.sln")).ReadProjects();
 			Assert.That(projects.Count, Is.EqualTo(3));
-			Assert.That(projects[0].Fullpath, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDENet"), "OpenIDENet.csproj"))));
-			Assert.That(projects[1].Fullpath, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDENet.Tests"), "OpenIDENet.Tests.csproj"))));
-			Assert.That(projects[2].Fullpath, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "oi"), "oi.csproj"))));
+			Assert.That(projects[0].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDENet"), "OpenIDENet.csproj"))));
+			Assert.That(projects[1].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDENet.Tests"), "OpenIDENet.Tests.csproj"))));
+			Assert.That(projects[2].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "oi"), "oi.csproj"))));
 		}
 	}
 }

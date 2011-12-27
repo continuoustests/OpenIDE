@@ -27,7 +27,8 @@ namespace CSharp.Projects.Referencers
 		
 		public void Reference(Project project, IFile file)
 		{
-			if (!_fs.FileExists(file.Fullpath))
+			// TODO fix implementation
+			/*if (!_fs.FileExists(file.Fullpath))
 			{
 				_bus.Publish(
 					new FailMessage(
@@ -51,12 +52,13 @@ namespace CSharp.Projects.Referencers
 			fileAttribute.Value = relativePath;
 			node.Attributes.Append(fileAttribute);
 			parent.AppendChild(node);
-			project.SetContent(_document.OuterXml);
+			project.SetContent(_document.OuterXml);*/
 		}
 		
 		public void Dereference(Project project, IFile file)
 		{
-			if (!tryOpen(project.Content.ToString()))
+			// TODO fix implementation
+			/*if (!tryOpen(project.Content.ToString()))
 				return;
 			
 			var relativePath = PathExtensions.GetRelativePath(
@@ -123,7 +125,7 @@ namespace CSharp.Projects.Referencers
 				return null;
 		 	var node = document.CreateNode(XmlNodeType.Element, "ItemGroup", element.NamespaceURI);
 			element.AppendChild(node);
-			return node;
+			return node;*/
 		}
 	}
 }

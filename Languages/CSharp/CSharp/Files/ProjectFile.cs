@@ -3,11 +3,11 @@ using System.IO;
 
 namespace CSharp.Files
 {
-	class ProjectFile : IFile
+	class VSProjectFile : IFile
 	{
 		public string Fullpath { get; private set; }
 
-		public ProjectFile(string fullpath)
+		public VSProjectFile(string fullpath)
 		{
 			Fullpath = Path.GetFullPath(fullpath);
 		}

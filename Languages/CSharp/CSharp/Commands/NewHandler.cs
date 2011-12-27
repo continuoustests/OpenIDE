@@ -19,27 +19,31 @@ namespace CSharp.Commands
 		// Check explanation by OverrideTemplatePicker
 		private Func<string, string, INewTemplate> _pickTemplate;
 		
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
 				try {
-					var usage = new CommandHandlerParameter(
-						"C#",
-						CommandType.Run,
-						Command,
-						"Uses the new template to create what ever specified by the template");
-				
-					getTemplates("C#").ToList()
+					var usage = 
+						Command+"|\"Uses the new template to create what ever specified by the template\"";
+					getTemplates("CSharp").ToList()
 						.ForEach(x => 
 							{
 								var command = getUsage(x);
 								if (command != null)
-									usage.Add(command);
+									usage += listUsages(command);
 							});
-					return usage;
+					return usage + "end";
 				} catch {
 					return null;
 				}
 			}
+		}
+
+		private string listUsages(BaseCommandHandlerParameter command)
+		{
+			var usage = command.Name + "|\"" + command.Description + "\"";
+			command.Parameters.ToList()
+				.ForEach(x => usage += listUsages(x));
+			return usage + "end";
 		}
 
 		private BaseCommandHandlerParameter getUsage(string template)
@@ -81,8 +85,7 @@ namespace CSharp.Commands
 		
 		public void Execute(string[] arguments)
 		{
-			// TODO Finish implementation
-			/*if (arguments.Length < 2)
+			if (arguments.Length < 2)
 			{
 				Console.WriteLine("Invalid number of arguments. " +
 					"Usage: new {template name} {item name} {template arguments}");
@@ -112,7 +115,7 @@ namespace CSharp.Commands
 			Console.WriteLine("Full path {0}", template.File.Fullpath);
 			Console.WriteLine("");
 			
-			gotoFile(template.File.Fullpath, template.Line, template.Column, location);*/
+			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
 		}
 		
 		private INewTemplate pickTemplate(string templateName, string type)
@@ -169,7 +172,7 @@ namespace CSharp.Commands
 		
 		private string getFileName(string className, string location, Project project)
 		{
-			// TODO figure out how to handle return fileName + CompileFile.DefaultExtensionFor(project.Settings.Type);
+			return fileName + CompileFile.DefaultExtensionFor(project.Settings.Type);
 			var fileName = Path.Combine(location, className);
 			return fileName + CompileFile.DefaultExtensionFor("Type from project");
 		}

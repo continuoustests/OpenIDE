@@ -23,8 +23,9 @@ namespace CSharp.Projects
 			}
 			catch
 			{
-				_bus.Publish(new FailMessage(
-					string.Format("Invalid project file {0}", xml)));
+				// TODO fix
+				/*_bus.Publish(new FailMessage(
+					string.Format("Invalid project file {0}", xml)));*/
 				return false;
 			}
 		}	

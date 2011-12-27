@@ -22,20 +22,21 @@ namespace CSharp.Projects
 		private Project _project;
 		private IProvideVersionedTypes _with;
 		
-		public string Fullpath { get { return _project.Fullpath; } }
-		public string Type { get { return _project.Settings.Type; } }
-		public string DefaultNamespace { get { return _project.Settings.DefaultNamespace; } }
+		public string Fullpath { get { return _project.File; } }
+		public string Type { get { return "from project"; } } // TODO fix return _project.Settings.Type; } }
+		public string DefaultNamespace { get { return null; } } // TODO fix return _project.Settings.DefaultNamespace; } }
 
 		public bool Read(string location, Func<string> getTypesProviderByLocation)
 		{
-			_project = null;
+			// TODO fix
+			/*_project = null;
 			_provider = getTypesProviderByLocation(location);
 			if (_provider == null)
 				return false;
 			_with = (IProvideVersionedTypes) _provider.TypesProvider;
 			if (_with == null)
 				return false;
-			_project = _with.Reader().Read(_provider.ProjectFile);
+			_project = _with.Reader().Read(_provider.ProjectFile);*/
 			return _project != null;
 		}
 

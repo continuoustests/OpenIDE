@@ -3,15 +3,11 @@ namespace CSharp.Commands
 {
 	class AddFileHandler : ICommandHandler
 	{
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
-				var usage = new CommandHandlerParameter(
-					"C#",
-					CommandType.FileCommand,
-					Command,
-					"Adds a file to the closest project");
-				usage.Add("FILE_TO_ADD", "Relative or full path to the file to add");
-				return usage;
+					return Command + "|\"Adds a file to the closest project\"" +
+								"FILE_TO_ADD|\"Relative or full path to the file to add\" end" +
+						   "end";
 			}
 		}
 

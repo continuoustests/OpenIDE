@@ -28,7 +28,8 @@ namespace CSharp.Projects.Removers
 
 		public void Remove(Project project, IFile file)
 		{
-			var document = new XmlDocument();
+			// TODO fix implementation
+			/*var document = new XmlDocument();
 			if (!tryOpen(document, project.Content.ToString()))
 			{
 				_bus.Publish(new FailMessage(string.Format("Could not remove file. Invalid project file {0}", project.Fullpath)));
@@ -66,7 +67,7 @@ namespace CSharp.Projects.Removers
 			catch
 			{
 				return false;
-			}
+			}*/
 		}
 	}
 }

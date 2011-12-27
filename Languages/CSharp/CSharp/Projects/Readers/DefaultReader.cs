@@ -23,8 +23,10 @@ namespace CSharp.Projects.Readers
 		
 		public Project Read(string fullPath)
 		{
-			var content = _fs.ReadFileAsText(fullPath);
-			return new Project(Path.GetFullPath(fullPath), content, getSettings(content));
+			// TODO fix
+			//var content = _fs.ReadFileAsText(fullPath);
+			//return new Project(Path.GetFullPath(fullPath), content, getSettings(content));
+			return null;
 		}
 		
 		/*private ProjectSettings getSettings(string content)

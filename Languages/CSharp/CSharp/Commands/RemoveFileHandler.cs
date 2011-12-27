@@ -3,15 +3,12 @@ namespace CSharp.Commands
 {
 	class RemoveFileHandler : ICommandHandler
 	{
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
-				var usage = new CommandHandlerParameter(
-					SupportedLanguage.CSharp,
-					CommandType.FileCommand,
-					Command,
-					"Removes a file from the closest project");
-				usage.Add("FILE_TO_REMOVE", "Relative or full path to the file to remove");
-				return usage;
+				return
+					Command + "|\"Removes a file from the closest project\"" +
+						"FILE_TO_REMOVE|\"Relative or full path to the file to remove\" end" +
+					"end";
 			}
 		}
 
@@ -19,7 +16,8 @@ namespace CSharp.Commands
 		
 		public void Execute(string[] arguments)
 		{
-			var provider = getTypesProviderByLocation(arguments[0]);
+			// TODO fix implementation
+			/*var provider = getTypesProviderByLocation(arguments[0]);
 			if (provider == null)
 				return;
 			var with = provider.TypesProvider;
@@ -28,7 +26,7 @@ namespace CSharp.Commands
 				return;
 			var project = with.Reader().Read(provider.ProjectFile);
 			with.FileRemoverFor(file).Remove(project, file);
-			with.Writer().Write(project);
+			with.Writer().Write(project);*/
 		}
 	}
 }

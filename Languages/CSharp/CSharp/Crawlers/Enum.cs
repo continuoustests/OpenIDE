@@ -3,7 +3,8 @@ namespace CSharp.Crawlers
 {
 	public class EnumType : ICodeReference 
 	{
-		public string Fullpath { get; private set; }
+		public string Type { get; private set; }
+		public string File { get; private set; }
 		public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
@@ -13,7 +14,7 @@ namespace CSharp.Crawlers
 		
 		public EnumType(string file, string ns, string name, int offset, int line, int column)
 		{
-			Fullpath = file;
+			File = file;
 			Namespace = ns;
 			Name = name;
 			Offset = offset;

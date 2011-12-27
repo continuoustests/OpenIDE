@@ -6,40 +6,42 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
-using OpenIDENet.Projects;
-using OpenIDENet.EditorEngineIntegration;
-using OpenIDENet.Languages;
+using CSharp.Projects;
 
-namespace OpenIDENet.Arguments.Handlers
+namespace CSharp.Commands
 {
 	class CreateHandler : ICommandHandler
 	{
-		private OpenIDENet.Files.IResolveFileTypes _fileTypeResolver;
-		private ILocateEditorEngine _editorFactory; 
+		private CSharp.Files.IResolveFileTypes _fileTypeResolver;
 		
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
 				try {
-					var usage = new CommandHandlerParameter(
-						SupportedLanguage.All,
-						CommandType.ProjectCommand,
-						Command,
-						"Uses the create template to create what ever project related specified by the template");
-				
+					var usage =
+						Command + "|\"Uses the create template to create what ever" +
+								  "project related specified by the template\"";
 					getTemplates().ToList()
 						.ForEach(x => 
 							{
 								var command = getUsage(x);
 								if (command != null)
-									usage.Add(command);
+									usage += listUsages(command);
 							});
-					return usage;
+					return usage + "end";
 				} catch {
 					return null;
 				}
 			}
 		}
 		
+		private string listUsages(BaseCommandHandlerParameter command)
+		{
+			var usage = command.Name + "|\"" + command.Description + "\"";
+			command.Parameters.ToList()
+				.ForEach(x => usage += listUsages(x));
+			return usage + "end";
+		}
+
 		private BaseCommandHandlerParameter getUsage(string template)
 		{
 			var name = Path.GetFileNameWithoutExtension(template);
@@ -59,11 +61,9 @@ namespace OpenIDENet.Arguments.Handlers
 		public string Command { get { return "create"; } }
 
 		public CreateHandler(
-			OpenIDENet.Files.IResolveFileTypes fileTypeResolver,
-			ILocateEditorEngine editorFactory)
+			CSharp.Files.IResolveFileTypes fileTypeResolver)
 		{
 			_fileTypeResolver = fileTypeResolver;
-			_editorFactory = editorFactory;
 		}
 		
 		public void Execute(string[] arguments)
@@ -137,17 +137,16 @@ namespace OpenIDENet.Arguments.Handlers
 
 		private void gotoFile(string file, int line, int column, string location)
 		{
-			var instance = _editorFactory.GetInstance(location);
-			if (instance == null)
-				return;
-			instance.GoTo(file, line, column);
-			instance.SetFocus();
-		}	
+			Console.WriteLine(
+				string.Format("editor-goto|{0}|{1}|{2}",
+					file, line, column));
+			Console.WriteLine("editor-setfocus");
+		}
 	}
 
 	public interface ICreateTemplate
 	{
-		OpenIDENet.Files.IFile File { get; }
+		CSharp.Files.IFile File { get; }
 		int Line { get; }
 		int Column { get; }
 		
@@ -157,13 +156,13 @@ namespace OpenIDENet.Arguments.Handlers
 	class CreateTemplate : ICreateTemplate
 	{
 		private string _file;
-		private OpenIDENet.Files.IResolveFileTypes _typeResolver;
+		private CSharp.Files.IResolveFileTypes _typeResolver;
 		
-		public OpenIDENet.Files.IFile File { get; private set; }
+		public CSharp.Files.IFile File { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 		
-		public CreateTemplate(string file, OpenIDENet.Files.IResolveFileTypes typeResolver)
+		public CreateTemplate(string file, CSharp.Files.IResolveFileTypes typeResolver)
 		{
 			File = null;
 			_file = file;
