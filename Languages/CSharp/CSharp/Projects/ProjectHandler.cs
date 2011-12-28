@@ -1,5 +1,6 @@
 using System;
 using CSharp.Files;
+using CSharp.Projects;
 using CSharp.Versioning;
 
 namespace CSharp.Projects
@@ -10,7 +11,7 @@ namespace CSharp.Projects
 		string Type { get; }
 		string DefaultNamespace { get; }
 
-		bool Read(string location, Func<string> getTypesProviderByLocation);
+		bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation);
 		void AppendFile(IFile file);
 		void Reference(IFile file);
 		void Dereference(IFile file);
@@ -21,22 +22,22 @@ namespace CSharp.Projects
 	{
 		private Project _project;
 		private IProvideVersionedTypes _with;
+		private ProviderSettings _provider;
 		
 		public string Fullpath { get { return _project.File; } }
-		public string Type { get { return "from project"; } } // TODO fix return _project.Settings.Type; } }
-		public string DefaultNamespace { get { return null; } } // TODO fix return _project.Settings.DefaultNamespace; } }
+		public string Type { get { return _project.Settings.Type; } }
+		public string DefaultNamespace { get { return _project.Settings.DefaultNamespace; } }
 
-		public bool Read(string location, Func<string> getTypesProviderByLocation)
+		public bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation)
 		{
-			// TODO fix
-			/*_project = null;
+			_project = null;
 			_provider = getTypesProviderByLocation(location);
 			if (_provider == null)
 				return false;
 			_with = (IProvideVersionedTypes) _provider.TypesProvider;
 			if (_with == null)
 				return false;
-			_project = _with.Reader().Read(_provider.ProjectFile);*/
+			_project = _with.Reader().Read(_provider.ProjectFile);
 			return _project != null;
 		}
 

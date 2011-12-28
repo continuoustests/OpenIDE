@@ -1,5 +1,11 @@
 OpenIDE.Net integrates with programming languages through both executable output and tcp communication.
 
+------------------------------------------------------- GENERAL OUTPUT ---------------------------------------------------------
+
+Error description with no line separators
+	RESPONSE FORMAT:
+		error|ERROR_DESCRIPTION
+
 ----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
 
 Getting command definitions for this language extension
@@ -20,3 +26,15 @@ Getting command definitions for this language extension
 							will be trimmed and new line is replaced by space" end
 			end
 		end
+
+Crawl directories and/or files
+	PARAMETER:
+		crawl-source PATH_TO_FILE_CONTIAINING_LINE_PR_FILE_OR_DIR_TO_PARSE
+	
+	RESPONSE FORMAT:
+		// Project is optional. Other than that the hierarchy is as follows
+		// Indentation is only to show hierarchy not required in output
+		[project|PROJECT-PATH]
+			file|FILE-PATH
+				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN
+				reference|SIGNATURE|OFFSET|LINE|COLUMN

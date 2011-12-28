@@ -30,24 +30,24 @@ namespace CSharp.Projects.Appenders
 		
 		public void Append(Project project, IFile file)
 		{
-			// TODO fix implementation
-			/*var document = new XmlDocument();
+			var document = new XmlDocument();
 			if (!tryOpen(document, project.Content.ToString()))
 			{
-				_bus.Publish(new FailMessage(string.Format("Could not append file. Invalid project file {0}", project.File)));
+				
+				Console.WriteLine("Could not append file. Invalid project file {0}", project.File);
 				return;
 			}
 			
 			if (!_fs.FileExists(file.Fullpath))
 			{
-				_bus.Publish(new FailMessage(string.Format("Could not append unexisting file {0}", file.File)));
+				Console.WriteLine("Could not append unexisting file {0}", file.Fullpath);
 				return;
 			}
 			
-			var relativePath = PathExtensions.GetRelativePath(project.File, file.File).Replace("/", "\\");
+			var relativePath = PathExtensions.GetRelativePath(project.File, file.Fullpath).Replace("/", "\\");
 			if (exists(document, relativePath))
 				return;
-			var node = getCompileItemGroup(document, project.Fullpath);
+			var node = getCompileItemGroup(document, project.File);
 			if (node == null)
 				return;
 			appendFile(document, node, relativePath);
@@ -68,7 +68,7 @@ namespace CSharp.Projects.Appenders
 			else
 				node = node.ParentNode;
 			if (node == null)
-				_bus.Publish(new FailMessage(string.Format("Could not append file. Project file is not of known format {0}", project)));
+				Console.WriteLine("Could not append file. Project file is not of known format {0}", project);
 			return node;
 		}
 		
@@ -115,7 +115,7 @@ namespace CSharp.Projects.Appenders
             if (_nsManager == null)
                 return text.Replace("||NS||", "");
             else
-                return text.Replace("||NS||", "b:");*/
+                return text.Replace("||NS||", "b:");
         }
 	}
 }

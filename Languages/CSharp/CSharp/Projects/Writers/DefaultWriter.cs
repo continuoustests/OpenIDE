@@ -14,19 +14,18 @@ namespace CSharp.Projects.Writers
 		
 		public void Write(Project project)
 		{
-			// TODO fix
-			/*if (project.IsModified)
+			if (project.IsModified)
 			{
 				var xml = new XmlDocument();
 				xml.LoadXml(project.Content.ToString());
 				XmlWriterSettings settings = new XmlWriterSettings();
 				settings.Indent = true;
 				settings.NewLineChars = Environment.NewLine;
-				using (XmlWriter writer = XmlTextWriter.Create(project.Fullpath, settings))
+				using (XmlWriter writer = XmlTextWriter.Create(project.File, settings))
 				{
 				    xml.Save(writer);
 				}
-			}*/
+			}
 		}
 	}
 }

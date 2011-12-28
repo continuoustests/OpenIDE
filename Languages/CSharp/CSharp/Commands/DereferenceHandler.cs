@@ -10,6 +10,7 @@ namespace CSharp.Commands
 {
 	class DereferenceHandler : ICommandHandler
 	{
+		private Func<string, ProviderSettings> _getTypesProviderByLocation;
 		private IProjectHandler _project = new ProjectHandler();
 		
 		public string Usage {
@@ -25,10 +26,14 @@ namespace CSharp.Commands
 
 		public string Command { get { return "dereference"; } }
 
+		public DereferenceHandler(Func<string, ProviderSettings> provider)
+		{
+			_getTypesProviderByLocation = provider;
+		}
+
 		public void Execute(string[] arguments)
 		{
-			// TODO finish implementation
-			/*if (arguments.Length != 2)
+			if (arguments.Length != 2)
 			{
 				Console.WriteLine("The handler needs the full path to the reference. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
@@ -37,8 +42,8 @@ namespace CSharp.Commands
 			
 			var fullpath = getFile(arguments[0]);
 			IFile file;
-			if (ProjectFile.SupportsExtension(fullpath))
-				file = new ProjectFile(fullpath);
+			if (VSProjectFile.SupportsExtension(fullpath))
+				file = new VSProjectFile(fullpath);
 			else
 				file = new AssemblyFile(fullpath);
 			var projectFile = arguments[1];
@@ -49,12 +54,12 @@ namespace CSharp.Commands
 				return;
 			}
 			
-			if (!_project.Read(projectFile, getTypesProviderByLocation))
+			if (!_project.Read(projectFile, _getTypesProviderByLocation))
 				return;
 			_project.Dereference(file);
 			_project.Write();
 
-			Console.WriteLine("Rereferenced {0} from {1}", file, projectFile);*/
+			Console.WriteLine("Rereferenced {0} from {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)

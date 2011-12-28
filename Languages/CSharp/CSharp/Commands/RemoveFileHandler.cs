@@ -3,6 +3,7 @@ namespace CSharp.Commands
 {
 	class RemoveFileHandler : ICommandHandler
 	{
+		private Func<string, ProviderSettings> _getTypesProviderByLocation;
 		public string Usage {
 			get {
 				return
@@ -14,10 +15,14 @@ namespace CSharp.Commands
 
 		public string Command { get { return "removefile"; } }
 		
+		public RemoveFileHandler(Func<string, ProviderSettings> provider)
+		{
+			_getTypesProviderByLocation = provider;
+		}
+
 		public void Execute(string[] arguments)
 		{
-			// TODO fix implementation
-			/*var provider = getTypesProviderByLocation(arguments[0]);
+			var provider = _getTypesProviderByLocation(arguments[0]);
 			if (provider == null)
 				return;
 			var with = provider.TypesProvider;
@@ -26,7 +31,7 @@ namespace CSharp.Commands
 				return;
 			var project = with.Reader().Read(provider.ProjectFile);
 			with.FileRemoverFor(file).Remove(project, file);
-			with.Writer().Write(project);*/
+			with.Writer().Write(project);
 		}
 	}
 }

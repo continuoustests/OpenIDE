@@ -29,17 +29,22 @@ namespace CSharp.Crawlers
         private string _content;
         private Location _suggestedLocation = Location.Unknown;
         private Location _currentLocation;
+		private IOutputWriter _builder;
         private Stack<Location> _locationHierarchy = new Stack<Location>();
 		private List<LocationHierarchyActivity> _locationHierarchyActivity = 
 													new List<LocationHierarchyActivity>();
         private CSharpCodeNavigator _navigator;
 
         private Namespace _currentNamespace = null;
+		
+		public CSharpFileParser(IOutputWriter writer)
+		{
+			_builder = writer;
+		}
 
         public void ParseFile(string file, Func<string> getContent)
         {
-			// TODO fix
-            /*lock (_padLock)
+            lock (_padLock)
             {
                 _builder.AddFile(file);
                 _file = file;
@@ -212,7 +217,7 @@ namespace CSharp.Crawlers
 
         private void suggestLocation(Location location)
         {
-            _suggestedLocation = location;*/
+            _suggestedLocation = location;
         }
     }
 }

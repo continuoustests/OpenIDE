@@ -9,16 +9,22 @@ namespace CSharp.Crawlers
 {
 	public class CSharpCrawler : ICrawler
 	{
-		public void InitialCrawl(CrawlOptions options)
+		private IOutputWriter _builder;
+
+		public CSharpCrawler(IOutputWriter writer)
 		{
-			ThreadPool.QueueUserWorkItem(initialCrawl, options);
+			_builder = writer;
 		}
-		
-		private void initialCrawl(object state)
+
+		public void Crawl(CrawlOptions options)
 		{
-			var options = (CrawlOptions) state;
 			List<Project> projects;
-			if (options.IsSolutionFile)
+			if (!options.IsSolutionFile && options.File != null)
+			{
+				parseFile(options.File);
+				return;
+			}
+			else if (options.IsSolutionFile)
 				projects = new SolutionReader(options.File).ReadProjects();
 			else
 				projects = getProjects(options.Directory);
@@ -37,22 +43,24 @@ namespace CSharp.Crawlers
 		
 		private void crawl(Project project)
 		{
-			// TODO fix
-			/*if (!_builder.ProjectExists(project))
-				_builder.AddProject(project);
-			var files = new ProjectReader(project.Fullpath).ReadFiles();
+			_builder.AddProject(project);
+			var files = new ProjectReader(project.File).ReadFiles();
 			files.ForEach(x => {
-					try
-					{
-						new CSharpFileParser(_builder).ParseFile(x, () => { return File.ReadAllText(x); });
-					}
-					catch (Exception ex)
-					{
-						Logger.Write("Failed to parse " + x);
-						Logger.Write(ex);
-					}
-				});*/
-			
+					parseFile(x);
+				});
+		}
+
+		private void parseFile(string x)
+		{
+			try
+			{
+				new CSharpFileParser(_builder).ParseFile(x, () => { return File.ReadAllText(x); });
+			}
+			catch (Exception ex)
+			{
+				_builder.Error("Failed to parse " + x);
+				_builder.Error(ex.ToString());
+			}
 		}
 	}
 					

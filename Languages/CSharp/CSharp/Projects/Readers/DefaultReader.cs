@@ -23,13 +23,11 @@ namespace CSharp.Projects.Readers
 		
 		public Project Read(string fullPath)
 		{
-			// TODO fix
-			//var content = _fs.ReadFileAsText(fullPath);
-			//return new Project(Path.GetFullPath(fullPath), content, getSettings(content));
-			return null;
+			var content = _fs.ReadFileAsText(fullPath);
+			return new Project(Path.GetFullPath(fullPath), content, getSettings(content));
 		}
 		
-		/*private ProjectSettings getSettings(string content)
+		private ProjectSettings getSettings(string content)
 		{
 			var ns = "ns";
 			var document = new XmlDocument();
@@ -40,8 +38,8 @@ namespace CSharp.Projects.Readers
 					ns = node.InnerText;
 			}
 			
-			return new ProjectSettings(SupportedLanguage.CSharp, ns);
-		}*/
+			return new ProjectSettings("C#", ns);
+		}
 		
 		private bool tryOpen(XmlDocument document, string xml)
 		{

@@ -28,7 +28,7 @@ namespace CSharp.Crawlers
 	
 	public interface ICrawler
 	{
-		void InitialCrawl(CrawlOptions options);
+		void Crawl(CrawlOptions options);
 	}
 }
 

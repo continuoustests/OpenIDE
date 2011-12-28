@@ -10,6 +10,7 @@ namespace CSharp.Commands
 {
 	class ReferenceHandler : ICommandHandler
 	{
+		private Func<string, ProviderSettings> _provider;
 		private IProjectHandler _project = new ProjectHandler();
 		
 		public string Usage {
@@ -24,11 +25,15 @@ namespace CSharp.Commands
 		}
 
 		public string Command { get { return "reference"; } }
+		
+		public ReferenceHandler(Func<string, ProviderSettings> provider)
+		{
+			_provider = provider;
+		}
 
 		public void Execute(string[] arguments)
 		{
-			// TODO fix implementation
-			/*if (arguments.Length != 2)
+			if (arguments.Length != 2)
 			{
 				Console.WriteLine("The handler needs the full path to the reference. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
@@ -49,7 +54,7 @@ namespace CSharp.Commands
 				return;
 			}
 			
-			if (!_project.Read(projectFile, getTypesProviderByLocation))
+			if (!_project.Read(projectFile, _provider))
 				return;
 			_project.Reference(file);
 			_project.Write();
@@ -69,7 +74,7 @@ namespace CSharp.Commands
 					filename);
 			if (Directory.Exists(dir))
 				return Path.Combine(dir, filename);
-			return Path.Combine(Environment.CurrentDirectory, filename);*/
+			return Path.Combine(Environment.CurrentDirectory, filename);
 		}
 	}
 }

@@ -28,18 +28,17 @@ namespace CSharp.Projects.Removers
 
 		public void Remove(Project project, IFile file)
 		{
-			// TODO fix implementation
-			/*var document = new XmlDocument();
+			var document = new XmlDocument();
 			if (!tryOpen(document, project.Content.ToString()))
 			{
-				_bus.Publish(new FailMessage(string.Format("Could not remove file. Invalid project file {0}", project.Fullpath)));
+				Console.WriteLine("Could not remove file. Invalid project file {0}", project.File);
 				return;
 			}
 			
 			if (!_fs.FileExists(file.Fullpath))
 				return;
 			
-			var relativePath = PathExtensions.GetRelativePath(project.Fullpath, file.Fullpath).Replace("/", "\\");
+			var relativePath = PathExtensions.GetRelativePath(project.File, file.Fullpath).Replace("/", "\\");
 			var node = getNode(document, relativePath);
 			if (node == null)
 				return;
@@ -67,7 +66,7 @@ namespace CSharp.Projects.Removers
 			catch
 			{
 				return false;
-			}*/
+			}
 		}
 	}
 }

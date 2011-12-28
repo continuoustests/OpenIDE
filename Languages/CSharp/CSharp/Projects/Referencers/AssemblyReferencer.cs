@@ -28,12 +28,9 @@ namespace CSharp.Projects.Referencers
 		
 		public void Reference(Project project, IFile file)
 		{
-			// TODO fix implementation
-			/*if (!_fs.FileExists(file.Fullpath))
+			if (!_fs.FileExists(file.Fullpath))
 			{
-				_bus.Publish(
-					new FailMessage(
-						string.Format("Could not reference unexisting assembly {0}", file.Fullpath)));
+				Console.WriteLine("Could not reference unexisting assembly {0}", file.Fullpath);
 				return;
 			}
 
@@ -41,29 +38,28 @@ namespace CSharp.Projects.Referencers
 				return;
 			
 			var relativePath = PathExtensions.GetRelativePath(
-				project.Fullpath,
+				project.File,
 				file.Fullpath).Replace("/", "\\");
 
 			if (alreadyReferenced(relativePath))
 				return;
 			
-			var parent = getReferenceGroup(project.Fullpath);
+			var parent = getReferenceGroup(project.File);
 			var node = _document.CreateNode(XmlNodeType.Element, "Reference", parent.NamespaceURI);
 			var fileAttribute = _document.CreateAttribute("Include");
 			fileAttribute.Value = relativePath;
 			node.Attributes.Append(fileAttribute);
 			parent.AppendChild(node);
-			project.SetContent(_document.OuterXml);*/
+			project.SetContent(_document.OuterXml);
 		}
 		
 		public void Dereference(Project project, IFile file)
 		{
-			//TODO fix implementation
-			/*if (!tryOpen(project.Content.ToString()))
+			if (!tryOpen(project.Content.ToString()))
 				return;
 			
 			var relativePath = PathExtensions.GetRelativePath(
-				project.Fullpath,
+				project.File,
 				file.Fullpath).Replace("/", "\\");
 			
 			removeReferences(relativePath);
@@ -110,10 +106,7 @@ namespace CSharp.Projects.Referencers
 			else
 				node = node.ParentNode;
 			if (node == null)
-				_bus.Publish(
-					new FailMessage(
-						string.Format("Could not reference file. Project file is not of known format {0}",
-							project)));
+				Console.WriteLine("Could not reference file. Project file is not of known format {0}", project);
 			return node;
 		}
 
@@ -125,7 +118,7 @@ namespace CSharp.Projects.Referencers
 				return null;
 		 	var node = document.CreateNode(XmlNodeType.Element, "ItemGroup", element.NamespaceURI);
 			element.AppendChild(node);
-			return node;*/
+			return node;
 		}
 	}
 }

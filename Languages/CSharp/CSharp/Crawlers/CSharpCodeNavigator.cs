@@ -66,10 +66,7 @@ namespace CSharp.Crawlers
 				}
 				return null;
 			} catch {
-				// TODO fix impl
-				/*Logger.Write("GetWord failed while on line {0} and column {1}",
-					_line,
-					_column);*/
+				Console.WriteLine("GetWord failed while on line {0} and column {1}", _line, _column);
 				throw;
 			}
 		}
@@ -79,10 +76,7 @@ namespace CSharp.Crawlers
 			try {
 				return collectSignature();
 			} catch {
-				// TODO fix
-				/*Logger.Write("GetWord failed while on line {0} and column {1}",
-					_line,
-					_column);*/
+				Console.WriteLine("GetWord failed while on line {0} and column {1}", _line, _column);
 				throw;
 			}
 		}

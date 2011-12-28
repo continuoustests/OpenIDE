@@ -4,6 +4,8 @@ namespace CSharp.Commands
 {
 	class DeleteFileHandler : ICommandHandler
 	{
+		private Func<string, ProviderSettings> _getTypesProviderByLocation;
+
 		public string Usage {
 			get {
 				return Command + "\"Removes a file from the closest project and deletes it\"" +
@@ -14,10 +16,14 @@ namespace CSharp.Commands
 
 		public string Command { get { return "deletefile"; } }
 		
+		public DeleteFileHandler(Func<string, ProviderSettings> provider)
+		{
+			_getTypesProviderByLocation = provider;
+		}
+
 		public void Execute(string[] arguments)
 		{
-			// TODO fix implementation
-			/*var provider = getTypesProviderByLocation(arguments[0]);
+			var provider = _getTypesProviderByLocation(arguments[0]);
 			if (provider == null)
 				return;
 			var with = provider.TypesProvider;
@@ -28,7 +34,7 @@ namespace CSharp.Commands
 			with.FileRemoverFor(file).Remove(project, file);
 			with.Writer().Write(project);
 			
-			File.Delete(file.Fullpath);*/
+			File.Delete(file.Fullpath);
 		}
 	}
 }

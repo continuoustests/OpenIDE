@@ -8,7 +8,6 @@ using System.Text;
 using System.Diagnostics;
 using CSharp.Projects;
 using CSharp.Files;
-using CSharp.FileSystem;
 
 namespace CSharp.Commands
 {
@@ -16,6 +15,7 @@ namespace CSharp.Commands
 	{
 		private IProjectHandler _project;
 		private IResolveFileTypes _fileTypeResolver;
+		private Func<string, ProviderSettings> _getTypesProviderByLocation;
 		// Check explanation by OverrideTemplatePicker
 		private Func<string, string, INewTemplate> _pickTemplate;
 		
@@ -64,8 +64,9 @@ namespace CSharp.Commands
 		
 		public string Command { get { return "new"; } }
 		
-		public NewHandler(IResolveFileTypes fileTypeResolver)
+		public NewHandler(IResolveFileTypes fileTypeResolver, Func<string, ProviderSettings> provider)
 		{
+			_getTypesProviderByLocation = provider;
 			_pickTemplate = pickTemplate;
 			_fileTypeResolver = fileTypeResolver;
 			_project = new ProjectHandler();
@@ -94,7 +95,7 @@ namespace CSharp.Commands
 			
 			var className = getFileName(arguments[1]);
 			var location = getLocation(arguments[1]);
-			if (!_project.Read(location, getTypesProviderByLocation))
+			if (!_project.Read(location, _getTypesProviderByLocation))
 				return;
 			
 			var template = _pickTemplate(arguments[0], _project.Type);
@@ -172,7 +173,6 @@ namespace CSharp.Commands
 		
 		private string getFileName(string className, string location, Project project)
 		{
-			return fileName + CompileFile.DefaultExtensionFor(project.Settings.Type);
 			var fileName = Path.Combine(location, className);
 			return fileName + CompileFile.DefaultExtensionFor("Type from project");
 		}
@@ -190,11 +190,10 @@ namespace CSharp.Commands
 		
 		private void gotoFile(string file, int line, int column, string location)
 		{
-			var instance = _editorFactory.GetInstance(location);
-			if (instance == null)
-				return;
-			instance.GoTo(file, line, column);
-			instance.SetFocus();
+			Console.WriteLine(
+				string.Format("editor-goto|{0}|{1}|{2}",
+					file, line, column));
+			Console.WriteLine("editor-setfocus");
 		}
 	}
 	
