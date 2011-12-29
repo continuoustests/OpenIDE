@@ -1,33 +1,34 @@
 using System;
 using NUnit.Framework;
-using OpenIDENet.Arguments;
+using CSharp.Commands;
 using Rhino.Mocks;
-namespace OpenIDENet.Tests
+namespace CSharp.Tests.Commands
 {
 	[TestFixture]
 	public class CommandDispatcherTests
 	{
 		private FakeHandler _handler;
-		private CommandDispatcher _execute;
+		private Dispatcher _execute;
 		
 		[SetUp]
 		public void Setup()
 		{
 			_handler = new FakeHandler();
-			_execute = new CommandDispatcher(new ICommandHandler[] { _handler });
+			_execute = new Dispatcher();
+			_execute.Register(_handler);
 		}
 		
 		[Test]
 		public void Should_find_named_handler()
 		{
-			_execute.For("MyCommand", new string[] {});
+			_execute.GetHandler("MyCommand").Execute(new string[] {});
 			_handler.WasCalled();
 		}
 		
 		[Test]
 		public void When_no_matching_handlers_it_should_return_null()
 		{
-			_execute.For("MyOtherCommand", new string[] {});
+			Assert.That(_execute.GetHandler("MyOtherCommand"),  Is.Null);
 			_handler.WasNotCalled();
 		}
 	}
@@ -36,9 +37,9 @@ namespace OpenIDENet.Tests
 	{
 		private bool _wasExecuted = false;
 		
-		public CommandHandlerParameter Usage {
+		public string Usage {
 			get {
-				return new CommandHandlerParameter("C#", CommandType.FileCommand, "", "");
+				return null;
 			}
 		}
 

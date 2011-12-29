@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CSharp.Commands
 {
-	class Dispatcher
+	public class Dispatcher
 	{
 		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
 

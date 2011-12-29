@@ -20,7 +20,12 @@ namespace CSharp.Commands
 				return;
 			}
 			var crawler = new CSharpCrawler(output);
-			File.ReadAllText(args[0]).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+			File.ReadAllText(
+				args[0])
+					.Split(new string[] { 
+						Environment.NewLine
+					}, StringSplitOptions.RemoveEmptyEntries
+					).ToList()
 				.ForEach(x =>
 					{
 						crawler.Crawl(new CrawlOptions(x));

@@ -1,14 +1,8 @@
 using System;
 using System.Linq;
-using OpenIDENet.Projects;
-using OpenIDENet.Projects.Readers;
-using OpenIDENet.Projects.Appenders;
-using OpenIDENet.Projects.Writers;
 using OpenIDENet.Messaging;
 using OpenIDENet.FileSystem;
 using OpenIDENet.Bootstrapping;
-using OpenIDENet.Versioning;
-using OpenIDENet.Files;
 using OpenIDENet.Arguments;
 
 namespace oi

@@ -11,7 +11,7 @@ using CSharp.Files;
 
 namespace CSharp.Commands
 {
-	class NewHandler : ICommandHandler
+	public class NewHandler : ICommandHandler
 	{
 		private IProjectHandler _project;
 		private IResolveFileTypes _fileTypeResolver;
@@ -31,7 +31,7 @@ namespace CSharp.Commands
 								if (command != null)
 									usage += listUsages(command);
 							});
-					return usage + "end";
+					return usage + "end ";
 				} catch {
 					return null;
 				}
@@ -43,7 +43,7 @@ namespace CSharp.Commands
 			var usage = command.Name + "|\"" + command.Description + "\"";
 			command.Parameters.ToList()
 				.ForEach(x => usage += listUsages(x));
-			return usage + "end";
+			return usage + "end ";
 		}
 
 		private BaseCommandHandlerParameter getUsage(string template)
@@ -132,10 +132,8 @@ namespace CSharp.Commands
 		{
 			var templateDir = 
 				Path.Combine(
-					Path.Combine(
-						Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-						"templates"),
-					type.ToString().ToLower()), "new");
+					Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+					"CSharp"), "new");
 			return Directory.GetFiles(templateDir);
 		}
 
@@ -317,7 +315,7 @@ namespace CSharp.Commands
             if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
 			    proc.StartInfo = new ProcessStartInfo(_file, arguments);
             else
-                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c " + _file + " " + arguments);
+                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c \"" + _file + "\" " + arguments);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

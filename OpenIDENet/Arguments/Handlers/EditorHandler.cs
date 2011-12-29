@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using OpenIDENet.Languages;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
@@ -15,7 +14,7 @@ namespace OpenIDENet.Arguments.Handlers
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.All,
+					"All",
 					CommandType.Run,
 					Command,
 					"Starts the editor of your choice depending on the plugins available in ||newline||" +

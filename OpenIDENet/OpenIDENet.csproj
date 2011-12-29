@@ -59,14 +59,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Core" />
-    <Reference Include="Castle.Core, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Castle.Windsor\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=2.5.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Castle.Windsor\Castle.Windsor.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arguments\ICommandDispatcher.cs" />
@@ -103,13 +95,13 @@
     <Compile Include="Arguments\Handlers\CodeEngineHandler.cs" />
     <Compile Include="Arguments\CommandHandlerParameters.cs" />
     <Compile Include="Arguments\Handlers\TemplateDefinitionParser.cs" />
-    <Compile Include="Languages\SupportedLanguages.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
     <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
     <Compile Include="CommandBuilding\CommandBuilder.cs" />
     <Compile Include="CommandBuilding\CommandStringParser.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletion.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletion.cs" />
+    <Compile Include="Language\PluginLocator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

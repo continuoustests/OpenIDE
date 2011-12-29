@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace OpenIDENet.EditorEngineIntegration
 {
-	class EngineLocator : ILocateEditorEngine
+	public class EngineLocator : ILocateEditorEngine
 	{
 		private IFS _fs;
 		

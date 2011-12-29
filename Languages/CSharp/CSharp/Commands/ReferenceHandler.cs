@@ -8,7 +8,7 @@ using CSharp.Projects;
 
 namespace CSharp.Commands
 {
-	class ReferenceHandler : ICommandHandler
+	public class ReferenceHandler : ICommandHandler
 	{
 		private Func<string, ProviderSettings> _provider;
 		private IProjectHandler _project = new ProjectHandler();
@@ -18,9 +18,9 @@ namespace CSharp.Commands
 				return
 					Command + "|\"Adds a reference to a project file\"" +
 						"REFERENCE|\"The path to the project or assembly to be referenced\"" +
-							"PROJECT|\"The path to the project to add the reference to\" end" +
-						"end" +
-					"end";
+							"PROJECT|\"The path to the project to add the reference to\" end " +
+						"end " +
+					"end ";
 			}
 		}
 

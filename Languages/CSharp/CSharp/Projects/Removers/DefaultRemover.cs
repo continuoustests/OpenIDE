@@ -6,7 +6,7 @@ using CSharp.Versioning;
 
 namespace CSharp.Projects.Removers
 {
-	class DefaultRemover : IRemoveFiles
+	public class DefaultRemover : IRemoveFiles
 	{
 		private IFS _fs;
 		private XmlNamespaceManager _nsManager = null;

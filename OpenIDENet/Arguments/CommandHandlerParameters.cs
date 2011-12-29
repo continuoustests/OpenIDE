@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using OpenIDENet.Languages;
 
 namespace OpenIDENet.Arguments
 {
@@ -56,10 +55,10 @@ namespace OpenIDENet.Arguments
 
 	public class CommandHandlerParameter : BaseCommandHandlerParameter
 	{
-		public SupportedLanguage Language { get; private set; }
+		public string Language { get; private set; }
 		public CommandType Type { get; private set; }
 
-		public CommandHandlerParameter(SupportedLanguage language, CommandType type, string name, string description) :
+		public CommandHandlerParameter(string language, CommandType type, string name, string description) :
 			base(name, description)
 		{
 			Language = language;

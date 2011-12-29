@@ -12,18 +12,16 @@ namespace OpenIDENet.Bootstrapping
 		public static void Initialize()
 		{
 			_container = new DIContainer();
-			_container.Configure();
 		}
 		
 		public static ICommandDispatcher GetDispatcher()
 		{
-			return new CommandDispatcher(
-				_container.ResolveAll<ICommandHandler>());
+			return new CommandDispatcher(GetCommandHandlers().ToArray());
 		}
 
 		public static IEnumerable<ICommandHandler> GetCommandHandlers()
 		{
-			return _container.ResolveAll<ICommandHandler>();
+			return _container.ICommandHandlers();
 		}
 	}
 }

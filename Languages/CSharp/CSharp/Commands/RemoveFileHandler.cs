@@ -8,8 +8,8 @@ namespace CSharp.Commands
 			get {
 				return
 					Command + "|\"Removes a file from the closest project\"" +
-						"FILE_TO_REMOVE|\"Relative or full path to the file to remove\" end" +
-					"end";
+						"FILE_TO_REMOVE|\"Relative or full path to the file to remove\" end " +
+					"end ";
 			}
 		}
 

@@ -10,8 +10,10 @@
     <RootNamespace>OpenIDENet.Tests</RootNamespace>
     <AssemblyName>OpenIDENet.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -62,26 +64,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Projects\Appenders\VS2010FileAppenderTests.cs" />
     <Compile Include="Messaging\Fake_Consumer.cs" />
     <Compile Include="Messaging\Fake_Message.cs" />
     <Compile Include="Messaging\Fake_MessageBus.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="FileSystem\PathExtensionsTests.cs" />
     <Compile Include="Bootstrapping\DIContainerTests.cs" />
-    <Compile Include="Versioning\VS2010Tests.cs" />
     <Compile Include="Arguments\CommandDispatcherTests.cs" />
-    <Compile Include="Files\ComplieFileTests.cs" />
-    <Compile Include="Projects\Readers\DefaultReaderTests.cs" />
-    <Compile Include="Projects\Removers\DefaultRemoverTests.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocatorTests.cs" />
-    <Compile Include="Arguments\Handlers\ReferenceHandlerTests.cs" />
-    <Compile Include="Arguments\Handlers\NewHandlerTests.cs" />
-    <Compile Include="Arguments\Handlers\TemplateDefinitionParserTests.cs" />
     <Compile Include="CommandBuilding\CommandBuilderTests.cs" />
     <Compile Include="CommandBuilding\CommandStringParserTests.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletionTests.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletionTests.cs" />
+    <Compile Include="Arguments\Handlers\UsageParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

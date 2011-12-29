@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using OpenIDENet.Arguments.Handlers;
+using CSharp.Commands;
 
-namespace OpenIDENet.Tests.Arguments.Handlers
+namespace CSharp.Tests.Commands
 {
 	[TestFixture]
 	public class TemplateDefinitionParserTests

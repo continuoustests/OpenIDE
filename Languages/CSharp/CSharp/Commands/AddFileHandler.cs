@@ -7,8 +7,8 @@ namespace CSharp.Commands
 		public string Usage {
 			get {
 					return Command + "|\"Adds a file to the closest project\"" +
-								"FILE_TO_ADD|\"Relative or full path to the file to add\" end" +
-						   "end";
+								"FILE_TO_ADD|\"Relative or full path to the file to add\" end " +
+						   "end ";
 			}
 		}
 

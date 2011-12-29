@@ -1,7 +1,6 @@
 using System;
-using Castle.Windsor;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers.SpecializedResolvers;
+using System.Linq;
+using System.Collections.Generic;
 using OpenIDENet.FileSystem;
 using OpenIDENet.Messaging;
 using OpenIDENet.Arguments;
@@ -13,37 +12,42 @@ namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
 	{
-		private WindsorContainer _container;
-		
-		public DIContainer()
+		public IFS IFS()
 		{
-			_container = new WindsorContainer();
+			return new FS();
 		}
-		
-		public void Configure()
-		{
-			_container.Kernel.Resolver.AddSubResolver(new ArrayResolver(_container.Kernel));
-			_container
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineGoToHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineExploreHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<RunCommandHandler>())
 
-					  .Register(Component.For<IFS>().ImplementedBy<FS>())
-					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
-					  
-					  .Register(Component.For<ILocateEditorEngine>().ImplementedBy<EngineLocator>())
-					  .Register(Component.For<ICodeEngineLocator>().ImplementedBy<CodeEngineDispatcher>());
-		}
-		
-		public T Resolve<T>()
+		public IMessageBus IMessageBus()
 		{
-			return _container.Resolve<T>();
+			return new MessageBus();
 		}
-		
-		public T[] ResolveAll<T>()
+
+		public ILocateEditorEngine ILocateEditorEngine()
 		{
-			return _container.ResolveAll<T>();
+			return new EngineLocator(IFS());
+		}
+
+		public ICodeEngineLocator ICodeEngineLocator()
+		{
+			return new CodeEngineDispatcher(IFS());
+		}
+
+		public IEnumerable<ICommandHandler> ICommandHandlers()
+		{
+			var handlers = new List<ICommandHandler>();
+			handlers.AddRange(getHandlers());
+			handlers.Add(new RunCommandHandler(getHandlers().ToArray()));
+			return handlers;
+		}
+
+		private IEnumerable<ICommandHandler> getHandlers()
+		{
+			return new ICommandHandler[]
+				{
+					new EditorHandler(ILocateEditorEngine()),
+					new CodeEngineGoToHandler(ICodeEngineLocator()),
+					new CodeEngineExploreHandler(ICodeEngineLocator())
+				};
 		}
 	}
 }

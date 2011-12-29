@@ -1,39 +1,108 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace OpenIDENet.Arguments.Handlers
 {
-	public class TemplateDefinitionParser
+	public class UsageParser
 	{
-		public BaseCommandHandlerParameter Parse(string name, string definition)
+		private string _usage;
+
+		public UsageParser(string usage)
 		{
-			try
+			_usage = usage
+				.Replace(Environment.NewLine, " ")
+				.Replace("\t", "");
+		}
+
+		public BaseCommandHandlerParameter[] Parse()
+		{
+			var commands = new List<BaseCommandHandlerParameter>();
+			int index = 0;
+			while (true)
 			{
-				if (!definition.Contains("=>"))
-					return new BaseCommandHandlerParameter(name, definition);
-				var chunks = definition.Split(new string[] { "=>" }, StringSplitOptions.None);
-				var parameters = new BaseCommandHandlerParameter(name, chunks[0]);
-				BaseCommandHandlerParameter parameter = parameters;
-				chunks[1]
-					.Split(new string[] { "||" }, StringSplitOptions.None).ToList()
-					.ForEach(x =>
-						{
-							var y =x.Split(new string[] { "|" }, StringSplitOptions.None);
-							if (y[0].StartsWith("["))
-								parameter = parameter.Add(y[0].Replace("[", "").Replace("]", ""), y[1]).IsOptional();
-							else
-								parameter = parameter.Add(y[0], y[1]);
-						});
-				return parameters;
+				var command = parse(ref index);
+				if (command == null)
+					break;
+				commands.Add(command);
 			}
-			catch
+			return commands.ToArray();
+		}
+
+		private BaseCommandHandlerParameter parse(ref int index)
+		{
+			bool isTerminated;
+			bool isRequired;
+			var command = getCommand(ref index, out isRequired);
+			if (command == null)
+				return null;;
+			var description = getDescription(ref index, out isTerminated);
+			var cmd = new BaseCommandHandlerParameter(command, description);
+			if (!isTerminated)
+				getSubCommands(ref index).ForEach(x => cmd.Add(x));
+			if (!isRequired)
+				cmd.IsOptional();
+			return cmd;
+		}
+
+		private List<BaseCommandHandlerParameter> getSubCommands(ref int index)
+		{
+			var commands = new List<BaseCommandHandlerParameter>();
+			while (true)
 			{
-				return new BaseCommandHandlerParameter(
-					"Usage string is not in the right format: " +
-					"Description string=>Parameter1|Parameter1 description||" +
-					"Parameter2|Parameter2 description",
-					definition);
+				var cmd = parse(ref index);
+				if (cmd == null)
+					throw new Exception(string.Format("Invalid usage. Could not get sub command at {0} in {1}", index, _usage));
+				commands.Add(cmd);
+				if (nextIsTermination(ref index))
+					break;
 			}
+			return commands;
+		}
+
+		private string getCommand(ref int index, out bool required)
+		{
+			required = true;
+			var end = _usage.IndexOf("|\"", index);
+			if (end == -1)
+				return null;
+			var command = _usage.Substring(index, end - index).Trim();
+			if (command.StartsWith("["))
+			{
+				required = false;
+				command = command.Replace("[", "").Replace("]", "");
+			}
+			index = end + "|\"".Length;
+			return command;
+		}
+
+		private string getDescription(ref int index, out bool isTerminated)
+		{
+			var end = _usage.IndexOf("\"", index);
+			if (end == -1)
+				throw new Exception(string.Format("Invalid usage statement. Error parsing description at offset {0} in {1}", index, _usage));
+			var command = _usage.Substring(index, end - index);
+			index = end + "\"".Length;
+			isTerminated = nextIsTermination(ref index);
+			return command.Trim();
+		}
+
+		private bool nextIsTermination(ref int index)
+		{
+			var isTerminated = nextIsTermination(index);
+			if (isTerminated)
+				index = _usage.IndexOf(" end", index) + " end".Length;
+			return isTerminated;
+		}
+
+		private bool nextIsTermination(int index)
+		{
+			var nextCommand = _usage.IndexOf("|\"", index);
+			if (nextCommand == -1)
+				return true;
+			if (_usage.IndexOf(" end", index) < nextCommand)
+				return true;
+			return false;
 		}
 	}
 }

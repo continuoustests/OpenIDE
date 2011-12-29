@@ -18,9 +18,9 @@ namespace CSharp.Commands
 				return 
 					Command + "|\"Dereferences a project/assembly from given project\"" +
 						"REFERENCE|\"Path to the reference to remove\"" +
-							"PROJECT|\"Project to remove the reference from\"" +
-						"end" +
-					"end";
+							"PROJECT|\"Project to remove the reference from\" end " +
+						"end " +
+					"end ";
 			}
 		}
 

@@ -1,29 +1,26 @@
 using System;
 using NUnit.Framework;
-using OpenIDENet.Tests.Messaging;
-using OpenIDENet.Projects.Appenders;
-using OpenIDENet.Projects;
-using OpenIDENet.Messaging.Messages;
+using CSharp.Projects.Appenders;
+using CSharp.Projects;
 using System.IO;
 using Rhino.Mocks;
-using OpenIDENet.FileSystem;
-using OpenIDENet.Files;
-using OpenIDENet.Languages;
-namespace OpenIDENet.Tests.Projects.Appenders
+using CSharp.FileSystem;
+using CSharp.Files;
+namespace CSharp.Tests.Projects.Appenders
 {
 	[TestFixture]
 	public class VS2010FileAppenderTests
 	{
-		private Fake_MessageBus _bus;
 		private VSFileAppender _appender;
 		
 		[SetUp]
 		public void Setup()
 		{
 			var fs = MockRepository.GenerateMock<IFS>();
-			fs.Stub(f => f.FileExists("")).IgnoreArguments().Return(true);
-			_bus = new Fake_MessageBus();
-			_appender = new VSFileAppender(_bus, fs);
+			fs.Stub(x => x.FileExists(new CompileFile("somefile.cs").Fullpath)).Return(true);
+			fs.Stub(x => x.FileExists(new CompileFile("someotherfile.cs").Fullpath)).Return(true);
+			fs.Stub(x => x.FileExists(new CompileFile(Path.GetFullPath(Path.Combine("somesubdir", "somefile.cs"))).Fullpath)).Return(true);
+			_appender = new VSFileAppender(fs);
 		}
 		
 		[Test]
@@ -32,7 +29,7 @@ namespace OpenIDENet.Tests.Projects.Appenders
 			var project = getProject(Path.GetFullPath("someproject.csproj"), "");
 			_appender.Append(project, new CompileFile("somefile.cs"));
 			
-			_bus.Published<FailMessage>();
+			Assert.That(project.Content, Is.EqualTo(""));
 		}
 		
 		[Test]
@@ -41,19 +38,18 @@ namespace OpenIDENet.Tests.Projects.Appenders
 			var project = getProject(Path.GetFullPath("someproject.csproj"), "<someelement></someelement>");
 			_appender.Append(project, new CompileFile("somefile.cs"));
 			
-			_bus.Published<FailMessage>();
+			Assert.That(project.Content, Is.EqualTo("<someelement></someelement>"));
 		}
 		
 		[Test]
 		public void Should_publish_faliure_when_file_does_not_exist()
 		{
 			var fs = MockRepository.GenerateMock<IFS>();
-			var bus = new Fake_MessageBus();
-			var appender = new VSFileAppender(bus, fs);
+			var appender = new VSFileAppender(fs);
 			var project = getProject(Path.GetFullPath("someproject.csproj"), "<Project><ItemGroup><Compile Include=\"BuildRunners\\MSBuildOutputParser.cs\" /></ItemGroup></Project>");
 			appender.Append(project, new CompileFile("somefile.cs"));
 			
-			bus.Published<FailMessage>();
+			Assert.That(project.Content, Is.EqualTo("<Project><ItemGroup><Compile Include=\"BuildRunners\\MSBuildOutputParser.cs\" /></ItemGroup></Project>"));
 		}
 		
 		[Test]
@@ -122,7 +118,7 @@ namespace OpenIDENet.Tests.Projects.Appenders
 		
 		private Project getProject(string file, string content)
 		{
-			return new Project(file, content, new ProjectSettings(SupportedLanguage.CSharp, ""));
+			return new Project(file, content, new ProjectSettings("C#", ""));
 		}
 	}
 }

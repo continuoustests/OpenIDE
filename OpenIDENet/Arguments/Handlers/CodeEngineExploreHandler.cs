@@ -1,5 +1,4 @@
 using System;
-using OpenIDENet.Languages;
 using OpenIDENet.CodeEngineIntegration;
 namespace OpenIDENet.Arguments.Handlers
 {
@@ -10,7 +9,7 @@ namespace OpenIDENet.Arguments.Handlers
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.All,
+					"All",
 					CommandType.FileCommand,
 					Command,
 					"Launches the code engines file explorer window");

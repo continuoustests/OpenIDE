@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using OpenIDENet.Languages;
 using OpenIDENet.UI;
 using OpenIDENet.CommandBuilding;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace OpenIDENet.Arguments.Handlers
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.All,
+					"All",
 					CommandType.Run,
 					Command,
 					"Launches the command execution window");

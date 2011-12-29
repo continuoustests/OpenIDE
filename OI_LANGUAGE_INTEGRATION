@@ -13,6 +13,7 @@ Getting command definitions for this language extension
 		get-command-definitions
 	
 	RESPONSE FORMAT:
+		// Wrapping the command name with [] means the command is optional
 		// This is the definition response for the following commands:
 		// new file FILE_NAME
 		// new directory DIR_NAME
@@ -27,9 +28,24 @@ Getting command definitions for this language extension
 			end
 		end
 
+Plugin language
+	PARAMETER:
+		get-language
+	
+	RESPONSE FORMAT:
+		// String describing the language like:
+		C#
+
+Suppoerted file extensions. This determintes what files will be sent over for change tracking
+	PARAMETER
+		crawl-file-types
+	
+	RESPONSE FORMAT:
+		*.csproj|*.cs
+
 Crawl directories and/or files
 	PARAMETER:
-		crawl-source PATH_TO_FILE_CONTIAINING_LINE_PR_FILE_OR_DIR_TO_PARSE
+		crawl-source PATH_TO_FILE_CONTIAINING_LINE_PR_FILE_OR_DIR_TO_CRAWL
 	
 	RESPONSE FORMAT:
 		// Project is optional. Other than that the hierarchy is as follows

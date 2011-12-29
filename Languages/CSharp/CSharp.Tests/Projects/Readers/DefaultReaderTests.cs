@@ -1,17 +1,16 @@
 using System;
 using NUnit.Framework;
-using OpenIDENet.Projects.Readers;
+using CSharp.Projects.Readers;
 using Rhino.Mocks;
-using OpenIDENet.FileSystem;
+using CSharp.FileSystem;
 using System.Text;
-using OpenIDENet.Projects;
-using OpenIDENet.Languages;
-namespace OpenIDENet.Tests
+using CSharp.Projects;
+namespace CSharp.Tests.Projects.Readers
 {
 	[TestFixture]
 	public class DefaultReaderTests
 	{
-		private IProject _project;
+		private Project _project;
 		
 		[SetUp]
 		public void Setup()
@@ -24,7 +23,7 @@ namespace OpenIDENet.Tests
 		[Test]
 		public void Should_parse_project_type()
 		{
-			Assert.That(_project.Settings.Type, Is.EqualTo(SupportedLanguage.CSharp));
+			Assert.That(_project.Settings.Type, Is.EqualTo("C#"));
 		}
 		
 		[Test]

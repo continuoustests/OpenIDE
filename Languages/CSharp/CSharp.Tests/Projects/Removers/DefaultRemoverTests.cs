@@ -1,20 +1,16 @@
 using System;
 using NUnit.Framework;
-using OpenIDENet.Projects.Removers;
-using OpenIDENet.Tests.Messaging;
-using OpenIDENet.Messaging.Messages;
-using OpenIDENet.Files;
-using OpenIDENet.Projects;
+using CSharp.Projects.Removers;
+using CSharp.Files;
+using CSharp.Projects;
 using System.IO;
-using OpenIDENet.FileSystem;
+using CSharp.FileSystem;
 using Rhino.Mocks;
-using OpenIDENet.Languages;
-namespace OpenIDENet.Tests.Projects.Removers
+namespace CSharp.Tests.Projects.Removers
 {
 	[TestFixture]
 	public class DefaultRemoverTests
 	{
-		private Fake_MessageBus _bus;
 		private DefaultRemover _remover;
 		
 		[SetUp]
@@ -22,8 +18,7 @@ namespace OpenIDENet.Tests.Projects.Removers
 		{
 			var fs = MockRepository.GenerateMock<IFS>();
 			fs.Stub(f => f.FileExists("")).IgnoreArguments().Return(true);
-			_bus = new Fake_MessageBus();
-			_remover = new DefaultRemover(_bus, fs);
+			_remover = new DefaultRemover(fs);
 		}
 		
 		[Test]
@@ -32,7 +27,6 @@ namespace OpenIDENet.Tests.Projects.Removers
 			var project = getProject(Path.GetFullPath("someproject.csproj"), "");
 			_remover.Remove(project, new CompileFile("somefile.cs"));
 			
-			_bus.Published<FailMessage>();
 		}
 		
 		[Test]
@@ -46,7 +40,7 @@ namespace OpenIDENet.Tests.Projects.Removers
 		
 		private Project getProject(string file, string content)
 		{
-			return new Project(file, content, new ProjectSettings(SupportedLanguage.CSharp, ""));
+			return new Project(file, content, new ProjectSettings("C#", ""));
 		}
 	}
 }

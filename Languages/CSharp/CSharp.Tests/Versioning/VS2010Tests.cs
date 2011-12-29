@@ -1,8 +1,8 @@
 using System;
 using NUnit.Framework;
-using OpenIDENet.Versioning;
+using CSharp.Versioning;
 using System.IO;
-namespace OpenIDENet.Tests
+namespace CSharp.Tests.Versioning
 {
 	[TestFixture]
 	public class VS2010Tests
