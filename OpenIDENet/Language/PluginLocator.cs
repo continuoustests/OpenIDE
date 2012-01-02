@@ -10,56 +10,24 @@ namespace OpenIDENet.Language
 {
 	public class PluginLocator
 	{
-		public string[] Locate()
+		public LanguagePlugin[] Locate()
 		{
 			return getPlugins()
-				.Where(x => hasUsages(x)).ToArray();
-		}
-
-		public string GetLanguage(string plugin)
-		{
-			return run(plugin, "get-language");
+				.Select(x => new LanguagePlugin(x, run))
+				.Where(x => x.GetUsages().Count() > 0).ToArray();
 		}
 		
 		public IEnumerable<CommandHandlerParameter> GetUsages()
-		{
-			return getUsages();
-		}
-		
-		private bool hasUsages(string plugin)
-		{
-			var usage = getUsage(plugin);
-			return new UsageParser(usage).Parse().Length > 0;
-		}
-
-		private IEnumerable<CommandHandlerParameter> getUsages()
 		{
 			var commands = new List<CommandHandlerParameter>();
 			getPlugins().ToList()
 				.ForEach(x => 
 					{
-						new UsageParser(getUsage(x))
-							.Parse().ToList()
-								.ForEach(y =>
-									{
-										var cmd = new CommandHandlerParameter(
-											GetLanguage(x),
-											CommandType.FileCommand,
-											y.Name,
-											y.Description);
-										y.Parameters.ToList()
-											.ForEach(p => cmd.Add(p));
-										if (!y.Required)
-											cmd.IsOptional();
-										commands.Add(cmd);
-									});
+						var plugin = new LanguagePlugin(x, run);
+						plugin.GetUsages().ToList()
+							.ForEach(y => commands.Add(y));
 					});
-				return commands;
-		}
-
-		private string getUsage(string plugin)
-		{
-			return run(plugin, "get-command-definitions");
+			return commands;
 		}
 
 		private string[] getPlugins()
@@ -70,7 +38,7 @@ namespace OpenIDENet.Language
 					"Languages"));
 		}
 
-		private string run(string cmd, string arguments)
+		private IEnumerable<string> run(string cmd, string arguments)
 		{
 			var proc = new Process();
             if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
@@ -85,8 +53,8 @@ namespace OpenIDENet.Language
 			var output = proc.StandardOutput.ReadToEnd();
 			proc.WaitForExit();
 			if (output.Length > Environment.NewLine.Length)
-				return output.Substring(0, output.Length - Environment.NewLine.Length);
-			return output;
+				output = output.Substring(0, output.Length - Environment.NewLine.Length);
+			return output.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 		}
 	}
 }

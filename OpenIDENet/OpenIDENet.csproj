@@ -102,6 +102,7 @@
     <Compile Include="CommandBuilding\CommandAutoCompletion.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletion.cs" />
     <Compile Include="Language\PluginLocator.cs" />
+    <Compile Include="Language\LanguagePlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
