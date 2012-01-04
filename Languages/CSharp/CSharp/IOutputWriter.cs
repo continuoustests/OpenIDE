@@ -61,8 +61,8 @@ namespace CSharp
 		private void writeSignature(string type, ICodeReference coderef)
 		{
 			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}",
-				coderef.Name,
 				coderef.Signature,
+				coderef.Name,
 				type,
 				coderef.Offset,
 				coderef.Line,

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace OpenIDENet.Arguments.Handlers
+namespace OpenIDENet.Core.Language
 {
 	public class UsageParser
 	{

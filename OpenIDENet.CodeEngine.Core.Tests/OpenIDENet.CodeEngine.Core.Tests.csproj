@@ -64,6 +64,7 @@
     <Compile Include="Caching\HierarchyBuilderTests.cs" />
     <Compile Include="Caching\TypeCacheTests.cs" />
     <Compile Include="FileSystem\PathParserTests.cs" />
+    <Compile Include="ChangeTrackersCrawlHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

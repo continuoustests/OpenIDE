@@ -4,26 +4,34 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
-using OpenIDENet.Arguments;
-using OpenIDENet.Arguments.Handlers;
-namespace OpenIDENet.Language
+
+namespace OpenIDENet.Core.Language
 {
 	public class PluginLocator
 	{
+		private string _languageRoot;
+		private Action<string> _dispatchMessage;
+
+		public PluginLocator(string languageRoot, Action<string> dispatchMessage)
+		{
+			_languageRoot = languageRoot;
+			_dispatchMessage = dispatchMessage;
+		}
+
 		public LanguagePlugin[] Locate()
 		{
 			return getPlugins()
-				.Select(x => new LanguagePlugin(x, run))
+				.Select(x => new LanguagePlugin(x, run, _dispatchMessage))
 				.Where(x => x.GetUsages().Count() > 0).ToArray();
 		}
 		
-		public IEnumerable<CommandHandlerParameter> GetUsages()
+		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
 		{
-			var commands = new List<CommandHandlerParameter>();
+			var commands = new List<BaseCommandHandlerParameter>();
 			getPlugins().ToList()
 				.ForEach(x => 
 					{
-						var plugin = new LanguagePlugin(x, run);
+						var plugin = new LanguagePlugin(x, run, _dispatchMessage);
 						plugin.GetUsages().ToList()
 							.ForEach(y => commands.Add(y));
 					});
@@ -32,10 +40,13 @@ namespace OpenIDENet.Language
 
 		private string[] getPlugins()
 		{
-			return Directory.GetFiles(
+			var dir = 
 				Path.Combine(
-					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"Languages"));
+					_languageRoot,
+					"Languages");
+			if (!Directory.Exists(dir))
+				return new string[] {};
+			return Directory.GetFiles(dir);
 		}
 
 		private IEnumerable<string> run(string cmd, string arguments)

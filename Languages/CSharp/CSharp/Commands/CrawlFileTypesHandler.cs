@@ -10,7 +10,7 @@ namespace CSharp.Commands
 
 		public void Execute(string[] args)
 		{
-			Console.WriteLine("*.csproj|*.cs");
+			Console.WriteLine(".csproj|.cs");
 		}
 	}
 }

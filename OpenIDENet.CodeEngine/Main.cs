@@ -1,14 +1,17 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Endpoints;
 using System.IO;
 using System.Threading;
+using System.Reflection;
 using OpenIDENet.CodeEngine.Core.ChangeTrackers;
 using OpenIDENet.CodeEngine.Core.Logging;
 using OpenIDENet.CodeEngine.Core.UI;
 using OpenIDENet.CodeEngine.Core.EditorEngine;
 using System.Drawing;
+using OpenIDENet.Core.Language;
 
 namespace OpenIDENet.CodeEngine
 {
@@ -76,7 +79,16 @@ namespace OpenIDENet.CodeEngine
         {
             Logger.Assign(new FileLogger());
             var cache = new TypeCache();
-			// TODO set up crawling, file watching
+			var crawlHandler = new CrawlHandler(cache);
+			var pluginLocator = new PluginLocator(
+				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
+				(msg) => {});
+			initPlugins(pluginLocator, crawlHandler);
+			var tracker = new PluginFileTracker();
+			tracker.Start(
+				_path,
+				cache,
+				pluginLocator);
 
             var endpoint = new CommandEndpoint(_path, cache, handleMessage);
             endpoint.Start(_path);
@@ -84,6 +96,19 @@ namespace OpenIDENet.CodeEngine
                 Thread.Sleep(100);
             Close();
         }
+
+		private void initPlugins(PluginLocator locator, CrawlHandler handler)
+		{
+			new Thread(() =>
+				{
+					locator.Locate().ToList()
+						.ForEach(x => 
+							{
+								foreach (var line in x.Crawl(new string[] { _path }))
+									handler.Handle(line);
+							});
+				}).Start();
+		}
 
         private void handleMessage(string message, ITypeCache cache, Editor editor)
         {

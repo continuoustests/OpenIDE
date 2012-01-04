@@ -45,7 +45,6 @@ namespace OpenIDENet.CodeEngine.Core.Caching.Search
         public List<FileFindResult> GetNextStepInProject(Project project, string directory)
         {
             var list = new List<FileFindResult>();
-			// TODO get files in project from file list
             _files
                 .Where(x => x.Project != null && x.Project.Equals(project.File) &&
 							(Path.GetDirectoryName(project.File).Equals(directory) || x.File.StartsWith(directory)))

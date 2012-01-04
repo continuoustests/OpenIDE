@@ -18,8 +18,9 @@ namespace CSharp.Commands
 		public void Execute(string[] args)
 		{
 			var output = "";
-			_dispatcher.GetHandlers().ToList()
-				.ForEach(x => output += x.Usage);
+			_dispatcher.GetHandlers()
+				.Where(x => x.Usage != null).ToList()
+				.ForEach(x => output += x.Usage + " ");
 			Console.WriteLine(output);
 		}
 	}

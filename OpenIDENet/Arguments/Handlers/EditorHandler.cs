@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using OpenIDENet.Core.Language;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler

@@ -7,11 +7,10 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 {
 	public class TypeCache : ICacheBuilder, ITypeCache
 	{
-		
-		
 		private List<Project> _projects = new List<Project>();
 		private List<ProjectFile> _files = new List<ProjectFile>();
 		private List<ICodeReference> _codeReferences = new List<ICodeReference>();
+		private List<ISignatureReference> _signatureReferences = new List<ISignatureReference>();
 
 		public int ProjectCount { get { return _projects.Count; } }
 		public int FileCount { get { return _files.Count; } }
@@ -19,7 +18,9 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		
 		public List<ICodeReference> Find(string name)
 		{
-			return _codeReferences.OrderBy(x => nameSort(x.Name, name)).ToList();
+			return _codeReferences
+				.Where(x => x.Signature.ToLower().Contains(name.ToLower()))
+				.OrderBy(x => nameSort(x.Signature, name)).ToList();
 		}
 
         public List<FileFindResult> FindFiles(string searchString)
@@ -76,10 +77,19 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		
 		public void Invalidate(string file)
 		{
-			lock (_files) {
-				lock (_codeReferences) {
-					_files.RemoveAll(x => x.File.Equals(file));
-					_codeReferences.RemoveAll(x => x.File.Equals(file));
+			var project = GetProject(file);
+			if (project != null) {
+				lock (_files) {
+					_files.RemoveAll(x => x.Project.Equals(file));
+				}
+			}
+			else {
+				lock (_files) {
+					lock (_codeReferences) {
+						_files.RemoveAll(x => x.File.Equals(file));
+						_codeReferences.RemoveAll(x => x.File.Equals(file));
+						_signatureReferences.RemoveAll(x => x.File.Equals(file));
+					}
 				}
 			}
 		}
@@ -100,6 +110,12 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		{
 			lock (_codeReferences)
 				_codeReferences.AddRange(references);
+		}
+
+		public void Add(ISignatureReference reference)
+		{
+			lock (_signatureReferences)
+				_signatureReferences.Add(reference);
 		}
 		
 		private int nameSort(string name, string compareString)

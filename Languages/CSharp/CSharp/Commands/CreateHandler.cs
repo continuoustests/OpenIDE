@@ -25,9 +25,9 @@ namespace CSharp.Commands
 							{
 								var command = getUsage(x);
 								if (command != null)
-									usage += listUsages(command);
+									usage += " " + listUsages(command);
 							});
-					return usage + "end ";
+					return usage + " end ";
 				} catch {
 					return null;
 				}
@@ -38,8 +38,8 @@ namespace CSharp.Commands
 		{
 			var usage = command.Name + "|\"" + command.Description + "\"";
 			command.Parameters.ToList()
-				.ForEach(x => usage += listUsages(x));
-			return usage + "end ";
+				.ForEach(x => usage += " " + listUsages(x));
+			return usage + " end ";
 		}
 
 		private BaseCommandHandlerParameter getUsage(string template)

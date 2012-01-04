@@ -41,7 +41,7 @@ Suppoerted file extensions. This determintes what files will be sent over for ch
 		crawl-file-types
 	
 	RESPONSE FORMAT:
-		*.csproj|*.cs
+		.csproj|.cs
 
 Crawl directories and/or files
 	PARAMETER:

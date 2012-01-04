@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 using OpenIDENet.Arguments;
+using OpenIDENet.Core.Language;
 using OpenIDENet.CommandBuilding;
 using System.Text;
 

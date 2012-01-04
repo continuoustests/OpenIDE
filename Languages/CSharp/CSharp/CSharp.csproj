@@ -99,6 +99,7 @@
     <Compile Include="IOutputWriter.cs" />
     <Compile Include="Commands\CrawlHandler.cs" />
     <Compile Include="Commands\CrawlFileTypesHandler.cs" />
+    <Compile Include="Commands\LanguageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

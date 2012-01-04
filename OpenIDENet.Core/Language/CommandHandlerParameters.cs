@@ -1,7 +1,8 @@
+
 using System;
 using System.Collections.Generic;
 
-namespace OpenIDENet.Arguments
+namespace OpenIDENet.Core.Language
 {
 	public class BaseCommandHandlerParameter
 	{
@@ -11,6 +12,7 @@ namespace OpenIDENet.Arguments
 		private string _description = "";
 		public string Description { get { return GetDescription(""); } }
 		public bool Required { get; private set; }
+		public CommandType Type { get; private set; }
 		public IEnumerable<BaseCommandHandlerParameter> Parameters { get { return _parameters; } }
 
 		public BaseCommandHandlerParameter(string name, string description)
@@ -18,6 +20,16 @@ namespace OpenIDENet.Arguments
 			Name = name;
 			_description = description;
 			Required = true;
+			Type = CommandType.SubParameter;
+			_parameters = new List<BaseCommandHandlerParameter>();
+		}
+
+		public BaseCommandHandlerParameter(string name, string description, CommandType type)
+		{
+			Name = name;
+			_description = description;
+			Required = true;
+			Type = type;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
 
@@ -56,13 +68,12 @@ namespace OpenIDENet.Arguments
 	public class CommandHandlerParameter : BaseCommandHandlerParameter
 	{
 		public string Language { get; private set; }
-		public CommandType Type { get; private set; }
+		
 
 		public CommandHandlerParameter(string language, CommandType type, string name, string description) :
-			base(name, description)
+			base(name, description, type)
 		{
 			Language = language;
-			Type = type;
 		}
 	}
 
@@ -71,6 +82,8 @@ namespace OpenIDENet.Arguments
 		Initialization,
 		FileCommand,
 		ProjectCommand,
-		Run
+		Run,
+		SubParameter,
+		LanguageCommand
 	}
 }

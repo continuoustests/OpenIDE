@@ -16,7 +16,7 @@ namespace OpenIDENet.Bootstrapping
 		
 		public static ICommandDispatcher GetDispatcher()
 		{
-			return new CommandDispatcher(GetCommandHandlers().ToArray());
+			return _container.GetDispatcher();
 		}
 
 		public static IEnumerable<ICommandHandler> GetCommandHandlers()

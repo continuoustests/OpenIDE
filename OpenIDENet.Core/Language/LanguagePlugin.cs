@@ -4,20 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using OpenIDENet.Arguments;
-using OpenIDENet.Arguments.Handlers;
 
-namespace OpenIDENet.Language
+namespace OpenIDENet.Core.Language
 {
 	public class LanguagePlugin
 	{
 		private string _path;
 		private Func<string, string, IEnumerable<string>> _execute;
+		private Action<string> _dispatch;
 
-		public LanguagePlugin(string path, Func<string, string, IEnumerable<string>> execute)
+		public LanguagePlugin(
+			string path,
+			Func<string, string, IEnumerable<string>> execute,
+			Action<string> dispatch)
 		{
 			_path = path;
 			_execute = execute;
+			_dispatch = dispatch;
 		}
 
 		public string GetLanguage()
@@ -25,7 +28,7 @@ namespace OpenIDENet.Language
 			return ToSingleLine("get-language");
 		}
 
-		public IEnumerable<CommandHandlerParameter> GetUsages()
+		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
 		{
 			return getUsages();
 		}
@@ -38,23 +41,33 @@ namespace OpenIDENet.Language
 		public IEnumerable<string> Crawl(IEnumerable<string> filesAndFolders)
 		{
 			var file = Path.GetTempFileName();
-			File.WriteAllLines(filesAndFolders.ToArray());
+			File.WriteAllLines(file, filesAndFolders.ToArray());
 			foreach (var line in run(string.Format("crawl-source \"{0}\"", file)))
 				yield return line;
+			File.Delete(file);
+		}
+
+		public void Run(string[] arguments)
+		{
+			var sb = new StringBuilder();
+			arguments.ToList()
+				.ForEach(x => sb.Append(" " + x));
+			foreach (var line in run(sb.ToString()))
+				_dispatch(line);
 		}
 		
-		private IEnumerable<CommandHandlerParameter> getUsages()
+		private IEnumerable<BaseCommandHandlerParameter> getUsages()
 		{
-			var commands = new List<CommandHandlerParameter>();
-			new UsageParser(getUsage())
+			var commands = new List<BaseCommandHandlerParameter>();
+			var usage = getUsage();
+			new UsageParser(usage)
 				.Parse().ToList()
 					.ForEach(y =>
 						{
-							var cmd = new CommandHandlerParameter(
-								GetLanguage(),
-								CommandType.FileCommand,
+							var cmd = new BaseCommandHandlerParameter(
 								y.Name,
-								y.Description);
+								y.Description,
+								CommandType.FileCommand);
 							y.Parameters.ToList()
 								.ForEach(p => cmd.Add(p));
 							if (!y.Required)
@@ -71,10 +84,13 @@ namespace OpenIDENet.Language
 
 		private string ToSingleLine(string arguments)
 		{
-			var text = new StringBuilder();
+			var sb = new StringBuilder();
 			run(arguments).ToList()
-				.ForEach(x => text.Append(text));
-			return text.ToString();
+				.ForEach(x => 
+					{
+						sb.Append(x);
+					});
+			return sb.ToString();
 		}
 
 		private IEnumerable<string> run(string arguments)

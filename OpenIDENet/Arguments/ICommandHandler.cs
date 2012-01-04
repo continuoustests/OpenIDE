@@ -1,4 +1,6 @@
 using System;
+using OpenIDENet.Core.Language;
+
 namespace OpenIDENet.Arguments
 {
 	public interface ICommandHandler

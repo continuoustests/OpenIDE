@@ -4,6 +4,7 @@ using OpenIDENet.UI;
 using OpenIDENet.CommandBuilding;
 using System.Collections.Generic;
 using System.IO;
+using OpenIDENet.Core.Language;
 
 namespace OpenIDENet.Arguments.Handlers
 {

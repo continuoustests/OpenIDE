@@ -19,19 +19,25 @@ mkdir %DEPLOYDIR%\CodeEngine
 mkdir %DEPLOYDIR%\EditorEngine
 mkdir %DEPLOYDIR%\AutoTest.Net
 mkdir %DEPLOYDIR%\ContinuousTests
-mkdir %DEPLOYDIR%\templates
+mkdir %DEPLOYDIR%\Languages
+mkdir %DEPLOYDIR%\Languages\CSharp
+mkdir %DEPLOYDIR%\Languages\CSharp\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
+%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%Languages\CSharp\CSharp.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 
-xcopy %BINARYDIR%\Castle*.* %DEPLOYDIR%
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
 copy %BINARYDIR%\OpenIDENet.dll %DEPLOYDIR%\OpenIDENet.dll
+copy %BINARYDIR%\OpenIDENet.Core.dll %DEPLOYDIR%\OpenIDENet.Core.dll
 copy %ROOT%\initialize.rb %DEPLOYDIR%\initialize.rb
 xcopy /S /I /E %LIB%\EditorEngine %DEPLOYDIR%\EditorEngine
 xcopy /S /I /E %LIB%\AutoTest.Net %DEPLOYDIR%\AutoTest.Net
 xcopy /S /I /E %LIB%\ContinuousTests %DEPLOYDIR%\ContinuousTests
-xcopy /S /I /E %ROOT%\templates %DEPLOYDIR%\templates
 copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDENet.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.exe
 copy %BINARYDIR%\OpenIDENet.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.Core.dll
+copy %BINARYDIR%\OpenIDENet.Core.dll %DEPLOYDIR%\OpenIDENet.CodeEngine\OpenIDENet.Core.dll
+
+copy %BINARYDIR%\CSharp.exe %DEPLOYDIR%\Languages\CSharp.exe
+xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\CSharp

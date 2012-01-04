@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -61,6 +61,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIDENet.Core\OpenIDENet.Core.csproj">
+      <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>OpenIDENet.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Arguments\ICommandDispatcher.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="UI\RunCommandForm.cs">
@@ -83,7 +89,6 @@
     <Compile Include="Arguments\CommandDispatcher.cs" />
     <Compile Include="Arguments\ICommandHandler.cs" />
     <Compile Include="Exceptions\InvalidArgumentsException.cs" />
-    <Compile Include="Arguments\ProviderSettings.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
     <Compile Include="EditorEngineIntegration\Client.cs" />
     <Compile Include="EditorEngineIntegration\IClient.cs" />
@@ -93,16 +98,13 @@
     <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
     <Compile Include="CodeEngineIntegration\Instance.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineHandler.cs" />
-    <Compile Include="Arguments\CommandHandlerParameters.cs" />
-    <Compile Include="Arguments\Handlers\TemplateDefinitionParser.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
     <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
     <Compile Include="CommandBuilding\CommandBuilder.cs" />
     <Compile Include="CommandBuilding\CommandStringParser.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletion.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletion.cs" />
-    <Compile Include="Language\PluginLocator.cs" />
-    <Compile Include="Language\LanguagePlugin.cs" />
+    <Compile Include="Arguments\Handlers\LanguageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

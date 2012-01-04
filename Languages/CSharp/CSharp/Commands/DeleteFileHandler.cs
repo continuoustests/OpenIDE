@@ -8,7 +8,7 @@ namespace CSharp.Commands
 
 		public string Usage {
 			get {
-				return Command + "\"Removes a file from the closest project and deletes it\"" +
+				return Command + "|\"Removes a file from the closest project and deletes it\"" +
 							"FILE_TO_DELETE|\"Relative or full path to the file to delete\" end " +
 					   "end ";
 			}

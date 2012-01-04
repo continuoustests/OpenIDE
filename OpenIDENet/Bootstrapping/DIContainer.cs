@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using OpenIDENet.FileSystem;
 using OpenIDENet.Messaging;
@@ -7,11 +9,45 @@ using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
 using OpenIDENet.EditorEngineIntegration;
 using OpenIDENet.CodeEngineIntegration;
+using OpenIDENet.Core.Language;
+using OpenIDENet.CommandBuilding;
 
 namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
 	{
+		private ICommandDispatcher _dispatcher;
+		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
+
+		public DIContainer()
+		{
+			addCommandHandlers();
+			_dispatcher = new CommandDispatcher(_handlers.ToArray());
+		}
+
+		private void addCommandHandlers()
+		{
+			_handlers = new List<ICommandHandler>();
+			_handlers.AddRange(
+				new ICommandHandler[]
+				{
+					new EditorHandler(ILocateEditorEngine()),
+					new CodeEngineGoToHandler(ICodeEngineLocator()),
+					new CodeEngineExploreHandler(ICodeEngineLocator())
+				});
+			
+			var plugins = PluginLocator().Locate();
+			plugins.ToList()
+				.ForEach(x => _handlers.Add(new LanguageHandler(x)));
+
+			_handlers.Add(new RunCommandHandler(_handlers.ToArray()));
+		}
+
+		public ICommandDispatcher GetDispatcher()
+		{
+			return _dispatcher;
+		}
+
 		public IFS IFS()
 		{
 			return new FS();
@@ -20,6 +56,22 @@ namespace OpenIDENet.Bootstrapping
 		public IMessageBus IMessageBus()
 		{
 			return new MessageBus();
+		}
+
+		public PluginLocator PluginLocator()
+		{
+			return new PluginLocator(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				(command) => dispatchMessage(command));
+		}
+
+		private void dispatchMessage(string command)
+		{
+			var parser = new CommandStringParser();
+			var args = parser.Parse(command);
+			_dispatcher.For(
+				parser.GetCommand(args),
+				parser.GetArguments(args));
 		}
 
 		public ILocateEditorEngine ILocateEditorEngine()
@@ -34,20 +86,7 @@ namespace OpenIDENet.Bootstrapping
 
 		public IEnumerable<ICommandHandler> ICommandHandlers()
 		{
-			var handlers = new List<ICommandHandler>();
-			handlers.AddRange(getHandlers());
-			handlers.Add(new RunCommandHandler(getHandlers().ToArray()));
-			return handlers;
-		}
-
-		private IEnumerable<ICommandHandler> getHandlers()
-		{
-			return new ICommandHandler[]
-				{
-					new EditorHandler(ILocateEditorEngine()),
-					new CodeEngineGoToHandler(ICodeEngineLocator()),
-					new CodeEngineExploreHandler(ICodeEngineLocator())
-				};
+			return _handlers;
 		}
 	}
 }

@@ -18,6 +18,7 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		void Add(ProjectFile file);
 		void Add(ICodeReference reference);
 		void Add(IEnumerable<ICodeReference> references);
+		void Add(ISignatureReference reference);
 	}
 }
 

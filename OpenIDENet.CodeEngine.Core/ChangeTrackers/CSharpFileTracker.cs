@@ -4,24 +4,52 @@ using System.IO;
 using System.Collections.Generic;
 using OpenIDENet.CodeEngine.Core.Caching;
 using System.Linq;
+using OpenIDENet.Core.Language;
 namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 {
-	public class CSharpFileTracker
+	public class PluginFileTracker 
 	{
+		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
 		private ICacheBuilder _cache;
 		
-		public void Start(string path, ICacheBuilder cache)
+		public void Start(string path, ICacheBuilder cache, PluginLocator pluginLocator)
 		{
 			_cache = cache;
 			_tracker = new FileChangeTracker();
-			_tracker.Start(path, "*.cs*", handleChanges);
+			pluginLocator.Locate().ToList()
+				.ForEach(x => _plugins.Add(new PluginPattern(x)));
+			_tracker.Start(path, getFilter(), handleChanges);
+		}
+
+		private string getFilter()
+		{
+			var pattern = "";
+			_plugins
+				.ForEach(x => 
+					{
+						x.Patterns
+							.ForEach(y =>
+								{
+									if (pattern == "")
+										pattern = "*" + y;
+									else
+										pattern += "|*" + y;
+								});
+					});
+			return pattern;
 		}
 			               
 		private void handleChanges(Stack<FileSystemEventArgs> buffer)
 		{
+			var cacheHandler = new CrawlHandler(_cache);
 			var files = getChanges(buffer);
-			files.ForEach(x => handle(x));
+			files.ForEach(x =>
+				{
+					_cache.Invalidate(x.FullPath);
+					handle(x);
+				});
+			_plugins.ForEach(x => x.Handle(cacheHandler));
 		}
 		
 		private List<FileSystemEventArgs> getChanges(Stack<FileSystemEventArgs> buffer)
@@ -30,7 +58,7 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 			while (buffer.Count != 0)
 			{
 				var item = buffer.Pop();
-				if (!list.Contains(item))
+				if (item != null && !list.Contains(item))
 					list.Add(item);
 			}
 			return list;
@@ -46,66 +74,44 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 			var extension = Path.GetExtension(file.FullPath).ToLower();
 			if (extension == null)
 				return;
-			/*if (extension.Equals(".csproj"))
-				handleProject(file);
-			else if (extension.Equals(".cs"))
-				handleFile(file);*/
+			_plugins.ForEach(x =>
+				{
+					if (x.Supports(extension))
+						x.FilesToHandle.Add(file.FullPath);
+				});
 		}
-		
-		// TODO file watcher handling must be sent to integration points
-		/*private void handleProject(FileSystemEventArgs file)
+	}
+
+	class PluginPattern
+	{
+		public LanguagePlugin Plugin { get; private set; }
+		public List<string> Patterns { get; private set; }
+		public List<string> FilesToHandle { get; private set; }
+
+		public PluginPattern(LanguagePlugin plugin)
 		{
-			lock (_cache)
-			{
-				var project = _cache.GetProject(file.FullPath);
-				var files = new ProjectReader(file.FullPath).ReadFiles();
-				if (project == null)
-					addProject(file.FullPath, files);
-				else
-					updateProject(project, files);
-			}
-			
+			Plugin = plugin;
+			Patterns = new List<string>();
+			Patterns.AddRange(
+				Plugin
+					.GetCrawlFileTypes()
+						.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries));
+			FilesToHandle = new List<string>();
 		}
-		
-		private void addProject(string file, List<string> files)
+
+		public bool Supports(string extension)
 		{
-			var project = new Project(file);
-			project.Files.AddRange(files);
-			_cache.AddProject(project);
-			project.Files.ForEach(x => addFile(x));
+			return Patterns.Count(x => x.ToLower().Equals(extension)) > 0;
 		}
-		
-		private void updateProject(Project project, List<string> files)
+
+		public void Handle(CrawlHandler cacheHandler)
 		{
-			project.Files.Where(x => !files.Contains(x)).ToList()
-				.ForEach(x => {
-								project.Files.Remove(x);
-								removeFile(x);
-							  });
-			files.Where(x => !project.Files.Contains(x)).ToList()
-				.ForEach(x => {
-								project.Files.Add(x);
-								addFile(x);
-							   });
+			if (FilesToHandle.Count == 0)
+				return;
+			foreach (var line in Plugin.Crawl(FilesToHandle))
+				cacheHandler.Handle(line);
+			FilesToHandle.Clear();
 		}
-		
-		private void addFile(string file)
-		{
-			if (!_cache.FileExists(file))
-				new CSharpFileParser(_cache).ParseFile(file, () => { return File.ReadAllText(file); });
-		}
-		
-		private void removeFile(string file)
-		{
-			_cache.Invalidate(file);
-		}
-		
-		private void handleFile(FileSystemEventArgs file)
-		{
-			_cache.Invalidate(file.FullPath);
-			if (file.ChangeType != WatcherChangeTypes.Deleted)
-				new CSharpFileParser(_cache).ParseFile(file.FullPath, () => { return File.ReadAllText(file.FullPath); });
-		}*/
 	}
 }
 

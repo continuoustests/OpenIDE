@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using OpenIDENet.Arguments.Handlers;
-using OpenIDENet.Arguments;
-namespace OpenIDENet.Tests.Arguments.Handlers
+using OpenIDENet.Core.Language;
+
+namespace OpenIDENet.Core.Tests.Language
 {
 	[TestFixture]
 	public class UsageParserTests
@@ -96,6 +96,14 @@ namespace OpenIDENet.Tests.Arguments.Handlers
 			Assert.That(cmd[0].Parameters.ElementAt(0).Name, Is.EqualTo("sub_command"));
 			Assert.That(cmd[0].Parameters.ElementAt(0).Description, Is.EqualTo("sub description"));
 			Assert.That(cmd[0].Parameters.ElementAt(0).Required, Is.False);
+		}
+		
+		[Test]
+		public void Should_parse_csharp_output()
+		{
+			var cmd = parse("create|\"Uses the create template to create what everproject related specified by the template\" library|\"Creates a new C# library project\" ITEM_NAME|\"The name of the Project/Item to create\" end  end  service|\"Creates a new C# windows service project\" ITEM_NAME|\"The name of the Project/Item to create\" end  end  end  addfile|\"Adds a file to the closest project\"FILE_TO_ADD|\"Relative or full path to the file to add\" end end  deletefile|\"Removes a file from the closest project and deletes it\"FILE_TO_DELETE|\"Relative or full path to the file to delete\" end end  dereference|\"Dereferences a project/assembly from given project\"REFERENCE|\"Path to the reference to remove\"PROJECT|\"Project to remove the reference from\" end end end  new|\"Uses the new template to create what ever specified by the template\" class|\"Creates an empty C# class\" FILE|\"Path to the file to be create\" end  end  fixture|\"Creates an empty NUnit test fixture for C#\" FILE|\"Path to the file to be create\" end  end  interface|\"Creates an new C# interface\" FILE|\"Path to the file to be create\" end  end  end  reference|\"Adds a reference to a project file\"REFERENCE|\"The path to the project or assembly to be referenced\"PROJECT|\"The path to the project to add the reference to\" end end end  removefile|\"Removes a file from the closest project\"FILE_TO_REMOVE|\"Relative or full path to the file to remove\" end end");
+
+			Assert.That(cmd.Length, Is.EqualTo(7));
 		}
 
 		private BaseCommandHandlerParameter[] parse(string usage)

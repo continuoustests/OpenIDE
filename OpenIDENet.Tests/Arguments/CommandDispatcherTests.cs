@@ -2,6 +2,7 @@ using System;
 using NUnit.Framework;
 using OpenIDENet.Arguments;
 using Rhino.Mocks;
+using OpenIDENet.Core.Language;
 namespace OpenIDENet.Tests
 {
 	[TestFixture]

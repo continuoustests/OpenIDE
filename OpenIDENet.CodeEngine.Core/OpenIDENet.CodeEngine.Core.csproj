@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -93,6 +93,8 @@
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="UI\FileExplorerHelpers\CacheSearchHandler.cs" />
     <Compile Include="UI\FileExplorerHelpers\ISearchHandler.cs" />
+    <Compile Include="ChangeTrackers\CrawlHandler.cs" />
+    <Compile Include="Caching\ISignatureReference.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -123,4 +125,10 @@
     <Content Include="Resources\ok.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\OpenIDENet.Core\OpenIDENet.Core.csproj">
+      <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>OpenIDENet.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
