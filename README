@@ -5,8 +5,9 @@ team www.continuoustests.com. The purpose of this tool is to provide a basic set
 IDE type features around you favorite editor like type search, project file management
 and more.
 
-As the project is in it's early stages it is only tested and run on Linux. It currently
-supports type search and basic project management.
+As the project is in it's early stages but should run on Linux, MacOSX and windows.
+Although it has only been tested on Linux and Windows yet. It currently supports type
+search and basic project management.
 To connect to the editors OpenIDENet uses EditorEngine, another open source project
 maintained by ContinuousTests. Builds and tests are handled by AutoTest.Net or
 ContinuousTests which are also maintained by ContinuousTests.
