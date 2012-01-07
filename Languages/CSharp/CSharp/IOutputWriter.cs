@@ -20,12 +20,12 @@ namespace CSharp
 	{
 		public void AddProject(Project project)
 		{
-			Console.WriteLine("project|" + project.File);
+			Console.WriteLine("project|" + project.File + "|filesearch");
 		}
 
 		public void AddFile(string file)
 		{
-			Console.WriteLine("file|" + file);
+			Console.WriteLine("file|" + file + "|filesearch");
 		}
 		
 		public void AddNamespace(Namespace ns)
@@ -35,22 +35,22 @@ namespace CSharp
 
 		public void AddClass(Class cls)
 		{
-			writeSignature("class", cls);
+			writeSignature("class", cls, new[] { "typesearch" });
 		}
 
 		public void AddInterface(Interface iface)
 		{
-			writeSignature("interface", iface);
+			writeSignature("interface", iface, new[] { "typesearch" });
 		}
 
 		public void AddStruct(Struct str)
 		{
-			writeSignature("struct", str);
+			writeSignature("struct", str, new[] { "typesearch" });
 		}
 
 		public void AddEnum(EnumType enu)
 		{
-			writeSignature("enum", enu);
+			writeSignature("enum", enu, new[] { "typesearch" });
 		}
 
 		public void Error(string description)
@@ -60,13 +60,22 @@ namespace CSharp
 
 		private void writeSignature(string type, ICodeReference coderef)
 		{
-			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}",
+			writeSignature(type, coderef, new string[] {});
+		}
+
+		private void writeSignature(string type, ICodeReference coderef, string[] additional)
+		{
+			var additionalArguments = "";
+			foreach (var argument in additional)
+				additionalArguments += "|" + argument;
+			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}{6}",
 				coderef.Signature,
 				coderef.Name,
 				type,
 				coderef.Offset,
 				coderef.Line,
-				coderef.Column);
+				coderef.Column,
+				additionalArguments);
 		}
 	}
 }

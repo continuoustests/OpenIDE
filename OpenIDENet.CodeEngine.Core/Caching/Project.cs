@@ -6,11 +6,19 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 	{
 		public string File { get; private set; }
 		public string Project { get; private set; }
+
+		public bool FileSearch { get; private set; }
 		
 		public ProjectFile(string file, string project)
 		{
 			File = file;
 			Project = project;
+		}
+
+		public ProjectFile SetFileSearch()
+		{
+			FileSearch = true;
+			return this;
 		}
 	}
 
@@ -18,9 +26,17 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 	{
 		public string File { get; private set; }
 		
+		public bool FileSearch { get; private set; }
+		
 		public Project(string file)
 		{
 			File = file;
+		}
+
+		public Project SetFileSearch()
+		{
+			FileSearch = true;
+			return this;
 		}
 	}
 }

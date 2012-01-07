@@ -61,11 +61,14 @@ namespace OpenIDENet.Core.Language
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			proc.StartInfo.RedirectStandardOutput = true;
 			proc.Start();
-			var output = proc.StandardOutput.ReadToEnd();
+			while (true)
+			{
+				var line = proc.StandardOutput.ReadLine();
+				if (line == null)
+					break;
+				yield return line;
+			}
 			proc.WaitForExit();
-			if (output.Length > Environment.NewLine.Length)
-				output = output.Substring(0, output.Length - Environment.NewLine.Length);
-			return output.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 		}
 	}
 }

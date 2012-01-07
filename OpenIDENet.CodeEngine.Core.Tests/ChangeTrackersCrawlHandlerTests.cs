@@ -83,6 +83,41 @@ namespace OpenIDENet.CodeEngine.Core.Tests
 		{
 			_crawlHandler.Handle("signature|invalid stuff");
 		}
+
+		[Test]
+		public void When_given_file_explore_tag_it_will_mark_it()
+		{
+			var lines = new string[]
+				{
+					"project|/some/project.csproj|filesearch",
+					"file|/some/file.cs|filesearch"
+				};
+			
+			lines.ToList()
+				.ForEach(x => _crawlHandler.Handle(x));
+
+			Assert.That(_cache.Projects[0].File, Is.EqualTo("/some/project.csproj"));		
+			Assert.That(_cache.Projects[0].FileSearch, Is.True);
+
+			Assert.That(_cache.Files[0].File, Is.EqualTo("/some/file.cs"));		
+			Assert.That(_cache.Files[0].Project, Is.EqualTo("/some/project.csproj"));		
+			Assert.That(_cache.Files[0].FileSearch, Is.True);
+		}
+
+		[Test]
+		public void When_given_type_search_tag_it_will_mark_it()
+		{
+			var lines = new string[]
+				{
+					"file|/some/file.cs",
+					"signature|NS.MyClass|MyClass|class|12|2|3|typesearch"
+				};
+			
+			lines.ToList()
+				.ForEach(x => _crawlHandler.Handle(x));
+
+			Assert.That(_cache.References[0].TypeSearch, Is.True);
+		}
 	}
 
 	class Fake_Cache : ICacheBuilder

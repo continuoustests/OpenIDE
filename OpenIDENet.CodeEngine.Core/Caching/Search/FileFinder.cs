@@ -22,10 +22,10 @@ namespace OpenIDENet.CodeEngine.Core.Caching.Search
             pattern = pattern.ToLower();
             var list = new List<FileFindResult>();
             _projects
-                .Where(x => x.File.ToLower().Contains(pattern)).ToList()
+                .Where(x => x.FileSearch && x.File.ToLower().Contains(pattern)).ToList()
                 .ForEach(x => addFile(list, FileFindResultType.Project, x.File, pattern));
             _files
-                .Where(x => x.File.ToLower().Contains(pattern)).ToList()
+                .Where(x => x.FileSearch && x.File.ToLower().Contains(pattern)).ToList()
                 .ForEach(x => addFile(list, FileFindResultType.File, x.File, pattern));
             return list;
         }

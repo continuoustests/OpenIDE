@@ -21,7 +21,6 @@ mkdir %DEPLOYDIR%\AutoTest.Net
 mkdir %DEPLOYDIR%\ContinuousTests
 mkdir %DEPLOYDIR%\Languages
 mkdir %DEPLOYDIR%\Languages\CSharp
-mkdir %DEPLOYDIR%\Languages\CSharp\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild

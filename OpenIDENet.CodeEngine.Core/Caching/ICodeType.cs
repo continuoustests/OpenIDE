@@ -10,6 +10,8 @@ namespace OpenIDENet.CodeEngine.Core
 		int Offset { get; }
 		int Line { get; }
 		int Column { get; }
+
+		bool TypeSearch { get; }
 	}
 	
 	public class CodeReference : ICodeReference
@@ -21,6 +23,7 @@ namespace OpenIDENet.CodeEngine.Core
 		public int Offset { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+		public bool TypeSearch { get; private set; }
 
 		public CodeReference(
 			string type,
@@ -38,6 +41,12 @@ namespace OpenIDENet.CodeEngine.Core
 			Offset = offset;
 			Line = line;
 			Column = column;
+		}
+
+		public CodeReference SetTypeSearch()
+		{
+			TypeSearch = true;
+			return this;
 		}
 	}
 

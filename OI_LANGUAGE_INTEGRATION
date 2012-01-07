@@ -50,7 +50,11 @@ Crawl directories and/or files
 	RESPONSE FORMAT:
 		// Project is optional. Other than that the hierarchy is as follows
 		// Indentation is only to show hierarchy not required in output
-		[project|PROJECT-PATH]
-			file|FILE-PATH
-				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN
+		// Arguments in [] are optional
+		//	typesearch => Is searchable under typesearch
+		//	filesearch => Is searchable under file browse list
+
+		[project|PROJECT-PATH [|filesearch]]
+			file|FILE-PATH [|filesearch]
+				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN [|typesearch]
 				reference|SIGNATURE|OFFSET|LINE|COLUMN

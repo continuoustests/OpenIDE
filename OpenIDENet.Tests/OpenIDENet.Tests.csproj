@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -76,6 +76,7 @@
     <Compile Include="CommandBuilding\CommandStringParserTests.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletionTests.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletionTests.cs" />
+    <Compile Include="Bootstrapping\AppSettingsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

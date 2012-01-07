@@ -27,7 +27,6 @@ chmod +x $LIB/ContinuousTests/ContinuousTests.exe
 
 mkdir $DEPLOYDIR/Languages
 mkdir $DEPLOYDIR/Languages/CSharp
-mkdir $DEPLOYDIR/Languages/CSharp/templates
 
 echo $BINARYDIR
 
@@ -48,4 +47,4 @@ cp $BINARYDIR/OpenIDENet.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDENet.Co
 cp $BINARYDIR/OpenIDENet.Core.dll $DEPLOYDIR/CodeEngine/
 
 cp $BINARYDIR/CSharp.exe $DEPLOYDIR/Languages/CSharp.exe
-cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/CSharp/templates
+cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/CSharp

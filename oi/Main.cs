@@ -12,6 +12,7 @@ namespace oi
 	{
 		public static void Main(string[] args)
 		{	
+			args = Bootstrapper.Settings.Parse(args);
 			Bootstrapper.Initialize();
 			if (args.Length == 0)
 			{
@@ -39,9 +40,21 @@ namespace oi
 						var command = x.Usage;
 						if (command == null)
 							return;
-						printCommand(command);
+
+						if (command.Name != Bootstrapper.Settings.DefaultLanguage)
+							printCommand(command);
+						else
+						{
+							Console.WriteLine("");
+							Console.WriteLine("\tDirect commands because of default language {0}", command.Name);
+							level--;
+						}
+
 						command.Parameters.ToList()
 							.ForEach(y =>  printParameter(y, ref level));
+
+						if ((command.Name == Bootstrapper.Settings.DefaultLanguage))
+							level++;
 					});
 		}
 		

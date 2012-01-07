@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Logging;
 
@@ -20,7 +21,7 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 		{
 			try {
 				var chunks = command.Trim()
-					.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+					.Split(new char[] { '|' }, StringSplitOptions.None);
 				if (chunks.Length == 0)
 					return;
 				if (chunks[0] == "project")
@@ -39,25 +40,39 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 		private void handleProject(string[] chunks)
 		{
 			_currentProject = chunks[1];
-			_builder.Add(new Project(_currentProject));
+			var project = new Project(_currentProject);
+			var args = getArguments(chunks, 2);
+			if (args.Contains("filesearch"))
+				project.SetFileSearch();
+			_builder.Add(project);
 		}
 
 		private void handleFile(string[] chunks)
 		{
 			_currentFile = chunks[1];
-			_builder.Add(new ProjectFile(_currentFile, _currentProject));
+			var file = new ProjectFile(_currentFile, _currentProject);
+			var args = getArguments(chunks, 2);
+			if (args.Contains("filesearch"))
+				file.SetFileSearch();
+			_builder.Add(file);
 		}
 		
 		private void handleSignature(string[] chunks)
 		{
-			_builder.Add(new CodeReference(
+			var reference = new CodeReference(
 				chunks[3],
 				_currentFile,
 				chunks[1],
 				chunks[2],
 				int.Parse(chunks[4]),
 				int.Parse(chunks[5]),
-				int.Parse(chunks[6])));
+				int.Parse(chunks[6]));
+
+			var args = getArguments(chunks, 7);
+			if (args.Contains("typesearch"))
+				reference.SetTypeSearch();
+
+			_builder.Add(reference);
 		}
 
 		private void handleReference(string[] chunks)
@@ -68,6 +83,14 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 				int.Parse(chunks[2]),
 				int.Parse(chunks[3]),
 				int.Parse(chunks[4])));
+		}
+
+		private List<string> getArguments(string[] args, int fixNumber)
+		{
+			var list = new List<string>();
+			for (int i = fixNumber; i < args.Length; i++)
+				list.Add(args[i]);
+			return list;
 		}
 	}
 }

@@ -19,8 +19,8 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		public List<ICodeReference> Find(string name)
 		{
 			return _codeReferences
-				.Where(x => x.Signature.ToLower().Contains(name.ToLower()))
-				.OrderBy(x => nameSort(x.Signature, name)).ToList();
+				.Where(x => x.TypeSearch && x.Signature.ToLower().Contains(name.ToLower()))
+				.OrderBy(x => nameSort(x.Name, x.Signature, name)).ToList();
 		}
 
         public List<FileFindResult> FindFiles(string searchString)
@@ -118,7 +118,7 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 				_signatureReferences.Add(reference);
 		}
 		
-		private int nameSort(string name, string compareString)
+		private int nameSort(string name, string signature, string compareString)
 		{
 			if (name.Equals(compareString))
 				return 1;
@@ -130,11 +130,24 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 				return 4;
 			if (name.EndsWith(compareString))
 				return 5;
-			if (name.ToLower().EndsWith(compareString.ToLower()))
-				return 6;
 			if (name.Contains(compareString))
+				return 6;
+
+			if (name.Equals(compareString))
 				return 7;
-			return 8;
+			if (name.ToLower().Equals(compareString.ToLower()))
+				return 8;
+			if (name.StartsWith(compareString))
+				return 9;
+			if (name.ToLower().StartsWith(compareString.ToLower()))
+				return 10;
+			if (name.EndsWith(compareString))
+				return 11;
+			if (signature.ToLower().EndsWith(compareString.ToLower()))
+				return 12;
+			if (signature.Contains(compareString))
+				return 100 + (name.Length - name.IndexOf(compareString));
+			return 10000;
 		}
     }
 }
