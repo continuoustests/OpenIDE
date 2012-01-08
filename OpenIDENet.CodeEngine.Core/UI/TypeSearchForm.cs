@@ -38,7 +38,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
 		
 		void writeStatistics()
 		{
-			var text = string.Format("Projects: {3}, Files: {0}, Namespaces: {1}, Types: {2}", _cache.FileCount, _cache.NamespaceCount, _cache.TypeCount, _cache.ProjectCount);
+			var text = string.Format("Projects: {2}, Files: {0}, Code References: {1}", _cache.FileCount, _cache.CodeReferences, _cache.ProjectCount);
 			if (labelInfo.Text != text)
         		labelInfo.Text = text;
 		}
@@ -74,8 +74,8 @@ namespace OpenIDENet.CodeEngine.Core.UI
 			{
 	        	if (informationList.SelectedItems.Count != 1)
 					return;
-				var type = (ICodeType) informationList.SelectedItems[0].Tag;
-				_action.Invoke(type.Fullpath, type.Line, type.Column);
+				var type = (ICodeReference) informationList.SelectedItems[0].Tag;
+				_action.Invoke(type.File, type.Line, type.Column);
 				Close();
 			}
 			else if (e.KeyCode == Keys.Down)
@@ -103,7 +103,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
 			}
         }
 		
-		private void addItem(ICodeType type)
+		private void addItem(ICodeReference type)
 		{
 			var item = informationList.Items.Add(type.Signature);
 			item.Tag = type;

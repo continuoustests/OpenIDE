@@ -1,6 +1,6 @@
 using System;
-using OpenIDENet.Languages;
 using OpenIDENet.CodeEngineIntegration;
+using OpenIDENet.Core.Language;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class CodeEngineExploreHandler : ICommandHandler
@@ -10,7 +10,7 @@ namespace OpenIDENet.Arguments.Handlers
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.All,
+					"All",
 					CommandType.FileCommand,
 					Command,
 					"Launches the code engines file explorer window");
@@ -25,7 +25,7 @@ namespace OpenIDENet.Arguments.Handlers
 			_codeEngineFactory = codeEngineFactory;
 		}
 		
-		public void Execute (string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
+		public void Execute (string[] arguments)
 		{
 			Console.WriteLine("Handling explore");
 			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);

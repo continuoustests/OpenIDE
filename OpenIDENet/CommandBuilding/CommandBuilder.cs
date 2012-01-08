@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using OpenIDENet.Arguments;
 using System.Text;
+using OpenIDENet.Core.Language;
 
 namespace OpenIDENet.CommandBuilding
 {

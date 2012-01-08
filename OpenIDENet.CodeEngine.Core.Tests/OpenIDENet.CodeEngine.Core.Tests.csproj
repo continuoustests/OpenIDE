@@ -63,27 +63,10 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Caching\HierarchyBuilderTests.cs" />
     <Compile Include="Caching\TypeCacheTests.cs" />
-    <Compile Include="Crawlers\SolutionReaderTests.cs" />
     <Compile Include="FileSystem\PathParserTests.cs" />
-    <Compile Include="Crawlers\CSharpCrawlerTests.cs" />
-    <Compile Include="Crawlers\CSharpDefaultFileParserTests.cs" />
-    <Compile Include="Crawlers\CSharpCommentParserTests.cs" />
+    <Compile Include="ChangeTrackersCrawlHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <None Include="TestResources\VSSolutionFile.sln">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\DefaultCSharp.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\FunctionsCSharp.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\CSharpComments.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIDENet.CodeEngine.Core\OpenIDENet.CodeEngine.Core.csproj">
       <Project>{412B1F88-3F13-4473-8D71-AD719634F152}</Project>

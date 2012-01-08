@@ -1,10 +1,8 @@
 using System;
 using NUnit.Framework;
 using OpenIDENet.Arguments;
-using OpenIDENet.Versioning;
-using OpenIDENet.Projects;
 using Rhino.Mocks;
-using OpenIDENet.Languages;
+using OpenIDENet.Core.Language;
 namespace OpenIDENet.Tests
 {
 	[TestFixture]
@@ -12,20 +10,12 @@ namespace OpenIDENet.Tests
 	{
 		private FakeHandler _handler;
 		private CommandDispatcher _execute;
-		private ILocateClosestProject _projectLocator;
-		private IResolveProjectVersion _versionResolver;
 		
 		[SetUp]
 		public void Setup()
 		{
-			_projectLocator = MockRepository.GenerateMock<ILocateClosestProject>();
-			_versionResolver = MockRepository.GenerateMock<IResolveProjectVersion>();
-			
-			_projectLocator.Stub(x => x.Locate(null)).IgnoreArguments().Return("file");
-			_versionResolver.Stub(x => x.ResolveFor("file")).Return(MockRepository.GenerateMock<IProvideVersionedTypes>());
-			
 			_handler = new FakeHandler();
-			_execute = new CommandDispatcher(new ICommandHandler[] { _handler }, _projectLocator, _versionResolver);
+			_execute = new CommandDispatcher(new ICommandHandler[] { _handler });
 		}
 		
 		[Test]
@@ -49,13 +39,13 @@ namespace OpenIDENet.Tests
 		
 		public CommandHandlerParameter Usage {
 			get {
-				return new CommandHandlerParameter(SupportedLanguage.CSharp, CommandType.FileCommand, "", "");
+				return new CommandHandlerParameter("C#", CommandType.FileCommand, "", "");
 			}
 		}
 
 		public string Command { get { return "MyCommand"; } }
 		
-		public void Execute(string[] arguments, Func<string, ProviderSettings> with)
+		public void Execute(string[] arguments)
 		{
 			_wasExecuted = true;
 		}

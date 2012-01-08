@@ -1,12 +1,13 @@
 using System;
-using OpenIDENet.Versioning;
+using OpenIDENet.Core.Language;
+
 namespace OpenIDENet.Arguments
 {
 	public interface ICommandHandler
 	{
 		CommandHandlerParameter Usage { get; }
 		string Command { get; }
-		void Execute(string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation);
+		void Execute(string[] arguments);
 	}
 }
 

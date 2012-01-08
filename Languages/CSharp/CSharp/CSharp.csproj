@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FFE638AF-5B7F-4C54-8255-2011DE5560D1}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CSharp</RootNamespace>
+    <AssemblyName>CSharp</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Commands\AddFileHandler.cs" />
+    <Compile Include="Commands\DeleteFileHandler.cs" />
+    <Compile Include="Commands\DereferenceHandler.cs" />
+    <Compile Include="Commands\NewHandler.cs" />
+    <Compile Include="Commands\ReferenceHandler.cs" />
+    <Compile Include="Commands\RemoveFileHandler.cs" />
+    <Compile Include="Crawlers\CSharpCodeNavigator.cs" />
+    <Compile Include="Crawlers\CSharpCrawler.cs" />
+    <Compile Include="Crawlers\CSharpFileParser.cs" />
+    <Compile Include="Crawlers\FilePosition.cs" />
+    <Compile Include="Crawlers\ICrawler.cs" />
+    <Compile Include="Crawlers\ProjectReader.cs" />
+    <Compile Include="Crawlers\SolutionReader.cs" />
+    <Compile Include="Files\AssemblyFile.cs" />
+    <Compile Include="Files\CompileFile.cs" />
+    <Compile Include="Files\IFile.cs" />
+    <Compile Include="Files\IResolveFileTypes.cs" />
+    <Compile Include="Files\ProjectFile.cs" />
+    <Compile Include="Files\VSFileTypeResolver.cs" />
+    <Compile Include="Projects\Appenders\IAppendFiles.cs" />
+    <Compile Include="Projects\Appenders\VSFileAppender.cs" />
+    <Compile Include="Projects\Readers\DefaultReader.cs" />
+    <Compile Include="Projects\Readers\IReadProjectFiles.cs" />
+    <Compile Include="Projects\Referencers\AssemblyReferencer.cs" />
+    <Compile Include="Projects\Referencers\ProjectReferencer.cs" />
+    <Compile Include="Projects\Removers\DefaultRemover.cs" />
+    <Compile Include="Projects\Removers\IRemoveFiles.cs" />
+    <Compile Include="Projects\Writers\DefaultWriter.cs" />
+    <Compile Include="Projects\Writers\IWriteProjectFileToDiskFor.cs" />
+    <Compile Include="Projects\IAddReference.cs" />
+    <Compile Include="Projects\ILocateClosestProject.cs" />
+    <Compile Include="Projects\IRemoveReference.cs" />
+    <Compile Include="Projects\Project.cs" />
+    <Compile Include="Projects\ProjectCrawler.cs" />
+    <Compile Include="Projects\ProjectHandler.cs" />
+    <Compile Include="Projects\ProjectXML.cs" />
+    <Compile Include="Versioning\IAmProjectVersion.cs" />
+    <Compile Include="Versioning\IProvideVersionedTypes.cs" />
+    <Compile Include="Versioning\IResolveProjectVersion.cs" />
+    <Compile Include="Versioning\ProjectVersionResolver.cs" />
+    <Compile Include="Versioning\VS2010.cs" />
+    <Compile Include="Versioning\VersionedTypeProvider.cs" />
+    <Compile Include="Commands\ICommandHandler.cs" />
+    <Compile Include="Commands\CommandHandlerParameters.cs" />
+    <Compile Include="FileSystem\PathParser.cs" />
+    <Compile Include="FileSystem\FS.cs" />
+    <Compile Include="FileSystem\IFS.cs" />
+    <Compile Include="Crawlers\Class.cs" />
+    <Compile Include="Crawlers\Enum.cs" />
+    <Compile Include="Crawlers\Interface.cs" />
+    <Compile Include="Crawlers\Namespace.cs" />
+    <Compile Include="Crawlers\Struct.cs" />
+    <Compile Include="Crawlers\ICodeReference.cs" />
+    <Compile Include="Commands\TemplateDefinitionParser.cs" />
+    <Compile Include="FileSystem\PathExtensions.cs" />
+    <Compile Include="Commands\Dispatcher.cs" />
+    <Compile Include="Commands\CreateHandler.cs" />
+    <Compile Include="Commands\GetUsageHandler.cs" />
+    <Compile Include="IOutputWriter.cs" />
+    <Compile Include="Commands\CrawlHandler.cs" />
+    <Compile Include="Commands\CrawlFileTypesHandler.cs" />
+    <Compile Include="Commands\LanguageHandler.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

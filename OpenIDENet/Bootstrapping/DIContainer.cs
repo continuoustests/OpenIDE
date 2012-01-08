@@ -1,78 +1,129 @@
 using System;
-using Castle.Windsor;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers.SpecializedResolvers;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 using OpenIDENet.FileSystem;
 using OpenIDENet.Messaging;
-using OpenIDENet.Projects.Appenders;
-using OpenIDENet.Projects.Readers;
-using OpenIDENet.Projects.Writers;
-using OpenIDENet.Versioning;
-using OpenIDENet.Files;
-using OpenIDENet.Projects;
 using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
-using OpenIDENet.Projects.Removers;
-using OpenIDENet.Projects.Referencers;
 using OpenIDENet.EditorEngineIntegration;
 using OpenIDENet.CodeEngineIntegration;
+using OpenIDENet.Core.Language;
+using OpenIDENet.CommandBuilding;
 
 namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
 	{
-		private WindsorContainer _container;
-		
+		private ICommandDispatcher _dispatcher;
+		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
+		private string _path;
+
 		public DIContainer()
 		{
-			_container = new WindsorContainer();
+			_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			addCommandHandlers();
+			_dispatcher = new CommandDispatcher(_handlers.ToArray());
 		}
-		
-		public void Configure()
-		{
-			_container.Kernel.Resolver.AddSubResolver(new ArrayResolver(_container.Kernel));
-			_container
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<EditorHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineGoToHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CodeEngineExploreHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<CreateHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<NewHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<AddFileHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<RemoveFileHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<DeleteFileHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<ReferenceHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<DereferenceHandler>())
-					  .Register(Component.For<ICommandHandler>().ImplementedBy<RunCommandHandler>())
 
-					  .Register(Component.For<IFS>().ImplementedBy<FS>())
-					  .Register(Component.For<IMessageBus>().ImplementedBy<MessageBus>())
-					  .Register(Component.For<ILocateClosestProject>().ImplementedBy<ProjectLocator>())
-					  .Register(Component.For<IResolveProjectVersion>().ImplementedBy<ProjectVersionResolver>())
-					  
-					  .Register(Component.For<IReadProjectsFor>().ImplementedBy<DefaultReader>())
-					  .Register(Component.For<IResolveFileTypes>().ImplementedBy<VSFileTypeResolver>())
-					  .Register(Component.For<IAppendFiles>().ImplementedBy<VSFileAppender>())
-					  .Register(Component.For<IRemoveFiles>().ImplementedBy<DefaultRemover>())
-					  .Register(Component.For<IAddReference>()
-					  					 .Forward<IRemoveReference>().ImplementedBy<AssemblyReferencer>())
-					  .Register(Component.For<IAddReference>()
-					  					 .Forward<IRemoveReference>().ImplementedBy<ProjectReferencer>())
-					  .Register(Component.For<IWriteProjectFileToDiskFor>().ImplementedBy<DefaultWriter>())
-					
-					  .Register(Component.For<IProvideVersionedTypes>().ImplementedBy<VersionedTypeProvider<VS2010>>())
+		private void addCommandHandlers()
+		{
+			_handlers = new List<ICommandHandler>();
+			_handlers.AddRange(
+				new ICommandHandler[]
+				{
+					new EditorHandler(ILocateEditorEngine()),
+					new CodeEngineGoToHandler(ICodeEngineLocator()),
+					new CodeEngineExploreHandler(ICodeEngineLocator()),
+					new ConfigurationHandler(_path)
+				});
 			
-					  .Register(Component.For<ILocateEditorEngine>().ImplementedBy<EngineLocator>())
-					  .Register(Component.For<ICodeEngineLocator>().ImplementedBy<CodeEngineDispatcher>());
+			var plugins = PluginLocator().Locate();
+			plugins.ToList()
+				.ForEach(x => _handlers.Add(new LanguageHandler(x)));
+
+			_handlers.Add(new RunCommandHandler(_handlers.ToArray()));
+		}
+
+		public ICommandDispatcher GetDispatcher()
+		{
+			return _dispatcher;
+		}
+
+		public IFS IFS()
+		{
+			return new FS();
+		}
+
+		public IMessageBus IMessageBus()
+		{
+			return new MessageBus();
+		}
+
+		public PluginLocator PluginLocator()
+		{
+			return new PluginLocator(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				(command) => dispatchMessage(command));
+		}
+
+		private void dispatchMessage(string command)
+		{
+			var parser = new CommandStringParser();
+			var args = parser.Parse(command);
+			if (isError(command))
+			{
+				printError(command);
+				return;
+			}
+			if (isComment(command))
+			{
+				printComment(command);
+				return;
+			}
+			_dispatcher.For(
+				parser.GetCommand(args),
+				parser.GetArguments(args));
+		}
+
+		private bool isError(string command)
+		{
+			return command.Trim().StartsWith("error|");
+		}
+
+		private void printError(string command)
+		{
+			var commentTag = "comment|";
+			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.WriteLine(command.Substring(start, command.Length - start));
 		}
 		
-		public T Resolve<T>()
+		private bool isComment(string command)
 		{
-			return _container.Resolve<T>();
+			return command.Trim().StartsWith("comment|");
+		}
+
+		private void printComment(string command)
+		{
+			var commentTag = "comment|";
+			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.WriteLine(command.Substring(start, command.Length - start));
 		}
 		
-		public T[] ResolveAll<T>()
+		public ILocateEditorEngine ILocateEditorEngine()
 		{
-			return _container.ResolveAll<T>();
+			return new EngineLocator(IFS());
+		}
+
+		public ICodeEngineLocator ICodeEngineLocator()
+		{
+			return new CodeEngineDispatcher(IFS());
+		}
+
+		public IEnumerable<ICommandHandler> ICommandHandlers()
+		{
+			return _handlers;
 		}
 	}
 }

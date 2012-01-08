@@ -3,8 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 using OpenIDENet.Arguments;
+using OpenIDENet.Core.Language;
 using OpenIDENet.CommandBuilding;
-using OpenIDENet.Languages;
 using System.Text;
 
 namespace OpenIDENet.Tests.CommandBuilding
@@ -18,14 +18,14 @@ namespace OpenIDENet.Tests.CommandBuilding
 		{
 			var commands = new List<CommandHandlerParameter>();
 			commands.Add(new CommandHandlerParameter(
-				SupportedLanguage.CSharp,
+				"C#",
 				CommandType.FileCommand,
 				"Option1",
 				"Opt1 desc"));
 			commands[0].Add("opt1sub1", "desc");
 
 			commands.Add(new CommandHandlerParameter(
-				SupportedLanguage.CSharp,
+				"C#",
 				CommandType.FileCommand,
 				"Option2",
 				"Opt2 desc"));

@@ -8,10 +8,10 @@ namespace OpenIDENet.CodeEngine.Core.Caching.Search
 {
     class HierarchyBuilder
     {
-        private List<string> _files;
+        private List<ProjectFile> _files;
         private List<Project> _projects;
 
-        public HierarchyBuilder(List<string> files, List<Project> projects)
+        public HierarchyBuilder(List<ProjectFile> files, List<Project> projects)
         {
             _files = files;
             _projects = projects;
@@ -27,27 +27,28 @@ namespace OpenIDENet.CodeEngine.Core.Caching.Search
         {
             var list = new List<FileFindResult>();
             _projects
-                .Where(x => x.Fullpath.StartsWith(directory))
-                .Select(x => new FileFindResult(FileFindResultType.Project, x.Fullpath)).ToList()
+                .Where(x => x.File.StartsWith(directory))
+                .Select(x => new FileFindResult(FileFindResultType.Project, x.File)).ToList()
                 .ForEach(x => addResult(list, x));
             _files
-                .Where(x => x.StartsWith(directory))
-                .Select(x => getResult(x, directory, null, FileFindResultType.Directory)).ToList()
+                .Where(x => x.File.StartsWith(directory))
+                .Select(x => getResult(x.File, directory, null, FileFindResultType.Directory)).ToList()
                 .ForEach(x => addResult(list, x));
             return list;
         }
 
         public List<FileFindResult> GetNextStepInProject(Project project)
         {
-            return GetNextStepInProject(project, Path.GetDirectoryName(project.Fullpath));
+            return GetNextStepInProject(project, Path.GetDirectoryName(project.File));
         }
 
         public List<FileFindResult> GetNextStepInProject(Project project, string directory)
         {
             var list = new List<FileFindResult>();
-            project.Files
-                .Where(x => x.StartsWith(directory))
-                .Select(x => getResult(x, directory, project.Fullpath, FileFindResultType.DirectoryInProject)).ToList()
+            _files
+                .Where(x => x.Project != null && x.Project.Equals(project.File) &&
+							(Path.GetDirectoryName(project.File).Equals(directory) || x.File.StartsWith(directory)))
+                .Select(x => getResult(x.File, directory, project.File, FileFindResultType.DirectoryInProject)).ToList()
                 .ForEach(x => addResult(list, x));
             return list;
         }

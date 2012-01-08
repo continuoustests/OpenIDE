@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
-using OpenIDENet.CodeEngine.Core.Crawlers;
 using OpenIDENet.CodeEngine.Core.Caching.Search;
+using OpenIDENet.CodeEngine.Core.Logging;
 using System.Diagnostics;
 
 namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
@@ -15,11 +15,13 @@ namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
 	class CacheSearchHandler : ISearchHandler
 	{
 		private ITypeCache _cache;
+		private string _defaultLanguage;
 		private TreeView _list;
 
-		public CacheSearchHandler(ITypeCache cache, TreeView list)
+		public CacheSearchHandler(ITypeCache cache, string defaultLanguage, TreeView list)
 		{
 			_cache = cache;
+			_defaultLanguage = defaultLanguage;
 			_list = list;
 		}
 		
@@ -93,12 +95,15 @@ namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
             var directory = Path.GetDirectoryName(result.File);
             if (result.Type == FileFindResultType.Directory || result.Type == FileFindResultType.DirectoryInProject)
                 directory = result.File;
+			var additionalParameters = "";
+			if (_defaultLanguage != null)
+				additionalParameters = " --default-language=" + _defaultLanguage;
 
             var proc = new Process();
             if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-                proc.StartInfo = new ProcessStartInfo("oi", "run");
+                proc.StartInfo = new ProcessStartInfo("oi", "run" + additionalParameters);
             else
-                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c oi run");
+                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c oi run" + additionalParameters);
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

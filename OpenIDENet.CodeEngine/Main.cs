@@ -1,15 +1,17 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
-using OpenIDENet.CodeEngine.Core.Crawlers;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Endpoints;
 using System.IO;
 using System.Threading;
+using System.Reflection;
 using OpenIDENet.CodeEngine.Core.ChangeTrackers;
 using OpenIDENet.CodeEngine.Core.Logging;
 using OpenIDENet.CodeEngine.Core.UI;
 using OpenIDENet.CodeEngine.Core.EditorEngine;
 using System.Drawing;
+using OpenIDENet.Core.Language;
 
 namespace OpenIDENet.CodeEngine
 {
@@ -17,13 +19,16 @@ namespace OpenIDENet.CodeEngine
 	{
 		public static void Main (string[] args)
 		{
-			if (args.Length != 1)
+			if (args.Length < 1)
 				return;
 			var path = args[0];
+			string defaultLanguage = null;
+			if (args.Length > 1)
+				defaultLanguage = args[1];	
 			if (!Directory.Exists(path) && !File.Exists(path))
 				return;
 			
-			Application.Run(new TrayForm(path));
+			Application.Run(new TrayForm(path, defaultLanguage));
 		}
 	}
 
@@ -31,14 +36,23 @@ namespace OpenIDENet.CodeEngine
     {
         private SynchronizationContext _ctx;
         private string _path;
+		private string _defaultLanguage;
         private NotifyIcon trayIcon;
         private ContextMenu trayMenu;
 
-        public TrayForm(string path)
+        public TrayForm(string path, string defaultLanguage)
         {
             _ctx = SynchronizationContext.Current;
+            _path = path;
+			_defaultLanguage = defaultLanguage;
+            new Thread(startEngine).Start();
+			setupTray();
+			setupForm();
+        }
 
-            // Create a simple tray menu with only one item.
+		private void setupTray()
+		{
+			// Create a simple tray menu with only one item.
             trayMenu = new ContextMenu();
             trayMenu.MenuItems.Add("Exit", OnExit);
 
@@ -52,8 +66,10 @@ namespace OpenIDENet.CodeEngine
             // Add menu to tray icon and show it.
             trayIcon.ContextMenu = trayMenu;
             trayIcon.Visible = false;
-            _path = path;
-            new Thread(startEngine).Start();
+		}
+
+		private void setupForm()
+		{
 			Height = 0;
 			Width = 0;
 			ShowInTaskbar = false;
@@ -62,23 +78,43 @@ namespace OpenIDENet.CodeEngine
 			MaximizeBox = false;
 			ControlBox = false;
 			Opacity = 0;
-        }
+		}
 
         private void startEngine()
         {
             Logger.Assign(new FileLogger());
-            var options = new CrawlOptions(_path);
             var cache = new TypeCache();
-            var wather = new CSharpFileTracker();
-            wather.Start(options.Directory, cache);
-            new CSharpCrawler(cache).InitialCrawl(options);
+			var crawlHandler = new CrawlHandler(cache);
+			var pluginLocator = new PluginLocator(
+				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
+				(msg) => {});
+			initPlugins(pluginLocator, crawlHandler);
+			var tracker = new PluginFileTracker();
+			tracker.Start(
+				_path,
+				cache,
+				pluginLocator);
 
-            var endpoint = new CommandEndpoint(options.Directory, cache, handleMessage);
+			Logger.Write("language " + _defaultLanguage);
+            var endpoint = new CommandEndpoint(_path, cache, handleMessage);
             endpoint.Start(_path);
             while (endpoint.IsAlive)
                 Thread.Sleep(100);
             Close();
         }
+
+		private void initPlugins(PluginLocator locator, CrawlHandler handler)
+		{
+			new Thread(() =>
+				{
+					locator.Locate().ToList()
+						.ForEach(x => 
+							{
+								foreach (var line in x.Crawl(new string[] { _path }))
+									handler.Handle(line);
+							});
+				}).Start();
+		}
 
         private void handleMessage(string message, ITypeCache cache, Editor editor)
         {
@@ -109,6 +145,7 @@ namespace OpenIDENet.CodeEngine
                 {
                     _exploreForm = new FileExplorer(
 						cache,
+						_defaultLanguage,
 						(file, line, column) => { editor.GoTo(file, line, column); },
 						() => { editor.SetFocus(); });
                     _exploreForm.Show();

@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
-using OpenIDENet.Languages;
 using OpenIDENet.UI;
 using OpenIDENet.CommandBuilding;
 using System.Collections.Generic;
 using System.IO;
+using OpenIDENet.Bootstrapping;
+using OpenIDENet.Core.Language;
 
 namespace OpenIDENet.Arguments.Handlers
 {
@@ -15,7 +16,7 @@ namespace OpenIDENet.Arguments.Handlers
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
-					SupportedLanguage.All,
+					"All",
 					CommandType.Run,
 					Command,
 					"Launches the command execution window");
@@ -30,9 +31,12 @@ namespace OpenIDENet.Arguments.Handlers
             _commandHandlers = handlers;
         }
 
-		public void Execute (string[] arguments, Func<string, ProviderSettings> getTypesProviderByLocation)
+		public void Execute (string[] arguments)
 		{
-			var form = new RunCommandForm(Directory.GetCurrentDirectory(), "", new CommandBuilder(getHandlerParameters().Cast<BaseCommandHandlerParameter>()));
+			var form = new RunCommandForm(
+				Directory.GetCurrentDirectory(),
+				Bootstrapper.Settings.DefaultLanguage,
+				new CommandBuilder(getHandlerParameters().Cast<BaseCommandHandlerParameter>()));
 			form.ShowDialog();
 		}
 

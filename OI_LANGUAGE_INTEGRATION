@@ -1,0 +1,82 @@
+OpenIDE.Net integrates with programming languages through both executable output and tcp communication.
+
+------------------------------------------------------- GENERAL OUTPUT ---------------------------------------------------------
+
+Error description with no line separators
+	RESPONSE FORMAT:
+		error|ERROR_DESCRIPTION
+
+------------------------------------------------------- GENERAL OUTPUT ---------------------------------------------------------
+
+Comment with no line separators
+	RESPONSE FORMAT:
+		comment|COMMENT
+
+----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
+
+Getting command definitions for this language extension
+	PARAMETER:
+		get-command-definitions
+	
+	RESPONSE FORMAT:
+		// Wrapping the command name with [] means the command is optional
+		// This is the definition response for the following commands:
+		// new file FILE_NAME
+		// new directory DIR_NAME
+
+		new|"Template command for new file"
+			file|"Creates a new file"
+				FILE_NAME|"The path/name of the file you want to create" end
+			end
+			directory|"Creates a new directory"
+				DIR_NAME|"Long description where every line
+							will be trimmed and new line is replaced by space" end
+			end
+		end
+
+Plugin language
+	PARAMETER:
+		get-language
+	
+	RESPONSE FORMAT:
+		// String describing the language like:
+		C#
+
+Suppoerted file extensions. This determintes what files will be sent over for change tracking
+	PARAMETER
+		crawl-file-types
+	
+	RESPONSE FORMAT:
+		.csproj|.cs
+
+Crawl directories and/or files
+	PARAMETER:
+		crawl-source PATH_TO_FILE_CONTIAINING_LINE_PR_FILE_OR_DIR_TO_CRAWL
+	
+	RESPONSE FORMAT:
+		// Project is optional. Other than that the hierarchy is as follows
+		// Indentation is only to show hierarchy not required in output
+		// Arguments in [] are optional
+		//	typesearch => Is searchable under typesearch
+		//	filesearch => Is searchable under file browse list
+
+		[project|PROJECT-PATH [|filesearch]]
+			file|FILE-PATH [|filesearch]
+				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN [|typesearch]
+				reference|SIGNATURE|OFFSET|LINE|COLUMN
+
+Various language plugin commands. This would be any command handled by the plugin
+	PARAMETER
+		Whatever specified in command definitions
+	
+	RESPONSE FORMAT:
+		// Any supported oi commands you want executed
+		// The error and comment general output commands are also supported
+		// Below is a simple sample
+
+		comment|File /home/me/myfile created
+		editor goto /home/me/myfile|3|18
+		editor setfocus
+
+
+
