@@ -1,9 +1,12 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
+using OpenIDENet.Core.Config;
 namespace OpenIDENet.Bootstrapping
 {
 	public static class Bootstrapper
@@ -16,6 +19,7 @@ namespace OpenIDENet.Bootstrapping
 		{
 			_container = new DIContainer();
 			Settings = new AppSettings(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 				GetCommandHandlers()
 					.Where(x => x.GetType().Equals(typeof(LanguageHandler))));
 		}
@@ -35,12 +39,17 @@ namespace OpenIDENet.Bootstrapping
 	{
 		private const string DEFAULT_LANGUAGE = "--default-language=";
 
+		private string _path;
 		private ICommandHandler[] _handlers;
+		private Configuration _config;
 
-		public string DefaultLanguage { get; set; }
+		public string DefaultLanguage { get; private set; }
 
-		public AppSettings(IEnumerable<ICommandHandler> handlers)
+		public AppSettings(string path, IEnumerable<ICommandHandler> handlers)
 		{
+			_path = path;
+			_config = new Configuration(_path);
+			DefaultLanguage = _config.DefaultLanguage;
 			_handlers = handlers.ToArray();
 		}
 

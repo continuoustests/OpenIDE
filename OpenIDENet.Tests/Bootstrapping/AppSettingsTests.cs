@@ -14,7 +14,7 @@ namespace OpenIDENet.Tests.Bootstrapping
 		[SetUp]
 		public void Setup()
 		{
-			_appSettings = new AppSettings(new ICommandHandler[] { new Fake_CommandHandler() });
+			_appSettings = new AppSettings("", new ICommandHandler[] { new Fake_CommandHandler() });
 		}
 		
 		[Test]

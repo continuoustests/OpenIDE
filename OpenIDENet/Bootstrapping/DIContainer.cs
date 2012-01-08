@@ -18,9 +18,11 @@ namespace OpenIDENet.Bootstrapping
 	{
 		private ICommandDispatcher _dispatcher;
 		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
+		private string _path;
 
 		public DIContainer()
 		{
+			_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			addCommandHandlers();
 			_dispatcher = new CommandDispatcher(_handlers.ToArray());
 		}
@@ -33,7 +35,8 @@ namespace OpenIDENet.Bootstrapping
 				{
 					new EditorHandler(ILocateEditorEngine()),
 					new CodeEngineGoToHandler(ICodeEngineLocator()),
-					new CodeEngineExploreHandler(ICodeEngineLocator())
+					new CodeEngineExploreHandler(ICodeEngineLocator()),
+					new ConfigurationHandler(_path)
 				});
 			
 			var plugins = PluginLocator().Locate();
