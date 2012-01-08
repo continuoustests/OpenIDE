@@ -1,2 +1,16 @@
-Add file search to search dialog
+Needs to be done before 0.1 alpha
 
+1. Config support for enabled languages
+	Config options for setting support languages for a certain folder (like default language)
+
+2. Snippet support
+	1. Snippet support in th editor engine
+		File modification and direct editor modification if supported
+	2. Snippet window (like run command window)
+
+3. F1 to bring up keyboard shortcuts for all forms
+
+4. Queries support in codemodel for language plugins to get signatures and references
+	1. Console and endpoint support
+	
+5. General stabilisation
