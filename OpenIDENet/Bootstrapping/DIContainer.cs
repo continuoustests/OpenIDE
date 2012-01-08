@@ -77,6 +77,11 @@ namespace OpenIDENet.Bootstrapping
 				printError(command);
 				return;
 			}
+			if (isComment(command))
+			{
+				printComment(command);
+				return;
+			}
 			_dispatcher.For(
 				parser.GetCommand(args),
 				parser.GetArguments(args));
@@ -89,11 +94,23 @@ namespace OpenIDENet.Bootstrapping
 
 		private void printError(string command)
 		{
-			var errorTag = "error|";
-			var start = command.IndexOf(errorTag) + errorTag.Length;
+			var commentTag = "comment|";
+			var start = command.IndexOf(commentTag) + commentTag.Length;
 			Console.WriteLine(command.Substring(start, command.Length - start));
 		}
+		
+		private bool isComment(string command)
+		{
+			return command.Trim().StartsWith("comment|");
+		}
 
+		private void printComment(string command)
+		{
+			var commentTag = "comment|";
+			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.WriteLine(command.Substring(start, command.Length - start));
+		}
+		
 		public ILocateEditorEngine ILocateEditorEngine()
 		{
 			return new EngineLocator(IFS());

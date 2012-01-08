@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Text;
+using System.Linq;
 namespace OpenIDENet.EditorEngineIntegration
 {
 	public class Instance
@@ -46,6 +48,14 @@ namespace OpenIDENet.EditorEngineIntegration
 		public void SetFocus()
 		{
 			send("setfocus");
+		}
+
+		public void Run(string[] arguments)
+		{
+			var sb = new StringBuilder();
+			arguments.ToList()
+				.ForEach(x => sb.Append(x + " "));
+			send(sb.ToString());
 		}
 		
 		private void send(string message)

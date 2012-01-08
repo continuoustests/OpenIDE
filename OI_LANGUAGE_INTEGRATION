@@ -6,6 +6,12 @@ Error description with no line separators
 	RESPONSE FORMAT:
 		error|ERROR_DESCRIPTION
 
+------------------------------------------------------- GENERAL OUTPUT ---------------------------------------------------------
+
+Comment with no line separators
+	RESPONSE FORMAT:
+		comment|COMMENT
+
 ----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
 
 Getting command definitions for this language extension
@@ -58,3 +64,19 @@ Crawl directories and/or files
 			file|FILE-PATH [|filesearch]
 				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN [|typesearch]
 				reference|SIGNATURE|OFFSET|LINE|COLUMN
+
+Various language plugin commands. This would be any command handled by the plugin
+	PARAMETER
+		Whatever specified in command definitions
+	
+	RESPONSE FORMAT:
+		// Any supported oi commands you want executed
+		// The error and comment general output commands are also supported
+		// Below is a simple sample
+
+		comment|File /home/me/myfile created
+		editor goto /home/me/myfile|3|18
+		editor setfocus
+
+
+

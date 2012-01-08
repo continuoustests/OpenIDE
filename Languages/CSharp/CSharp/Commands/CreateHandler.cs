@@ -70,7 +70,7 @@ namespace CSharp.Commands
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("Invalid number of arguments. " +
+				Console.WriteLine("comment|Invalid number of arguments. " +
 					"Usage: create {template name} {item name} {template arguments}");
 				return;
 			}
@@ -82,7 +82,7 @@ namespace CSharp.Commands
 			
 			template.Run(project, getArguments(arguments));
 
-			Console.WriteLine("Created {0}", project);
+			Console.WriteLine("comment|Created {0}", project);
 
 			if (template.File == null)
 				return;

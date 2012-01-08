@@ -24,6 +24,9 @@ namespace OpenIDENet.Arguments.Handlers
 					"type search and file explorer. It also initializes the system by running ||newline||" +
 					"whatever is specified in the initialize(.rb) script.");
 				usage.Add("PLUGIN_NAME", "The name of the plugin to launch");
+				usage.Add("goto", "Open file on spesific line and column")
+					.Add("FILE|LINE|COLUMN", "| separated filepath, line and column");
+				usage.Add("setfocus", "Sets focus to the editor");
 				return usage;
 			}
 		}
@@ -37,16 +40,15 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length != 1)
-			{
-				Console.WriteLine("Invalid number of arguments. Useage: editor {editor name}");
-				return;
-			}
 			var instance = _editorFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null)
+			if (instance == null && arguments.Length == 1)
+			{
 				instance = startInstance();
-			instance.Start(arguments[0].Trim());
-			runInitScript();
+				instance.Start(arguments[0].Trim());
+				runInitScript();
+			}
+			else
+				instance.Run(arguments);
 		}
 		
 		private Instance startInstance()
