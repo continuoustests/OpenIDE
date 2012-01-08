@@ -72,6 +72,12 @@ namespace OpenIDENet.CodeEngine.Core.UI
 
         private void treeViewFiles_KeyDown(object sender, KeyEventArgs e)
         {
+			if (e.Control && e.KeyCode == Keys.R)
+			{
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+				runCommandToolStripMenuItem_Click(this, new EventArgs());
+			}
             if (e.KeyCode == Keys.Enter)
             {
 				var position = _handler.PositionFromnode(treeViewFiles.SelectedNode);
@@ -128,7 +134,7 @@ namespace OpenIDENet.CodeEngine.Core.UI
 
         private void runCommandToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _handler.Run(treeViewFiles.SelectedNode);
+			_handler.Run(treeViewFiles.SelectedNode);
         }
     }
 }

@@ -104,7 +104,7 @@ namespace CSharp.Commands
 				System.IO.Path.Combine(
 					System.IO.Path.Combine(
 						System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"CSharp"), "create");
+					"C#"), "create");
 			return System.IO.Directory.GetFiles(templateDir);
 		}
 

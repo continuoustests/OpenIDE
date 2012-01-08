@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using OpenIDENet.Bootstrapping;
 using OpenIDENet.Core.Language;
+using System.Windows.Forms;
 
 namespace OpenIDENet.Arguments.Handlers
 {

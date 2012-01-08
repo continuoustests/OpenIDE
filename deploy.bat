@@ -20,7 +20,7 @@ mkdir %DEPLOYDIR%\EditorEngine
 mkdir %DEPLOYDIR%\AutoTest.Net
 mkdir %DEPLOYDIR%\ContinuousTests
 mkdir %DEPLOYDIR%\Languages
-mkdir %DEPLOYDIR%\Languages\CSharp
+mkdir %DEPLOYDIR%\Languages\C#
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDENet.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
@@ -38,5 +38,5 @@ copy %BINARYDIR%\OpenIDENet.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDENet.Cod
 copy %BINARYDIR%\OpenIDENet.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.Core.dll
 copy %BINARYDIR%\OpenIDENet.Core.dll %DEPLOYDIR%\OpenIDENet.CodeEngine\OpenIDENet.Core.dll
 
-copy %BINARYDIR%\CSharp.exe %DEPLOYDIR%\Languages\CSharp.exe
-xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\CSharp
+copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
+xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#

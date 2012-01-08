@@ -133,7 +133,7 @@ namespace CSharp.Commands
 			var templateDir = 
 				Path.Combine(
 					Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"CSharp"), "new");
+					"C#"), "new");
 			return Directory.GetFiles(templateDir);
 		}
 

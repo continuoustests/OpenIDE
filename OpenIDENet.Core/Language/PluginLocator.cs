@@ -22,7 +22,7 @@ namespace OpenIDENet.Core.Language
 		{
 			return getPlugins()
 				.Select(x => new LanguagePlugin(x, run, _dispatchMessage))
-				.Where(x => x.GetUsages().Count() > 0).ToArray();
+				.ToArray();
 		}
 		
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
@@ -68,7 +68,6 @@ namespace OpenIDENet.Core.Language
 					break;
 				yield return line;
 			}
-			proc.WaitForExit();
 		}
 	}
 }

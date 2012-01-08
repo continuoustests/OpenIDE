@@ -38,11 +38,10 @@ namespace OpenIDENet.Bootstrapping
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
 					new ConfigurationHandler(_path)
 				});
-			
+				
 			var plugins = PluginLocator().Locate();
 			plugins.ToList()
 				.ForEach(x => _handlers.Add(new LanguageHandler(x)));
-
 			_handlers.Add(new RunCommandHandler(_handlers.ToArray()));
 		}
 

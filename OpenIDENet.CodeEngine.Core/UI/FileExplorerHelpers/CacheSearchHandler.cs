@@ -109,7 +109,6 @@ namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             proc.StartInfo.WorkingDirectory = directory;
             proc.Start();
-            proc.WaitForExit();
         }
 
 		private void listResult(

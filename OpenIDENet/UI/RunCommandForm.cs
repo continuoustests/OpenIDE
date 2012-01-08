@@ -267,7 +267,6 @@ namespace OpenIDENet.UI
             proc.StartInfo.WorkingDirectory = _directory;
             proc.Start();
             var output = proc.StandardOutput.ReadToEnd();
-            proc.WaitForExit();
             if (output.Length > Environment.NewLine.Length)
                 return output.Substring(0, output.Length - Environment.NewLine.Length);
             return output;

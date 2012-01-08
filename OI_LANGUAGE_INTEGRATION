@@ -34,14 +34,6 @@ Getting command definitions for this language extension
 			end
 		end
 
-Plugin language
-	PARAMETER:
-		get-language
-	
-	RESPONSE FORMAT:
-		// String describing the language like:
-		C#
-
 Suppoerted file extensions. This determintes what files will be sent over for change tracking
 	PARAMETER
 		crawl-file-types

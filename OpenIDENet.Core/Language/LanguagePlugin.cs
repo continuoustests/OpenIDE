@@ -25,7 +25,7 @@ namespace OpenIDENet.Core.Language
 
 		public string GetLanguage()
 		{
-			return ToSingleLine("get-language");
+			return Path.GetFileNameWithoutExtension(_path);
 		}
 
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()

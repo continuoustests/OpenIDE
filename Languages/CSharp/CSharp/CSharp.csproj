@@ -8,7 +8,7 @@
     <ProjectGuid>{FFE638AF-5B7F-4C54-8255-2011DE5560D1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>CSharp</RootNamespace>
-    <AssemblyName>CSharp</AssemblyName>
+    <AssemblyName>C#</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -99,7 +99,6 @@
     <Compile Include="IOutputWriter.cs" />
     <Compile Include="Commands\CrawlHandler.cs" />
     <Compile Include="Commands\CrawlFileTypesHandler.cs" />
-    <Compile Include="Commands\LanguageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
