@@ -69,9 +69,26 @@ namespace OpenIDENet.Bootstrapping
 		{
 			var parser = new CommandStringParser();
 			var args = parser.Parse(command);
+			if (isError(command))
+			{
+				printError(command);
+				return;
+			}
 			_dispatcher.For(
 				parser.GetCommand(args),
 				parser.GetArguments(args));
+		}
+
+		private bool isError(string command)
+		{
+			return command.Trim().StartsWith("error|");
+		}
+
+		private void printError(string command)
+		{
+			var errorTag = "error|";
+			var start = command.IndexOf(errorTag) + errorTag.Length;
+			Console.WriteLine(command.Substring(start, command.Length - start));
 		}
 
 		public ILocateEditorEngine ILocateEditorEngine()

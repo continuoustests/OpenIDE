@@ -18,15 +18,17 @@ namespace OpenIDENet.CodeEngine.Core.UI
 		private Action<string, int, int> _action;
 		private Action _cancelAction;
 		private ISearchHandler _handler;
+		private string _defaultLanguage;
 		
-        public FileExplorer(ITypeCache cache, Action<string, int, int> action, Action cancelAction)
+        public FileExplorer(ITypeCache cache, string defaultLanguage, Action<string, int, int> action, Action cancelAction)
         {
             InitializeComponent();
 			Refresh();
 			_cache = cache;
+			_defaultLanguage = defaultLanguage;
 			_action = action;
 			_cancelAction = cancelAction;
-			_handler = new CacheSearchHandler(_cache, treeViewFiles);
+			_handler = new CacheSearchHandler(_cache, _defaultLanguage, treeViewFiles);
         }
 
         private void textBoxSearch_TextChanged(object sender, EventArgs e)

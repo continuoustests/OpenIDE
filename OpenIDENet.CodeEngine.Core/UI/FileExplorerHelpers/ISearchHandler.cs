@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace OpenIDENet.CodeEngine.Core.UI.FileExplorerHelpers
 {
-	interface ISearchHandler
+	public interface ISearchHandler
 	{
 		void ListFromSearch(string expression);
 		string GetDescription(TreeNode node);

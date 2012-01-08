@@ -19,13 +19,16 @@ namespace OpenIDENet.CodeEngine
 	{
 		public static void Main (string[] args)
 		{
-			if (args.Length != 1)
+			if (args.Length < 1)
 				return;
 			var path = args[0];
+			string defaultLanguage = null;
+			if (args.Length > 1)
+				defaultLanguage = args[1];	
 			if (!Directory.Exists(path) && !File.Exists(path))
 				return;
 			
-			Application.Run(new TrayForm(path));
+			Application.Run(new TrayForm(path, defaultLanguage));
 		}
 	}
 
@@ -33,13 +36,15 @@ namespace OpenIDENet.CodeEngine
     {
         private SynchronizationContext _ctx;
         private string _path;
+		private string _defaultLanguage;
         private NotifyIcon trayIcon;
         private ContextMenu trayMenu;
 
-        public TrayForm(string path)
+        public TrayForm(string path, string defaultLanguage)
         {
             _ctx = SynchronizationContext.Current;
             _path = path;
+			_defaultLanguage = defaultLanguage;
             new Thread(startEngine).Start();
 			setupTray();
 			setupForm();
@@ -90,6 +95,7 @@ namespace OpenIDENet.CodeEngine
 				cache,
 				pluginLocator);
 
+			Logger.Write("language " + _defaultLanguage);
             var endpoint = new CommandEndpoint(_path, cache, handleMessage);
             endpoint.Start(_path);
             while (endpoint.IsAlive)
@@ -139,6 +145,7 @@ namespace OpenIDENet.CodeEngine
                 {
                     _exploreForm = new FileExplorer(
 						cache,
+						_defaultLanguage,
 						(file, line, column) => { editor.GoTo(file, line, column); },
 						() => { editor.SetFocus(); });
                     _exploreForm.Show();

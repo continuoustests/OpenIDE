@@ -4,12 +4,16 @@ require 'rbconfig'
 WINDOWS = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
 
 working_directory = ARGV[0]
+default_language = ""
+if ARGV.length > 1
+	default_language = ARGV[1]
+end
 
 t1 = Thread.new do
 	if WINDOWS
-		%x[CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}"]
+		%x[CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}"]
 	else
-		%x[mono ./CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}"]
+		%x[mono ./CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}"]
 	end
 end
 t2 = Thread.new do

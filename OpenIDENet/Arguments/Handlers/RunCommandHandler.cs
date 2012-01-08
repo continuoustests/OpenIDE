@@ -4,6 +4,7 @@ using OpenIDENet.UI;
 using OpenIDENet.CommandBuilding;
 using System.Collections.Generic;
 using System.IO;
+using OpenIDENet.Bootstrapping;
 using OpenIDENet.Core.Language;
 
 namespace OpenIDENet.Arguments.Handlers
@@ -32,7 +33,10 @@ namespace OpenIDENet.Arguments.Handlers
 
 		public void Execute (string[] arguments)
 		{
-			var form = new RunCommandForm(Directory.GetCurrentDirectory(), "", new CommandBuilder(getHandlerParameters().Cast<BaseCommandHandlerParameter>()));
+			var form = new RunCommandForm(
+				Directory.GetCurrentDirectory(),
+				Bootstrapper.Settings.DefaultLanguage,
+				new CommandBuilder(getHandlerParameters().Cast<BaseCommandHandlerParameter>()));
 			form.ShowDialog();
 		}
 

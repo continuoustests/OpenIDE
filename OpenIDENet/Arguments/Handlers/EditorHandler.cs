@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using OpenIDENet.Core.Language;
+using OpenIDENet.Bootstrapping;
 namespace OpenIDENet.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
@@ -50,9 +51,11 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		private Instance startInstance()
 		{
-			var exe = Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "EditorEngine"), "EditorEngine.exe");
+			var exe = Path.Combine(
+				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "EditorEngine"),
+				"EditorEngine.exe");
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(exe, Environment.CurrentDirectory);
+			proc.StartInfo = new ProcessStartInfo(exe, "\"" + Environment.CurrentDirectory + "\"");
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -74,8 +77,13 @@ namespace OpenIDENet.Arguments.Handlers
 			var initscript = Directory.GetFiles(appdir, "initialize.*").FirstOrDefault();
 			if (initscript == null)
 				return;
+			var defaultLanguage = "";
+			if (Bootstrapper.Settings.DefaultLanguage != null)
+				defaultLanguage = " " + Bootstrapper.Settings.DefaultLanguage;
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(initscript, "\"" + Environment.CurrentDirectory + "\"");
+			proc.StartInfo = new ProcessStartInfo(
+				initscript,
+				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

@@ -60,7 +60,7 @@ namespace CSharp
 			var projectFile = new ProjectLocator().Locate(location);
 			if (projectFile == null)
 			{
-				Console.WriteLine("Could not locate a project file for {0}", location);
+				Console.WriteLine("error|Could not locate a project file for {0}", location);
 				return null;
 			}
 			var fs = new FS();

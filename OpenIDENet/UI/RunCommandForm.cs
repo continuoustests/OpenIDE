@@ -34,6 +34,12 @@ namespace OpenIDENet.UI
                 informationList.Items[0].Selected = true;
             Text = "Running command from " + _directory;
             labelInfo.Text = "Already selected parameters: " + additionalParameters;
+			if (additionalParameters != null && additionalParameters.Length > 0)
+			{
+				textBoxSearch.Text = additionalParameters + " ";
+				textBoxSearch.SelectionStart = textBoxSearch.Text.Length;
+				textBoxSearch_TextChanged(this, new EventArgs());
+			}
         }
 		
 		void HandleHandleFormClosing (object sender, FormClosingEventArgs e)
@@ -102,7 +108,8 @@ namespace OpenIDENet.UI
 
         private bool commandEndsWithSpace(string selection)
         {
-            return selection.Length < textBoxSearch.Text.Length && textBoxSearch.Text.Substring(selection.Length, 1) == " ";
+            return selection.Length < textBoxSearch.Text.Length &&
+				   textBoxSearch.Text.Substring(selection.Length, 1) == " ";
         }
 
         private void autoCompletePath()

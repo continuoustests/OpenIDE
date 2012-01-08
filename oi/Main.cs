@@ -12,8 +12,8 @@ namespace oi
 	{
 		public static void Main(string[] args)
 		{	
-			args = Bootstrapper.Settings.Parse(args);
 			Bootstrapper.Initialize();
+			args = Bootstrapper.Settings.Parse(args);
 			if (args.Length == 0)
 			{
 				printUsage();
