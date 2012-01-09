@@ -17,20 +17,26 @@ namespace OpenIDENet.Bootstrapping
 	public class DIContainer
 	{
 		private ICommandDispatcher _dispatcher;
-		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
 		private string _path;
 
 		public DIContainer()
 		{
 			_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			addCommandHandlers();
-			_dispatcher = new CommandDispatcher(_handlers.ToArray());
+			_dispatcher = new CommandDispatcher(getDefaultHandlers().ToArray(), getPluginHandlers);
 		}
 
-		private void addCommandHandlers()
+		private IEnumerable<ICommandHandler> getCommandHandlers()
 		{
-			_handlers = new List<ICommandHandler>();
-			_handlers.AddRange(
+			var handlers = new List<ICommandHandler>();
+			handlers.AddRange(getDefaultHandlers());
+			handlers.AddRange(getPluginHandlers());
+			return handlers;
+		}
+
+		private IEnumerable<ICommandHandler> getDefaultHandlers()
+		{
+			var handlers = new List<ICommandHandler>();
+			handlers.AddRange(
 				new ICommandHandler[]
 				{
 					new EditorHandler(ILocateEditorEngine()),
@@ -38,11 +44,17 @@ namespace OpenIDENet.Bootstrapping
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
 					new ConfigurationHandler(_path)
 				});
-				
+			handlers.Add(new RunCommandHandler(getPluginHandlers));
+			return handlers;
+		}
+
+		private IEnumerable<ICommandHandler> getPluginHandlers()
+		{
+			var handlers = new List<ICommandHandler>();
 			var plugins = PluginLocator().Locate();
 			plugins.ToList()
-				.ForEach(x => _handlers.Add(new LanguageHandler(x)));
-			_handlers.Add(new RunCommandHandler(_handlers.ToArray()));
+				.ForEach(x => handlers.Add(new LanguageHandler(x)));
+			return handlers;
 		}
 
 		public ICommandDispatcher GetDispatcher()
@@ -122,7 +134,7 @@ namespace OpenIDENet.Bootstrapping
 
 		public IEnumerable<ICommandHandler> ICommandHandlers()
 		{
-			return _handlers;
+			return getCommandHandlers();
 		}
 	}
 }

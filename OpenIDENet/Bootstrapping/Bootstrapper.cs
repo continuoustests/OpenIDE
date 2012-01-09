@@ -20,8 +20,11 @@ namespace OpenIDENet.Bootstrapping
 			_container = new DIContainer();
 			Settings = new AppSettings(
 				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-				GetCommandHandlers()
-					.Where(x => x.GetType().Equals(typeof(LanguageHandler))));
+				() =>
+					{
+						return GetCommandHandlers()
+							.Where(x => x.GetType().Equals(typeof(LanguageHandler)));
+					});
 		}
 		
 		public static ICommandDispatcher GetDispatcher()
@@ -41,16 +44,17 @@ namespace OpenIDENet.Bootstrapping
 
 		private string _path;
 		private ICommandHandler[] _handlers;
+		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
 		private Configuration _config;
 
 		public string DefaultLanguage { get; private set; }
 
-		public AppSettings(string path, IEnumerable<ICommandHandler> handlers)
+		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers)
 		{
 			_path = path;
 			_config = new Configuration(_path);
 			DefaultLanguage = _config.DefaultLanguage;
-			_handlers = handlers.ToArray();
+			_handlerFactory = handlers;
 		}
 
 		public string[] Parse(string[] args)
@@ -69,6 +73,8 @@ namespace OpenIDENet.Bootstrapping
 			}
 			if (DefaultLanguage != null && newArgs.Count > 0)
 			{
+				if (_handlers == null)
+					_handlers = _handlerFactory().ToArray();
 				var command = 
 					_handlers
 						.FirstOrDefault(x => x.Command.Equals(DefaultLanguage));
