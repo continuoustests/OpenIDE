@@ -52,10 +52,12 @@ namespace OpenIDENet.Core.Language
 		private IEnumerable<string> run(string cmd, string arguments)
 		{
 			var proc = new Process();
-            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-			    proc.StartInfo = new ProcessStartInfo(cmd, arguments);
-            else
-                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c \"" + cmd + "\" " + arguments);
+            if (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX)
+			{
+                arguments = "/c \"" + ("\"" + cmd + "\" " + arguments).Replace ("\"", "^\"") + "\"";
+				cmd = "cmd.exe";
+			}
+			proc.StartInfo = new ProcessStartInfo(cmd, arguments);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

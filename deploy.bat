@@ -36,7 +36,7 @@ xcopy /S /I /E %LIB%\ContinuousTests %DEPLOYDIR%\ContinuousTests
 copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDENet.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.exe
 copy %BINARYDIR%\OpenIDENet.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDENet.CodeEngine.Core.dll
-copy %BINARYDIR%\OpenIDENet.Core.dll %DEPLOYDIR%\OpenIDENet.CodeEngine\OpenIDENet.Core.dll
+copy %BINARYDIR%\OpenIDENet.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDENet.Core.dll
 
 copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#

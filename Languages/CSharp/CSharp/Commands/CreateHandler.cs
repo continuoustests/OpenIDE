@@ -244,10 +244,13 @@ namespace CSharp.Commands
 		private string run(string arguments)
 		{
 			var proc = new Process();
-            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-                proc.StartInfo = new ProcessStartInfo(_file, arguments);
-            else
-                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c \"" + _file + "\" " + arguments);
+			var cmd = _file;
+			if (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX)
+			{
+				cmd = "cmd.exe";
+                arguments = "/c \"" + ("\"" + _file + "\" " + arguments).Replace ("\"", "^\"") + "\"";
+			}
+			proc.StartInfo = new ProcessStartInfo(cmd, arguments);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
