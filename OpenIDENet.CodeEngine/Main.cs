@@ -136,7 +136,7 @@ namespace OpenIDENet.CodeEngine
                     _gotoType = new TypeSearchForm(
 						cache,
 						(file, line, column) => { editor.GoTo(file, line, column); },
-						() => { editor.SetFocus(); });
+						() => { new System.Threading.Thread(() => { System.Threading.Thread.Sleep(1000); editor.SetFocus(); }).Start(); });
                     _gotoType.Show();
                     _gotoType.BringToFront();
                 }, null);

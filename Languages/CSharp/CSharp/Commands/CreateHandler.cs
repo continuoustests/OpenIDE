@@ -184,7 +184,7 @@ namespace CSharp.Commands
 						projectPath,
 						tempFile));
 				System.IO.File.Delete(tempFile);
-				getFile();
+				getFile(projectPath);
 				getPositionInfo();
 			}
 			catch (Exception ex)
@@ -212,11 +212,13 @@ namespace CSharp.Commands
 			return sb.ToString();
 		}
 		
-		private void getFile()
+		private void getFile(string project)
 		{
 			try
 			{
-				var file = run("get_file");
+				var file = Path.Combine(
+					Path.GetDirectoryName(project),
+					run("get_file"));
 				File = _typeResolver.Resolve(file);
 			}
 			catch
