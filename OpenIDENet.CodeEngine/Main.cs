@@ -12,6 +12,7 @@ using OpenIDENet.CodeEngine.Core.UI;
 using OpenIDENet.CodeEngine.Core.EditorEngine;
 using System.Drawing;
 using OpenIDENet.Core.Language;
+using OpenIDENet.Core.Windowing;
 
 namespace OpenIDENet.CodeEngine
 {

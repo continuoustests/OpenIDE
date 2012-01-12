@@ -42,7 +42,8 @@ namespace OpenIDENet.Bootstrapping
 					new EditorHandler(ILocateEditorEngine()),
 					new CodeEngineGoToHandler(ICodeEngineLocator()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
-					new ConfigurationHandler(_path)
+					new ConfigurationHandler(_path),
+					new BringToForegroundHandler()
 				});
 			handlers.Add(new RunCommandHandler(getPluginHandlers));
 			return handlers;

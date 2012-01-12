@@ -40,6 +40,7 @@
     <Compile Include="Language\PluginLocator.cs" />
     <Compile Include="Language\UsageParser.cs" />
     <Compile Include="Config\Configuration.cs" />
+    <Compile Include="Windowing\BringToForeGround.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

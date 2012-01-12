@@ -18,7 +18,7 @@ namespace OpenIDENet.Tests
 		{
 			var container = new DIContainer();
 			
-			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(5));
+			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(6));
 			
 			Assert.That(container.IFS(), Is.InstanceOf<IFS>());
 			Assert.That(container.IMessageBus(), Is.InstanceOf<IMessageBus>());
