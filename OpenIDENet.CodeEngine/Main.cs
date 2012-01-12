@@ -95,7 +95,6 @@ namespace OpenIDENet.CodeEngine
 				cache,
 				pluginLocator);
 
-			Logger.Write("language " + _defaultLanguage);
             var endpoint = new CommandEndpoint(_path, cache, handleMessage);
             endpoint.Start(_path);
             while (endpoint.IsAlive)
@@ -110,8 +109,13 @@ namespace OpenIDENet.CodeEngine
 					locator.Locate().ToList()
 						.ForEach(x => 
 							{
-								foreach (var line in x.Crawl(new string[] { _path }))
-									handler.Handle(line);
+								try
+								{
+									foreach (var line in x.Crawl(new string[] { _path }))
+										handler.Handle(line);
+								} catch (Exception ex) {
+									Logger.Write(ex.ToString());
+								}
 							});
 				}).Start();
 		}

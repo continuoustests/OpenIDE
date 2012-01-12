@@ -15,7 +15,7 @@ namespace OpenIDENet.Tests
 		public void Setup()
 		{
 			_handler = new FakeHandler();
-			_execute = new CommandDispatcher(new ICommandHandler[] { _handler });
+			_execute = new CommandDispatcher(new ICommandHandler[] { _handler }, () => { return new ICommandHandler[] {}; });
 		}
 		
 		[Test]

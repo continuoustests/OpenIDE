@@ -12,6 +12,7 @@ namespace OpenIDENet.Arguments.Handlers
 {
 	class RunCommandHandler : ICommandHandler
 	{
+		private Func<IEnumerable<ICommandHandler>> _commandHandlerFactory;
         private ICommandHandler[] _commandHandlers;
 
 		public CommandHandlerParameter Usage {
@@ -27,9 +28,9 @@ namespace OpenIDENet.Arguments.Handlers
 
 		public string Command { get { return "run"; } }
 		
-        public RunCommandHandler(ICommandHandler[] handlers)
+        public RunCommandHandler(Func<IEnumerable<ICommandHandler>> handlers)
         {
-            _commandHandlers = handlers;
+        	_commandHandlerFactory = handlers;
         }
 
 		public void Execute (string[] arguments)
@@ -43,6 +44,8 @@ namespace OpenIDENet.Arguments.Handlers
 
         private IEnumerable<CommandHandlerParameter> getHandlerParameters()
         {
+        	if (_commandHandlers == null)
+        		_commandHandlers = _commandHandlerFactory().ToArray();
             var parameters = new List<CommandHandlerParameter>();
             _commandHandlers.ToList()
                 .ForEach(x => 

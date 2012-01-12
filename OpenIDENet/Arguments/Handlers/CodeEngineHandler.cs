@@ -27,10 +27,10 @@ namespace OpenIDENet.Arguments.Handlers
 		
 		public void Execute (string[] arguments)
 		{
-			Console.WriteLine("Handling go to type");
 			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
 			if (instance == null)
 				return;
+			Console.WriteLine("Handling go to type");
 			instance.GoToType();
 		}
 	}
