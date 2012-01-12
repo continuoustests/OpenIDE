@@ -7,22 +7,22 @@ namespace CSharp.Files
 	{
 		public string Fullpath { get; private set; }
 		
+		public CompileFile() { }
+		
 		public CompileFile(string fullPath)
 		{
 			Fullpath = Path.GetFullPath(fullPath);
 		}
+
+		public IFile New(string fullPath)
+		{
+			return new CompileFile(fullPath);
+		}
 		
-		public static bool SupportsExtension(string extension)
+		public bool SupportsExtension(string extension)
 		{
 			extension = extension.ToLower();
 			return extension.Equals(".cs");
-		}
-		
-		public static string DefaultExtensionFor(string type)
-		{
-			if (type == "C#")
-				return ".cs";
-			throw new Exception(string.Format("Unhandled project type {0}", type.ToString()));
 		}
 	}
 }

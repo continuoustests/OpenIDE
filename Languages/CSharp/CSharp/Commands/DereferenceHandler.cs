@@ -42,10 +42,10 @@ namespace CSharp.Commands
 			
 			var fullpath = getFile(arguments[0]);
 			IFile file;
-			if (VSProjectFile.SupportsExtension(fullpath))
-				file = new VSProjectFile(fullpath);
+			if (new VSProjectFile().SupportsExtension(fullpath))
+				file = new VSProjectFile().New(fullpath);
 			else
-				file = new AssemblyFile(fullpath);
+				file = new AssemblyFile().New(fullpath);
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{

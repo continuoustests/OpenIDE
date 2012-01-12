@@ -42,13 +42,34 @@ namespace CSharp
 			dispatcher.Register(new GetUsageHandler(dispatcher));
 			dispatcher.Register(new CrawlHandler());
 			dispatcher.Register(new CrawlFileTypesHandler());
-			dispatcher.Register(new CreateHandler(new VSFileTypeResolver()));
+			dispatcher.Register(new CreateHandler(getReferenceTypeResolver()));
 			dispatcher.Register(new AddFileHandler(getTypesProvider));
 			dispatcher.Register(new DeleteFileHandler(getTypesProvider));
 			dispatcher.Register(new DereferenceHandler(getTypesProvider));
-			dispatcher.Register(new NewHandler(new VSFileTypeResolver(), getTypesProvider));
+			dispatcher.Register(new NewHandler(getFileTypeResolver(), getTypesProvider));
 			dispatcher.Register(new ReferenceHandler(getTypesProvider));
 			dispatcher.Register(new RemoveFileHandler(getTypesProvider));
+		}
+
+		static VSFileTypeResolver getFileTypeResolver()
+		{
+			return new VSFileTypeResolver(
+				new IFile[]
+					{
+						new CompileFile(),
+						// Keep this one last as it accept all types
+						new NoneFile()
+					});
+		}
+		
+		static VSFileTypeResolver getReferenceTypeResolver()
+		{
+			return new VSFileTypeResolver(
+				new IFile[]
+					{
+						new AssemblyFile(),
+						new VSProjectFile()
+					});
 		}
 		
 		static ProviderSettings getTypesProvider(string location)
@@ -74,7 +95,7 @@ namespace CSharp
 				new ProjectVersionResolver(new IProvideVersionedTypes[] {
 						new VersionedTypeProvider<VS2010>(
 							new IReadProjectsFor[] { new DefaultReader(fs) },
-							new IResolveFileTypes[] { new VSFileTypeResolver() },
+							new IResolveFileTypes[] { getFileTypeResolver() },
 							new IAppendFiles[] { new VSFileAppender(fs) },
 							new IRemoveFiles[] { new DefaultRemover(fs) },
 							new IWriteProjectFileToDiskFor[] { new DefaultWriter() },

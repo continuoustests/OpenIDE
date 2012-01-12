@@ -169,12 +169,6 @@ namespace CSharp.Commands
 			return dir;
 		}
 		
-		private string getFileName(string className, string location, Project project)
-		{
-			var fileName = Path.Combine(location, className);
-			return fileName + CompileFile.DefaultExtensionFor("TODO Type from project");
-		}
-		
 		private string getNamespace(string location, string project, string defaultNamespace)
 		{
 			var projectLocation = Path.GetDirectoryName(project);

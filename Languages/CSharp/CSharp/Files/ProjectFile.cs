@@ -7,12 +7,21 @@ namespace CSharp.Files
 	{
 		public string Fullpath { get; private set; }
 
+		public VSProjectFile()
+		{
+		}
+		
 		public VSProjectFile(string fullpath)
 		{
 			Fullpath = Path.GetFullPath(fullpath);
 		}
+
+		public IFile New(string fullpath)
+		{
+			return new VSProjectFile(fullpath);
+		}
 		
-		public static bool SupportsExtension(string fullpath)
+		public bool SupportsExtension(string fullpath)
 		{
 			var extension = Path.GetExtension(fullpath).ToLower();
 			return extension == ".csproj" ||

@@ -46,10 +46,10 @@ namespace CSharp.Tests.Integration
 			assertContains(project, "    <Compile Include=\"Main.cs\" />");
 
 			// Add non compile file
-			//var nonCompile = combine("library1", "NoNCompile.txt");
-			//File.WriteAllText(nonCompile, "");
-			//run("addfile", nonCompile);
-			//assertContains(project, "blupp");
+			var nonCompile = combine("library1", "NoNCompile.txt");
+			File.WriteAllText(nonCompile, "");
+			run("addfile", nonCompile);
+			assertContains(project, "    <None Include=\"NoNCompile.txt\" />");
 
 			// Create library 2
 			var project2 = combine("library2", "library2.csproj");

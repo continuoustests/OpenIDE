@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using CSharp.Versioning;
 using System.Xml;
 using CSharp.FileSystem;
@@ -12,10 +14,18 @@ namespace CSharp.Projects.Appenders
 	{
 		private IFS _fs;
 		private XmlNamespaceManager _nsManager = null;
+		private List<IVSFileAppender> _appenders = new List<IVSFileAppender>();
 		
 		public VSFileAppender(IFS fs)
 		{
 			_fs = fs;
+			Func<XmlNamespaceManager> getNSManager = () => { return _nsManager; };
+			_appenders.AddRange(
+				new IVSFileAppender[]
+					{
+						new CompileFileAppender(getNSManager, nsPrefix),
+						new NoneFileAppender(getNSManager, nsPrefix)
+					});
 		}
 		
 		public bool SupportsProject<T>() where T : IAmProjectVersion
@@ -25,7 +35,7 @@ namespace CSharp.Projects.Appenders
 		
 		public bool SupportsFile(IFile file)
 		{
-			return file.GetType().Equals(typeof(CompileFile));
+			return _appenders.Count(x => x.AppendsFor(file)) > 0;
 		}
 		
 		public void Append(Project project, IFile file)
@@ -44,34 +54,13 @@ namespace CSharp.Projects.Appenders
 				return;
 			}
 			
-			var relativePath = PathExtensions.GetRelativePath(project.File, file.Fullpath).Replace("/", "\\");
-			if (exists(document, relativePath))
-				return;
-			var node = getCompileItemGroup(document, project.File);
-			if (node == null)
-				return;
-			appendFile(document, node, relativePath);
+			_appenders
+				.Where(x => x.AppendsFor(file)).ToList()
+				.ForEach(x => x.Append(document, project, file));
+
 			project.SetContent(document.OuterXml);
 		}
-			    
-		private bool exists(XmlDocument document, string file)
-		{
-            var node = document.SelectSingleNode(nsPrefix(string.Format("||NS||Project/||NS||ItemGroup/||NS||Compile[contains(@Include,'{0}')]", file)), _nsManager);
-			return node != null;
-		}
-		
-		private XmlNode getCompileItemGroup(XmlDocument document, string project)
-		{
-            var node = document.SelectSingleNode(nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Compile"), _nsManager);
-			if (node == null)
-				node = createCompileGroup(document);
-			else
-				node = node.ParentNode;
-			if (node == null)
-				Console.WriteLine("Could not append file. Project file is not of known format {0}", project);
-			return node;
-		}
-		
+
 		private bool tryOpen(XmlDocument document, string xml)
 		{
 			try
@@ -88,6 +77,67 @@ namespace CSharp.Projects.Appenders
 			{
 				return false;
 			}
+		}
+
+		private string nsPrefix(string text)
+        {
+            if (_nsManager == null)
+                return text.Replace("||NS||", "");
+            else
+                return text.Replace("||NS||", "b:");
+        }
+	}
+
+	interface IVSFileAppender
+	{
+		bool AppendsFor(IFile file);
+		void Append(XmlDocument document, Project project, IFile file);
+	}
+
+	class CompileFileAppender : IVSFileAppender
+	{
+		private XmlNamespaceManager _nsManager { get { return getNSManager(); } }
+		private Func<XmlNamespaceManager> getNSManager;
+		private Func<string,string> nsPrefix;
+
+		public CompileFileAppender(Func<XmlNamespaceManager> nsManager, Func<string,string> prefixer)
+		{
+			nsPrefix = prefixer;
+			getNSManager = nsManager;
+		}
+
+		public bool AppendsFor(IFile file)
+		{
+			return file.GetType().Equals(typeof(CompileFile));
+		}
+
+		public void Append(XmlDocument document, Project project, IFile file)
+		{
+			var relativePath = PathExtensions.GetRelativePath(project.File, file.Fullpath).Replace("/", "\\");
+			if (exists(document, relativePath))
+				return;
+			var node = getCompileItemGroup(document, project.File);
+			if (node == null)
+				return;
+			appendFile(document, node, relativePath);
+		}
+
+		private bool exists(XmlDocument document, string file)
+		{
+            var node = document.SelectSingleNode(nsPrefix(string.Format("||NS||Project/||NS||ItemGroup/||NS||Compile[contains(@Include,'{0}')]", file)), _nsManager);
+			return node != null;
+		}
+		
+		private XmlNode getCompileItemGroup(XmlDocument document, string project)
+		{
+            var node = document.SelectSingleNode(nsPrefix("||NS||Project/||NS||ItemGroup/||NS||Compile"), _nsManager);
+			if (node == null)
+				node = createCompileGroup(document);
+			else
+				node = node.ParentNode;
+			if (node == null)
+				Console.WriteLine("Could not append file. Project file is not of known format {0}", project);
+			return node;
 		}
 		
 		private XmlNode createCompileGroup(XmlDocument document)
@@ -109,14 +159,73 @@ namespace CSharp.Projects.Appenders
 			node.Attributes.Append(fileAttribute);
 			parent.AppendChild(node);
 		}
+	}
+	
+	class NoneFileAppender : IVSFileAppender
+	{
+		private XmlNamespaceManager _nsManager { get { return getNSManager(); } }
+		private Func<XmlNamespaceManager> getNSManager;
+		private Func<string,string> nsPrefix;
 
-        private string nsPrefix(string text)
-        {
-            if (_nsManager == null)
-                return text.Replace("||NS||", "");
-            else
-                return text.Replace("||NS||", "b:");
-        }
+		public NoneFileAppender(Func<XmlNamespaceManager> nsManager, Func<string,string> prefixer)
+		{
+			nsPrefix = prefixer;
+			getNSManager = nsManager;
+		}
+
+		public bool AppendsFor(IFile file)
+		{
+			return file.GetType().Equals(typeof(NoneFile));
+		}
+
+		public void Append(XmlDocument document, Project project, IFile file)
+		{
+			var relativePath = PathExtensions.GetRelativePath(project.File, file.Fullpath).Replace("/", "\\");
+			if (exists(document, relativePath))
+				return;
+			var node = getNoneItemGroup(document, project.File);
+			if (node == null)
+				return;
+			appendFile(document, node, relativePath);
+		}
+
+		private bool exists(XmlDocument document, string file)
+		{
+            var node = document.SelectSingleNode(nsPrefix(string.Format("||NS||Project/||NS||ItemGroup/||NS||None[contains(@Include,'{0}')]", file)), _nsManager);
+			return node != null;
+		}
+		
+		private XmlNode getNoneItemGroup(XmlDocument document, string project)
+		{
+            var node = document.SelectSingleNode(nsPrefix("||NS||Project/||NS||ItemGroup/||NS||None"), _nsManager);
+			if (node == null)
+				node = createNoneGroup(document);
+			else
+				node = node.ParentNode;
+			if (node == null)
+				Console.WriteLine("Could not append file. Project file is not of known format {0}", project);
+			return node;
+		}
+		
+		private XmlNode createNoneGroup(XmlDocument document)
+		{
+            var element = document.SelectSingleNode(nsPrefix("||NS||Project"), _nsManager);
+			
+			if (element == null)
+				return null;
+		 	var node = document.CreateNode(XmlNodeType.Element, "ItemGroup", element.NamespaceURI);
+			element.AppendChild(node);
+			return node;
+		}
+		
+		private void appendFile(XmlDocument document, XmlNode parent, string file)
+		{
+			var node = document.CreateNode(XmlNodeType.Element, "None", parent.NamespaceURI);
+			var fileAttribute = document.CreateAttribute("Include");
+			fileAttribute.Value = file;
+			node.Attributes.Append(fileAttribute);
+			parent.AppendChild(node);
+		}
 	}
 }
 

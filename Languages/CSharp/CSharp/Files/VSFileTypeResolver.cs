@@ -1,11 +1,19 @@
 using System;
 using System.IO;
+using System.Linq;
 using CSharp.Versioning;
 
 namespace CSharp.Files
 {
 	public class VSFileTypeResolver : IResolveFileTypes
 	{
+		private IFile[] _fileTypes;
+
+		public VSFileTypeResolver(IFile[] fileTypes)
+		{
+			_fileTypes = fileTypes;
+		}
+
 		public bool SupportsProject<T>() where T : IAmProjectVersion
 		{
 			return typeof(T).Equals(typeof(VS2010));
@@ -14,13 +22,10 @@ namespace CSharp.Files
 		public IFile Resolve(string fullPath)
 		{
 			var extension = Path.GetExtension(fullPath);
-			if (CompileFile.SupportsExtension(extension))
-				return new CompileFile(fullPath);
-			if (AssemblyFile.SupportsExtension(extension))
-				return new AssemblyFile(fullPath);
-			if (VSProjectFile.SupportsExtension(extension))
-				return new VSProjectFile(fullPath);
-			return null;
+			var type = _fileTypes.FirstOrDefault(x => x.SupportsExtension(extension));
+			if (type == null)
+				return null;
+			return type.New(fullPath);
 		}
 	}
 }
