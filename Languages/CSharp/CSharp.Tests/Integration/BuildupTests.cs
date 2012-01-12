@@ -19,6 +19,12 @@ namespace CSharp.Tests.Integration
 				Directory.Delete("C#", true);
 		}
 
+		[TearDown]
+		public void Teardown()
+		{
+			Setup();
+		}
+
 		[Test]
 		public void Run_the_full_suite_of_commands()
 		{
