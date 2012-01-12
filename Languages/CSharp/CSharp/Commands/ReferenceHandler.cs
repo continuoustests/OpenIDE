@@ -35,13 +35,14 @@ namespace CSharp.Commands
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("The handler needs the full path to the reference. " +
+				Console.WriteLine("error|The handler needs the full path to the reference. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
 			
 			var fullpath = getFile(arguments[0]);
 			IFile file;
+
 			if (VSProjectFile.SupportsExtension(fullpath))
 				file = new VSProjectFile(fullpath);
 			else
@@ -49,7 +50,7 @@ namespace CSharp.Commands
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("The project to add this reference to does not exist. " +
+				Console.WriteLine("error|The project to add this reference to does not exist. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
@@ -59,7 +60,7 @@ namespace CSharp.Commands
 			_project.Reference(file);
 			_project.Write();
 
-			Console.WriteLine("Added reference {0} to {1}", file, projectFile);
+			Console.WriteLine("comment|Added reference {0} to {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)
@@ -67,7 +68,7 @@ namespace CSharp.Commands
 			var filename = Path.GetFileName(argument);
 			var dir = Path.GetDirectoryName(argument).Trim();
 			if (dir.Length == 0)
-				return Environment.CurrentDirectory;
+				return Path.Combine(Environment.CurrentDirectory, filename);
 			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
 				return Path.Combine(
 					Path.Combine(Environment.CurrentDirectory, dir),

@@ -60,7 +60,7 @@ namespace CSharp.FileSystem
 			var dir = Path.GetDirectoryName(templateDir);
 			if (dir == null || dir.Length == 0)
 				return -1;
-			if (fullPathFile.Substring(0, dir.Length).Equals(dir))
+			if (fullPathFile.Length >= dir.Length && fullPathFile.Substring(0, dir.Length).Equals(dir))
 				return level;
 			return checkRecursiveLevels(dir, fullPathFile, level + 1);
 		}

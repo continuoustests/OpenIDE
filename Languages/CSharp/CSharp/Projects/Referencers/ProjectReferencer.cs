@@ -1,5 +1,6 @@
 using System;
 using System.Xml;
+using System.IO;
 using CSharp.Versioning;
 using CSharp.Files;
 using CSharp.FileSystem;
@@ -9,10 +10,12 @@ namespace CSharp.Projects.Referencers
 	public class ProjectReferencer : ProjectXML, IAddReference, IRemoveReference
 	{
 		private IFS _fs;
+		private Func<string, ProviderSettings> _getTypesProviderByProject;
 
-		public ProjectReferencer(IFS fs)
+		public ProjectReferencer(IFS fs, Func<string, ProviderSettings> getTypesProviderByProject)
 		{
 			_fs = fs;
+			_getTypesProviderByProject = getTypesProviderByProject;
 		}
 
 		public bool SupportsProject<T>() where T : IAmProjectVersion
@@ -22,7 +25,7 @@ namespace CSharp.Projects.Referencers
 
 		public bool SupportsFile(IFile file)
 		{
-			return file.GetType().Equals(typeof(ProjectFile));
+			return file.GetType().Equals(typeof(VSProjectFile));
 		}
 		
 		public void Reference(Project project, IFile file)
@@ -42,12 +45,17 @@ namespace CSharp.Projects.Referencers
 
 			if (alreadyReferenced(relativePath))
 				return;
+
+			var handler = new ProjectHandler();
+			handler.Read(file.Fullpath, _getTypesProviderByProject);
 			
 			var parent = getReferenceGroup(project.File);
 			var node = _document.CreateNode(XmlNodeType.Element, "ProjectReference", parent.NamespaceURI);
 			var fileAttribute = _document.CreateAttribute("Include");
 			fileAttribute.Value = relativePath;
 			node.Attributes.Append(fileAttribute);
+			node.AppendChild(createNode("Project", "{" + handler.Guid.ToString() + "}", parent));
+			node.AppendChild(createNode("Name", Path.GetFileNameWithoutExtension(file.Fullpath), parent));
 			parent.AppendChild(node);
 			project.SetContent(_document.OuterXml);
 		}
@@ -65,6 +73,13 @@ namespace CSharp.Projects.Referencers
 			project.SetContent(_document.OuterXml);
 		}
 
+		private XmlNode createNode(string name, string nodeValue, XmlNode parent)
+		{
+			var node = _document.CreateNode(XmlNodeType.Element, name, parent.NamespaceURI);
+			node.InnerText = nodeValue;
+			return node;
+		}
+		
 		private bool alreadyReferenced(string path)
 		{
 			var nodes = _document

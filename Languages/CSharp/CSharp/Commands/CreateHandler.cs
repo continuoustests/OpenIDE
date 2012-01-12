@@ -136,9 +136,9 @@ namespace CSharp.Commands
 		private void gotoFile(string file, int line, int column, string location)
 		{
 			Console.WriteLine(
-				string.Format("editor-goto|{0}|{1}|{2}",
+				string.Format("editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			Console.WriteLine("editor-setfocus");
+			Console.WriteLine("editor setfocus");
 		}
 	}
 

@@ -118,7 +118,7 @@ namespace CSharp.Tests.Projects.Appenders
 		
 		private Project getProject(string file, string content)
 		{
-			return new Project(file, content, new ProjectSettings("C#", ""));
+			return new Project(file, content, new ProjectSettings() { Type = "C#" });
 		}
 	}
 }

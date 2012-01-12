@@ -27,6 +27,7 @@ namespace CSharp.Projects
 		public string Fullpath { get { return _project.File; } }
 		public string Type { get { return _project.Settings.Type; } }
 		public string DefaultNamespace { get { return _project.Settings.DefaultNamespace; } }
+		public Guid Guid { get { return _project.Settings.Guid; } }
 
 		public bool Read(string location, Func<string, ProviderSettings> getTypesProviderByLocation)
 		{
@@ -48,7 +49,8 @@ namespace CSharp.Projects
 
 		public void Reference(IFile file)
 		{
-			_with.ReferencerFor(file).Reference(_project, file);	
+			var referencer = _with.ReferencerFor(file);
+			referencer.Reference(_project, file);	
 		}
 
 		public void Dereference(IFile file)

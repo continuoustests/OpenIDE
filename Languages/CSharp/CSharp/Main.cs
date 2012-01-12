@@ -15,7 +15,7 @@ using CSharp.Projects.Referencers;
 
 namespace CSharp
 {
-	class MainClass
+	public class MainClass
 	{
 		public static void Main(string[] args)
 		{
@@ -62,8 +62,15 @@ namespace CSharp
 				Console.WriteLine("error|Could not locate a project file for {0}", location);
 				return null;
 			}
+			return getTypesProviderByProject(projectFile);
+		}
+
+		static ProviderSettings getTypesProviderByProject(string projectFile)
+		{
 			var fs = new FS();
-			var project = 
+			var projectReferencer = new ProjectReferencer(fs, getTypesProviderByProject);
+			var assemblyReferencer = new AssemblyReferencer(fs);
+			var resolver = 
 				new ProjectVersionResolver(new IProvideVersionedTypes[] {
 						new VersionedTypeProvider<VS2010>(
 							new IReadProjectsFor[] { new DefaultReader(fs) },
@@ -71,10 +78,10 @@ namespace CSharp
 							new IAppendFiles[] { new VSFileAppender(fs) },
 							new IRemoveFiles[] { new DefaultRemover(fs) },
 							new IWriteProjectFileToDiskFor[] { new DefaultWriter() },
-							new IAddReference[] { new ProjectReferencer(fs), new AssemblyReferencer(fs) },
-							new IRemoveReference[] { new ProjectReferencer(fs), new AssemblyReferencer(fs) })
-					})
-					.ResolveFor(projectFile);
+							new IAddReference[] { projectReferencer, assemblyReferencer },
+							new IRemoveReference[] { projectReferencer, assemblyReferencer })
+					});
+			var project = resolver.ResolveFor(projectFile);
 			if (project == null)
 				Console.WriteLine("Unsupported poject version for project {0}", projectFile);
 			return new ProviderSettings(projectFile, project);

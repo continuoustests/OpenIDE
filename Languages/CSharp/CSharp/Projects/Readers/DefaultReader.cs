@@ -30,15 +30,28 @@ namespace CSharp.Projects.Readers
 		private ProjectSettings getSettings(string content)
 		{
 			var ns = "ns";
+			var guid = Guid.Empty;
 			var document = new XmlDocument();
 			if (tryOpen(document, content))
 			{
-                var node = document.SelectSingleNode(nsPrefix("||NS||Project/||NS||PropertyGroup/||NS||RootNamespace"), _nsManager);
+                var node = document
+					.SelectSingleNode(
+						nsPrefix("||NS||Project/||NS||PropertyGroup/||NS||RootNamespace"), _nsManager);
 				if (node != null)
 					ns = node.InnerText;
+				node = document
+					.SelectSingleNode(
+						nsPrefix("||NS||Project/||NS||PropertyGroup/||NS||ProjectGuid"), _nsManager);
+				if (node != null)
+					guid = new Guid(node.InnerText);
 			}
 			
-			return new ProjectSettings("C#", ns);
+			return new ProjectSettings()
+				{
+					Type = "C#",
+					DefaultNamespace = ns,
+					Guid = guid
+				};
 		}
 		
 		private bool tryOpen(XmlDocument document, string xml)

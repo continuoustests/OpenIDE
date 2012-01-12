@@ -48,13 +48,8 @@ namespace CSharp.Projects
 
 	public class ProjectSettings
 	{
-		public string Type { get; private set; }
-		public string DefaultNamespace { get; private set; }
-		
-		public ProjectSettings(string type, string defaultNamespace)
-		{
-			Type = type;
-			DefaultNamespace = defaultNamespace;
-		}
+		public string Type { get; set; }
+		public string DefaultNamespace { get; set; }
+		public Guid Guid { get; set; }
 	}
 }

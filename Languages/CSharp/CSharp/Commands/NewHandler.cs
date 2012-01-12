@@ -88,7 +88,7 @@ namespace CSharp.Commands
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("Invalid number of arguments. " +
+				Console.WriteLine("error|Invalid number of arguments. " +
 					"Usage: new {template name} {item name} {template arguments}");
 				return;
 			}
@@ -101,7 +101,7 @@ namespace CSharp.Commands
 			var template = _pickTemplate(arguments[0], _project.Type);
 			if (template == null)
 			{
-				Console.WriteLine("No template with the name {0} exists.", arguments[0]);
+				Console.WriteLine("error|No template with the name {0} exists.", arguments[0]);
 				return;
 			}
 			var ns = getNamespace(location, _project.Fullpath, _project.DefaultNamespace);
@@ -112,8 +112,8 @@ namespace CSharp.Commands
 			_project.AppendFile(template.File);
 			_project.Write();
 			
-			Console.WriteLine("Created class {0}.{1}", ns, className);
-			Console.WriteLine("Full path {0}", template.File.Fullpath);
+			Console.WriteLine("comment|Created class {0}.{1}", ns, className);
+			Console.WriteLine("comment|Full path {0}", template.File.Fullpath);
 			Console.WriteLine("");
 			
 			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
@@ -172,7 +172,7 @@ namespace CSharp.Commands
 		private string getFileName(string className, string location, Project project)
 		{
 			var fileName = Path.Combine(location, className);
-			return fileName + CompileFile.DefaultExtensionFor("Type from project");
+			return fileName + CompileFile.DefaultExtensionFor("TODO Type from project");
 		}
 		
 		private string getNamespace(string location, string project, string defaultNamespace)
@@ -189,9 +189,9 @@ namespace CSharp.Commands
 		private void gotoFile(string file, int line, int column, string location)
 		{
 			Console.WriteLine(
-				string.Format("editor-goto|{0}|{1}|{2}",
+				string.Format("editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			Console.WriteLine("editor-setfocus");
+			Console.WriteLine("editor setfocus");
 		}
 	}
 	
@@ -246,7 +246,7 @@ namespace CSharp.Commands
 					Path.Combine(location, string.Format("{0}{1}", itemName, run("get_file_extension")));
 				if (System.IO.File.Exists(filename))
 				{
-					Console.WriteLine("File already exists {0}", filename);
+					Console.WriteLine("error|File already exists {0}", filename);
 					File = null;
 					return;
 				}

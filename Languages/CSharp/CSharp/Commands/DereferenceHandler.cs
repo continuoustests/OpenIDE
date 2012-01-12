@@ -35,7 +35,7 @@ namespace CSharp.Commands
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("The handler needs the full path to the reference. " +
+				Console.WriteLine("error|The handler needs the full path to the reference. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
@@ -49,7 +49,7 @@ namespace CSharp.Commands
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("The project to remove this reference for does not exist. " +
+				Console.WriteLine("error|The project to remove this reference for does not exist. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
@@ -59,7 +59,7 @@ namespace CSharp.Commands
 			_project.Dereference(file);
 			_project.Write();
 
-			Console.WriteLine("Rereferenced {0} from {1}", file, projectFile);
+			Console.WriteLine("comment|Rereferenced {0} from {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)

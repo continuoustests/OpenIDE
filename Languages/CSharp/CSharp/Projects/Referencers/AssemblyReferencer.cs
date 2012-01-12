@@ -43,7 +43,6 @@ namespace CSharp.Projects.Referencers
 
 			if (alreadyReferenced(relativePath))
 				return;
-			
 			var parent = getReferenceGroup(project.File);
 			var node = _document.CreateNode(XmlNodeType.Element, "Reference", parent.NamespaceURI);
 			var fileAttribute = _document.CreateAttribute("Include");
