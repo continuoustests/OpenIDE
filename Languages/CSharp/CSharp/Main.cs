@@ -75,7 +75,7 @@ namespace CSharp
 		static ProviderSettings getTypesProvider(string location)
 		{
 			location = Path.GetFullPath(location);
-			if (File.Exists(location))
+			if (File.Exists(location) || Path.GetFileName(location).Contains("*"))
 				location = Path.GetDirectoryName(location);
 			var projectFile = new ProjectLocator().Locate(location);
 			if (projectFile == null)

@@ -51,6 +51,29 @@ namespace CSharp.Tests.Integration
 			run("addfile", nonCompile);
 			assertContains(project, "    <None Include=\"NoNCompile.txt\" />");
 
+			// Add using wildcard names
+			var wildcard1 = combine("library1", "wildcard1.cs");
+			var wildcard2 = combine("library1", "wildcard2.txt");
+			var wildcardNoMatch = combine("library1", "notwildcard.cs");
+			File.WriteAllText(wildcard1, "");
+			File.WriteAllText(wildcard2, "");
+			File.WriteAllText(wildcardNoMatch, "");
+			run("addfile", combine("library1", "wildcard*"));
+			assertContains(project, "    <Compile Include=\"wildcard1.cs\" />");
+			assertContains(project, "    <None Include=\"wildcard2.txt\" />");
+			assertNotContains(project, "    <Compile Include=\"notwildcard.cs\" />");
+
+			// Add using recursive wildcard names
+			var wildcard3 = combine("library1", "wildcardsub1.cs");
+			var wildcard4 = combine("library1", "subdir", "wildcardsub2.cs");
+			File.WriteAllText(wildcard3, "");
+			Directory.CreateDirectory(Path.GetDirectoryName(wildcard4));
+			File.WriteAllText(wildcard4, "");
+			run("addfile", combine("library1", "wildcardsub*"), "--recursive");
+			assertContains(project, "    <Compile Include=\"wildcardsub1.cs\" />");
+			assertContains(project, "    <Compile Include=\"subdir\\wildcardsub2.cs\" />");
+			assertNotContains(project, "    <Compile Include=\"notwildcard.cs\" />");
+
 			// Create library 2
 			var project2 = combine("library2", "library2.csproj");
 			run("create", "library", project2);

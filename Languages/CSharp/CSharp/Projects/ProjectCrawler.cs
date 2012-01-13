@@ -26,7 +26,10 @@ namespace CSharp.Projects
 
         private string locateNearestProjectFile(string startDirectory, List<string> fileExtensions)
         {
-            return find(new DirectoryInfo(startDirectory), new Func<FileInfo, bool>(x => fileExtensions.Contains(x.Extension)));
+            return find(
+				new DirectoryInfo(startDirectory),
+				new Func<FileInfo, bool>(x => 
+					fileExtensions.Contains(x.Extension)));
         }
 
         static string find(DirectoryInfo info, Func<FileInfo, bool> predicate)
