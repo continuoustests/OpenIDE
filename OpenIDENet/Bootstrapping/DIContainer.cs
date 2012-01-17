@@ -17,11 +17,9 @@ namespace OpenIDENet.Bootstrapping
 	public class DIContainer
 	{
 		private ICommandDispatcher _dispatcher;
-		private string _path;
 
 		public DIContainer()
 		{
-			_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			_dispatcher = new CommandDispatcher(getDefaultHandlers().ToArray(), getPluginHandlers);
 		}
 
@@ -32,8 +30,21 @@ namespace OpenIDENet.Bootstrapping
 			handlers.AddRange(getPluginHandlers());
 			return handlers;
 		}
-
 		private IEnumerable<ICommandHandler> getDefaultHandlers()
+		{
+			var handlers = new List<ICommandHandler>();
+			handlers.AddRange(getDefaultHandlersWithoutRunHandler());
+			handlers.Add(new RunCommandHandler(() =>
+				{
+					var runHandlers = new List<ICommandHandler>();
+					runHandlers.AddRange(getDefaultHandlersWithoutRunHandler());
+					runHandlers.AddRange(getPluginHandlers());
+					return runHandlers;
+				}));
+			return handlers;
+		}
+
+		private IEnumerable<ICommandHandler> getDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
 			handlers.AddRange(
@@ -42,10 +53,9 @@ namespace OpenIDENet.Bootstrapping
 					new EditorHandler(ILocateEditorEngine()),
 					new CodeEngineGoToHandler(ICodeEngineLocator()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
-					new ConfigurationHandler(_path),
+					new ConfigurationHandler(),
 					new BringToForegroundHandler()
 				});
-			handlers.Add(new RunCommandHandler(getPluginHandlers));
 			return handlers;
 		}
 
@@ -82,6 +92,8 @@ namespace OpenIDENet.Bootstrapping
 
 		private void dispatchMessage(string command)
 		{
+			if (command.Length == 0)
+				return;
 			var parser = new CommandStringParser();
 			var args = parser.Parse(command);
 			if (isError(command))

@@ -41,14 +41,21 @@ namespace OpenIDENet.Arguments.Handlers
 		public void Execute(string[] arguments)
 		{
 			var instance = _editorFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null && arguments.Length == 1)
+			// TODO remove that unbeleavable nasty setfocus solution. Only init if launching editor
+			if (instance == null && arguments.Length == 1 && arguments[0] != "setfocus")
 			{
 				instance = startInstance();
+				if (instance == null)
+					return;
 				instance.Start(arguments[0].Trim());
 				runInitScript();
 			}
 			else
+			{
+				if (instance == null)
+					return;
 				instance.Run(arguments);
+			}
 		}
 		
 		private Instance startInstance()
@@ -63,14 +70,14 @@ namespace OpenIDENet.Arguments.Handlers
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
 			proc.Start();
-            var timeout = DateTime.Now.AddSeconds(5);
-            while (DateTime.Now < timeout)
-            {
-                if (_editorFactory.GetInstance(Environment.CurrentDirectory) != null)
-                    break;
-                Thread.Sleep(50);
-            }
-            return _editorFactory.GetInstance(Environment.CurrentDirectory);
+			var timeout = DateTime.Now.AddSeconds(5);
+			while (DateTime.Now < timeout)
+			{
+				if (_editorFactory.GetInstance(Environment.CurrentDirectory) != null)
+					break;
+				Thread.Sleep(50);
+			}
+			return _editorFactory.GetInstance(Environment.CurrentDirectory);
 		}
 		
 		private void runInitScript()

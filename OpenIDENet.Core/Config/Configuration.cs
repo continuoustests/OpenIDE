@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace OpenIDENet.Core.Config
 {
@@ -9,13 +10,25 @@ namespace OpenIDENet.Core.Config
 		private const string DEFAULT_LANGUAGE_SETTING = "default-language=";
 
 		private string _path;
+		private bool _allowGlobal = false;
+
+		public string ConfigurationFile { get; private set; }
 
 		public string DefaultLanguage { get; private set; }
 
-		public Configuration(string path)
+		public Configuration(string path, bool allowGlobal)
 		{
 			_path = path;
+			_allowGlobal = allowGlobal;
+			ConfigurationFile = getConfigFile(_path);
+			if (ConfigurationFile == null && _allowGlobal)
+				ConfigurationFile = getConfigFile(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 			readConfiguration();
+		}
+
+		public static string GetConfigFile(string path)
+		{
+			return getConfigFile(path);
 		}
 
 		public void Write(string setting)
@@ -25,15 +38,21 @@ namespace OpenIDENet.Core.Config
 				Console.WriteLine("Invalid setting: " + setting);
 				return;
 			}
-			var file = getConfigFile();
-			if (!Directory.Exists(Path.GetDirectoryName(file)))
-				Directory.CreateDirectory(Path.GetDirectoryName(file));
+			if (!Directory.Exists(Path.GetDirectoryName(ConfigurationFile)))
+				Directory.CreateDirectory(Path.GetDirectoryName(ConfigurationFile));
 			string[] lines = new string[] {};
-			if (File.Exists(file))
-				lines = File.ReadAllLines(file);
-			write(file, lines, setting);
+			if (File.Exists(ConfigurationFile))
+				lines = File.ReadAllLines(ConfigurationFile);
+			write(ConfigurationFile, lines, setting);
 		}
 
+		public void Delete(string setting)
+		{
+			if (!File.Exists(ConfigurationFile))
+				return;
+			var lines = File.ReadAllLines(ConfigurationFile);
+			remove(ConfigurationFile, lines, setting + "=");
+		}
 
 		private void write(string file, string[] lines, string setting)
 		{
@@ -49,6 +68,24 @@ namespace OpenIDENet.Core.Config
 								writer.WriteLine(setting);
 								written = true;
 							}
+							else
+								writer.WriteLine(x);
+						});
+				if (!written)
+					writer.WriteLine(setting);
+			}
+		}
+
+		private void remove(string file, string[] lines, string setting)
+		{
+			using (var writer = new StreamWriter(file))
+			{
+				var written = false;
+				lines.ToList()
+					.ForEach(x => 
+						{
+							if (getTag(x).Equals(setting))
+								written = true;
 							else
 								writer.WriteLine(x);
 						});
@@ -82,10 +119,9 @@ namespace OpenIDENet.Core.Config
 
 		private void readConfiguration()
 		{
-			var file = getConfigFile();
-			if (!File.Exists(file))
+			if (ConfigurationFile == null)
 				return;
-			File.ReadAllLines(file).ToList()
+			File.ReadAllLines(ConfigurationFile).ToList()
 				.ForEach(x =>
 					{
 						parseLine(x);
@@ -108,9 +144,20 @@ namespace OpenIDENet.Core.Config
 				DefaultLanguage = line.Substring(space, line.Length - space).Trim();
 		}
 
-		private string getConfigFile()
+		private static string getConfigFile(string path)
 		{
-			return Path.Combine(_path, Path.Combine(".OpenIDE", "oi.config"));
+			if (path == null)
+				return null;
+			var file = Path.Combine(path, Path.Combine(".OpenIDE", "oi.config"));
+			if (!File.Exists(file))
+			{
+				try {
+					return getConfigFile(Path.GetDirectoryName(path));
+				} catch {
+					return null;
+				}
+			}
+			return file;
 		}
 	}
 }

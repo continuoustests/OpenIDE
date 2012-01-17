@@ -18,8 +18,8 @@ namespace CSharp.Commands
 			get {
 				try {
 					var usage =
-						Command + "|\"Uses the create template to create what ever" +
-								  "project related specified by the template\"";
+						Command + "|\"Uses the create template to create what ever " +
+								  "project related specified by the template\" ";
 					getTemplates().ToList()
 						.ForEach(x => 
 							{
@@ -105,7 +105,8 @@ namespace CSharp.Commands
 					System.IO.Path.Combine(
 						System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 					"C#"), "create");
-			return System.IO.Directory.GetFiles(templateDir);
+			return System.IO.Directory.GetFiles(templateDir)
+				.Where(x => !x.EndsWith(".swp") && !x.EndsWith("~"));
 		}
 
 		private string getFile(string argument)

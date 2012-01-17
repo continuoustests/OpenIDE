@@ -257,9 +257,14 @@ namespace OpenIDENet.UI
         {
             var proc = new Process();
             if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-                proc.StartInfo = new ProcessStartInfo("oi", _additionalParameters + arguments);
+                proc.StartInfo = new ProcessStartInfo("oi", arguments);
             else
-                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c oi " + _additionalParameters + arguments);
+			{
+                proc.StartInfo = 
+					new ProcessStartInfo(
+						"cmd.exe", "/c oi \"" +
+						arguments.Replace("\"", "^\"") + "\"");
+			}
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

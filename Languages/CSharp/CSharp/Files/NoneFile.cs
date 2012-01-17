@@ -3,7 +3,7 @@ using System.IO;
 
 namespace CSharp.Files
 {
-	class NoneFile : IFile
+	public class NoneFile : IFile
 	{
 		public string Fullpath { get; private set; }
 		

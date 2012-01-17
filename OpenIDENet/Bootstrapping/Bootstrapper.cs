@@ -45,15 +45,20 @@ namespace OpenIDENet.Bootstrapping
 		private string _path;
 		private ICommandHandler[] _handlers;
 		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
-		private Configuration _config;
 
 		public string DefaultLanguage { get; private set; }
 
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers)
 		{
 			_path = path;
-			_config = new Configuration(_path);
-			DefaultLanguage = _config.DefaultLanguage;
+			var local = new Configuration(Directory.GetCurrentDirectory(), false);
+			var global = new Configuration(_path, false);
+
+			if (local.DefaultLanguage != null)
+				DefaultLanguage = local.DefaultLanguage;
+			else if (global.DefaultLanguage != null)
+				DefaultLanguage = global.DefaultLanguage;
+
 			_handlerFactory = handlers;
 		}
 

@@ -134,7 +134,8 @@ namespace CSharp.Commands
 				Path.Combine(
 					Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 					"C#"), "new");
-			return Directory.GetFiles(templateDir);
+			return Directory.GetFiles(templateDir)
+				.Where(x => !x.EndsWith(".swp") && !x.EndsWith("~")).ToArray();
 		}
 
 		private string[] getArguments(string[] args)

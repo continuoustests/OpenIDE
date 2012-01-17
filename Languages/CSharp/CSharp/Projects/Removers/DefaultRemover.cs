@@ -23,7 +23,8 @@ namespace CSharp.Projects.Removers
 
 		public bool SupportsFile(IFile file)
 		{
-			return file.GetType().Equals(typeof(CompileFile));
+			return file.GetType().Equals(typeof(CompileFile)) ||
+				   file.GetType().Equals(typeof(NoneFile));
 		}
 
 		public void Remove(Project project, IFile file)
@@ -48,7 +49,13 @@ namespace CSharp.Projects.Removers
 			    
 		private XmlNode getNode(XmlDocument document, string file)
 		{
-			return document.SelectSingleNode(string.Format("b:Project/b:ItemGroup/b:Compile[contains(@Include,'{0}')]", file), _nsManager);
+			var node = document.SelectSingleNode(string.Format("b:Project/b:ItemGroup/b:Compile[contains(@Include,'{0}')]", file), _nsManager);
+			if (node != null)
+				return node;
+			node = document.SelectSingleNode(string.Format("b:Project/b:ItemGroup/b:None[contains(@Include,'{0}')]", file), _nsManager);
+			if (node != null)
+				return node;
+			return null;
 		}
 		
 		private bool tryOpen(XmlDocument document, string xml)
