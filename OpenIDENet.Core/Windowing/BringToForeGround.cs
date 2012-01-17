@@ -28,7 +28,7 @@ namespace OpenIDENet.Core.Windowing
 
 		private static IntPtr findWindow(string process, string title)
 		{
-            var proc = Process.GetProcessesByName(process)
+      var proc = Process.GetProcessesByName(process)
 				.FirstOrDefault(x => x.MainWindowTitle.Contains(title));
 			if (proc != null)
 				return proc.MainWindowHandle;
