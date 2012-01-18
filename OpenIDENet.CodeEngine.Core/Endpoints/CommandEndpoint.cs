@@ -1,63 +1,84 @@
 using System;
-using OpenIDENet.CodeEngine.Core.Endpoints.Tcp;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Diagnostics;
-using OpenIDENet.CodeEngine.Core.EditorEngine;
+using System.Collections.Generic;
 using OpenIDENet.CodeEngine.Core.UI;
 using OpenIDENet.CodeEngine.Core.Caching;
+using OpenIDENet.CodeEngine.Core.Commands;
+using OpenIDENet.CodeEngine.Core.EditorEngine;
+using OpenIDENet.CodeEngine.Core.Endpoints.Tcp;
 namespace OpenIDENet.CodeEngine.Core.Endpoints
 {
 	public class CommandEndpoint
 	{
+		private string _keyPath;
 		private TcpServer _server;
 		private Editor _editor;
 		private ITypeCache _cache;
 		private string _instanceFile;
-		private Action<string, ITypeCache, Editor> _onCommand;
+		private List<Action<string,ITypeCache,Editor>> _handlers = new List<Action<string,ITypeCache,Editor>>();
 		
 		public bool IsAlive { get { return _editor.IsConnected; } }
 		
-		public CommandEndpoint(string editorKey, ITypeCache cache, Action<string, ITypeCache, Editor> onCommand)
+		public CommandEndpoint(string editorKey, ITypeCache cache)
 		{
-			_onCommand = onCommand;
+			_keyPath = editorKey;
 			_cache = cache;
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
 			_editor = new Editor();
 			_editor.RecievedMessage += Handle_editorRecievedMessage;
-			_editor.Connect(editorKey);
+			_editor.Connect(_keyPath);
 		}
 
 		void Handle_editorRecievedMessage(object sender, MessageArgs e)
 		{
-			var message = EditorEngineMessage.New(e.Message);
-			if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "t")
-				_onCommand("gototype", _cache, _editor);
-            if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "e")
-                _onCommand("explore", _cache, _editor);
-			else if (message.Command == "keypress" && message.Arguments.Count == 1 && message.Arguments[0] == "nobuffers")
-				_onCommand("gototype", _cache, _editor);
+			var msg = CommandMessage.New(e.Message);
+			if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "t")
+				handle("gototype");
+            if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "e")
+                handle("explore");
+			else if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "nobuffers")
+				handle("gototype");
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
 			if (e.Message == "GoToType")
-				_onCommand("gototype", _cache, _editor);
-			if (e.Message == "Explore")
-				_onCommand("explore", _cache, _editor);
+				handle("gototype");
+			else if (e.Message == "Explore")
+				handle("explore");
+			else
+				handle(e.Message);
+
 		}
-		
-		public void Run(string cmd)
+
+		void handle(string command)
 		{
-			_server.Send(cmd);
+			ThreadPool.QueueUserWorkItem((cmd) =>
+				{
+					_handlers
+						.ForEach(x => x(command.ToString(), _cache, _editor));
+				}, command);
+		}
+
+		public void AddHandler(Action<string,ITypeCache,Editor> handler)
+		{
+			_handlers.Add(handler);
 		}
 		
-		public void Start(string key)
+		public void Send(string message)
+		{
+			_server.Send(message);
+		}
+		
+		public void Start()
 		{
 			_server.Start();
-			writeInstanceInfo(key);
+			writeInstanceInfo(_keyPath);
 		}
 		
 		public void Stop()

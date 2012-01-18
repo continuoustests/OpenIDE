@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -10,8 +10,7 @@
     <RootNamespace>OpenIDENet.CodeEngine.Core</RootNamespace>
     <AssemblyName>OpenIDENet.CodeEngine.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -84,7 +83,6 @@
     </Compile>
     <Compile Include="UI\TypeSearchForm.Designer.cs" />
     <Compile Include="Caching\ITypeCache.cs" />
-    <Compile Include="EditorEngine\EditorEngineMessage.cs" />
     <Compile Include="ChangeTrackers\FileChangeTracker.cs" />
     <Compile Include="ChangeTrackers\CSharpFileTracker.cs" />
     <Compile Include="Caching\Project.cs" />
@@ -95,6 +93,11 @@
     <Compile Include="UI\FileExplorerHelpers\ISearchHandler.cs" />
     <Compile Include="ChangeTrackers\CrawlHandler.cs" />
     <Compile Include="Caching\ISignatureReference.cs" />
+    <Compile Include="Bootstrapping\Bootstrapper.cs" />
+    <Compile Include="Handlers\GetCodeRefsHandler.cs" />
+    <Compile Include="Handlers\IHandler.cs" />
+    <Compile Include="Commands\CommandMessage.cs" />
+    <Compile Include="Commands\CacheFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

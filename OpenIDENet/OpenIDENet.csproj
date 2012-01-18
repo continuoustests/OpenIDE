@@ -105,6 +105,7 @@
     <Compile Include="Arguments\Handlers\LanguageHandler.cs" />
     <Compile Include="Arguments\Handlers\ConfigurationHandler.cs" />
     <Compile Include="Arguments\Handlers\BringToForegroundHandler.cs" />
+    <Compile Include="Arguments\Handlers\CodeEngineGetCodeRefsHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

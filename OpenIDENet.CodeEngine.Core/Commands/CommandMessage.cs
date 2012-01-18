@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
-namespace OpenIDENet.CodeEngine.Core.EditorEngine
+namespace OpenIDENet.CodeEngine.Core.Commands
 {
-	public class EditorEngineMessage
+	public class CommandMessage
 	{
 		public string Command { get; private set; }
 		public List<string> Arguments { get; private set; }
 		
-		public EditorEngineMessage(string command, IEnumerable<string> arguments)
+		public CommandMessage(string command, IEnumerable<string> arguments)
 		{
 			Command = command;
 			Arguments = new List<string>();
 			Arguments.AddRange(arguments);
 		}
 		
-		public static EditorEngineMessage New(string message)
+		public static CommandMessage New(string message)
 		{
 			var chunks = splitMessage(message);
 			if (chunks.Count == 0)
-				return new EditorEngineMessage("", new string[] {});
-			return new EditorEngineMessage(chunks[0], getRemainingChunks(chunks));
+				return new CommandMessage("", new string[] {});
+			return new CommandMessage(chunks[0], getRemainingChunks(chunks));
 		}
 		
 		private static List<string> splitMessage(string message)

@@ -42,6 +42,24 @@ namespace OpenIDENet.CodeEngineIntegration
 		{
 			send("Explore");
 		}
+
+		public void GetCodeRefs()
+		{
+			var client = _clientFactory.Invoke();
+			client.Connect(Port);
+			if (!client.IsConnected)
+				return;
+			client.SendAndWait("get-code-refs bleh");
+
+			var then = DateTime.Now.AddSeconds(15);
+			while (then > DateTime.Now)
+			{
+				if (client.RecievedMessage != null)
+					break;
+			}
+			Console.WriteLine(client.RecievedMessage);
+			client.Disconnect();
+		}
 		
 		private void send(string message)
 		{
