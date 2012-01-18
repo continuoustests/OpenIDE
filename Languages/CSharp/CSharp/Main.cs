@@ -36,7 +36,7 @@ namespace CSharp
 				remaining.Add(args[i]);
 			return remaining.ToArray();
 		}
-
+		
 		static void configureHandlers(Dispatcher dispatcher)
 		{
 			dispatcher.Register(new GetUsageHandler(dispatcher));
@@ -50,7 +50,7 @@ namespace CSharp
 			dispatcher.Register(new ReferenceHandler(getTypesProvider));
 			dispatcher.Register(new RemoveFileHandler(getTypesProvider));
 		}
-
+		
 		static VSFileTypeResolver getFileTypeResolver()
 		{
 			return new VSFileTypeResolver(

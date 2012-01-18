@@ -19,12 +19,9 @@ namespace OpenIDENet.Bootstrapping
 		{
 			_container = new DIContainer();
 			Settings = new AppSettings(
-				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-				() =>
-					{
-						return GetCommandHandlers()
-							.Where(x => x.GetType().Equals(typeof(LanguageHandler)));
-					});
+				Path.GetDirectoryName(
+					Assembly.GetExecutingAssembly().Location),
+					getLanguageHandlers);
 		}
 		
 		public static ICommandDispatcher GetDispatcher()
@@ -35,6 +32,12 @@ namespace OpenIDENet.Bootstrapping
 		public static IEnumerable<ICommandHandler> GetCommandHandlers()
 		{
 			return _container.ICommandHandlers();
+		}
+
+		private static IEnumerable<ICommandHandler> getLanguageHandlers()
+		{
+			return _container.ICommandHandlers()
+				.Where(x => x.GetType().Equals(typeof(LanguageHandler)));
 		}
 	}
 
