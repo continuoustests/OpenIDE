@@ -10,7 +10,8 @@
     <RootNamespace>OpenIDENet.CodeEngine.Core</RootNamespace>
     <AssemblyName>OpenIDENet.CodeEngine.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -98,6 +99,7 @@
     <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="Commands\CommandMessage.cs" />
     <Compile Include="Commands\CacheFormatter.cs" />
+    <Compile Include="Commands\QueryArgumentParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

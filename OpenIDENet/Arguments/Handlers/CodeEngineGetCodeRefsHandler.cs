@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using OpenIDENet.CodeEngineIntegration;
 using OpenIDENet.Core.Language;
 
@@ -15,6 +16,7 @@ namespace OpenIDENet.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Queries for code references");
+				usage.Add("[QUERY]", "Format: type=class,name=MyName*. Supported properties: type, file, signature, name");
 				return usage;
 			}
 		}
@@ -31,7 +33,10 @@ namespace OpenIDENet.Arguments.Handlers
 			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
 			if (instance == null)
 				return;
-			instance.GetCodeRefs();
+			var args = "";
+			if (arguments.Length == 1)
+				args = arguments[0];
+			instance.GetCodeRefs(args);
 		}
 	}
 }
