@@ -9,8 +9,20 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
 {
 	public class TcpServer
 	{
+		class Client
+		{
+			public Guid ID { get; private set; }
+			public NetworkStream Stream { get; private set; }
+
+			public Client(NetworkStream stream)
+			{
+				ID = Guid.NewGuid();
+				Stream = stream;
+			}
+		}
+
 		private Socket _listener = null;
-		private List<NetworkStream> _clients = new List<NetworkStream>();
+		private List<Client> _clients = new List<Client>();
 		private byte[] _buffer = new byte[5000];
 		private MemoryStream _readBuffer = new MemoryStream();
 		private int _currentPort = 0;
@@ -46,12 +58,12 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
             try
             {
                 var client = listener.EndAccept(result);
-                var clientStream = new NetworkStream(client);
+                var clientStream = new Client(new NetworkStream(client));
                 lock (_clients)
                 {
                     _clients.Add(clientStream);
                 }
-                clientStream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, clientStream);
+                clientStream.Stream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, clientStream);
                 if (ClientConnected != null)
 					ClientConnected(this, new EventArgs());
             }
@@ -66,10 +78,10 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
 		
 		private void ReadCompleted(IAsyncResult result)
         {
-            var stream = (NetworkStream) result.AsyncState;
+            var stream = (Client) result.AsyncState;
             try
             {
-                var x = stream.EndRead(result);
+                var x = stream.Stream.EndRead(result);
                 if(x == 0) return;
                 for (int i = 0; i < x;i++)
                 {
@@ -82,7 +94,7 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
 						else
 						    actual = Encoding.UTF8.GetString(data, 0, data.Length - (_messageTermination.Length - 1));
 						if (IncomingMessage != null)
-							IncomingMessage(this, new MessageArgs(actual));
+							IncomingMessage(this, new MessageArgs(stream.ID, actual));
                         _readBuffer.SetLength(0);
                     }
                     else
@@ -90,7 +102,7 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
                         _readBuffer.WriteByte(_buffer[i]);
                     }
                 }
-                stream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, stream);
+                stream.Stream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, stream);
             }
             catch
             {
@@ -112,7 +124,7 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
 			return true;
 		}
 		
-		private void disconnect(NetworkStream stream)
+		private void disconnect(Client stream)
 		{
 			lock(_clients)
 			{
@@ -134,15 +146,39 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
             }
         }
 
+		public void Send(string message, Guid clientID)
+		{
+			lock (_clients)
+			{
+				// Add message terminate char
+				byte[] data;
+				if (_messageTermination == null)
+					data = Encoding.UTF8.GetBytes(message).Concat(new byte[] { 0x0 }).ToArray();
+				else
+					data = Encoding.UTF8.GetBytes(message + _messageTermination).ToArray();
+				
+				var client = _clients.FirstOrDefault(x => x.ID.Equals(clientID));
+				if (client == null)
+					return;
+				try
+				{
+					sendToClient(data, client);
+				}
+				catch
+				{
+					disconnect(client);
+				}
+			}
+		}
+
         private void SendToClients(byte[] data)
         {
-			var failingClients = new List<NetworkStream>();
+			var failingClients = new List<Client>();
             foreach (var client in _clients)
             {
                 try
                 {
-                    var stream = client;
-                    client.BeginWrite(data, 0, data.Length, WriteCompleted, stream);
+					sendToClient(data, client);
                 }
                 catch
                 {
@@ -151,13 +187,19 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
             }
 			failingClients.ForEach(client => disconnect(client));
         }
+
+		private void sendToClient(byte[] data, Client client)
+		{
+			var stream = client.Stream;
+            stream.BeginWrite(data, 0, data.Length, WriteCompleted, client);
+		}
 		
 		private void WriteCompleted(IAsyncResult result)
         {
-            var client = (NetworkStream) result.AsyncState;
+            var client = (Client) result.AsyncState;
             try
             {
-                client.EndWrite(result);
+                client.Stream.EndWrite(result);
             }
             catch
             {

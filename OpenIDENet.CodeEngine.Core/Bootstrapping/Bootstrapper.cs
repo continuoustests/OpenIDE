@@ -8,6 +8,7 @@ using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Commands;
 using OpenIDENet.CodeEngine.Core.Handlers;
 using OpenIDENet.CodeEngine.Core.Endpoints;
+using OpenIDENet.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDENet.CodeEngine.Core.ChangeTrackers;
 using OpenIDENet.CodeEngine.Core.Logging;
 using OpenIDENet.CodeEngine.Core.EditorEngine;
@@ -50,12 +51,12 @@ namespace OpenIDENet.CodeEngine.Core.Bootstrapping
 			return _endpoint;
 		}
 
-		private static void messageHandler(string message, ITypeCache cache, Editor editor)
+		private static void messageHandler(MessageArgs message, ITypeCache cache, Editor editor)
 		{
-			var msg = CommandMessage.New(message);
+			var msg = CommandMessage.New(message.Message);
 			_handlers
 				.Where(x => x.Handles(msg)).ToList()
-				.ForEach(x => x.Handle(msg));
+				.ForEach(x => x.Handle(message.ClientID, msg));
 		}
 		
 		private static void initPlugins(PluginLocator locator, CrawlHandler handler)

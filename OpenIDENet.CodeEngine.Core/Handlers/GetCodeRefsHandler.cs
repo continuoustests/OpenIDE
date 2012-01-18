@@ -24,8 +24,10 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 			return message.Command.Equals("get-code-refs");
 		}
 
-		public void Handle(CommandMessage message)
+		public void Handle(Guid clientID, CommandMessage message)
 		{
+			if (clientID == Guid.Empty)
+				return;
 			var sb = new StringBuilder();
 			var formatter = new CacheFormatter();
 			_cache.All()
@@ -36,7 +38,7 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 						x.ToList()
 							.ForEach(y => sb.AppendLine(formatter.Format(y)));
 					});
-			_endpoint.Send(sb.ToString());
+			_endpoint.Send(sb.ToString(), clientID);
 		}
 	}
 }

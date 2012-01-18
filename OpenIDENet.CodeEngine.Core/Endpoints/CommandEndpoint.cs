@@ -18,7 +18,8 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 		private Editor _editor;
 		private ITypeCache _cache;
 		private string _instanceFile;
-		private List<Action<string,ITypeCache,Editor>> _handlers = new List<Action<string,ITypeCache,Editor>>();
+		private List<Action<MessageArgs,ITypeCache,Editor>> _handlers =
+			new List<Action<MessageArgs,ITypeCache,Editor>>();
 		
 		public bool IsAlive { get { return _editor.IsConnected; } }
 		
@@ -38,34 +39,34 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 		{
 			var msg = CommandMessage.New(e.Message);
 			if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "t")
-				handle("gototype");
+				handle(new MessageArgs(Guid.Empty, "gototype"));
             if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "e")
-                handle("explore");
+                handle(new MessageArgs(Guid.Empty, "explore"));
 			else if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "nobuffers")
-				handle("gototype");
+				handle(new MessageArgs(Guid.Empty, "gototype"));
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
 			if (e.Message == "GoToType")
-				handle("gototype");
+				handle(new MessageArgs(e.ClientID, "gototype"));
 			else if (e.Message == "Explore")
-				handle("explore");
+				handle(new MessageArgs(e.ClientID, "explore"));
 			else
-				handle(e.Message);
+				handle(e);
 
 		}
 
-		void handle(string command)
+		void handle(MessageArgs command)
 		{
 			ThreadPool.QueueUserWorkItem((cmd) =>
 				{
 					_handlers
-						.ForEach(x => x(command.ToString(), _cache, _editor));
-				}, command);
+						.ForEach(x => x(command, _cache, _editor));
+				}, null);
 		}
 
-		public void AddHandler(Action<string,ITypeCache,Editor> handler)
+		public void AddHandler(Action<MessageArgs,ITypeCache,Editor> handler)
 		{
 			_handlers.Add(handler);
 		}
@@ -73,6 +74,11 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints
 		public void Send(string message)
 		{
 			_server.Send(message);
+		}
+
+		public void Send(string message, Guid clientID)
+		{
+			_server.Send(message, clientID);
 		}
 		
 		public void Start()

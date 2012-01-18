@@ -69,7 +69,7 @@ namespace OpenIDENet.CodeEngine.Core.EditorEngine
 		void Handle_clientIncomingMessage(object sender, IncomingMessageArgs e)
 		{
 			if (RecievedMessage != null)
-				RecievedMessage(this, new MessageArgs(e.Message));
+				RecievedMessage(this, new MessageArgs(Guid.Empty, e.Message));
 		}
 	}
 	

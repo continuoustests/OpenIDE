@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Endpoints;
+using OpenIDENet.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDENet.CodeEngine.Core.EditorEngine;
 using OpenIDENet.CodeEngine.Core.UI;
 
@@ -66,11 +67,11 @@ namespace OpenIDENet.CodeEngine
             Close();
         }
 
-        private void handleMessage(string message, ITypeCache cache, Editor editor)
+        private void handleMessage(MessageArgs message, ITypeCache cache, Editor editor)
         {
-            if (message == "gototype")
+            if (message.Message == "gototype")
                 goToType(cache, editor);
-            if (message == "explore")
+            if (message.Message == "explore")
                 explore(cache, editor);
         }
 
