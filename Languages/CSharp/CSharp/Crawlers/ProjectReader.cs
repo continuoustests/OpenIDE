@@ -34,6 +34,7 @@ namespace CSharp.Crawlers
 		{
 			var files = new List<string>();
 			files.AddRange(getFiles(_xml.SelectNodes("b:Project/b:ItemGroup/b:Compile", _nsManager)));
+			files.AddRange(getFiles(_xml.SelectNodes("b:Project/b:ItemGroup/b:Content", _nsManager)));
 			files.AddRange(getFiles(_xml.SelectNodes("b:Project/b:ItemGroup/b:None", _nsManager)));
 			return files;
 		}
