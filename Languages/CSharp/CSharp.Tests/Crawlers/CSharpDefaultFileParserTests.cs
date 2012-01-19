@@ -198,23 +198,6 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(iface.Column, Is.EqualTo(11));
 		}
 		
-		[Test]
-		public void File_test()
-		{
-			var file = "/home/ack/src/mono/mcs/class/System.XML/Test/System.Xml/nist_dom/fundamental/Element/Element.cs";
-			var cache = new Fake_CacheBuilder();
-			var parser = new CSharpFileParser(cache);
-			
-			try
-			{
-				parser.ParseFile("file1", () => { return File.ReadAllText(file); });
-			}
-			catch
-			{
-				throw new Exception(string.Format("{0}, {1}, {2}", cache.Namespaces.Count, cache.Classes.Count, cache.Interfaces.Count));
-			}
-		}
-		
 		private string getContent()
 		{
 			return File.ReadAllText(

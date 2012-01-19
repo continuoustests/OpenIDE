@@ -33,7 +33,14 @@ namespace CSharp.Crawlers
 		private List<string> getFiles()
 		{
 			var files = new List<string>();
-			var nodes = _xml.SelectNodes("b:Project/b:ItemGroup/b:Compile", _nsManager);
+			files.AddRange(getFiles(_xml.SelectNodes("b:Project/b:ItemGroup/b:Compile", _nsManager)));
+			files.AddRange(getFiles(_xml.SelectNodes("b:Project/b:ItemGroup/b:None", _nsManager)));
+			return files;
+		}
+
+		private IEnumerable<string> getFiles(XmlNodeList nodes)
+		{
+			var files = new List<string>();
 			foreach (XmlNode node in nodes)
 			{
 				var relativePath = node.Attributes["Include"];
