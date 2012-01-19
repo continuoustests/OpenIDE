@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using OpenIDENet.CodeEngine.Core.Caching;
+using OpenIDENet.CodeEngine.Core.Logging;
 using System.Linq;
 using OpenIDENet.Core.Language;
 namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
@@ -67,16 +68,13 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 		private void handle(FileSystemEventArgs file)
 		{
 			if (file == null)
-			{
-				Console.WriteLine("FS args is null???");
 				return;
-			}
 			var extension = Path.GetExtension(file.FullPath).ToLower();
 			if (extension == null)
 				return;
 			_plugins.ForEach(x =>
 				{
-					if (x.Supports(extension))
+					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.FullPath))
 						x.FilesToHandle.Add(file.FullPath);
 				});
 		}

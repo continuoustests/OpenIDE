@@ -1,14 +1,16 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using OpenIDENet.CodeEngine.Core.Caching;
+using OpenIDENet.CodeEngine.Core.Logging;
 namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 {
 	public class FileChangeTracker
 	{
 		private string _watchPath;
-		private string _pattern;
+		private string[] _patterns;
 		private FileSystemWatcher _watcher;
 		private Stack<FileSystemEventArgs> _buffer = new Stack<FileSystemEventArgs>();
 		private Action<Stack<FileSystemEventArgs>> _changeHandler;
@@ -16,10 +18,12 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 		public void Start(string path, string pattern, Action<Stack<FileSystemEventArgs>> changeHandler)
 		{
 			_watchPath = path;
-			_pattern = pattern;
+			_patterns = pattern
+				.Replace("*", "")
+				.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 			_changeHandler = changeHandler;
-			ThreadPool.QueueUserWorkItem(startChangeHandler);
-			ThreadPool.QueueUserWorkItem(start);
+			new Thread(startChangeHandler).Start();
+			new Thread(start).Start();
 		}
 		
 		private void startChangeHandler(object state)
@@ -50,8 +54,7 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 			_watcher = new FileSystemWatcher
                            {
                                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.Attributes,
-                               IncludeSubdirectories = true,
-                               Filter = _pattern,
+                               IncludeSubdirectories = true
                            };
 			_watcher.Changed += WatcherChangeHandler;
             _watcher.Created += WatcherChangeHandler;
@@ -64,6 +67,8 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 		
 		private void WatcherChangeHandler(object sender, FileSystemEventArgs e)
         {
+			if (!_patterns.Contains(Path.GetExtension(e.FullPath)))
+				return;
             addToBuffer(e);
         }
 
