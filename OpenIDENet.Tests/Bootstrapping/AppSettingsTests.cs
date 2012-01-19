@@ -16,8 +16,8 @@ namespace OpenIDENet.Tests.Bootstrapping
 		{
 			_appSettings = new AppSettings(
 				"",
-				() => { return new ICommandHandler[] { new Fake_CommandHandler() }; },
-				() => { return new ICommandHandler[] { new Fake_LanguageCommandHandler() }; });
+				() => { return new ICommandHandler[] { new Fake_CommandHandler() }; },
+				() => { return new ICommandHandler[] { new Fake_LanguageCommandHandler() }; });
 		}
 		
 		[Test]
