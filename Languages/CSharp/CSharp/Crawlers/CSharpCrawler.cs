@@ -59,7 +59,13 @@ namespace CSharp.Crawlers
 			catch (Exception ex)
 			{
 				_builder.Error("Failed to parse " + x);
-				_builder.Error(ex.ToString());
+				_builder.Error(ex.Message.Replace(Environment.NewLine, ""));
+				if (ex.StackTrace != null)
+				{
+					ex.StackTrace
+						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+						.ForEach(line => _builder.Error(line));
+				}
 			}
 		}
 	}

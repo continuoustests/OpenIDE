@@ -26,7 +26,18 @@ namespace CSharp
 			var handler = dispatcher.GetHandler(args[0]);
 			if (handler == null)
 				return;
-			handler.Execute(getParameters(args));
+
+			try {
+				handler.Execute(getParameters(args));
+			} catch (Exception ex) {
+				var builder = new OutputWriter();
+				builder.Error(ex.Message.Replace(Environment.NewLine, ""));
+				if (ex.StackTrace != null) {
+					ex.StackTrace
+						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+						.ForEach(line => builder.Error(line));
+				}
+			}
 		}
 
 		static string[] getParameters(string[] args)

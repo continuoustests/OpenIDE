@@ -32,6 +32,10 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 					handleSignature(chunks);
 				if (chunks[0] == "reference")
 					handleReference(chunks);
+				if (chunks[0] == "error")
+					Logger.Write(command);
+				if (chunks[0] == "comment")
+					Logger.Write(command);
 			} catch (Exception ex) {
 				Logger.Write(ex);
 			}
