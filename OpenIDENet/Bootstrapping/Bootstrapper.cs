@@ -96,7 +96,7 @@ namespace OpenIDENet.Bootstrapping
 					unhandledArg = false;
 			}
 
-			if (DefaultLanguage != null && unhandledArg)
+			if (DefaultLanguage != null && unhandledArg && newArgs.Count > 0)
 			{
 				if (_pluginHandlers == null)
 					_pluginHandlers = _pluginHandlerFactory().ToArray();
