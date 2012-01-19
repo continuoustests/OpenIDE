@@ -7,10 +7,12 @@ using OpenIDENet.CodeEngine.Core.Caching;
 using OpenIDENet.CodeEngine.Core.Logging;
 namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 {
-	public class FileChangeTracker
+	public class FileChangeTracker : IDisposable
 	{
 		private string _watchPath;
 		private string[] _patterns;
+		private Thread _changeHandlerThread;
+		private Thread _listenerThread;
 		private FileSystemWatcher _watcher;
 		private Stack<FileSystemEventArgs> _buffer = new Stack<FileSystemEventArgs>();
 		private Action<Stack<FileSystemEventArgs>> _changeHandler;
@@ -22,8 +24,10 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 				.Replace("*", "")
 				.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 			_changeHandler = changeHandler;
-			new Thread(startChangeHandler).Start();
-			new Thread(start).Start();
+			_changeHandlerThread = new Thread(startChangeHandler);
+			_listenerThread = new Thread(start);
+			_changeHandlerThread.Start();
+			_listenerThread.Start();
 		}
 		
 		private void startChangeHandler(object state)
@@ -83,6 +87,12 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 			
             _buffer.Push(file);
         }
+
+		public void Dispose()
+		{
+			_changeHandlerThread.Abort();
+			_listenerThread.Abort();
+		}
 	}
 }
 

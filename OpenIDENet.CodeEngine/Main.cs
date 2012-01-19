@@ -20,6 +20,7 @@ namespace OpenIDENet.CodeEngine
 
 			var endpoint = Bootstrapper.GetEndpoint(path);		
 			Application.Run(new TrayForm(endpoint, defaultLanguage));
+			Bootstrapper.Shutdown();
 		}
 	}
 

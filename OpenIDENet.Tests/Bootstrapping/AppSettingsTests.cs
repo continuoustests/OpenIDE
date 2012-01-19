@@ -14,7 +14,10 @@ namespace OpenIDENet.Tests.Bootstrapping
 		[SetUp]
 		public void Setup()
 		{
-			_appSettings = new AppSettings("", () => { return new ICommandHandler[]Â { new Fake_CommandHandler() }; });
+			_appSettings = new AppSettings(
+				"",
+				() => { return new ICommandHandler[] { new Fake_CommandHandler() }; },
+				() => { return new ICommandHandler[] { new Fake_LanguageCommandHandler() }; });
 		}
 		
 		[Test]
@@ -48,7 +51,7 @@ namespace OpenIDENet.Tests.Bootstrapping
 		}
 
 		[Test]
-		public void When_parsing_a_command_it_should_default_to_the_default_language()
+		public void When_parsing_a_command_it_should_default_to_the_default_language_if_not_in_original_commands()
 		{
 			var args = _appSettings.Parse(new[]
 				{
@@ -61,9 +64,46 @@ namespace OpenIDENet.Tests.Bootstrapping
 			Assert.That(args[0], Is.EqualTo("fake_language"));
 			Assert.That(args[1], Is.EqualTo("subcommand"));
 		}
+
+		[Test]
+		public void When_parsing_a_command_it_should_to_original_commands()
+		{
+			var args = _appSettings.Parse(new[]
+				{
+					"mycommand",
+					"subcommand",
+					"--default-language=fake_language"
+				});
+
+			Assert.That(_appSettings.DefaultLanguage, Is.EqualTo("fake_language"));
+			Assert.That(args.Length, Is.EqualTo(2));
+			Assert.That(args[0], Is.EqualTo("mycommand"));
+			Assert.That(args[1], Is.EqualTo("subcommand"));
+		}
 	}
-	
+
 	class Fake_CommandHandler : ICommandHandler
+	{
+		public CommandHandlerParameter Usage {
+			get { 
+				var usage = new CommandHandlerParameter(
+					"All",
+					CommandType.Run,
+					Command,
+					"description");
+				usage.Add("subcommand", "description");
+				return usage;
+			}
+		}
+
+		public string Command { get { return "mycommand"; } }
+
+		public void Execute(string[] arguments)
+		{
+		}
+	}
+
+	class Fake_LanguageCommandHandler : ICommandHandler
 	{
 		public CommandHandlerParameter Usage {
 			get { 

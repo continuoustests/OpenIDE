@@ -21,6 +21,7 @@ namespace OpenIDENet.CodeEngine.Core.Bootstrapping
 	public class Bootstrapper
 	{
 		private static string _path;
+		private static PluginFileTracker _tracker;
 		private static List<IHandler> _handlers = new List<IHandler>();
 		private static CommandEndpoint _endpoint;
 
@@ -34,13 +35,11 @@ namespace OpenIDENet.CodeEngine.Core.Bootstrapping
 				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
 				(msg) => {});
 			initPlugins(pluginLocator, crawlHandler);
-			var tracker = new PluginFileTracker();
-			tracker.Start(
+			_tracker = new PluginFileTracker();
+			_tracker.Start(
 				_path,
 				cache,
 				pluginLocator);
-
-			
 
             _endpoint = new CommandEndpoint(_path, cache);
 			_endpoint.AddHandler(messageHandler);
@@ -52,6 +51,11 @@ namespace OpenIDENet.CodeEngine.Core.Bootstrapping
 					new GetSignatureRefsHandler(_endpoint, cache)
 				});
 			return _endpoint;
+		}
+
+		public static void Shutdown()
+		{
+			_tracker.Dispose();
 		}
 
 		private static void messageHandler(MessageArgs message, ITypeCache cache, Editor editor)

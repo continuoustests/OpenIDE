@@ -8,7 +8,7 @@ using System.Linq;
 using OpenIDENet.Core.Language;
 namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 {
-	public class PluginFileTracker 
+	public class PluginFileTracker : IDisposable
 	{
 		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
@@ -77,6 +77,11 @@ namespace OpenIDENet.CodeEngine.Core.ChangeTrackers
 					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.FullPath))
 						x.FilesToHandle.Add(file.FullPath);
 				});
+		}
+
+		public void Dispose()
+		{
+			_tracker.Dispose();
 		}
 	}
 

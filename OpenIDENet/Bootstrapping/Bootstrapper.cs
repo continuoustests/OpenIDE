@@ -21,6 +21,7 @@ namespace OpenIDENet.Bootstrapping
 			Settings = new AppSettings(
 				Path.GetDirectoryName(
 					Assembly.GetExecutingAssembly().Location),
+					getDefaultHandlers,
 					getLanguageHandlers);
 		}
 		
@@ -34,10 +35,14 @@ namespace OpenIDENet.Bootstrapping
 			return _container.ICommandHandlers();
 		}
 
+		private static IEnumerable<ICommandHandler> getDefaultHandlers()
+		{
+			return _container.GetDefaultHandlers();
+		}
+
 		private static IEnumerable<ICommandHandler> getLanguageHandlers()
 		{
-			return _container.ICommandHandlers()
-				.Where(x => x.GetType().Equals(typeof(LanguageHandler)));
+			return _container.GetPluginHandlers();
 		}
 	}
 
@@ -47,11 +52,13 @@ namespace OpenIDENet.Bootstrapping
 
 		private string _path;
 		private ICommandHandler[] _handlers;
+		private ICommandHandler[] _pluginHandlers;
 		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
+		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
 		public string DefaultLanguage { get; private set; }
 
-		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers)
+		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
 			_path = path;
 			var local = new Configuration(Directory.GetCurrentDirectory(), false);
@@ -63,6 +70,7 @@ namespace OpenIDENet.Bootstrapping
 				DefaultLanguage = global.DefaultLanguage;
 
 			_handlerFactory = handlers;
+			_pluginHandlerFactory = pluginHandlers;
 		}
 
 		public string[] Parse(string[] args)
@@ -76,15 +84,24 @@ namespace OpenIDENet.Bootstrapping
 						.Substring(DEFAULT_LANGUAGE.Length, arg.Length - DEFAULT_LANGUAGE.Length);
 					continue;
 				}
-				
 				newArgs.Add(arg);
 			}
-			if (DefaultLanguage != null && newArgs.Count > 0)
+
+			var unhandledArg = true;
+			if (newArgs.Count > 0)
 			{
 				if (_handlers == null)
 					_handlers = _handlerFactory().ToArray();
+				if (_handlers.FirstOrDefault(x => x.Command.Equals(newArgs[0])) != null)
+					unhandledArg = false;
+			}
+
+			if (DefaultLanguage != null && unhandledArg)
+			{
+				if (_pluginHandlers == null)
+					_pluginHandlers = _pluginHandlerFactory().ToArray();
 				var command = 
-					_handlers
+					_pluginHandlers
 						.FirstOrDefault(x => x.Command.Equals(DefaultLanguage));
 				if (command != null)
 				{

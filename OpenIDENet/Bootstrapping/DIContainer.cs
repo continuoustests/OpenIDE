@@ -21,10 +21,10 @@ namespace OpenIDENet.Bootstrapping
 
 		public DIContainer()
 		{
-			_dispatcher = new CommandDispatcher(getDefaultHandlers().ToArray(), getPluginHandlers);
+			_dispatcher = new CommandDispatcher(GetDefaultHandlers().ToArray(), GetPluginHandlers);
 		}
 
-		private IEnumerable<ICommandHandler> getDefaultHandlers()
+		public IEnumerable<ICommandHandler> GetDefaultHandlers()
 		{
 			var handlers = new List<ICommandHandler>();
 			handlers.AddRange(getDefaultHandlersWithoutRunHandler());
@@ -32,7 +32,7 @@ namespace OpenIDENet.Bootstrapping
 				{
 					var runHandlers = new List<ICommandHandler>();
 					runHandlers.AddRange(getDefaultHandlersWithoutRunHandler());
-					runHandlers.AddRange(getPluginHandlers());
+					runHandlers.AddRange(GetPluginHandlers());
 					return runHandlers;
 				}));
 			return handlers;
@@ -57,7 +57,7 @@ namespace OpenIDENet.Bootstrapping
 			return handlers;
 		}
 
-		private IEnumerable<ICommandHandler> getPluginHandlers()
+		public IEnumerable<ICommandHandler> GetPluginHandlers()
 		{
 			if (_pluginHandlers.Count == 0)
 			{
@@ -148,8 +148,8 @@ namespace OpenIDENet.Bootstrapping
 		public IEnumerable<ICommandHandler> ICommandHandlers()
 		{
 			var list = new List<ICommandHandler>();
-			list.AddRange(getDefaultHandlers());
-			list.AddRange(getPluginHandlers());
+			list.AddRange(GetDefaultHandlers());
+			list.AddRange(GetPluginHandlers());
 			return list;
 		}
 	}
