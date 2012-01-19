@@ -46,7 +46,10 @@ namespace OpenIDENet.CodeEngine.Core.Bootstrapping
 			_endpoint.AddHandler(messageHandler);
 			
 			_handlers.AddRange(new IHandler[] {
-					new GetCodeRefsHandler(_endpoint, cache)
+					new GetProjectsHandler(_endpoint, cache),
+					new GetFilesHandler(_endpoint, cache),
+					new GetCodeRefsHandler(_endpoint, cache),
+					new GetSignatureRefsHandler(_endpoint, cache)
 				});
 			return _endpoint;
 		}

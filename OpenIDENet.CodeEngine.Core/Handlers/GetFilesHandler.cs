@@ -10,12 +10,12 @@ using OpenIDENet.CodeEngine.Core.Logging;
 
 namespace OpenIDENet.CodeEngine.Core.Handlers
 {
-	public class GetCodeRefsHandler : IHandler
+	class GetFilesHandler : IHandler
 	{
 		private CommandEndpoint _endpoint;
 		private ITypeCache _cache;
 
-		public GetCodeRefsHandler(CommandEndpoint endpoint, ITypeCache cache)
+		public GetFilesHandler(CommandEndpoint endpoint, ITypeCache cache)
 		{
 			_endpoint = endpoint;
 			_cache = cache;
@@ -23,7 +23,7 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 
 		public bool Handles(CommandMessage message)
 		{
-			return message.Command.Equals("get-code-refs");
+			return message.Command.Equals("get-files");
 		}
 
 		public void Handle(Guid clientID, CommandMessage message)
@@ -33,12 +33,13 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 			var query = getQuery(message);
 			var sb = new StringBuilder();
 			var formatter = new CacheFormatter();
-			_cache.AllReferences()
+			_cache.AllFiles()
 				.Where(x => filter(x, query))
-				.GroupBy(x => x.File).ToList()
+				.GroupBy(x => x.Project).ToList()
 				.ForEach(x =>
 					{
-						sb.AppendLine(formatter.FormatFile(x.Key));
+						if (x.Key != null)
+							sb.AppendLine(formatter.FormatProject(x.Key));
 						x.ToList()
 							.ForEach(y => sb.AppendLine(formatter.Format(y)));
 					});
@@ -55,10 +56,8 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 				return null;
 			return new Query()
 				{
-					Type = getValue(queryArgs, "type"),
+					Project = getValue(queryArgs, "project"),
 					File = getValue(queryArgs, "file"),
-					Signature = getValue(queryArgs, "signature"),
-					Name = getValue(queryArgs, "name")
 				};
 		}
 
@@ -70,17 +69,13 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 			return items.ElementAt(0).Value;
 		}
 
-		private bool filter(ICodeReference reference, Query query)
+		private bool filter(ProjectFile reference, Query query)
 		{
 			if (query == null)
 				return true;
-			if (query.Type != null && !wildcardmatch(reference.Type, query.Type))
+			if (query.Project != null && !wildcardmatch(reference.Project, query.Project))
 				return false;
 			if (query.File != null && !wildcardmatch(reference.File, query.File))
-				return false;
-			if (query.Signature != null && !wildcardmatch(reference.Signature, query.Signature))
-				return false;
-			if (query.Name != null && !wildcardmatch(reference.Name, query.Name))
 				return false;
 			return true;
 		}
@@ -96,10 +91,8 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 
 		class Query
 		{
-			public string Type { get; set; }
+			public string Project { get; set; }
 			public string File { get; set; }
-			public string Signature { get; set; }
-			public string Name { get; set; }
 		}
 	}
 }

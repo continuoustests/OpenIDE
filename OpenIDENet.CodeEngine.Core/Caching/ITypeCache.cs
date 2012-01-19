@@ -9,7 +9,11 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		int FileCount { get; }
 		int CodeReferences { get; }
 		
-		IEnumerable<ICodeReference> All();
+		IEnumerable<Project> AllProjects();
+		IEnumerable<ProjectFile> AllFiles();
+		IEnumerable<ICodeReference> AllReferences();
+		IEnumerable<ISignatureReference> AllSignatures();
+
 		List<ICodeReference> Find(string name);
         List<FileFindResult> FindFiles(string searchString);
         List<FileFindResult> GetFilesInDirectory(string directory);

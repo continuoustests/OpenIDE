@@ -42,14 +42,34 @@ namespace OpenIDENet.CodeEngineIntegration
 		{
 			send("Explore");
 		}
+		
+		public void GetProjects(string query)
+		{
+			queryCodeEngine("get-projects", query);
+		}
+
+		public void GetFiles(string query)
+		{
+			queryCodeEngine("get-files", query);
+		}
 
 		public void GetCodeRefs(string query)
+		{
+			queryCodeEngine("get-code-refs", query);
+		}
+
+		public void GetSignatureRefs(string query)
+		{
+			queryCodeEngine("get-signature-refs", query);
+		}
+
+		private void queryCodeEngine(string command, string query)
 		{
 			var client = _clientFactory.Invoke();
 			client.Connect(Port);
 			if (!client.IsConnected)
 				return;
-			client.SendAndWait("get-code-refs " + query);
+			client.SendAndWait(command + " " + query);
 
 			var then = DateTime.Now.AddSeconds(20);
 			while (then > DateTime.Now)

@@ -10,12 +10,12 @@ using OpenIDENet.CodeEngine.Core.Logging;
 
 namespace OpenIDENet.CodeEngine.Core.Handlers
 {
-	public class GetCodeRefsHandler : IHandler
+	public class GetSignatureRefsHandler : IHandler
 	{
 		private CommandEndpoint _endpoint;
 		private ITypeCache _cache;
 
-		public GetCodeRefsHandler(CommandEndpoint endpoint, ITypeCache cache)
+		public GetSignatureRefsHandler(CommandEndpoint endpoint, ITypeCache cache)
 		{
 			_endpoint = endpoint;
 			_cache = cache;
@@ -23,7 +23,7 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 
 		public bool Handles(CommandMessage message)
 		{
-			return message.Command.Equals("get-code-refs");
+			return message.Command.Equals("get-signature-refs");
 		}
 
 		public void Handle(Guid clientID, CommandMessage message)
@@ -33,7 +33,7 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 			var query = getQuery(message);
 			var sb = new StringBuilder();
 			var formatter = new CacheFormatter();
-			_cache.AllReferences()
+			_cache.AllSignatures()
 				.Where(x => filter(x, query))
 				.GroupBy(x => x.File).ToList()
 				.ForEach(x =>
@@ -55,10 +55,8 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 				return null;
 			return new Query()
 				{
-					Type = getValue(queryArgs, "type"),
 					File = getValue(queryArgs, "file"),
-					Signature = getValue(queryArgs, "signature"),
-					Name = getValue(queryArgs, "name")
+					Signature = getValue(queryArgs, "signature")
 				};
 		}
 
@@ -70,17 +68,13 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 			return items.ElementAt(0).Value;
 		}
 
-		private bool filter(ICodeReference reference, Query query)
+		private bool filter(ISignatureReference reference, Query query)
 		{
 			if (query == null)
 				return true;
-			if (query.Type != null && !wildcardmatch(reference.Type, query.Type))
-				return false;
 			if (query.File != null && !wildcardmatch(reference.File, query.File))
 				return false;
 			if (query.Signature != null && !wildcardmatch(reference.Signature, query.Signature))
-				return false;
-			if (query.Name != null && !wildcardmatch(reference.Name, query.Name))
 				return false;
 			return true;
 		}
@@ -96,10 +90,8 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 
 		class Query
 		{
-			public string Type { get; set; }
 			public string File { get; set; }
 			public string Signature { get; set; }
-			public string Name { get; set; }
 		}
 	}
 }

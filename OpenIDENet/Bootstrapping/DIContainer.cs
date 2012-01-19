@@ -47,7 +47,10 @@ namespace OpenIDENet.Bootstrapping
 					new EditorHandler(ILocateEditorEngine()),
 					new CodeEngineGoToHandler(ICodeEngineLocator()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
+					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
+					new CodeEngineGetFilesHandler(ICodeEngineLocator()),
 					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
+					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
 					new ConfigurationHandler(),
 					new BringToForegroundHandler()
 				});

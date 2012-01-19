@@ -10,8 +10,10 @@
     <RootNamespace>OpenIDENet</RootNamespace>
     <AssemblyName>OpenIDENet</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -105,7 +107,7 @@
     <Compile Include="Arguments\Handlers\LanguageHandler.cs" />
     <Compile Include="Arguments\Handlers\ConfigurationHandler.cs" />
     <Compile Include="Arguments\Handlers\BringToForegroundHandler.cs" />
-    <Compile Include="Arguments\Handlers\CodeEngineGetCodeRefsHandler.cs" />
+    <Compile Include="Arguments\Handlers\CodeEngineGetSignatureRefs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

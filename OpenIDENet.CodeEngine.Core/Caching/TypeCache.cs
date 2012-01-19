@@ -16,9 +16,24 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 		public int FileCount { get { return _files.Count; } }
 		public int CodeReferences { get { return _codeReferences.Count; } }
 		
-		public IEnumerable<ICodeReference> All()
+		public IEnumerable<Project> AllProjects()
+		{
+			return _projects;
+		}
+
+		public IEnumerable<ProjectFile> AllFiles()
+		{
+			return _files;
+		}
+
+		public IEnumerable<ICodeReference> AllReferences()
 		{
 			return _codeReferences;
+		}
+
+		public IEnumerable<ISignatureReference> AllSignatures()
+		{
+			return _signatureReferences;
 		}
 
 		public List<ICodeReference> Find(string name)
