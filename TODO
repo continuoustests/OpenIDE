@@ -9,8 +9,5 @@ Needs to be done before 0.1 alpha
 	2. Snippet window (like run command window)
 
 3. F1 to bring up keyboard shortcuts for all forms
-
-4. Queries support in codemodel for language plugins to get signatures and references
-	1. Console and endpoint support
 	
-5. General stabilisation
+4. General stabilisation
