@@ -55,7 +55,7 @@ namespace OpenIDENet.CodeEngineIntegration
 
 		public void GetCodeRefs(string query)
 		{
-			queryCodeEngine("get-code-refs", query);
+			queryCodeEngine("get-signatures", query);
 		}
 
 		public void GetSignatureRefs(string query)

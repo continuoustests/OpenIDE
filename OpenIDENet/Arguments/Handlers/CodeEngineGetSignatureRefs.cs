@@ -48,12 +48,12 @@ namespace OpenIDENet.Arguments.Handlers
 	class CodeEngineGetCodeRefsHandler : CodeEngineQueryHandler 
 	{
 		protected override string _commandDescription {
-			get { return  "Queries for code references"; }
+			get { return  "Queries for signatures"; }
 		}
 		protected override string _queryDescription {
 			get { return  "Format: type=class,name=MyCls*. Supported properties: type, file, signature, name"; }
 		}
-		protected override string _command { get { return  "get-code-refs"; } }
+		protected override string _command { get { return  "get-signatures"; } }
 
 		protected override void run(Instance instance, string args) {
 			instance.GetCodeRefs(args);

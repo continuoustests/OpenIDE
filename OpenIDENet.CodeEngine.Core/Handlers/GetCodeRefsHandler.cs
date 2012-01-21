@@ -23,7 +23,7 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 
 		public bool Handles(CommandMessage message)
 		{
-			return message.Command.Equals("get-code-refs");
+			return message.Command.Equals("get-signatures");
 		}
 
 		public void Handle(Guid clientID, CommandMessage message)
