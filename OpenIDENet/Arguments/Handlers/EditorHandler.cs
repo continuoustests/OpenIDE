@@ -27,9 +27,9 @@ namespace OpenIDENet.Arguments.Handlers
 				usage.Add("goto", "Open file on spesific line and column")
 					.Add("FILE|LINE|COLUMN", "| separated filepath, line and column");
 				usage.Add("setfocus", "Sets focus to the editor");
-				usage.Add("inject", "Injects a chunk of text to a spesific position in a file")
-					.Add("CONTENT_FILE", "File containing the text you want to inject")
-						.Add("TARGET_LOCATION", "The target file and position to inject the text to. Format: /my/file.cs|LINE|COLUMN");
+				usage.Add("insert", "Inserts a chunk of text to a spesific position in a file")
+					.Add("CONTENT_FILE", "File containing the text you want to insert")
+						.Add("TARGET_LOCATION", "The target file and position to insert the text to. Format: /my/file.cs|LINE|COLUMN");
 				usage.Add("remove", "Removes a chunk of text from a file")
 					.Add("FILE_AND_START_POSITION", "The file and starting position of text to be removed. Format: /my/file.cs|LINE|COLUMN")
 						.Add("END_POSITION", "The position where the text chunk to remove ends. Format: LINE|COLUMN");
@@ -37,8 +37,8 @@ namespace OpenIDENet.Arguments.Handlers
 					.Add("CONTENT_FILE", "File containing the text you want to replace with")
 						.Add("FILE_AND_START_POSITION", "The file and starting position for text to be replaced. Format: /my/file.cs|LINE|COLUMN")
 							.Add("END_POSITION", "The position where the text chunk to be replaced ends. Format: LINE|COLUMN");
-				usage.Add("refactor", "Gives the posibility to batch up several inject, remove and replace commands")
-					.Add("CONTENT_FILE", "A file containing inject, remove and replace commands. One command pr line");
+				usage.Add("refactor", "Gives the posibility to batch up several insert, remove and replace commands")
+					.Add("CONTENT_FILE", "A file containing insert, remove and replace commands. One command pr line");
 				return usage;
 			}
 		}
