@@ -100,7 +100,7 @@ namespace OpenIDENet.CodeEngine.Core.Caching
 			var project = GetProject(file);
 			if (project != null) {
 				lock (_files) {
-					_files.RemoveAll(x => x.Project.Equals(file));
+					_files.RemoveAll(x => x.Project != null && x.Project.Equals(file));
 				}
 			}
 			else {
