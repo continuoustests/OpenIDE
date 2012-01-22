@@ -39,6 +39,7 @@ namespace OpenIDENet.Arguments.Handlers
 							.Add("END_POSITION", "The position where the text chunk to be replaced ends. Format: LINE|COLUMN");
 				usage.Add("refactor", "Gives the posibility to batch up several insert, remove and replace commands")
 					.Add("CONTENT_FILE", "A file containing insert, remove and replace commands. One command pr line");
+				usage.Add("get-dirty-files", "Queries the editor for all modified files and their content");
 				return usage;
 			}
 		}
@@ -61,6 +62,12 @@ namespace OpenIDENet.Arguments.Handlers
 					return;
 				instance.Start(arguments[0].Trim());
 				runInitScript();
+			}
+			else if (arguments.Length == 1 && arguments[0] == "get-dirty-files")
+			{
+				if (instance == null)
+					return;
+				Console.WriteLine(instance.GetDirtyFiles());
 			}
 			else
 			{

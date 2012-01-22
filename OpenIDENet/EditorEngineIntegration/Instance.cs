@@ -50,6 +50,25 @@ namespace OpenIDENet.EditorEngineIntegration
 			send("setfocus");
 		}
 
+		public string GetDirtyFiles()
+		{
+			var client = _clientFactory.Invoke();
+			client.Connect(Port);
+			if (!client.IsConnected)
+				return "";
+			client.SendAndWait("get-dirty-files");
+
+			var then = DateTime.Now.AddSeconds(20);
+			while (then > DateTime.Now)
+			{
+				if (client.RecievedMessage != null)
+					break;
+			}
+			var content = client.RecievedMessage;
+			client.Disconnect();
+			return content;
+		}
+
 		public void Run(string[] arguments)
 		{
 			var sb = new StringBuilder();

@@ -22,6 +22,7 @@ namespace OpenIDENet.CodeEngine.Core.Endpoints.Tcp
 		
 		void Start();
 		void Send(string message);
+		void Send(string message, Guid clientID);
 	}
 }
 
