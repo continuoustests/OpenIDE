@@ -66,25 +66,18 @@ namespace OpenIDENet.CodeEngineIntegration
 		private void queryCodeEngine(string command, string query)
 		{
 			var client = _clientFactory.Invoke();
-			client.Connect(Port);
+			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
 				return;
-			client.SendAndWait(command + " " + query);
-
-			var then = DateTime.Now.AddSeconds(20);
-			while (then > DateTime.Now)
-			{
-				if (client.RecievedMessage != null)
-					break;
-			}
-			Console.WriteLine(client.RecievedMessage);
+			var reply = client.Request(command + " " + query);
+			Console.WriteLine(reply);
 			client.Disconnect();
 		}
 		
 		private void send(string message)
 		{
 			var client = _clientFactory.Invoke();
-			client.Connect(Port);
+			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
 				return;
 			client.SendAndWait(message);

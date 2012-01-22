@@ -47,7 +47,7 @@ namespace OpenIDENet.CodeEngineIntegration
 		private bool canConnectTo(Instance info)
 		{
 			var client = ClientFactory.Invoke();
-			client.Connect(info.Port);
+			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
 			client.Disconnect();
 			if (!connected)

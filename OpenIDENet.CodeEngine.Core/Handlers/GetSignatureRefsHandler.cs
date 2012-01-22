@@ -32,6 +32,7 @@ namespace OpenIDENet.CodeEngine.Core.Handlers
 				return;
 			var query = getQuery(message);
 			var sb = new StringBuilder();
+			sb.Append(message.CorrelationID);
 			var formatter = new CacheFormatter();
 			_cache.AllSignatures()
 				.Where(x => filter(x, query))

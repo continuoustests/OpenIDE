@@ -53,20 +53,12 @@ namespace OpenIDENet.EditorEngineIntegration
 		public string GetDirtyFiles()
 		{
 			var client = _clientFactory.Invoke();
-			client.Connect(Port);
+			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
 				return "";
-			client.SendAndWait("get-dirty-files");
-
-			var then = DateTime.Now.AddSeconds(20);
-			while (then > DateTime.Now)
-			{
-				if (client.RecievedMessage != null)
-					break;
-			}
-			var content = client.RecievedMessage;
+			var reply = client.Request("get-dirty-files");
 			client.Disconnect();
-			return content;
+			return reply;
 		}
 
 		public void Run(string[] arguments)
@@ -80,7 +72,7 @@ namespace OpenIDENet.EditorEngineIntegration
 		private void send(string message)
 		{
 			var client = _clientFactory.Invoke();
-			client.Connect(Port);
+			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
 				return;
 			client.SendAndWait(message);

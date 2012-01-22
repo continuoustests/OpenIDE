@@ -53,8 +53,10 @@ namespace OpenIDENet.CodeEngine.Core.EditorEngine
 				if (instance == null)
 					return false;
 				_client = new SocketClient();
-				_client.IncomingMessage += Handle_clientIncomingMessage;
-				_client.Connect(instance.Port);
+				_client.Connect(instance.Port, (m) => {
+						if (RecievedMessage != null)
+							RecievedMessage(this, new MessageArgs(Guid.Empty, m));
+					});
 				if (_client.IsConnected)
 					return true;
 				_client = null;
@@ -64,12 +66,6 @@ namespace OpenIDENet.CodeEngine.Core.EditorEngine
 			{
 				return false;
 			}
-		}
-
-		void Handle_clientIncomingMessage(object sender, IncomingMessageArgs e)
-		{
-			if (RecievedMessage != null)
-				RecievedMessage(this, new MessageArgs(Guid.Empty, e.Message));
 		}
 	}
 	
@@ -100,7 +96,7 @@ namespace OpenIDENet.CodeEngine.Core.EditorEngine
 		private bool canConnectTo(Instance info)
 		{
 			var client = new SocketClient();
-			client.Connect(info.Port);
+			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
 			client.Disconnect();
 			if (!connected)

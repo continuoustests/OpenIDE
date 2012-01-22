@@ -4,22 +4,36 @@ namespace OpenIDENet.CodeEngine.Core.Commands
 {
 	public class CommandMessage
 	{
+		public string CorrelationID { get; private set; }
 		public string Command { get; private set; }
 		public List<string> Arguments { get; private set; }
 		
-		public CommandMessage(string command, IEnumerable<string> arguments)
+		public CommandMessage(string command, string correlationID, IEnumerable<string> arguments)
 		{
 			Command = command;
+			CorrelationID = correlationID;
 			Arguments = new List<string>();
 			Arguments.AddRange(arguments);
 		}
 		
 		public static CommandMessage New(string message)
 		{
+			string correlationID = null;
+			if (message.StartsWith("correlationID=") &&
+				message.IndexOf("|") != -1)
+			{
+				correlationID =
+					message.Substring(
+						0,
+						message.IndexOf("|") + 1);
+				message = message.Substring(
+					correlationID.Length,
+					message.Length - correlationID.Length);
+			}
 			var chunks = splitMessage(message);
 			if (chunks.Count == 0)
-				return new CommandMessage("", new string[] {});
-			return new CommandMessage(chunks[0], getRemainingChunks(chunks));
+				return new CommandMessage("", correlationID, new string[] {});
+			return new CommandMessage(chunks[0], correlationID, getRemainingChunks(chunks));
 		}
 		
 		private static List<string> splitMessage(string message)
