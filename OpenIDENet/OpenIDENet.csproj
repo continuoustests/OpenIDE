@@ -101,7 +101,6 @@
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
     <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
     <Compile Include="CommandBuilding\CommandBuilder.cs" />
-    <Compile Include="CommandBuilding\CommandStringParser.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletion.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletion.cs" />
     <Compile Include="Arguments\Handlers\LanguageHandler.cs" />

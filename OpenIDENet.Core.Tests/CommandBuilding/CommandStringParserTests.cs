@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using OpenIDENet.CommandBuilding;
+using OpenIDENet.Core.CommandBuilding;
 using System.Collections.Generic;
 
-namespace OpenIDENet.Tests.CommandBuilding
+namespace OpenIDENet.Tests.Core.CommandBuilding
 {
 	[TestFixture]
 	public class CommandStringParserTests
@@ -62,6 +62,15 @@ namespace OpenIDENet.Tests.CommandBuilding
                 _parser.Parse("new class \"C:\\my\\folder with spaces\\myfile.txt\"").ToArray(),
                 "new", "class", "C:\\my\\folder with spaces\\myfile.txt");
         }
+
+		[Test]
+		public void Can_parse_string_with_different_separator()
+		{
+			assertArguments(
+				new CommandStringParser(',')
+					.Parse("one,after ,the	,other, and with space inside them").ToArray(),
+				"one", "after", "the", "other", "and with space inside them");
+		}
 
         private void assertArguments(string[] args, params string[] argList)
         {

@@ -73,7 +73,6 @@
     <Compile Include="Arguments\CommandDispatcherTests.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocatorTests.cs" />
     <Compile Include="CommandBuilding\CommandBuilderTests.cs" />
-    <Compile Include="CommandBuilding\CommandStringParserTests.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletionTests.cs" />
     <Compile Include="CommandBuilding\PathAutoCompletionTests.cs" />
     <Compile Include="Bootstrapping\AppSettingsTests.cs" />

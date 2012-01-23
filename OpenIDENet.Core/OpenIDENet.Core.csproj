@@ -41,6 +41,7 @@
     <Compile Include="Language\UsageParser.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Windowing\BringToForeGround.cs" />
+    <Compile Include="CommandBuilding\CommandStringParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

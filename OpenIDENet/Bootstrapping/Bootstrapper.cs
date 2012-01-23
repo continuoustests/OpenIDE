@@ -7,6 +7,7 @@ using System.Linq;
 using OpenIDENet.Arguments;
 using OpenIDENet.Arguments.Handlers;
 using OpenIDENet.Core.Config;
+using OpenIDENet.Core.CommandBuilding;
 namespace OpenIDENet.Bootstrapping
 {
 	public static class Bootstrapper
@@ -17,12 +18,12 @@ namespace OpenIDENet.Bootstrapping
 		
 		public static void Initialize()
 		{
-			_container = new DIContainer();
 			Settings = new AppSettings(
 				Path.GetDirectoryName(
 					Assembly.GetExecutingAssembly().Location),
 					getDefaultHandlers,
 					getLanguageHandlers);
+			_container = new DIContainer(Settings);
 		}
 		
 		public static ICommandDispatcher GetDispatcher()
@@ -49,6 +50,7 @@ namespace OpenIDENet.Bootstrapping
 	public class AppSettings
 	{
 		private const string DEFAULT_LANGUAGE = "--default-language=";
+		private const string ENABLED_LANGUAGES = "--supported-languages";
 
 		private string _path;
 		private ICommandHandler[] _handlers;
@@ -57,6 +59,7 @@ namespace OpenIDENet.Bootstrapping
 		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
 		public string DefaultLanguage { get; private set; }
+		public string[] EnabledLanguages { get; private set; }
 
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
@@ -68,6 +71,11 @@ namespace OpenIDENet.Bootstrapping
 				DefaultLanguage = local.DefaultLanguage;
 			else if (global.DefaultLanguage != null)
 				DefaultLanguage = global.DefaultLanguage;
+
+			if (local.EnabledLanguages != null)
+				EnabledLanguages = local.EnabledLanguages;
+			else if (global.EnabledLanguages != null)
+				EnabledLanguages = global.EnabledLanguages;
 
 			_handlerFactory = handlers;
 			_pluginHandlerFactory = pluginHandlers;
@@ -82,6 +90,16 @@ namespace OpenIDENet.Bootstrapping
 				{
 					DefaultLanguage = arg
 						.Substring(DEFAULT_LANGUAGE.Length, arg.Length - DEFAULT_LANGUAGE.Length);
+					continue;
+				}
+				if (arg.StartsWith(ENABLED_LANGUAGES))
+				{
+					EnabledLanguages = 
+						new CommandStringParser(',')
+							.Parse(arg
+								.Substring(
+									ENABLED_LANGUAGES.Length,
+									arg.Length - ENABLED_LANGUAGES.Length)).ToArray();
 					continue;
 				}
 				newArgs.Add(arg);

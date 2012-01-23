@@ -8,12 +8,16 @@ default_language = ""
 if ARGV.length > 1
 	default_language = ARGV[1]
 end
+enabled_languages = ""
+if ARGV.length > 2
+	enabled_languages = ARGV[2]
+end
 
 t1 = Thread.new do
 	if WINDOWS
-		%x[CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}"]
+		%x[CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
 	else
-		%x[mono ./CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}"]
+		%x[mono ./CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
 	end
 end
 t2 = Thread.new do

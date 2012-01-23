@@ -9,11 +9,13 @@ namespace OpenIDENet.Core.Language
 {
 	public class PluginLocator
 	{
+		private string[] _enabledLanguages;
 		private string _languageRoot;
 		private Action<string> _dispatchMessage;
 
-		public PluginLocator(string languageRoot, Action<string> dispatchMessage)
+		public PluginLocator(string[] enabledLanguages, string languageRoot, Action<string> dispatchMessage)
 		{
+			_enabledLanguages = enabledLanguages;
 			_languageRoot = languageRoot;
 			_dispatchMessage = dispatchMessage;
 		}
@@ -22,16 +24,16 @@ namespace OpenIDENet.Core.Language
 		{
 			return getPlugins()
 				.Select(x => new LanguagePlugin(x, run, _dispatchMessage))
+				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()))
 				.ToArray();
 		}
 		
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
 		{
 			var commands = new List<BaseCommandHandlerParameter>();
-			getPlugins().ToList()
-				.ForEach(x => 
+			Locate().ToList()
+				.ForEach(plugin => 
 					{
-						var plugin = new LanguagePlugin(x, run, _dispatchMessage);
 						plugin.GetUsages().ToList()
 							.ForEach(y => commands.Add(y));
 					});

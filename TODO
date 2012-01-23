@@ -1,15 +1,18 @@
 Needs to be done before 0.1 alpha
 
-1. Config support for enabled languages
+Config support for enabled languages
 	Config options for setting support languages for a certain folder (like default language)
+	Support += and -= with enabled languages setting would be cool
 
-2. Add correlation id support to server in editorengine and codeengine
+Greater than and less than search on line and column in code engine search
 
-3. Snippet support
+Snippet support
 	1. Snippet support in th editor engine
 		File modification and direct editor modification if supported
 	2. Snippet window (like run command window)
 
-4. F1 to bring up keyboard shortcuts for all forms
+F1 to bring up keyboard shortcuts for all forms
 	
-5. General stabilisation
+General stabilisation
+
+

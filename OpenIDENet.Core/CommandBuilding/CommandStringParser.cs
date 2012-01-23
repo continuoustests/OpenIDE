@@ -2,13 +2,23 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace OpenIDENet.CommandBuilding
+namespace OpenIDENet.Core.CommandBuilding
 {
 	public class CommandStringParser
 	{
         private List<string> _words;
         private char _separator;
         private string _word;
+		private char _delimiter = ' ';
+
+		public CommandStringParser()
+		{
+		}
+
+		public CommandStringParser(char delimiter)
+		{
+			_delimiter = delimiter;
+		}
 
 		public string GetCommand(IEnumerable<string> args)
 		{
@@ -29,7 +39,7 @@ namespace OpenIDENet.CommandBuilding
         public IEnumerable<string> Parse(string arguments)
         {
             _words = new List<string>();
-            _separator = ' ';
+            _separator = _delimiter;
             _word = "";
             for (int i = 0; i < arguments.Length; i++)
                 processCharacter(arguments[i]);
@@ -54,7 +64,7 @@ namespace OpenIDENet.CommandBuilding
         private void addWord()
         {
             if (_word.Length > 0)
-                _words.Add(_word);
+                _words.Add(_word.Trim());
         }
 
         private bool itTerminatesArgument(char argument)
@@ -65,13 +75,13 @@ namespace OpenIDENet.CommandBuilding
 
         private bool isArgumentSeparator(char argument)
         {
-            return (_word.Length == 0 && argument == ' ') ||
+            return (_word.Length == 0 && argument == _delimiter) ||
                    (_word.Length == 0 && argument == '"');
         }
 
         private bool argumentIsTerminatedWithSpace(char arguments)
         {
-            return (arguments == ' ' && _separator == ' ');
+            return (arguments == _delimiter && _separator == _delimiter);
         }
 
         private bool argumentIsTerminatedWithQuote(char arguments)

@@ -108,10 +108,20 @@ namespace OpenIDENet.Arguments.Handlers
 			var defaultLanguage = "";
 			if (Bootstrapper.Settings.DefaultLanguage != null)
 				defaultLanguage = " " + Bootstrapper.Settings.DefaultLanguage;
+			var enabledLanguages = "";
+			if (Bootstrapper.Settings.EnabledLanguages != null)
+			{
+				enabledLanguages = " \"";
+				Bootstrapper.Settings.EnabledLanguages.ToList()
+					.ForEach(x => enabledLanguages += x + ",");
+				enabledLanguages = 
+					enabledLanguages
+						.Substring(0, enabledLanguages.Length - 1) + "\"";
+			}
 			var proc = new Process();
 			proc.StartInfo = new ProcessStartInfo(
 				initscript,
-				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage);
+				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

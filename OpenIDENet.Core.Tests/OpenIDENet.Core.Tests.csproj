@@ -36,6 +36,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Language\UsageParserTests.cs" />
+    <Compile Include="Config\ConfigurationTests.cs" />
+    <Compile Include="CommandBuilding\CommandStringParserTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

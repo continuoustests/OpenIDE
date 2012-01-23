@@ -16,7 +16,11 @@ namespace OpenIDENet.Tests
 		[Test]
 		public void Should_resolve_types()
 		{
-			var container = new DIContainer();
+			var container = new DIContainer(
+				new AppSettings(
+					"",
+					() => { return new ICommandHandler[] {}; },
+					() => { return new ICommandHandler[] {}; }));
 			
 			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(10));
 			

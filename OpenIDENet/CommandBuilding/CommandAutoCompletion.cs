@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using OpenIDENet.Core.CommandBuilding;
 
 namespace OpenIDENet.CommandBuilding
 {

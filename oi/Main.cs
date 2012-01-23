@@ -6,6 +6,7 @@ using OpenIDENet.Bootstrapping;
 using OpenIDENet.Arguments;
 using OpenIDENet.Core.Language;
 using OpenIDENet.CommandBuilding;
+using OpenIDENet.Core.CommandBuilding;
 namespace oi
 {
 	class MainClass

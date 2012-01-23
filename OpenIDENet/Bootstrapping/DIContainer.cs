@@ -11,16 +11,19 @@ using OpenIDENet.EditorEngineIntegration;
 using OpenIDENet.CodeEngineIntegration;
 using OpenIDENet.Core.Language;
 using OpenIDENet.CommandBuilding;
+using OpenIDENet.Core.CommandBuilding;
 
 namespace OpenIDENet.Bootstrapping
 {
 	public class DIContainer
 	{
+		private AppSettings _settings;
 		private ICommandDispatcher _dispatcher;
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
 
-		public DIContainer()
+		public DIContainer(AppSettings settings)
 		{
+			_settings = settings;
 			_dispatcher = new CommandDispatcher(GetDefaultHandlers().ToArray(), GetPluginHandlers);
 		}
 
@@ -63,7 +66,12 @@ namespace OpenIDENet.Bootstrapping
 			{
 				var plugins = PluginLocator().Locate();
 				plugins.ToList()
-					.ForEach(x => _pluginHandlers.Add(new LanguageHandler(x)));
+					.ForEach(x =>
+						{
+							if (_settings.EnabledLanguages == null ||
+								_settings.EnabledLanguages.Contains(x.GetLanguage()))
+								_pluginHandlers.Add(new LanguageHandler(x));
+						});
 			}
 			return _pluginHandlers;
 		}
@@ -86,6 +94,7 @@ namespace OpenIDENet.Bootstrapping
 		public PluginLocator PluginLocator()
 		{
 			return new PluginLocator(
+				_settings.EnabledLanguages,
 				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 				(command) => dispatchMessage(command));
 		}

@@ -25,13 +25,14 @@ namespace OpenIDENet.CodeEngine.Core.Bootstrapping
 		private static List<IHandler> _handlers = new List<IHandler>();
 		private static CommandEndpoint _endpoint;
 
-		public static CommandEndpoint GetEndpoint(string path)
+		public static CommandEndpoint GetEndpoint(string path, string[] enabledLanguages)
 		{
 			_path = path;
 			Logger.Assign(new FileLogger());
             var cache = new TypeCache();
 			var crawlHandler = new CrawlHandler(cache);
 			var pluginLocator = new PluginLocator(
+				enabledLanguages,
 				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
 				(msg) => {});
 			initPlugins(pluginLocator, crawlHandler);
