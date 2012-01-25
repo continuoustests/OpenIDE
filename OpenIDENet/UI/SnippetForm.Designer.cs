@@ -49,7 +49,7 @@ namespace OpenIDENet.UI
             this.textBoxPlaceholders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxPlaceholders.Location = new System.Drawing.Point(12, 25);
-            this.textBoxPlaceholders.Name = "textBoxSearch";
+            this.textBoxPlaceholders.Name = "textBoxPlaceholders";
             this.textBoxPlaceholders.Size = new System.Drawing.Size(595, 20);
             this.textBoxPlaceholders.TabIndex = 1;
             this.textBoxPlaceholders.TextChanged += new System.EventHandler(this.textBoxPlaceholders_TextChanged);
@@ -64,6 +64,7 @@ namespace OpenIDENet.UI
             this.textBoxPreview.Name = "textBoxPreview";
             this.textBoxPreview.Size = new System.Drawing.Size(648, 250);
             this.textBoxPreview.TabIndex = 3;
+            this.textBoxPreview.TextChanged += new System.EventHandler(this.textBoxPreview_textChanged);
             // 
             // buttonRun
             // 

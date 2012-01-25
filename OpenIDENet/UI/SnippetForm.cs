@@ -15,6 +15,9 @@ namespace OpenIDENet.UI
     public partial class SnippetForm : Form
     {
 		private SnippetReplaceController _controller;
+		private bool _controlledUpdate = false;
+
+		public string Content { get; private set; }
 
         public SnippetForm(string[] replaces, string content)
         {
@@ -33,6 +36,13 @@ namespace OpenIDENet.UI
         {
             if (e.KeyCode == Keys.Escape)
                 Close();
+			else if (e.KeyCode == Keys.Enter)
+				buttonRun_Click(this, new EventArgs());
+			else
+			{
+				setContent();
+				updateForm();
+			}
         }
 		
         private bool commandEndsWithSpace(string selection)
@@ -43,18 +53,39 @@ namespace OpenIDENet.UI
 
         private void textBoxPlaceholders_TextChanged(object sender, EventArgs e)
         {
-			_controller.SetContent(textBoxPlaceholders.Text, textBoxPlaceholders.SelectionStart);
+			setContent();
 			updateForm();
         }
 
+		private void textBoxPreview_textChanged(object sender, EventArgs e)
+		{
+			if (_controlledUpdate)
+				return;
+			_controller.SetModifiedContent(textBoxPreview.Text);
+			updateLabel();
+		}
+
         private void buttonRun_Click(object sender, EventArgs e)
         {
+			Content = textBoxPreview.Text;
             Close();
         }
 
+		private void setContent()
+		{
+			_controller.SetContent(textBoxPlaceholders.Text, textBoxPlaceholders.SelectionStart);
+		}
+
 		private void updateForm()
 		{
+			_controlledUpdate = true;
 			textBoxPreview.Text = _controller.ModifiedSnippet;
+			updateLabel();
+			_controlledUpdate = false;
+		}
+
+		private void updateLabel()
+		{
 			labelInfo.Text = "Currently replacing: " + _controller.CurrentPlaceholder;
 		}
     }

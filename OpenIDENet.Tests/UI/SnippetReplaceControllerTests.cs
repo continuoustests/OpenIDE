@@ -121,6 +121,14 @@ namespace OpenIDENet.Tests.UI
 						.Replace("{nr3}", "SecondWord")));
 		}
 
+		[Test]
+		public void When_rewriting_original_content_it_will_affect_current_placeholder()
+		{
+			var newContent = getContent().Replace("{nr1}", "bleh");
+			_controller.SetModifiedContent(newContent);
+			Assert.That(_controller.CurrentPlaceholder, Is.EqualTo("{nr2}"));
+		}
+
 		private string getContent()
 		{
 			return "it will replace {nr1} with" + Environment.NewLine +

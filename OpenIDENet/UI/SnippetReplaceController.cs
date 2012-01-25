@@ -9,6 +9,9 @@ namespace OpenIDENet.UI
 		private string[] _originalPlaceHolders;
 		private string[] _placeHolders;
 		private string _content;
+		private int _activePosition = 0;
+		private string _activeText = "";
+		private string[] _activeReplacements = new string[] {};
 
 		public string CurrentPlaceholder { get; private set; }
 		public string ModifiedSnippet { get; private set; }
@@ -27,42 +30,52 @@ namespace OpenIDENet.UI
 		{
 			_content = content;
 			_placeHolders = _originalPlaceHolders.Where(x => _content.IndexOf(x) != -1).ToArray();
+			setCurrentFromPosition();
 		}
 
 		public void SetContent(string replacementString, int cursorPosition)
 		{
-			var replacements = new CommandStringParser()
-				.Parse(replacementString).ToArray();
+			_activeText = replacementString;
+			_activeReplacements = new CommandStringParser()
+				.Parse(_activeText).ToArray();
+			_activePosition = cursorPosition;
+
 			ModifiedSnippet = _content;
 			for (int i = 0; i < _placeHolders.Length; i++)
 			{
-				if (i >= replacements.Length)
+				if (i >= _activeReplacements.Length)
 					break;
-				ModifiedSnippet = ModifiedSnippet.Replace(_placeHolders[i], replacements[i]);
+				ModifiedSnippet = ModifiedSnippet.Replace(_placeHolders[i], _activeReplacements[i]);
 			}
-			setCurrentFromPosition(replacementString, cursorPosition, replacements);
+			setCurrentFromPosition();
 		}
 
-		private void setCurrentFromPosition(string text, int position, string[] chunks)
+		private void setCurrentFromPosition()
 		{
-			if (chunks.Length > _placeHolders.Length)
+			if (_activeReplacements.Length > _placeHolders.Length)
 			{
+				Console.WriteLine("chunks: " + _activeReplacements.Length.ToString());
 				CurrentPlaceholder = "There are no more placeholders?! Stop writing!";
 				return;
 			}
-			if (position == text.Length && text.EndsWith(" "))
+			if (_activePosition == _activeText.Length &&
+				_activeText.EndsWith(" ") &&
+				_activeText.Count(x => x.Equals('\"')) % 2 == 0)
 			{
-				CurrentPlaceholder = _placeHolders[chunks.Length];
+				if (_placeHolders.Length - 1 < _activeReplacements.Length)
+					CurrentPlaceholder = _placeHolders[_placeHolders.Length - 1];
+				else
+					CurrentPlaceholder = _placeHolders[_activeReplacements.Length];
 				return;
 			}
 			var end = 0;
 			var index = 0;
-			foreach (var chunk in chunks)
+			foreach (var chunk in _activeReplacements)
 			{
-				end = getEndOf(chunk, text, end);
+				end = getEndOf(chunk, _activeText, end);
 				if (end == -1)
 					break;
-				if (end >= position)
+				if (end >= _activePosition)
 				{
 					CurrentPlaceholder = _placeHolders[index];
 					return;
