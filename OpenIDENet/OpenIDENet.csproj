@@ -75,6 +75,12 @@
     <Compile Include="UI\RunCommandForm.Designer.cs">
       <DependentUpon>RunCommandForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\SnippetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SnippetForm.Designer.cs">
+      <DependentUpon>SnippetForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Messaging\MessageBus.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Messaging\IConsumer.cs" />
@@ -107,6 +113,8 @@
     <Compile Include="Arguments\Handlers\ConfigurationHandler.cs" />
     <Compile Include="Arguments\Handlers\BringToForegroundHandler.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineGetSignatureRefs.cs" />
+    <Compile Include="Arguments\Handlers\PrewievSnippetHandler.cs" />
+    <Compile Include="UI\SnippetReplaceController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -129,6 +137,9 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\RunCommandForm.resx">
       <DependentUpon>RunCommandForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SnippetForm.resx">
+      <DependentUpon>SnippetForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

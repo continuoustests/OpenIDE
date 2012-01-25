@@ -55,7 +55,8 @@ namespace OpenIDENet.Bootstrapping
 					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
 					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
 					new ConfigurationHandler(),
-					new BringToForegroundHandler()
+					new BringToForegroundHandler(),
+					new PrewievSnippetHandler()
 				});
 			return handlers;
 		}

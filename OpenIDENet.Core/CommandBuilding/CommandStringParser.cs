@@ -10,6 +10,7 @@ namespace OpenIDENet.Core.CommandBuilding
         private char _separator;
         private string _word;
 		private char _delimiter = ' ';
+		private bool _addEmptyWords = false;
 
 		public CommandStringParser()
 		{
@@ -63,7 +64,7 @@ namespace OpenIDENet.Core.CommandBuilding
 
         private void addWord()
         {
-            if (_word.Length > 0)
+            if (_word.Length > 0 || _addEmptyWords)
                 _words.Add(_word.Trim());
         }
 

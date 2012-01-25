@@ -22,7 +22,7 @@ namespace OpenIDENet.Tests
 					() => { return new ICommandHandler[] {}; },
 					() => { return new ICommandHandler[] {}; }));
 			
-			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(10));
+			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(11));
 			
 			Assert.That(container.IFS(), Is.InstanceOf<IFS>());
 			Assert.That(container.IMessageBus(), Is.InstanceOf<IMessageBus>());
