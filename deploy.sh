@@ -48,3 +48,4 @@ cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
 
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
 cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#
+cp $ROOT/Languages/CSharp/initialize.rb $DEPLOYDIR/Languages/C#

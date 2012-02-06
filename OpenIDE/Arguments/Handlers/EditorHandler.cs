@@ -12,6 +12,7 @@ namespace OpenIDE.Arguments.Handlers
 	class EditorHandler : ICommandHandler
 	{
 		private ILocateEditorEngine _editorFactory;
+		private Func<PluginLocator> _pluginLocator;
 		
 		public CommandHandlerParameter Usage {
 			get {
@@ -46,9 +47,10 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(ILocateEditorEngine editorFactory)
+		public EditorHandler(ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
 		{
 			_editorFactory = editorFactory;
+			_pluginLocator = locator;
 		}
 		
 		public void Execute(string[] arguments)
@@ -61,7 +63,7 @@ namespace OpenIDE.Arguments.Handlers
 				if (instance == null)
 					return;
 				instance.Start(arguments[0].Trim());
-				runInitScript();
+				runInitScripts();
 			}
 			else if (arguments.Length == 1 && arguments[0] == "get-dirty-files")
 			{
@@ -98,11 +100,23 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			return _editorFactory.GetInstance(Environment.CurrentDirectory);
 		}
-		
-		private void runInitScript()
+
+		private void runInitScripts()
 		{
 			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			var initscript = Directory.GetFiles(appdir, "initialize.*").FirstOrDefault();
+			runInitScript(appdir);
+			_pluginLocator().Locate().ToList()
+				.ForEach(plugin => {
+					var language = plugin.GetLanguage();
+					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language)));
+				});
+		}
+		
+		private void runInitScript(string folder)
+		{
+			if (!Directory.Exists(folder))
+				return;
+			var initscript = Directory.GetFiles(folder, "initialize.*").FirstOrDefault();
 			if (initscript == null)
 				return;
 			var defaultLanguage = "";
@@ -125,7 +139,7 @@ namespace OpenIDE.Arguments.Handlers
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = appdir;
+			proc.StartInfo.WorkingDirectory = folder;
 			proc.Start();
 		}
 	}

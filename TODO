@@ -1,8 +1,8 @@
 Needs to be done before 0.1 alpha
 
-* Support initialize in language as well as oi
+* Done - Support initialize in language as well as oi
 * Move CSharp to it's own git project
-* Rename OpenIDENet ot OpenIDE
+* Done - Rename OpenIDENet ot OpenIDE
 * Change GoToType in code engine to gototype and Explore to explore
 * Make EditorEngine use normal commands not keypress t and stuff
 * Greater than and less than search on line and column in code engine search
@@ -13,14 +13,8 @@ Needs to be done before 0.1 alpha
 
 
 Wiki TODO
-	Editor Engine
-	Code Engine
-	Supported languages
-	Go to type
-	Language plugins
 	C#
 	Default language
-	Project (The project formatting project|path)
-	File (The file formatting file|path)
-	Signature (The signature formatting signature|....)
-	Signature Reference (The signature reference format reference|....)
+	code snippet
+	oi
+	vim => add setting up with with shortcut keys

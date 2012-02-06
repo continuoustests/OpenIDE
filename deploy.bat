@@ -40,3 +40,4 @@ copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.Core.dll
 
 copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#
+copy %ROOT%\Languages\CSharp\initialize.rb %DEPLOYDIR%\Languages\C#

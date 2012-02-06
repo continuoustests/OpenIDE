@@ -14,10 +14,12 @@ if ARGV.length > 2
 end
 
 t1 = Thread.new do
+	# Or if you want to use AutoTest.Net
+	# AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"
 	if WINDOWS
-		%x[CodeEngine/OpenIDE.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
+		%x[ContinuousTests/ContinuousTests.exe "#{working_directory}"]
 	else
-		%x[mono ./CodeEngine/OpenIDE.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
+		%x[mono ./ContinuousTests/ContinuousTests.exe "#{working_directory}"]
 	end
 end
 

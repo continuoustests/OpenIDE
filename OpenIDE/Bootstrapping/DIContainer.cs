@@ -47,7 +47,7 @@ namespace OpenIDE.Bootstrapping
 			handlers.AddRange(
 				new ICommandHandler[]
 				{
-					new EditorHandler(ILocateEditorEngine()),
+					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
 					new CodeEngineGoToHandler(ICodeEngineLocator()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
 					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
