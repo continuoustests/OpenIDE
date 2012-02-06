@@ -2,9 +2,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDENet", "OpenIDENet\OpenIDENet.csproj", "{DC8ED5C5-438E-4FB9-8616-0DCBA377C7DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE", "OpenIDE\OpenIDE.csproj", "{DC8ED5C5-438E-4FB9-8616-0DCBA377C7DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDENet.Tests", "OpenIDENet.Tests\OpenIDENet.Tests.csproj", "{0727E9CE-D6BF-435B-837B-BDC05768DF56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.Tests", "OpenIDE.Tests\OpenIDE.Tests.csproj", "{0727E9CE-D6BF-435B-837B-BDC05768DF56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oi", "oi\oi.csproj", "{E13ADCE9-1E17-4B4D-9E01-5F791580ADE4}"
 EndProject
@@ -28,6 +28,6 @@ Global
 		{E13ADCE9-1E17-4B4D-9E01-5F791580ADE4}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = OpenIDENet\OpenIDENet.csproj
+		StartupItem = OpenIDE\OpenIDE.csproj
 	EndGlobalSection
 EndGlobal

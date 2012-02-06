@@ -61,13 +61,13 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenIDENet\OpenIDENet.csproj">
+    <ProjectReference Include="..\OpenIDE\OpenIDE.csproj">
       <Project>{DC8ED5C5-438E-4FB9-8616-0DCBA377C7DF}</Project>
-      <Name>OpenIDENet</Name>
+      <Name>OpenIDE</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenIDENet.Core\OpenIDENet.Core.csproj">
+    <ProjectReference Include="..\OpenIDE.Core\OpenIDE.Core.csproj">
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
-      <Name>OpenIDENet.Core</Name>
+      <Name>OpenIDE.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

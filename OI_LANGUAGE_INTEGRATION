@@ -57,6 +57,31 @@ Crawl directories and/or files
 				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN [|typesearch]
 				reference|SIGNATURE|OFFSET|LINE|COLUMN
 
+Retrieve signature from a location inside code
+	PARAMETER:
+		signature-from-position PATH_TO_FILE|LINE|COLUMN
+	
+	RESPONSE FORMAT (fixed lines):
+		// The response have fixed lines as shown below
+		// The position is the start and end position of
+		// the reference under the position passed to it
+		// If not found return nothing
+		FILE_CONTAINING_REFERENCED_SIGNATURE
+		REFERENCED_SIGNATURE
+		REFERENCE_START_LINE|REFERENCE_START_COLUMN
+		REFERENCE_END_LINE|REFERENCE_END_COLUMN
+
+Retrieve members from signature
+	PARAMETER:
+		members-from-signature SIGNATURE
+	
+	RESPONSE FORMAT:
+		// A list if available members with descriptions
+		// One line pr member. In the description part new line
+		// is represented by [[newline]]
+		SomeProperty|(Int) Some number
+		Parse(string[])|(Returns string) Parses lines[[newline]]\tstring[] Lines
+
 Various language plugin commands. This would be any command handled by the plugin
 	PARAMETER
 		Whatever specified in command definitions

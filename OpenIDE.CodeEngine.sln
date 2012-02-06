@@ -1,0 +1,91 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75989E79-9474-47B2-8348-679F5A30BBC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.CodeEngine.Core.Tests", "OpenIDE.CodeEngine.Core.Tests\OpenIDE.CodeEngine.Core.Tests.csproj", "{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.CodeEngine", "OpenIDE.CodeEngine\OpenIDE.CodeEngine.csproj", "{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.CodeEngine.Core", "OpenIDE.CodeEngine.Core\OpenIDE.CodeEngine.Core.csproj", "{412B1F88-3F13-4473-8D71-AD719634F152}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Languages", "Languages", "{A7AA8190-4BA1-4672-BB81-7BE1BF7BE334}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{FE03DF8F-F922-469C-9B35-9F566DB8179E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp", "Languages\CSharp\CSharp\CSharp.csproj", "{FFE638AF-5B7F-4C54-8255-2011DE5560D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Tests", "Languages\CSharp\CSharp.Tests\CSharp.Tests.csproj", "{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.Core", "OpenIDE.Core\OpenIDE.Core.csproj", "{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Debug|x86.Build.0 = Debug|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2}.Release|x86.Build.0 = Release|Any CPU
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Debug|x86.ActiveCfg = Debug|x86
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Debug|x86.Build.0 = Debug|x86
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Release|x86.ActiveCfg = Release|x86
+		{9094DEE8-BD82-489D-BFA2-4BDD62D9AB09}.Release|x86.Build.0 = Release|x86
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Debug|x86.Build.0 = Debug|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Release|Any CPU.Build.0 = Release|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Release|x86.ActiveCfg = Release|Any CPU
+		{412B1F88-3F13-4473-8D71-AD719634F152}.Release|x86.Build.0 = Release|Any CPU
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Debug|x86.ActiveCfg = Debug|x86
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Debug|x86.Build.0 = Debug|x86
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Release|x86.ActiveCfg = Release|x86
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1}.Release|x86.Build.0 = Release|x86
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Debug|x86.Build.0 = Debug|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Release|x86.ActiveCfg = Release|Any CPU
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}.Release|x86.Build.0 = Release|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Debug|x86.Build.0 = Debug|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|x86.ActiveCfg = Release|Any CPU
+		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E403BE4E-BEFE-4CF9-8323-58FBBFAF22C2} = {75989E79-9474-47B2-8348-679F5A30BBC1}
+		{FE03DF8F-F922-469C-9B35-9F566DB8179E} = {A7AA8190-4BA1-4672-BB81-7BE1BF7BE334}
+		{FFE638AF-5B7F-4C54-8255-2011DE5560D1} = {FE03DF8F-F922-469C-9B35-9F566DB8179E}
+		{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46} = {FE03DF8F-F922-469C-9B35-9F566DB8179E}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = OpenIDE.CodeEngine\OpenIDE.CodeEngine.csproj
+	EndGlobalSection
+EndGlobal

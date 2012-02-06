@@ -1,18 +1,18 @@
 using System;
 using System.Linq;
-using OpenIDENet.Messaging;
-using OpenIDENet.FileSystem;
-using OpenIDENet.Bootstrapping;
-using OpenIDENet.Arguments;
-using OpenIDENet.Core.Language;
-using OpenIDENet.CommandBuilding;
-using OpenIDENet.Core.CommandBuilding;
+using OpenIDE.Messaging;
+using OpenIDE.FileSystem;
+using OpenIDE.Bootstrapping;
+using OpenIDE.Arguments;
+using OpenIDE.Core.Language;
+using OpenIDE.CommandBuilding;
+using OpenIDE.Core.CommandBuilding;
 namespace oi
 {
 	class MainClass
 	{
 		public static void Main(string[] args)
-		{	
+		{
 			Bootstrapper.Initialize();
 			args = Bootstrapper.Settings.Parse(args);
 			if (args.Length == 0)
@@ -31,7 +31,7 @@ namespace oi
 		{
 			Console.WriteLine("OpenIDE.Net v0.1");
 			Console.WriteLine("OpenIDE.Net is a cross language system that provides simple IDE features around your favorite text exitor.");
-			Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDENet)");
+			Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDE)");
 			Console.WriteLine();
 			var level = 1;
 			var handlers = Bootstrapper.GetCommandHandlers();

@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OpenIDE.Core</RootNamespace>
+    <AssemblyName>OpenIDE.Core</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\SnippetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SnippetForm.Designer.cs">
+      <DependentUpon>SnippetForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Language\CommandHandlerParameters.cs" />
+    <Compile Include="Language\LanguagePlugin.cs" />
+    <Compile Include="Language\PluginLocator.cs" />
+    <Compile Include="Language\UsageParser.cs" />
+    <Compile Include="Config\Configuration.cs" />
+    <Compile Include="Windowing\BringToForeGround.cs" />
+    <Compile Include="CommandBuilding\CommandStringParser.cs" />
+    <Compile Include="CommandBuilding\FilePosition.cs" />
+    <Compile Include="UI\SnippetReplaceController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+  	<EmbeddedResource Include="UI\SnippetForm.resx">
+      <DependentUpon>SnippetForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

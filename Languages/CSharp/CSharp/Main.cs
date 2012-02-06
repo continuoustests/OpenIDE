@@ -53,6 +53,8 @@ namespace CSharp
 			dispatcher.Register(new GetUsageHandler(dispatcher));
 			dispatcher.Register(new CrawlHandler());
 			dispatcher.Register(new CrawlFileTypesHandler());
+			dispatcher.Register(new SignatureFromPositionHandler());
+			dispatcher.Register(new MembersFromUnknownSignatureHandler());
 			dispatcher.Register(new CreateHandler(getReferenceTypeResolver()));
 			dispatcher.Register(new AddFileHandler(getTypesProvider));
 			dispatcher.Register(new DeleteFileHandler(getTypesProvider));

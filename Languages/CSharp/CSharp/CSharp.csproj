@@ -129,6 +129,8 @@
     <Compile Include="Commands\CrawlHandler.cs" />
     <Compile Include="Commands\CrawlFileTypesHandler.cs" />
     <Compile Include="Files\NoneFile.cs" />
+    <Compile Include="Commands\SignatureFromPositionHandler.cs" />
+    <Compile Include="Commands\MembersFromUnknownSignatureHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

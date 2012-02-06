@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDENet.CodeEngine.Core.Tests
+namespace OpenIDE.CodeEngine.Core.Tests
 {
 	/*public class CSharpComments
 	{

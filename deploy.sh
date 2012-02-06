@@ -30,21 +30,21 @@ mkdir $DEPLOYDIR/Languages/C#
 
 echo $BINARYDIR
 
-xbuild OpenIDENet.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
-xbuild OpenIDENet.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
+xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
+xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
 xbuild Languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
 
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
-cp $BINARYDIR/OpenIDENet.dll $DEPLOYDIR/
-cp $BINARYDIR/OpenIDENet.Core.dll $DEPLOYDIR/
+cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
+cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
 cp $ROOT/initialize.rb $DEPLOYDIR/initialize.rb
 cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
 cp -r $LIB/AutoTest.Net/* $DEPLOYDIR/AutoTest.Net
 cp -r $LIB/ContinuousTests/* $DEPLOYDIR/ContinuousTests
 cp $ROOT/oi/oi $DEPLOYDIR/oi
-cp $BINARYDIR/OpenIDENet.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDENet.CodeEngine.exe
-cp $BINARYDIR/OpenIDENet.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDENet.CodeEngine.Core.dll
-cp $BINARYDIR/OpenIDENet.Core.dll $DEPLOYDIR/CodeEngine/
+cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe
+cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
+cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
 
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
 cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#

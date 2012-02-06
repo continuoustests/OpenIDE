@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
-using OpenIDENet.Languages;
-using OpenIDENet.UI;
-using OpenIDENet.CommandBuilding;
+using OpenIDE.Languages;
+using OpenIDE.UI;
+using OpenIDE.CommandBuilding;
 using System.Collections.Generic;
 using System.IO;
 
-namespace OpenIDENet.Arguments.Handlers
+namespace OpenIDE.Arguments.Handlers
 {
 	class RunCommandHandler : ICommandHandler
 	{

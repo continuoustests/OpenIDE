@@ -15,9 +15,9 @@ end
 
 t1 = Thread.new do
 	if WINDOWS
-		%x[CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
+		%x[CodeEngine/OpenIDE.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
 	else
-		%x[mono ./CodeEngine/OpenIDENet.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
+		%x[mono ./CodeEngine/OpenIDE.CodeEngine.exe "#{working_directory}" "#{default_language}" "#{enabled_languages}"]
 	end
 end
 t2 = Thread.new do

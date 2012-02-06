@@ -20,8 +20,8 @@ namespace CSharp.Tests.Crawlers
 		{
 			var projects = new SolutionReader(Path.Combine("TestResources", "VSSolutionFile.sln")).ReadProjects();
 			Assert.That(projects.Count, Is.EqualTo(3));
-			Assert.That(projects[0].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDENet"), "OpenIDENet.csproj"))));
-			Assert.That(projects[1].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDENet.Tests"), "OpenIDENet.Tests.csproj"))));
+			Assert.That(projects[0].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDE"), "OpenIDE.csproj"))));
+			Assert.That(projects[1].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "OpenIDE.Tests"), "OpenIDE.Tests.csproj"))));
 			Assert.That(projects[2].File, Is.EqualTo(Path.GetFullPath(Path.Combine(Path.Combine("TestResources", "oi"), "oi.csproj"))));
 		}
 	}
