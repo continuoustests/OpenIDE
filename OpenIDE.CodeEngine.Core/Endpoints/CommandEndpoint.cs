@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
+using OpenIDE.Core.CommandBuilding;
 using OpenIDE.CodeEngine.Core.UI;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Commands;
@@ -41,16 +42,8 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		{
 			Logger.Write(e.Message);
 			var msg = CommandMessage.New(e.Message);
-			if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "t")
-				handle(new MessageArgs(Guid.Empty, "gototype"));
-            if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "e")
-                handle(new MessageArgs(Guid.Empty, "explore"));
-			else if (msg.Command == "keypress" && msg.Arguments.Count == 1 && msg.Arguments[0] == "nobuffers")
-				handle(new MessageArgs(Guid.Empty, "gototype"));
-			else if (msg.Command == "keypress" && msg.Arguments.Count > 1 && msg.Arguments[0] == "snippet-complete")
-				handle(new MessageArgs(Guid.Empty, e.Message.Substring(9, e.Message.Length - 9)));
-			else if (msg.Command == "keypress" && msg.Arguments.Count > 1 && msg.Arguments[0] == "snippet-create")
-				handle(new MessageArgs(Guid.Empty, e.Message.Substring(9, e.Message.Length - 9)));
+			if (msg.Command == "keypress" && msg.Arguments.Count > 0)
+				handle(new MessageArgs(Guid.Empty, new CommandStringParser().GetCommand(msg.Arguments)));
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)

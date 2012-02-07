@@ -4,6 +4,7 @@ ROOT=$(cd $(dirname "$0"); pwd)
 BINARYDIR=$(cd $(dirname "$0"); pwd)/build_output
 DEPLOYDIR=$(cd $(dirname "$0"); pwd)/ReleaseBinaries
 LIB=$(cd $(dirname "$0"); pwd)/lib
+CSHARP_BIN=$(cd $(dirname "$0"); pwd)/Languages/CSharp/bin
 
 if [ ! -d $BINARYDIR ]; then
 {
@@ -20,13 +21,14 @@ rm -r $BINARYDIR/*
 rm -r $DEPLOYDIR/*
 mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
-mkdir $DEPLOYDIR/AutoTest.Net
-mkdir $DEPLOYDIR/ContinuousTests
-chmod +x $LIB/ContinuousTests/AutoTest.*.exe
-chmod +x $LIB/ContinuousTests/ContinuousTests.exe
 
 mkdir $DEPLOYDIR/Languages
 mkdir $DEPLOYDIR/Languages/C#
+mkdir $DEPLOYDIR/Languages/C#/bin
+mkdir $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
+mkdir $DEPLOYDIR/Languages/C#/bin/ContinuousTests
+chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
+chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
 
 echo $BINARYDIR
 
@@ -39,8 +41,6 @@ cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
 cp $ROOT/initialize.rb $DEPLOYDIR/initialize.rb
 cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
-cp -r $LIB/AutoTest.Net/* $DEPLOYDIR/AutoTest.Net
-cp -r $LIB/ContinuousTests/* $DEPLOYDIR/ContinuousTests
 cp $ROOT/oi/oi $DEPLOYDIR/oi
 cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe
 cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
@@ -49,3 +49,5 @@ cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
 cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#
 cp $ROOT/Languages/CSharp/initialize.rb $DEPLOYDIR/Languages/C#
+cp -r $CSHARP_BIN/AutoTest.Net/* $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
+cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#/bin/ContinuousTests

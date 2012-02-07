@@ -17,9 +17,9 @@ t1 = Thread.new do
 	# Or if you want to use AutoTest.Net
 	# AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"
 	if WINDOWS
-		%x[ContinuousTests/ContinuousTests.exe "#{working_directory}"]
+		%x[bin/ContinuousTests/ContinuousTests.exe "#{working_directory}"]
 	else
-		%x[mono ./ContinuousTests/ContinuousTests.exe "#{working_directory}"]
+		%x[mono ./bin/ContinuousTests/ContinuousTests.exe "#{working_directory}"]
 	end
 end
 
