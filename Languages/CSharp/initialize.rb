@@ -15,16 +15,16 @@ end
 
 t1 = Thread.new do
 	# Or if you want to use AutoTest.Net
-	if WINDOWS
-		%x[bin/AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"]
-	else
-		%x[mono ./bin/AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"]
-	end
 	#if WINDOWS
-	#	%x[bin/ContinuousTests/ContinuousTests.exe "#{working_directory}"]
+	#	%x[bin/AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"]
 	#else
-	#	%x[mono ./bin/ContinuousTests/ContinuousTests.exe "#{working_directory}"]
+	#	%x[mono ./bin/AutoTest.Net/AutoTest.WinForms.exe "#{working_directory}"]
 	#end
+	if WINDOWS
+		%x[bin/ContinuousTests/ContinuousTests.exe "#{working_directory}"]
+	else
+		%x[mono ./bin/ContinuousTests/ContinuousTests.exe "#{working_directory}"]
+	end
 end
 
 sleep 5
