@@ -55,9 +55,9 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
-			if (e.Message == "GoToType")
+			if (e.Message == "gototype")
 				handle(new MessageArgs(e.ClientID, "gototype"));
-			else if (e.Message == "Explore")
+			else if (e.Message == "explore")
 				handle(new MessageArgs(e.ClientID, "explore"));
 			else
 				handle(e);

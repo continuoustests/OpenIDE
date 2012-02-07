@@ -36,12 +36,12 @@ namespace OpenIDE.CodeEngineIntegration
 		
 		public void GoToType()
 		{
-			send("GoToType");
+			send("gototype");
 		}
 
 		public void Explore()
 		{
-			send("Explore");
+			send("gototype");
 		}
 		
 		public void GetProjects(string query)
