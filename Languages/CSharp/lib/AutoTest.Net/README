@@ -1,32 +1,41 @@
 (View in WordPad or similar on windows since the file uses Unix line endings)
 
 AutoTest.Net (http://groups.google.com/group/autotestnet)
-This product provides continuous testing for the .Net platform.It contains a 
+This product provides continuous testing for the .Net platform. It contains a 
+Visual Studio Addin through a windows installer (AutoTest-v*.*.*.exe),
 winforms app and a console app.
+The Visual Studio Addin will by default start as paused so after opening a
+solution click AutoTest.Net->Resume Engine. To have it always run afeter
+opening a solution set the StartPaused setting to false and restart the engine.
 
 Features
+	* Watch directory or solution file
 	* File tracking: Automatic builds and testruns
 	* Assembly tracking: Automatic test runs for built assemblies (if 
 	  BuildExecutable is removed from config)
 		* You can then build through Visual Studio or something similar while
 		  still having your tests run automatically
 	* Cross platform support through Mono
-	* Supports C# and Visual Basic projects
+	* Supports C# and Visual Basic and F# projects
 	* Supported build tools
 		* MSBuild.exe
 		* Mono's xbuild
 	* Supported test runners
-		* AutoTest.TestRunner (Built in runner supporting NUNit and XUnit pr today)
-		* NUnit (Console runner)
-		* XUnit (Console runner)
-		* MSpec (Console runner)
-		* MSTest
+		* AutoTest.TestRunner (Built in runner) supporting:
+			* NUnit
+			* XUnit
+			* MSTest
+			* MSpec
+			* MbUnit
+		* Native Console runner for NUnit
+		* Native Console runner for XUnit
+		* Native Console runner for MSpec
+		* Native Console runner for MSTest
 	* Supports notifications through
 		* notify-send (Linux)
 		* Snarl through it's tcp interface (Windows)
 		* Growl (Mac, Windows)
 	* Supports configurable ignore files using the .gitignore format
-	* Local config files extending the main config
 		* The attribute override="merge" will merge with original
 		* The attribute override="exclude" will remove it all together
 
@@ -48,9 +57,14 @@ In there you will find the UppercuT.config and UppercuTx86.config files. Locate 
 line (<property name="microsoft.framework" value="mono-3.5" overwrite="false" />) in
 both files and switch from mono-3.5 to net-3.5.
 
-When done go in and run build and deploy scripts (biuld.sh/build.bat and 
+When done go in and run build and deploy scripts (build.sh/build.bat and 
 deploy.sh/deploy.bat depending on whether you are on Windows(bat) or something else(sh)).
 After running build and deploy scripts you will find the built binaries under the 
 ReleaseBinaries folder.
 
-PS! For building on mono you need 2.8 or later and it uses Git's core.autocrlf=true
+Build Visual Studio Addin from source
+Go through the steps described in the previous section except for the actual build and
+deploy part. Now download Inno Setup and install it to the path specified in package.bat.
+After it's installed run package.bat and find the installer in ReleaseBinaries\Installer.
+
+PS!! For building on mono you need 2.8 or later and it uses Git's core.autocrlf=true
