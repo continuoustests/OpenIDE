@@ -4,7 +4,7 @@ ROOT=$(cd $(dirname "$0"); pwd)
 BINARYDIR=$(cd $(dirname "$0"); pwd)/build_output
 DEPLOYDIR=$(cd $(dirname "$0"); pwd)/ReleaseBinaries
 LIB=$(cd $(dirname "$0"); pwd)/lib
-CSHARP_BIN=$(cd $(dirname "$0"); pwd)/Languages/CSharp/bin
+CSHARP_BIN=$(cd $(dirname "$0"); pwd)/Languages/CSharp/lib
 
 if [ ! -d $BINARYDIR ]; then
 {

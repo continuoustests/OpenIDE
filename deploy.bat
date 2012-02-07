@@ -4,7 +4,7 @@ SET ROOT=%~d0%~p0%
 SET BINARYDIR="%ROOT%build_output"
 SET DEPLOYDIR="%ROOT%ReleaseBinaries"
 SET LIB="%ROOT%lib"
-SET CSHARP_BIN="%ROOT%Languages\CSharp\bin"
+SET CSHARP_BIN="%ROOT%Languages\CSharp\lib"
 
 IF EXIST %BINARYDIR% (
   rmdir /Q /S %BINARYDIR%
