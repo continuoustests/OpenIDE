@@ -41,7 +41,7 @@ namespace OpenIDE.CodeEngineIntegration
 
 		public void Explore()
 		{
-			send("gototype");
+			send("explore");
 		}
 		
 		public void GetProjects(string query)
