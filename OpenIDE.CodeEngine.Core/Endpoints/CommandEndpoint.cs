@@ -42,8 +42,9 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		{
 			Logger.Write(e.Message);
 			var msg = CommandMessage.New(e.Message);
+			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
 			if (msg.Command == "keypress" && msg.Arguments.Count > 0)
-				handle(new MessageArgs(Guid.Empty, new CommandStringParser().GetCommand(msg.Arguments)));
+				handle(new MessageArgs(Guid.Empty, command));
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)

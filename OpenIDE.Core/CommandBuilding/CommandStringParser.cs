@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
 
 namespace OpenIDE.Core.CommandBuilding
@@ -24,6 +25,21 @@ namespace OpenIDE.Core.CommandBuilding
 		public string GetCommand(IEnumerable<string> args)
 		{
 			return args.ElementAt(0);
+		}
+
+		public string GetArgumentString(IEnumerable<string> args)
+		{
+			var arguments = args.ToArray();
+			var sb = new StringBuilder();
+			for (int i = 0; i < arguments.Length; i++)
+			{
+				if (i == 0)
+					sb.Append(arguments[i]);
+				else
+					sb.Append(" \"" + arguments[i] + "\"");
+			}
+			return sb.ToString();
+
 		}
 
 		public string[] GetArguments(IEnumerable<string> commandArgs)
