@@ -27,7 +27,8 @@ namespace OpenIDE.CodeEngine.Core.UI
 					member.Substring(
 							split + 1,
 							member.Length - (split + 1))
-						.Replace("[[newline]]", Environment.NewLine);
+						.Replace("[[newline]]", Environment.NewLine)
+                        .Replace("\t", "    ");
 			}
 		}
 
@@ -36,13 +37,27 @@ namespace OpenIDE.CodeEngine.Core.UI
         public MemberLookupForm(string[] members)
         {
             InitializeComponent();
+            initControls();
 			Refresh();
 			_members = members
 				.Select(x => new Member(x))
 				.OrderBy(x => x.Name).ToList();
 			listMembers();
         }
-	
+
+        void initControls()
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                labelComment.Location = new System.Drawing.Point(12, 360);
+            else
+                labelComment.Location = new System.Drawing.Point(12, 373);
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                informationList.Size = new System.Drawing.Size(526, 291);
+            else
+                informationList.Size = new System.Drawing.Size(526, 304);
+        }
+
 		void HandleHandleFormClosing (object sender, FormClosingEventArgs e)
         {
 			Visible = false;
@@ -72,15 +87,15 @@ namespace OpenIDE.CodeEngine.Core.UI
 		private void addItem(Member member)
 		{
 			var item = informationList.Items.Add(member.Name);
-			item.Tag = item;
+			item.Tag = member;
 		}
-		
-		void HandleTextBoxSearchhandleTextChanged(object sender, System.EventArgs e)
+
+        void textBoxSearch_TextChanged(object sender, System.EventArgs e)
         {
 			listMembers();
         }
-		
-		void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)
+
+        void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
         {
 			if (e.KeyCode == Keys.Enter)
 			{
