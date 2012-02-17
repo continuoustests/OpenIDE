@@ -13,6 +13,8 @@ namespace OpenIDE.EditorEngineIntegration
 		public string Key { get; private set; }
 		public int Port { get; private set; }
 		
+		public bool IsInitialized { get { return getEditor() != ""; } }
+
 		public Instance(Func<IClient> clientFactory, string file, int processID, string key, int port)
 		{
 			_clientFactory = clientFactory;
@@ -35,9 +37,15 @@ namespace OpenIDE.EditorEngineIntegration
 			return new Instance(clientFactory, file, processID, lines[0], port);
 		}
 		
-		public void Start(string editor)
+		public string Start(string editor)
 		{
-			send(string.Format("editor {0}", editor));
+			var client = _clientFactory.Invoke();
+			client.Connect(Port, (s) => {});
+			if (!client.IsConnected)
+				return "";
+			var reply = client.Request(string.Format("editor {0}", editor));
+			client.Disconnect();
+			return reply;
 		}
 		
 		public void GoTo(string file, int line, int column)
@@ -67,6 +75,18 @@ namespace OpenIDE.EditorEngineIntegration
 			arguments.ToList()
 				.ForEach(x => sb.Append(x + " "));
 			send(sb.ToString());
+		}
+
+		private string getEditor()
+		{
+			var client = _clientFactory.Invoke();
+			client.Connect(Port, (s) => {});
+			if (!client.IsConnected)
+				return "";
+			var reply = client.Request("is-initialized");
+			client.Disconnect();
+			Console.WriteLine("initialized reply: " + reply);
+			return reply;
 		}
 		
 		private void send(string message)

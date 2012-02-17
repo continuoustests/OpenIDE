@@ -131,6 +131,7 @@ namespace OpenIDE.EditorEngineIntegration
 			var correlationID = "correlationID=" + Guid.NewGuid().ToString() + "|";
 			var messageToSend = correlationID + message;
 			EventHandler<MessageArgs> msgHandler = (o,a) => {
+					Console.WriteLine("Received: " + a.Message);
 					if (a.Message.StartsWith(correlationID) && a.Message != messageToSend)
 						recieved = a.Message
 							.Substring(

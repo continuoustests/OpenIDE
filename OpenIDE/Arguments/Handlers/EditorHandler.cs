@@ -62,8 +62,11 @@ namespace OpenIDE.Arguments.Handlers
 				instance = startInstance();
 				if (instance == null)
 					return;
-				instance.Start(arguments[0].Trim());
-				runInitScripts();
+				var editor = instance.Start(arguments[0].Trim());
+				if (editor != null && editor != "")
+					runInitScripts();
+				else
+					instance = null;
 			}
 			else if (arguments.Length == 1 && arguments[0] == "get-dirty-files")
 			{
