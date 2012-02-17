@@ -39,7 +39,6 @@ xbuild Languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/;
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
-cp $ROOT/initialize.rb $DEPLOYDIR/initialize.rb
 cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
 cp $ROOT/oi/oi $DEPLOYDIR/oi
 cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe

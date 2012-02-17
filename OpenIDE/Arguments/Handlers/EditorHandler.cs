@@ -107,12 +107,38 @@ namespace OpenIDE.Arguments.Handlers
 		private void runInitScripts()
 		{
 			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			initCodeEngine(appdir);
 			runInitScript(appdir);
 			_pluginLocator().Locate().ToList()
 				.ForEach(plugin => {
 					var language = plugin.GetLanguage();
 					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language)));
 				});
+		}
+
+		private void initCodeEngine(string folder)
+		{
+			var defaultLanguage = getDefaultLanguage();
+			var enabledLanguages = getEnabledLanguages();
+
+			var cmd = "mono";
+			var arg = "./CodeEngine/OpenIDE.CodeEngine.exe ";
+			if (Environment.OSVersion.Platform != PlatformID.Unix &&
+				Environment.OSVersion.Platform != PlatformID.MacOSX)
+			{
+				cmd = "CodeEngine/OpenIDE.CodeEngine.exe";
+				arg = "";
+			}
+			
+			var proc = new Process();
+			proc.StartInfo = new ProcessStartInfo(
+				cmd,
+				arg + "\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
+			proc.StartInfo.CreateNoWindow = true;
+			proc.StartInfo.UseShellExecute = true;
+			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			proc.StartInfo.WorkingDirectory = folder;
+			proc.Start();
 		}
 		
 		private void runInitScript(string folder)
@@ -122,9 +148,29 @@ namespace OpenIDE.Arguments.Handlers
 			var initscript = Directory.GetFiles(folder, "initialize.*").FirstOrDefault();
 			if (initscript == null)
 				return;
+			var defaultLanguage = getDefaultLanguage();
+			var enabledLanguages = getEnabledLanguages();
+			var proc = new Process();
+			proc.StartInfo = new ProcessStartInfo(
+				initscript,
+				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
+			proc.StartInfo.CreateNoWindow = true;
+			proc.StartInfo.UseShellExecute = true;
+			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			proc.StartInfo.WorkingDirectory = folder;
+			proc.Start();
+		}
+
+		private string getDefaultLanguage()
+		{
 			var defaultLanguage = "";
 			if (Bootstrapper.Settings.DefaultLanguage != null)
 				defaultLanguage = " " + Bootstrapper.Settings.DefaultLanguage;
+			return defaultLanguage;
+		}
+
+		private string getEnabledLanguages()
+		{
 			var enabledLanguages = "";
 			if (Bootstrapper.Settings.EnabledLanguages != null)
 			{
@@ -135,15 +181,7 @@ namespace OpenIDE.Arguments.Handlers
 					enabledLanguages
 						.Substring(0, enabledLanguages.Length - 1) + "\"";
 			}
-			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(
-				initscript,
-				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = folder;
-			proc.Start();
+			return enabledLanguages;
 		}
 	}
 }

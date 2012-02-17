@@ -31,7 +31,6 @@ mkdir %DEPLOYDIR%\Languages\C#\bin\ContinuousTests
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
 copy %BINARYDIR%\OpenIDE.dll %DEPLOYDIR%\OpenIDE.dll
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\OpenIDE.Core.dll
-copy %ROOT%\initialize.rb %DEPLOYDIR%\initialize.rb
 xcopy /S /I /E %LIB%\EditorEngine %DEPLOYDIR%\EditorEngine
 copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDE.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDE.CodeEngine.exe
