@@ -126,7 +126,7 @@ namespace OpenIDE.Arguments.Handlers
 			if (Environment.OSVersion.Platform != PlatformID.Unix &&
 				Environment.OSVersion.Platform != PlatformID.MacOSX)
 			{
-				cmd = "CodeEngine/OpenIDE.CodeEngine.exe";
+				cmd = Path.Combine("CodeEngine", "OpenIDE.CodeEngine.exe");
 				arg = "";
 			}
 			
