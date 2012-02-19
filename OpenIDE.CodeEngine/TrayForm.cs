@@ -69,7 +69,9 @@ namespace OpenIDE.CodeEngine
             _endpoint.Start();
             while (_endpoint.IsAlive)
                 Thread.Sleep(100);
-            Close();
+			_ctx.Post((s) => {
+	            Close();
+			}, null);
         }
 
         private void handleMessage(MessageArgs message, ITypeCache cache, Editor editor)
