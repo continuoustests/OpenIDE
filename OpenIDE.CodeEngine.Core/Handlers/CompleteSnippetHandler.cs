@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using OpenIDE.Core.UI;
+using OpenIDE.Core.Config;
 using OpenIDE.CodeEngine.Core.Caching;
+using OpenIDE.CodeEngine.Core.Logging;
 using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 
@@ -14,11 +16,13 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 	{
 		private Editor _editor;
 		private ICacheBuilder _cache;
+		private string _keyPath;
 
-		public CompleteSnippetHandler(Editor editor, ICacheBuilder cache)
+		public CompleteSnippetHandler(Editor editor, ICacheBuilder cache, string keyPath)
 		{
 			_editor = editor;
 			_cache = cache;
+			_keyPath = keyPath;
 		}
 
 		public void Handle(string[] arguments)
@@ -28,13 +32,10 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			var language = getLanguage(arguments[0]);
 			if (language == null)
 				return;
-			var file = Path.Combine(
-				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
-				Path.Combine(
-					"Languages",
-					Path.Combine(
-						language,
-						Path.Combine("snippets", arguments[1] + ".snippet"))));
+			var file = getLocal(arguments);
+			if (!File.Exists(file))
+				file = getGlobal(arguments);
+
 			if (!File.Exists(file))
 				return;
 			var lines = File.ReadAllLines(file);
@@ -94,6 +95,31 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 				});
 			form.Show();
 			form.BringToFront();
+		}
+		
+		private string getGlobal(string[] arguments)
+		{
+				return getPath(
+					Path.GetDirectoryName(
+						Path.GetDirectoryName(
+							Assembly.GetExecutingAssembly().Location)), arguments);
+		}
+
+		private string getLocal(string[] arguments)
+		{
+				return getPath(Path.GetDirectoryName(
+					Configuration.GetConfigFile(_keyPath)), arguments);
+		}
+
+		private string getPath(string path, string[] arguments)
+		{
+			return Path.Combine(
+				path,
+				Path.Combine(
+					"Languages",
+					Path.Combine(
+						getLanguage(arguments[0]),
+						Path.Combine("snippets", arguments[1] + ".snippet"))));
 		}
 
 		private string getLanguage(string param)

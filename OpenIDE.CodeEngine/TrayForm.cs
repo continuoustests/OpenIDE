@@ -123,7 +123,7 @@ namespace OpenIDE.CodeEngine
 				{
 					var command = "snippet-complete ";
 					var msg = message.Message.Substring(command.Length, message.Message.Length - command.Length);
-					new CompleteSnippetHandler(editor, _cacheBuilder)
+					new CompleteSnippetHandler(editor, _cacheBuilder, Environment.CurrentDirectory)
 						.Handle(
 							new CommandStringParser()
 								.Parse(msg).ToArray());
@@ -135,7 +135,7 @@ namespace OpenIDE.CodeEngine
 			var command = "snippet-create ";
 					var msg = message.Message
 						.Substring(command.Length, message.Message.Length - command.Length);
-					new CreateSnippetHandler(editor, _cacheBuilder)
+					new CreateSnippetHandler(editor, _cacheBuilder, Environment.CurrentDirectory)
 						.Handle(
 							new CommandStringParser()
 								.Parse(msg).ToArray());

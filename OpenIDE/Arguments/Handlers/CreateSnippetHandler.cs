@@ -16,7 +16,9 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Creates a new snippet for a given language");
 				usage.Add("LANGUAGE", "Language to create snippet for (name or file extnsion)")
-					.Add("SNIPPET_NAME", "Desired name of snippet");
+					.Add("SNIPPET_NAME", "Desired name of snippet")
+						.Add("[--global]", "Will create the new snippet in the main language folder")
+							.Add("[-g]", "Short for --global");
 				return usage;
 			}
 		}

@@ -40,7 +40,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void Handle_editorRecievedMessage(object sender, MessageArgs e)
 		{
-			Logger.Write(e.Message);
 			var msg = CommandMessage.New(e.Message);
 			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
 			if (msg.Command == "keypress" && msg.Arguments.Count > 0)
