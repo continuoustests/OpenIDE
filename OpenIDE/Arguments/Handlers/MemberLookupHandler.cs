@@ -14,7 +14,7 @@ namespace OpenIDE.Arguments.Handlers
 					"All",
 					CommandType.FileCommand,
 					Command,
-					"Launches the member lookup and auto completion window");
+					"Launches the member lookup window");
 				usage.Add("FILE|LINE|COLUMN", "Position for where to fetch signature");
 				return usage;
 			}
