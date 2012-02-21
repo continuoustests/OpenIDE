@@ -31,6 +31,7 @@ namespace OpenIDE.CodeEngine
             new Thread(startEngine).Start();
 			setupTray();
 			setupForm();
+			throw new Exception();
         }
 
 		private void setupTray()

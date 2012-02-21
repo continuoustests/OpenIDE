@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using OpenIDE.CodeEngine.Core.Bootstrapping;
+using OpenIDE.CodeEngine.Core.Endpoints;
 
 namespace OpenIDE.CodeEngine
 {
@@ -22,13 +24,31 @@ namespace OpenIDE.CodeEngine
 				return;
 
 			var endpoint = Bootstrapper.GetEndpoint(path, enabledLanguages);		
-			Application.Run(
-				new TrayForm(
-					endpoint,
-					defaultLanguage,
-					Bootstrapper.GetCacheBuilder()));
+			var form = getForm(endpoint, defaultLanguage);
+			if (form != null)
+				Application.Run(form);
+			else
+				startEngine(endpoint);
 			Bootstrapper.Shutdown();
 		}
+		
+		private static TrayForm getForm(CommandEndpoint endpoint, string defaultLanguage)
+		{
+			try {
+				return new TrayForm(
+					endpoint,
+					defaultLanguage,
+					Bootstrapper.GetCacheBuilder());
+			} catch {
+				return null;
+			}
+		}
+		private static void startEngine(CommandEndpoint endpoint)
+        {
+            endpoint.Start();
+            while (endpoint.IsAlive)
+                Thread.Sleep(100);
+        }
 	}
 }
 
