@@ -24,25 +24,25 @@ namespace OpenIDE.CodeEngine
 				return;
 
 			var endpoint = Bootstrapper.GetEndpoint(path, enabledLanguages);		
-			var form = getForm(endpoint, defaultLanguage);
-			if (form != null)
-				Application.Run(form);
-			else
+			if (!runForm(endpoint, defaultLanguage))
 				startEngine(endpoint);
 			Bootstrapper.Shutdown();
 		}
 		
-		private static TrayForm getForm(CommandEndpoint endpoint, string defaultLanguage)
+		private static bool runForm(CommandEndpoint endpoint, string defaultLanguage)
 		{
 			try {
-				return new TrayForm(
+				var form = new TrayForm(
 					endpoint,
 					defaultLanguage,
 					Bootstrapper.GetCacheBuilder());
+				Application.Run(form);
+				return true;
 			} catch {
-				return null;
+				return false;
 			}
 		}
+
 		private static void startEngine(CommandEndpoint endpoint)
         {
             endpoint.Start();
