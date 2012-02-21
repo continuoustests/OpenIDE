@@ -1,6 +1,6 @@
 using System;
 
-namespace OpenIDE.CodeEngine.Core.Caching
+namespace OpenIDE.Core.Caching
 {
 	public interface ISignatureReference
 	{

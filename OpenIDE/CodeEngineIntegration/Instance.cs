@@ -64,6 +64,11 @@ namespace OpenIDE.CodeEngineIntegration
 			return queryCodeEngine("get-signature-refs", query);
 		}
 
+		public string FindTypes(string query)
+		{
+			return queryCodeEngine("find-types", query);
+		}
+
 		public void SnippetComplete(string[] arguments)
 		{
 			sendArgumentCommand("snippet-complete", arguments);

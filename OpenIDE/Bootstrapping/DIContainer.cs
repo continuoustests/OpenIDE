@@ -48,12 +48,13 @@ namespace OpenIDE.Bootstrapping
 				new ICommandHandler[]
 				{
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
-					new CodeEngineGoToHandler(ICodeEngineLocator()),
+					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
 					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
 					new CodeEngineGetFilesHandler(ICodeEngineLocator()),
 					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
 					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
+					new CodeEngineFindSignatureHandler(ICodeEngineLocator()),
 					new MemberLookupHandler(ICodeEngineLocator()),
 					new GoToDefinitionHandler(ICodeEngineLocator()),
 					new ConfigurationHandler(),

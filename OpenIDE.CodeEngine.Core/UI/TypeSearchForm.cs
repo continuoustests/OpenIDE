@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenIDE.CodeEngine.Core.Caching;
+using OpenIDE.Core.Caching;
 
 namespace OpenIDE.CodeEngine.Core.UI
 {

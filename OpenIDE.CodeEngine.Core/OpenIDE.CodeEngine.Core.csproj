@@ -10,8 +10,7 @@
     <RootNamespace>OpenIDE.CodeEngine.Core</RootNamespace>
     <AssemblyName>OpenIDE.CodeEngine.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -66,7 +65,6 @@
     <Compile Include="Caching\ICacheBuilder.cs" />
     <Compile Include="FileSystem\PathParser.cs" />
     <Compile Include="Caching\TypeCache.cs" />
-    <Compile Include="Caching\ICodeType.cs" />
     <Compile Include="Endpoints\CommandEndpoint.cs" />
     <Compile Include="Endpoints\Tcp\TcpServer.cs" />
     <Compile Include="Endpoints\Tcp\ITcpServer.cs" />
@@ -92,14 +90,11 @@
     <Compile Include="Caching\ITypeCache.cs" />
     <Compile Include="ChangeTrackers\FileChangeTracker.cs" />
     <Compile Include="ChangeTrackers\CSharpFileTracker.cs" />
-    <Compile Include="Caching\Project.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="UI\FileExplorerHelpers\CacheSearchHandler.cs" />
     <Compile Include="UI\FileExplorerHelpers\ISearchHandler.cs" />
-    <Compile Include="ChangeTrackers\CrawlHandler.cs" />
-    <Compile Include="Caching\ISignatureReference.cs" />
     <Compile Include="Bootstrapping\Bootstrapper.cs" />
     <Compile Include="Handlers\GetCodeRefsHandler.cs" />
     <Compile Include="Handlers\IHandler.cs" />
@@ -114,6 +109,7 @@
     <Compile Include="Caching\PluginFinder.cs" />
     <Compile Include="Handlers\GoToDefinitionHandler.cs" />
     <Compile Include="Caching\SearchSorter.cs" />
+    <Compile Include="Handlers\FindTypeHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

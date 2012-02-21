@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching.Search;
 using System.IO;

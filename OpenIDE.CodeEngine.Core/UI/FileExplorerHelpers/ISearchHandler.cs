@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using OpenIDE.Core.Caching;
 
 namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
 {

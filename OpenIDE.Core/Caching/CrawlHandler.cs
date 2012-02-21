@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
-using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Logging;
 
-namespace OpenIDE.CodeEngine.Core.ChangeTrackers
+namespace OpenIDE.Core.Caching
 {
 	public class CrawlHandler
 	{
 		private string _currentProject = null;
 		private string _currentFile = null;
+		private Action<string> _logWrite;
 		
 		private ICrawlResult _builder;
 
-		public CrawlHandler(ICrawlResult builder)
+		public CrawlHandler(ICrawlResult builder, Action<string> logWrite)
 		{
 			_builder = builder;
+			_logWrite = logWrite;
 		}
 
 		public void Handle(string command)
@@ -33,11 +33,11 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 				if (chunks[0] == "reference")
 					handleReference(chunks);
 				if (chunks[0] == "error")
-					Logger.Write(command);
+					_logWrite(command);
 				if (chunks[0] == "comment")
-					Logger.Write(command);
+					_logWrite(command);
 			} catch (Exception ex) {
-				Logger.Write(ex);
+				_logWrite(ex.ToString());
 			}
 		}
 		

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.Endpoints;

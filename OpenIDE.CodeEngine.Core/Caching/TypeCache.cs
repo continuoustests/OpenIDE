@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenIDE.CodeEngine.Core.Caching.Search;
+using OpenIDE.Core.Caching;
 using System.IO;
 namespace OpenIDE.CodeEngine.Core.Caching
 {

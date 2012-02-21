@@ -51,6 +51,11 @@
     <Compile Include="CommandBuilding\CommandStringParser.cs" />
     <Compile Include="CommandBuilding\FilePosition.cs" />
     <Compile Include="UI\SnippetReplaceController.cs" />
+    <Compile Include="Caching\ICodeType.cs" />
+    <Compile Include="Caching\Project.cs" />
+    <Compile Include="Caching\ISignatureReference.cs" />
+    <Compile Include="Caching\ICrawlResult.cs" />
+    <Compile Include="Caching\CrawlHandler.cs" />
   </ItemGroup>
   <ItemGroup>
   	<EmbeddedResource Include="UI\SnippetForm.resx">

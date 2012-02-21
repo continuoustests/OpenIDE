@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace OpenIDE.CodeEngine.Core.Caching
+namespace OpenIDE.Core.Caching
 {
 	public class ProjectFile
 	{

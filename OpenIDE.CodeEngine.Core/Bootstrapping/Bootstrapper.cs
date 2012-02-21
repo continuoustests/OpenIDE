@@ -12,6 +12,7 @@ using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.ChangeTrackers;
 using OpenIDE.CodeEngine.Core.Logging;
 using OpenIDE.CodeEngine.Core.EditorEngine;
+using OpenIDE.Core.Caching;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Windowing;
 
@@ -31,7 +32,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_path = path;
 			Logger.Assign(new FileLogger());
             _cache = new TypeCache();
-			var crawlHandler = new CrawlHandler(_cache);
+			var crawlHandler = new CrawlHandler(_cache, (s) => Logger.Write(s));
 			var pluginLocator = new PluginLocator(
 				enabledLanguages,
 				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
@@ -52,7 +53,8 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 					new GetFilesHandler(_endpoint, _cache),
 					new GetCodeRefsHandler(_endpoint, _cache),
 					new GetSignatureRefsHandler(_endpoint, _cache),
-					new GoToDefinitionHandler(_endpoint, _cache, pluginLocator)
+					new GoToDefinitionHandler(_endpoint, _cache, pluginLocator),
+					new FindTypeHandler(_endpoint, _cache)
 				});
 			return _endpoint;
 		}

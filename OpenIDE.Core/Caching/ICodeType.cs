@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDE.CodeEngine.Core
+namespace OpenIDE.Core.Caching
 {
 	public interface ICodeReference
 	{

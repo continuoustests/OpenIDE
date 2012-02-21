@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching.Search;
+using OpenIDE.Core.Caching;
 namespace OpenIDE.CodeEngine.Core.Caching
 {
 	public interface ITypeCache

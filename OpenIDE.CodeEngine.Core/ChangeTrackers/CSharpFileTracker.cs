@@ -6,6 +6,7 @@ using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Logging;
 using System.Linq;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Caching;
 namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 {
 	public class PluginFileTracker : IDisposable
@@ -51,7 +52,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			               
 		private void handleChanges(Stack<FileSystemEventArgs> buffer)
 		{
-			var cacheHandler = new CrawlHandler(_crawlReader);
+			var cacheHandler = new CrawlHandler(_crawlReader, (s) => Logger.Write(s));
 			var files = getChanges(buffer);
 			files.ForEach(x =>
 				{

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching.Search;
 using OpenIDE.CodeEngine.Core.Logging;

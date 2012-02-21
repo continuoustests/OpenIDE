@@ -22,7 +22,7 @@ namespace OpenIDE.Tests
 					() => { return new ICommandHandler[] {}; },
 					() => { return new ICommandHandler[] {}; }));
 			
-			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(14));
+			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(15));
 			
 			Assert.That(container.IFS(), Is.InstanceOf<IFS>());
 			Assert.That(container.IMessageBus(), Is.InstanceOf<IMessageBus>());

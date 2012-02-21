@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenIDE.Core.Caching;
 namespace OpenIDE.CodeEngine.Core.Caching
 {
 	public interface ICacheBuilder
@@ -14,15 +15,6 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		
 		bool FileExists(string file);
 		void Invalidate(string file);
-	}
-
-	public interface ICrawlResult
-	{
-		void Add(Project project);
-		void Add(ProjectFile file);
-		void Add(ICodeReference reference);
-		void Add(IEnumerable<ICodeReference> references);
-		void Add(ISignatureReference reference);
 	}
 
 	public class CachedPlugin

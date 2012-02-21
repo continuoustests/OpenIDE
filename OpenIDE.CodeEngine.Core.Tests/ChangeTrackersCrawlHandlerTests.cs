@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using NUnit.Framework;
+using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.ChangeTrackers;
 using OpenIDE.CodeEngine.Core.Caching;
 
@@ -18,7 +19,7 @@ namespace OpenIDE.CodeEngine.Core.Tests
 		public void Setup()
 		{
 			_cache = new Fake_Cache();
-			_crawlHandler = new CrawlHandler(_cache);
+			_crawlHandler = new CrawlHandler(_cache, (s) => {});
 		}
 		
 		[Test]

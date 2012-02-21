@@ -85,6 +85,26 @@ namespace OpenIDE.Arguments.Handlers
 		}
 	}
 	
+	class CodeEngineFindSignatureHandler : CodeEngineQueryHandler
+	{
+		protected override string _commandDescription {
+			get { return  "Type search"; }
+		}
+		protected override string _queryDescription {
+			get { return  "Search string"; }
+		}
+		protected override string _command { get { return  "find-types"; } }
+
+		protected override void run(Instance instance, string args) {
+			Console.WriteLine(instance.FindTypes(args));
+		}
+		
+		public CodeEngineFindSignatureHandler(ICodeEngineLocator codeEngineFactory)
+		{
+			_codeEngineFactory = codeEngineFactory;
+		}
+	}
+	
 	abstract class CodeEngineQueryHandler : ICommandHandler
 	{
 		protected abstract string _commandDescription { get; }

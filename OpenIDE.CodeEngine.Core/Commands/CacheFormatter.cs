@@ -1,4 +1,5 @@
 using System;
+using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
 
 namespace OpenIDE.CodeEngine.Core.Commands
