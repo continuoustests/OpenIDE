@@ -41,6 +41,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_tracker.Start(
 				_path,
 				_cache,
+				_cache,
 				pluginLocator);
 
             _endpoint = new CommandEndpoint(_path, _cache);

@@ -44,24 +44,24 @@ namespace OpenIDE.CodeEngineIntegration
 			send("explore");
 		}
 		
-		public void GetProjects(string query)
+		public string GetProjects(string query)
 		{
-			queryCodeEngine("get-projects", query);
+			return queryCodeEngine("get-projects", query);
 		}
 
-		public void GetFiles(string query)
+		public string GetFiles(string query)
 		{
-			queryCodeEngine("get-files", query);
+			return queryCodeEngine("get-files", query);
 		}
 
-		public void GetCodeRefs(string query)
+		public string GetCodeRefs(string query)
 		{
-			queryCodeEngine("get-signatures", query);
+			return queryCodeEngine("get-signatures", query);
 		}
 
-		public void GetSignatureRefs(string query)
+		public string GetSignatureRefs(string query)
 		{
-			queryCodeEngine("get-signature-refs", query);
+			return queryCodeEngine("get-signature-refs", query);
 		}
 
 		public void SnippetComplete(string[] arguments)
@@ -93,15 +93,15 @@ namespace OpenIDE.CodeEngineIntegration
 			send(sb.ToString());
 		}
 
-		private void queryCodeEngine(string command, string query)
+		private string queryCodeEngine(string command, string query)
 		{
 			var client = _clientFactory.Invoke();
 			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
-				return;
+				return "";
 			var reply = client.Request(command + " " + query);
-			Console.WriteLine(reply);
 			client.Disconnect();
+			return reply;
 		}
 		
 		private void send(string message)

@@ -10,9 +10,9 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private string _currentProject = null;
 		private string _currentFile = null;
 		
-		private ICacheBuilder _builder;
+		private ICrawlResult _builder;
 
-		public CrawlHandler(ICacheBuilder builder)
+		public CrawlHandler(ICrawlResult builder)
 		{
 			_builder = builder;
 		}

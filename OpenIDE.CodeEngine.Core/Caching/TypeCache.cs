@@ -5,7 +5,7 @@ using OpenIDE.CodeEngine.Core.Caching.Search;
 using System.IO;
 namespace OpenIDE.CodeEngine.Core.Caching
 {
-	public class TypeCache : ICacheBuilder, ITypeCache
+	public class TypeCache : ICacheBuilder, ITypeCache, ICrawlResult
 	{
 		private List<CachedPlugin> _plugins = new List<CachedPlugin>();
 		private List<Project> _projects = new List<Project>();

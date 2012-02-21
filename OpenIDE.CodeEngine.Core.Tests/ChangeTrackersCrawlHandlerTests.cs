@@ -120,7 +120,7 @@ namespace OpenIDE.CodeEngine.Core.Tests
 		}
 	}
 
-	class Fake_Cache : ICacheBuilder
+	class Fake_Cache : ICacheBuilder, ICrawlResult
 	{
 		public List<CachedPlugin> Plugins { get { return null; } }
 		public int ProjectCount { get; private set; }

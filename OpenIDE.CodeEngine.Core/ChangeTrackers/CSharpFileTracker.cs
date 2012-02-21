@@ -13,10 +13,12 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
 		private ICacheBuilder _cache;
+		private ICrawlResult _crawlReader;
 		
-		public void Start(string path, ICacheBuilder cache, PluginLocator pluginLocator)
+		public void Start(string path, ICacheBuilder cache, ICrawlResult crawlReader, PluginLocator pluginLocator)
 		{
 			_cache = cache;
+			_crawlReader = crawlReader;
 			_tracker = new FileChangeTracker();
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
@@ -49,7 +51,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			               
 		private void handleChanges(Stack<FileSystemEventArgs> buffer)
 		{
-			var cacheHandler = new CrawlHandler(_cache);
+			var cacheHandler = new CrawlHandler(_crawlReader);
 			var files = getChanges(buffer);
 			files.ForEach(x =>
 				{

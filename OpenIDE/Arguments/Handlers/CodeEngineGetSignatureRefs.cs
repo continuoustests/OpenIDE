@@ -16,7 +16,7 @@ namespace OpenIDE.Arguments.Handlers
 		protected override string _command { get { return  "get-projects"; } }
 
 		protected override void run(Instance instance, string args) {
-			instance.GetProjects(args);
+			Console.WriteLine(instance.GetProjects(args));
 		}
 		
 		public CodeEngineGetProjectsHandler(ICodeEngineLocator codeEngineFactory)
@@ -36,7 +36,7 @@ namespace OpenIDE.Arguments.Handlers
 		protected override string _command { get { return  "get-files"; } }
 
 		protected override void run(Instance instance, string args) {
-			instance.GetFiles(args);
+			Console.WriteLine(instance.GetFiles(args));
 		}
 		
 		public CodeEngineGetFilesHandler(ICodeEngineLocator codeEngineFactory)
@@ -56,7 +56,7 @@ namespace OpenIDE.Arguments.Handlers
 		protected override string _command { get { return  "get-signatures"; } }
 
 		protected override void run(Instance instance, string args) {
-			instance.GetCodeRefs(args);
+			Console.WriteLine(instance.GetCodeRefs(args));
 		}
 		
 		public CodeEngineGetCodeRefsHandler(ICodeEngineLocator codeEngineFactory)
@@ -76,7 +76,7 @@ namespace OpenIDE.Arguments.Handlers
 		protected override string _command { get { return  "get-signature-refs"; } }
 
 		protected override void run(Instance instance, string args) {
-			instance.GetSignatureRefs(args);
+			Console.WriteLine(instance.GetSignatureRefs(args));
 		}
 		
 		public CodeEngineGetSignatureRefsHandler(ICodeEngineLocator codeEngineFactory)

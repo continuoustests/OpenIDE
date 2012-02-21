@@ -14,7 +14,10 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		
 		bool FileExists(string file);
 		void Invalidate(string file);
-		
+	}
+
+	public interface ICrawlResult
+	{
 		void Add(Project project);
 		void Add(ProjectFile file);
 		void Add(ICodeReference reference);

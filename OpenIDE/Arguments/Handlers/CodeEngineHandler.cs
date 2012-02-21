@@ -14,6 +14,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Launches the code engines type search window");
+				usage.Add("[SEARCH-STRING]", "When passed it will perform the search in the command line");
 				return usage;
 			}
 		}
@@ -30,8 +31,15 @@ namespace OpenIDE.Arguments.Handlers
 			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
 			if (instance == null)
 				return;
-			Console.WriteLine("Handling go to type");
-			instance.GoToType();
+			if (arguments.Length == 0)
+				instance.GoToType();
+			else
+				consoleSearch(instance, arguments[0]);
+		}
+
+		private void consoleSearch(Instance instance, string search)
+		{
+			var result = instance.GetCodeRefs("name=*" + search + "*");
 		}
 	}
 }
