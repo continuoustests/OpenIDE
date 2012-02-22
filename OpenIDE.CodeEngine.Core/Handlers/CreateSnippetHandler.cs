@@ -25,7 +25,6 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 
 		public void Handle(string[] arguments)
 		{
-			Logging.Logger.Write("We are in create snippet handler");
 			if (arguments.Length < 2)
 				return;
 			var language = getLanguage(arguments[0]);
@@ -79,7 +78,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			}
 			unexisting.ForEach(x => {
 				dir = Path.Combine(dir, x);
-				Directory.CreateDirectory(dir);
+				Directory.CreateDirectory(_keyPath);
 			});
 		}
 	}

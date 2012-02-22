@@ -27,6 +27,10 @@ mkdir $DEPLOYDIR/Languages/C#
 mkdir $DEPLOYDIR/Languages/C#/bin
 mkdir $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
 mkdir $DEPLOYDIR/Languages/C#/bin/ContinuousTests
+
+mkdir $DEPLOYDIR/scripts
+mkdir $DEPLOYDIR/scripts/templates
+
 chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
 chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
 
@@ -44,6 +48,8 @@ cp $ROOT/oi/oi $DEPLOYDIR/oi
 cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe
 cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
+
+cp -r $ROOT/oi/script-templates $DEPLOYDIR/scripts/templates
 
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
 cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#

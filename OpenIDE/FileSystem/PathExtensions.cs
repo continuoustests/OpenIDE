@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
+
 namespace OpenIDE.FileSystem
 {
 	public static class PathExtensions
@@ -71,6 +73,23 @@ namespace OpenIDE.FileSystem
 				return path;
 			else
 				return path.ToLower();
+		}
+
+		public static void CreateDirectories(string file)
+		{
+			var unexisting = new List<string>();
+			var dir = Path.GetDirectoryName(file);
+			while (!Directory.Exists(dir))
+			{
+				unexisting.Insert(0, Path.GetFileName(dir));
+				dir = Path.GetDirectoryName(dir);
+				if (dir == null)
+					break;
+			}
+			unexisting.ForEach(x => {
+				dir = Path.Combine(dir, x);
+				Directory.CreateDirectory(dir);
+			});
 		}
 	}
 }

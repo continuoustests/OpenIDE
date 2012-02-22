@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenIDE.Core.Language;
+using OpenIDE.FileSystem;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -33,26 +34,9 @@ namespace OpenIDE.Arguments.Handlers
 			if (arguments.Length != 1)
 				return;
 			var file = Path.GetFullPath(arguments[0]);
-			createDirectories(file);
+			PathExtensions.CreateDirectories(file);
 			File.WriteAllText(file, "");
 			_dispatch("editor goto \"" + file + "|0|0\"");
-		}
-		
-		private void createDirectories(string file)
-		{
-			var unexisting = new List<string>();
-			var dir = Path.GetDirectoryName(file);
-			while (!Directory.Exists(dir))
-			{
-				unexisting.Insert(0, Path.GetFileName(dir));
-				dir = Path.GetDirectoryName(dir);
-				if (dir == null)
-					break;
-			}
-			unexisting.ForEach(x => {
-				dir = Path.Combine(dir, x);
-				Directory.CreateDirectory(dir);
-			});
 		}
 	}
 }

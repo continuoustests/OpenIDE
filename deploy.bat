@@ -23,6 +23,8 @@ mkdir %DEPLOYDIR%\Languages\C#
 mkdir %DEPLOYDIR%\Languages\C#\bin
 mkdir %DEPLOYDIR%\Languages\C#\bin\AutoTest.Net
 mkdir %DEPLOYDIR%\Languages\C#\bin\ContinuousTests
+mkdir %DEPLOYDIR%\scripts
+mkdir %DEPLOYDIR%\scripts\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDE.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %SOURCEDIR%OpenIDE.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
@@ -36,6 +38,8 @@ copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDE.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDE.CodeEngine.exe
 copy %BINARYDIR%\OpenIDE.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.CodeEngine.Core.dll
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.Core.dll
+
+xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 
 copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#

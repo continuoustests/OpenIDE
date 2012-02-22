@@ -23,22 +23,34 @@ namespace OpenIDE.Core.Config
 		{
 			_path = path;
 			_allowGlobal = allowGlobal;
-			ConfigurationFile = getConfigFile(_path);
+			ConfigurationFile = GetConfigFile(_path);
+			if (!File.Exists(ConfigurationFile))
+				ConfigurationFile = null;
 			if (ConfigurationFile == null && _allowGlobal)
-				ConfigurationFile = getConfigFile(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+				ConfigurationFile = GetConfigFile(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 			readConfiguration();
 		}
 
 		public static string GetConfigFile(string path)
 		{
-			return getConfigFile(path);
+			return Path.Combine(getConfigPoint(path), "oi.config");
+		}
+		
+		public static string GetConfigPoint(string path)
+		{
+			return getConfigPoint(path);
+		}
+
+		public static bool IsConfigured(string path)
+		{
+			return getConfigPoint(path) != null;
 		}
 
 		public void Write(string setting)
 		{
 			setting = setting.Trim(new[] { '\t' });
 			if (ConfigurationFile == null)
-				ConfigurationFile = getConfigFile(_path);
+				ConfigurationFile = GetConfigFile(_path);
 			if (ConfigurationFile == null)
 			{
 				Console.WriteLine("Could not find valid configuration point for path " + _path);
@@ -53,12 +65,13 @@ namespace OpenIDE.Core.Config
 				Directory.CreateDirectory(Path.GetDirectoryName(ConfigurationFile));
 			string[] lines = new string[] {};
 			if (File.Exists(ConfigurationFile))
-				lines = File.ReadAllLines(ConfigurationFile); write(ConfigurationFile, lines, setting); }
+				lines = File.ReadAllLines(ConfigurationFile); write(ConfigurationFile, lines, setting);
+		}
 
 		public void Delete(string setting)
 		{
 			if (!File.Exists(ConfigurationFile))
-				ConfigurationFile = getConfigFile(_path);
+				ConfigurationFile = GetConfigFile(_path);
 			if (!File.Exists(ConfigurationFile))
 			{
 				Console.WriteLine("Could not find valid configuration point for path " + _path);
@@ -210,6 +223,8 @@ namespace OpenIDE.Core.Config
 		{
 			if (ConfigurationFile == null)
 				return;
+			if (!File.Exists(ConfigurationFile))
+				return;
 			File.ReadAllLines(ConfigurationFile).ToList()
 				.ForEach(x =>
 					{
@@ -240,20 +255,20 @@ namespace OpenIDE.Core.Config
 			}
 		}
 
-		private static string getConfigFile(string path)
+		private static string getConfigPoint(string path)
 		{
 			if (path == null)
 				return null;
-			var file = Path.Combine(path, Path.Combine(".OpenIDE", "oi.config"));
-			if (!File.Exists(file))
+			var dir = Path.Combine(path, ".OpenIDE");
+			if (!Directory.Exists(dir))
 			{
 				try {
-					return getConfigFile(Path.GetDirectoryName(path));
+					return getConfigPoint(Path.GetDirectoryName(path));
 				} catch {
 					return null;
 				}
 			}
-			return file;
+			return dir;
 		}
 	}
 }

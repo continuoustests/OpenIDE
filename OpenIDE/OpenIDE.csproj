@@ -111,6 +111,7 @@
     <Compile Include="Arguments\Handlers\GoToDefinitionHandler.cs" />
     <Compile Include="Arguments\Handlers\TouchHandler.cs" />
     <Compile Include="Arguments\Handlers\CreateScriptHandler.cs" />
+    <Compile Include="FileSystem\ScriptLocator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

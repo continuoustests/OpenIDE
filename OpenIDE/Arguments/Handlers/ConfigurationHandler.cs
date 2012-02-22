@@ -56,13 +56,13 @@ namespace OpenIDE.Arguments.Handlers
 			if (args.Global)
 				path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-			var config = new Configuration(path, false);
-			if (config.ConfigurationFile == null)
+			if (!Configuration.IsConfigured(path))
 			{
 				Console.WriteLine("There is no config point at " + path);
 				return;
 			}
 
+			var config = new Configuration(path, false);
 			Console.WriteLine("Writing to " + config.ConfigurationFile);
 			Console.WriteLine("\t{0} setting: {1}",
 				args.Delete ? "Deleting" : "Updating",
@@ -81,20 +81,18 @@ namespace OpenIDE.Arguments.Handlers
 			var dir = Path.Combine(path, ".OpenIDE");
 			if (!Directory.Exists(dir))
 				Directory.CreateDirectory(dir);
-			var file = Path.Combine(dir, "oi.config");
-			File.WriteAllText(file, "");
 		}
 
 		private bool isInitialized(string path)
 		{
-			var file = Path.Combine(Path.Combine(path, ".OpenIDE"), "oi.config");
-			return File.Exists(file);
+			var file = Path.Combine(path, ".OpenIDE");
+			return Directory.Exists(file);
 		}
 
 		private void printClosestConfiguration(string path)
 		{
 			var file = new Configuration(path, true).ConfigurationFile;
-			if (file == null)
+			if (!File.Exists(file))
 				return;
 			Console.WriteLine("Configuration file: {0}", file);
 			Console.WriteLine("");
