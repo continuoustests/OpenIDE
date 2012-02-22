@@ -1,0 +1,22 @@
+{name},{command}
+18|2
+class {name} : ICommandHandler
+{
+	public CommandHandlerParameter Usage {
+		get {
+				var usage = new CommandHandlerParameter(
+					"All",
+					CommandType.FileCommand,
+					Command,
+					"Command description");
+				return usage;
+		}
+	}
+
+	public string Command { get { return "{command}"; } }
+
+	public void Execute(string[] arguments)
+	{
+		
+	}
+}
