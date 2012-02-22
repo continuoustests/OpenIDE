@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
@@ -11,6 +12,8 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class CreateScriptHandler : ICommandHandler
 	{
+		private Action<string> _dispatch;
+
 		public CommandHandlerParameter Usage {
 			get {
 					var usage = new CommandHandlerParameter(
@@ -26,6 +29,11 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		public string Command { get { return "script-create"; } }
+
+		public CreateScriptHandler(Action<string> dispatch)
+		{
+			_dispatch = dispatch;
+		}
 
 		public void Execute(string[] arguments)
 		{
@@ -48,6 +56,10 @@ namespace OpenIDE.Arguments.Handlers
 			if (template != null)
 				content = File.ReadAllText(template).Replace("[[scirpt_name]]", filename);
 			File.WriteAllText(file, content);
+			if (Environment.OSVersion.Platform == PlatformID.Unix ||
+				Environment.OSVersion.Platform == PlatformID.MacOSX)
+				run("chmod", "+x \"" + file + "\"");
+			_dispatch("editor goto \"" + file + "|0|0\"");
 		}
 
 		private string getFileName(string name)
@@ -70,6 +82,18 @@ namespace OpenIDE.Arguments.Handlers
 				return new ScriptLocator().GetGlobalPath();
 			else
 				return new ScriptLocator().GetLocalPath();
+		}
+		
+		private void run(string cmd, string arguments)
+		{
+			try {
+				var proc = new Process();
+				proc.StartInfo = new ProcessStartInfo(cmd, arguments);
+				proc.StartInfo.CreateNoWindow = true;
+				proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				proc.Start();
+			} catch {
+			}
 		}
 	}
 }

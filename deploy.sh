@@ -49,7 +49,7 @@ cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.ex
 cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
 
-cp -r $ROOT/oi/script-templates $DEPLOYDIR/scripts/templates
+cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/scripts/templates
 
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
 cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#

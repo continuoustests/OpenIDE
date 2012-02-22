@@ -76,7 +76,7 @@ namespace OpenIDE.Core.Language
 		{
 			var sb = new StringBuilder();
 			arguments.ToList()
-				.ForEach(x => sb.Append(" " + x));
+				.ForEach(x => sb.Append(" \"" + x + "\""));
 			foreach (var line in run(sb.ToString()))
 				_dispatch(line);
 		}

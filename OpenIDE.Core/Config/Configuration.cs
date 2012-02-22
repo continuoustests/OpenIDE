@@ -33,7 +33,10 @@ namespace OpenIDE.Core.Config
 
 		public static string GetConfigFile(string path)
 		{
-			return Path.Combine(getConfigPoint(path), "oi.config");
+			var point = getConfigPoint(path);
+			if (point == null)
+				return null;
+			return Path.Combine(point, "oi.config");
 		}
 		
 		public static string GetConfigPoint(string path)

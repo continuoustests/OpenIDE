@@ -62,7 +62,8 @@ namespace OpenIDE.Bootstrapping
 					new TouchHandler(dispatchMessage),
 					new PrewievSnippetHandler(ICodeEngineLocator()),
 					new CreateSnippetHandler(ICodeEngineLocator()),
-					new CreateScriptHandler()
+					new CreateScriptHandler(dispatchMessage),
+					new ScriptHandler(dispatchMessage)
 				});
 			return handlers;
 		}
