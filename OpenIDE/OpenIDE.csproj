@@ -111,6 +111,7 @@
     <Compile Include="Arguments\Handlers\CreateSnippetHandler.cs" />
     <Compile Include="Arguments\Handlers\MemberLookupHandler.cs" />
     <Compile Include="Arguments\Handlers\GoToDefinitionHandler.cs" />
+    <Compile Include="Arguments\Handlers\TouchHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
