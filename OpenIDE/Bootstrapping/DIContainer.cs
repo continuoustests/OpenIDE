@@ -65,7 +65,9 @@ namespace OpenIDE.Bootstrapping
 					new SnippetEditHandler(ICodeEngineLocator()),
 					new SnippetDeleteHandler(ICodeEngineLocator()),
 					new CreateScriptHandler(dispatchMessage),
-					new ScriptHandler(dispatchMessage)
+					new ScriptHandler(dispatchMessage),
+					new EditScriptHandler(dispatchMessage),
+					new DeleteScriptHandler()
 				});
 			return handlers;
 		}

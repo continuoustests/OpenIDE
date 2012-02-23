@@ -122,6 +122,8 @@
     <Compile Include="Arguments\Handlers\ScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\SnippetEditHandler.cs" />
     <Compile Include="Arguments\Handlers\SnippetDeleteHandler.cs" />
+    <Compile Include="Arguments\Handlers\EditScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\DeleteScriptHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

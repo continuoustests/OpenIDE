@@ -14,6 +14,7 @@ namespace OpenIDE.FileSystem
 
 		public IEnumerable<BaseCommandHandlerParameter> Usages { get { return getUsages(); } }
 
+		public string File { get { return _file; } }
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 
