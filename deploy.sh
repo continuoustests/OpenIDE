@@ -40,6 +40,7 @@ xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Re
 xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
 xbuild Languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
 
+cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
@@ -48,6 +49,7 @@ cp $ROOT/oi/oi $DEPLOYDIR/oi
 cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe
 cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
+cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/CodeEngine/
 
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/scripts/templates
 

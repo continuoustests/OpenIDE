@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
 using OpenIDE.FileSystem;
+using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -88,10 +89,7 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			try {
 				var proc = new Process();
-				proc.StartInfo = new ProcessStartInfo(cmd, arguments);
-				proc.StartInfo.CreateNoWindow = true;
-				proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-				proc.Start();
+                proc.Run(cmd, arguments, false, Environment.NewLine);
 			} catch {
 			}
 		}

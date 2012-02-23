@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
+using CoreExtensions;
 
 namespace OpenIDE.Core.Language
 {
@@ -54,24 +55,7 @@ namespace OpenIDE.Core.Language
 		private IEnumerable<string> run(string cmd, string arguments)
 		{
 			var proc = new Process();
-            if (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX)
-			{
-                arguments = "/c \"" + ("\"" + cmd + "\" " + arguments).Replace ("\"", "^\"") + "\"";
-				cmd = "cmd.exe";
-			}
-			proc.StartInfo = new ProcessStartInfo(cmd, arguments);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = false;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.RedirectStandardOutput = true;
-			proc.Start();
-			while (true)
-			{
-				var line = proc.StandardOutput.ReadLine();
-				if (line == null)
-					break;
-				yield return line;
-			}
+            return proc.Query(cmd, arguments, false, Environment.CurrentDirectory);
 		}
 	}
 }

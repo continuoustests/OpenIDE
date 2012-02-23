@@ -10,6 +10,7 @@ using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching.Search;
 using OpenIDE.CodeEngine.Core.Logging;
 using System.Diagnostics;
+using CoreExtensions;
 
 namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
 {
@@ -101,15 +102,7 @@ namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
 				additionalParameters = " --default-language=" + _defaultLanguage;
 
             var proc = new Process();
-            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-                proc.StartInfo = new ProcessStartInfo("oi", "run" + additionalParameters);
-            else
-                proc.StartInfo = new ProcessStartInfo("cmd.exe", "/c oi run" + additionalParameters);
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            proc.StartInfo.WorkingDirectory = directory;
-            proc.Start();
+            proc.Run("oi", additionalParameters, false, directory);
         }
 
 		private void listResult(

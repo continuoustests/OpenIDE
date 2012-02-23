@@ -15,6 +15,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -61,6 +61,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CoreExtensions\CoreExtensions.csproj">
+      <Project>{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>CoreExtensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIDE.Core\OpenIDE.Core.csproj">
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>OpenIDE.Core</Name>

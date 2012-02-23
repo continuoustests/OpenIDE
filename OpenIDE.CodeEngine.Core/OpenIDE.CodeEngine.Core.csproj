@@ -148,5 +148,9 @@
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>OpenIDE.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CoreExtensions\CoreExtensions.csproj">
+      <Project>{fb9bd7ea-f2f8-4f9c-8b82-17e703c0c766}</Project>
+      <Name>CoreExtensions</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

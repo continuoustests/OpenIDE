@@ -9,6 +9,7 @@ using OpenIDE.Arguments;
 using OpenIDE.CommandBuilding;
 using System.IO;
 using System.Diagnostics;
+using CoreExtensions;
 
 namespace OpenIDE.UI
 {
@@ -253,10 +254,13 @@ namespace OpenIDE.UI
             labelDescription.Text = _builder.Describe("/" + informationList.SelectedItems[0].Text.Replace(" ", "/"));
         }
 
-        private string run(string arguments)
+        private void run(string arguments)
         {
             var proc = new Process();
-            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+			foreach (var line in proc.Query("oi", arguments, false, _directory))
+				Console.WriteLine(line);
+
+            /*if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
                 proc.StartInfo = new ProcessStartInfo("oi", arguments);
             else
 			{
@@ -265,6 +269,7 @@ namespace OpenIDE.UI
 						"cmd.exe", "/c oi \"" +
 						arguments.Replace("\"", "^\"") + "\"");
 			}
+			Console.WriteLine("Running: " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -273,8 +278,8 @@ namespace OpenIDE.UI
             proc.Start();
             var output = proc.StandardOutput.ReadToEnd();
             if (output.Length > Environment.NewLine.Length)
-                return output.Substring(0, output.Length - Environment.NewLine.Length);
-            return output;
+                output = output.Substring(0, output.Length - Environment.NewLine.Length);
+            Console.WriteLine(output);*/
         }
 
         private void buttonRun_Click(object sender, EventArgs e)

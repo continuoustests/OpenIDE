@@ -135,7 +135,7 @@ namespace OpenIDE.Bootstrapping
 
 		private void printError(string command)
 		{
-			var commentTag = "comment|";
+			var commentTag = "error|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
 			Console.WriteLine(command.Substring(start, command.Length - start));
 		}
