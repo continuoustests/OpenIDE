@@ -120,6 +120,8 @@
     <Compile Include="FileSystem\ScriptLocator.cs" />
     <Compile Include="FileSystem\Script.cs" />
     <Compile Include="Arguments\Handlers\ScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\SnippetEditHandler.cs" />
+    <Compile Include="Arguments\Handlers\SnippetDeleteHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -146,5 +148,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Arguments\Handlers\SnippetEditHandler.cs&#xA;" />
   </ItemGroup>
 </Project>

@@ -78,7 +78,17 @@ namespace OpenIDE.CodeEngineIntegration
 		{
 			sendArgumentCommand("snippet-create", arguments);
 		}
+
+		public void SnippetEdit(string[] arguments)
+		{
+			sendArgumentCommand("snippet-edit", arguments);
+		}
 		
+		public void SnippetDelete(string[] arguments)
+		{
+			sendArgumentCommand("snippet-delete", arguments);
+		}
+
 		public void MemberLookup(string[] arguments)
 		{
 			sendArgumentCommand("member-lookup", arguments);

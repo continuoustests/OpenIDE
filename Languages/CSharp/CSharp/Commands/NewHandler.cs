@@ -311,7 +311,10 @@ namespace CSharp.Commands
             var sb = new StringBuilder();
             foreach (var line in proc.Query(_file, arguments, false, Environment.CurrentDirectory))
                 sb.AppendLine(line);
-            return sb.ToString();
+			var output = sb.ToString();
+			if (output.Length > Environment.NewLine.Length)
+				return output.Substring(0, output.Length - Environment.NewLine.Length);
+            return output;
 		}
 	}
 }

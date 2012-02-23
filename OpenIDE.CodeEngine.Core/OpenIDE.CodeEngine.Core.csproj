@@ -10,7 +10,8 @@
     <RootNamespace>OpenIDE.CodeEngine.Core</RootNamespace>
     <AssemblyName>OpenIDE.CodeEngine.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -110,6 +111,8 @@
     <Compile Include="Handlers\GoToDefinitionHandler.cs" />
     <Compile Include="Caching\SearchSorter.cs" />
     <Compile Include="Handlers\FindTypeHandler.cs" />
+    <Compile Include="Handlers\SnippetEditHandler.cs" />
+    <Compile Include="Handlers\SnippetDeleteHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

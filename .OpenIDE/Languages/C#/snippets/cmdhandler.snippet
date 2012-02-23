@@ -1,5 +1,5 @@
-{name},{command}
-18|2
+{name},{command},{description}
+17|2
 class {name} : ICommandHandler
 {
 	public CommandHandlerParameter Usage {
@@ -8,7 +8,7 @@ class {name} : ICommandHandler
 					"All",
 					CommandType.FileCommand,
 					Command,
-					"Command description");
+					"{description}");
 				return usage;
 		}
 	}

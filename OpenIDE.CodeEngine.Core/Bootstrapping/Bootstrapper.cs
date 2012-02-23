@@ -54,7 +54,9 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 					new GetCodeRefsHandler(_endpoint, _cache),
 					new GetSignatureRefsHandler(_endpoint, _cache),
 					new GoToDefinitionHandler(_endpoint, _cache, pluginLocator),
-					new FindTypeHandler(_endpoint, _cache)
+					new FindTypeHandler(_endpoint, _cache),
+					new SnippetEditHandler(_endpoint, _cache, _path),
+					new SnippetDeleteHandler(_cache, _path)
 				});
 			return _endpoint;
 		}
