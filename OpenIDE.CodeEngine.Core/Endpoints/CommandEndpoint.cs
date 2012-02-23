@@ -42,18 +42,14 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		{
 			var msg = CommandMessage.New(e.Message);
 			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
-			if (msg.Command == "keypress" && msg.Arguments.Count > 0)
-				handle(new MessageArgs(Guid.Empty, command));
+			var fullCommand = msg.Command + " " + command;
+			Logger.Write(fullCommand);
+			handle(new MessageArgs(Guid.Empty, fullCommand.Trim()));
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
-			if (e.Message == "gototype")
-				handle(new MessageArgs(e.ClientID, "gototype"));
-			else if (e.Message == "explore")
-				handle(new MessageArgs(e.ClientID, "explore"));
-			else
-				handle(e);
+			handle(e);
 		}
 
 		void handle(MessageArgs command)
