@@ -54,7 +54,14 @@ namespace OpenIDE.Arguments.Handlers
 				sb.Append(" \"" + arguments[i] + "\"");
 
 			foreach (var line in script.Run(sb.ToString()))
-				_dispatch(line);
+			{
+				if (line.StartsWith("command|"))
+					_dispatch(line.Substring("command|".Length, line.Length - "command|".Length));
+				else if (line.StartsWith("error|"))
+					_dispatch(line);
+				else
+					_dispatch("comment|" + line);
+			}
 		}
 	}
 }
