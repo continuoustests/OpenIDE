@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.CodeEngine.Core.Endpoints;
 using System.Linq;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Caching;
@@ -11,15 +12,22 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 {
 	public class PluginFileTracker : IDisposable
 	{
+		private EventEndpoint _eventDispatcher;
 		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
 		private ICacheBuilder _cache;
 		private ICrawlResult _crawlReader;
 		
-		public void Start(string path, ICacheBuilder cache, ICrawlResult crawlReader, PluginLocator pluginLocator)
+		public void Start(
+			string path,
+			ICacheBuilder cache,
+			ICrawlResult crawlReader,
+			PluginLocator pluginLocator,
+			EventEndpoint eventDispatcher)
 		{
 			_cache = cache;
 			_crawlReader = crawlReader;
+			_eventDispatcher = eventDispatcher;
 			_tracker = new FileChangeTracker();
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
@@ -68,7 +76,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			while (buffer.Count != 0)
 			{
 				var item = buffer.Pop();
-				if (item != null && !list.Contains(item))
+				if (item != null && !list.Exists(x => x.FullPath.Equals(item.FullPath)))
 					list.Add(item);
 			}
 			return list;
@@ -81,11 +89,16 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			var extension = Path.GetExtension(file.FullPath).ToLower();
 			if (extension == null)
 				return;
+			
+			_eventDispatcher.Send("codemodel file-changed \"" + file.FullPath + "\"");
+			
 			_plugins.ForEach(x =>
 				{
 					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.FullPath))
 						x.FilesToHandle.Add(file.FullPath);
 				});
+
+			_eventDispatcher.Send("codemodel file-crawled \"" + file.FullPath + "\"");
 		}
 
 		public void Dispose()

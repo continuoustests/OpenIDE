@@ -10,8 +10,7 @@
     <RootNamespace>OpenIDE.CodeEngine.Core</RootNamespace>
     <AssemblyName>OpenIDE.CodeEngine.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -113,6 +112,7 @@
     <Compile Include="Handlers\FindTypeHandler.cs" />
     <Compile Include="Handlers\SnippetEditHandler.cs" />
     <Compile Include="Handlers\SnippetDeleteHandler.cs" />
+    <Compile Include="Endpoints\EventEndpoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\TypeSearchForm.resx" />
+    <None Include="Endpoints\EventEndpoint" />
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\MemberLookupForm.resx" />

@@ -13,42 +13,20 @@ using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.Logging;
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
-	public class CommandEndpoint
+	public class EventEndpoint
 	{
 		private string _keyPath;
 		private TcpServer _server;
-		private Editor _editor;
-		private ITypeCache _cache;
-		private EventEndpoint _eventEndpoint;
 		private string _instanceFile;
-		private List<Action<MessageArgs,ITypeCache,Editor>> _handlers =
-			new List<Action<MessageArgs,ITypeCache,Editor>>();
 		
-		public bool IsAlive { get { return _editor.IsConnected; } }
-		public Editor Editor { get { return _editor; } }
-		
-		public CommandEndpoint(string editorKey, ITypeCache cache, EventEndpoint eventEndpoint)
+		public EventEndpoint(string keyPath)
 		{
-			_keyPath = editorKey;
-			_cache = cache;
-			_eventEndpoint = eventEndpoint;
+			_keyPath = keyPath;
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
-			_editor = new Editor();
-			_editor.RecievedMessage += Handle_editorRecievedMessage;
-			_editor.Connect(_keyPath);
 		}
-
-		void Handle_editorRecievedMessage(object sender, MessageArgs e)
-		{
-			var msg = CommandMessage.New(e.Message);
-			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
-			var fullCommand = msg.Command + " " + command;
-			Logger.Write(fullCommand);
-			handle(new MessageArgs(Guid.Empty, fullCommand.Trim()));
-		}
-		 
+ 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
 			handle(e);
@@ -56,27 +34,11 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
-			_eventEndpoint.Send(command.Message);
-			ThreadPool.QueueUserWorkItem((cmd) =>
-				{
-					_handlers
-						.ForEach(x => x(command, _cache, _editor));
-				}, null);
-		}
-
-		public void AddHandler(Action<MessageArgs,ITypeCache,Editor> handler)
-		{
-			_handlers.Add(handler);
 		}
 		
 		public void Send(string message)
 		{
 			_server.Send(message);
-		}
-
-		public void Send(string message, Guid clientID)
-		{
-			_server.Send(message, clientID);
 		}
 		
 		public void Start()
@@ -93,7 +55,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		
 		private void writeInstanceInfo(string key)
 		{
-			var path = Path.Combine(Path.GetTempPath(), "OpenIDE.CodeEngine");
+			var path = Path.Combine(Path.GetTempPath(), "OpenIDE.Events");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));

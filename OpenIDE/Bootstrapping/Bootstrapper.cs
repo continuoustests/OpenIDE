@@ -58,6 +58,7 @@ namespace OpenIDE.Bootstrapping
 		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
 		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
+		public string Path { get { return _path; } }
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
 

@@ -10,10 +10,8 @@
     <RootNamespace>OpenIDE</RootNamespace>
     <AssemblyName>OpenIDE</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -124,6 +122,7 @@
     <Compile Include="Arguments\Handlers\SnippetDeleteHandler.cs" />
     <Compile Include="Arguments\Handlers\EditScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\DeleteScriptHandler.cs" />
+    <Compile Include="EventIntegration\EventDispatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -153,5 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Arguments\Handlers\SnippetEditHandler.cs&#xA;" />
+    <None Include="EventIntegration\EventDispatcher" />
   </ItemGroup>
 </Project>
