@@ -25,6 +25,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		private static PluginFileTracker _tracker;
 		private static List<IHandler> _handlers = new List<IHandler>();
 		private static CommandEndpoint _endpoint;
+		private static EventEndpoint _eventEndpoint;
 		private static TypeCache _cache;
 
 		public static CommandEndpoint GetEndpoint(string path, string[] enabledLanguages)
@@ -38,14 +39,19 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
 				(msg) => {});
 			initPlugins(pluginLocator, crawlHandler);
+
+			_eventEndpoint = new EventEndpoint(_path);
+			_eventEndpoint.Start();
+
 			_tracker = new PluginFileTracker();
 			_tracker.Start(
 				_path,
 				_cache,
 				_cache,
-				pluginLocator);
+				pluginLocator,
+				_eventEndpoint);
 
-            _endpoint = new CommandEndpoint(_path, _cache);
+            _endpoint = new CommandEndpoint(_path, _cache, _eventEndpoint);
 			_endpoint.AddHandler(messageHandler);
 			
 			_handlers.AddRange(new IHandler[] {
@@ -69,6 +75,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		public static void Shutdown()
 		{
 			_tracker.Dispose();
+			_eventEndpoint.Stop();
 		}
 
 		private static void messageHandler(MessageArgs message, ITypeCache cache, Editor editor)

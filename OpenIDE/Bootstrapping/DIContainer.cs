@@ -24,7 +24,10 @@ namespace OpenIDE.Bootstrapping
 		public DIContainer(AppSettings settings)
 		{
 			_settings = settings;
-			_dispatcher = new CommandDispatcher(GetDefaultHandlers().ToArray(), GetPluginHandlers);
+			_dispatcher = new CommandDispatcher(
+				GetDefaultHandlers().ToArray(),
+				GetPluginHandlers,
+				EventDispatcher());
 		}
 
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
@@ -159,6 +162,11 @@ namespace OpenIDE.Bootstrapping
 		public ILocateEditorEngine ILocateEditorEngine()
 		{
 			return new EngineLocator(IFS());
+		}
+
+		public EventIntegration.IEventDispatcher EventDispatcher()
+		{
+			return new EventIntegration.EventDispatcher(_settings.Path);
 		}
 
 		public ICodeEngineLocator ICodeEngineLocator()

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OpenIDE.Arguments;
 using Rhino.Mocks;
 using OpenIDE.Core.Language;
+using OpenIDE.EventIntegration;
 namespace OpenIDE.Tests
 {
 	[TestFixture]
@@ -15,7 +16,10 @@ namespace OpenIDE.Tests
 		public void Setup()
 		{
 			_handler = new FakeHandler();
-			_execute = new CommandDispatcher(new ICommandHandler[] { _handler }, () => { return new ICommandHandler[] {}; });
+			_execute = new CommandDispatcher(
+				new ICommandHandler[] { _handler },
+				() => { return new ICommandHandler[] {}; },
+				new EventDispatcher(""));
 		}
 		
 		[Test]
