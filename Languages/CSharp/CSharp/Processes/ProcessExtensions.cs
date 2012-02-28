@@ -25,44 +25,27 @@ namespace CSharp.Processes
             bool visible,
             string workingDir)
         {
-            var outputFile = Path.GetTempFileName();
-            var batch = outputFile + ".bat";
-            if (Environment.OSVersion.Platform == PlatformID.Unix ||
-                Environment.OSVersion.Platform == PlatformID.MacOSX)
+            if (Environment.OSVersion.Platform != PlatformID.Unix &&
+                Environment.OSVersion.Platform != PlatformID.MacOSX)
             {
-                prepareProcess(proc, command, arguments, visible, workingDir);
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardOutput = true;
+                arguments = "/c " +
+                    "^\"" + command + "^\" " +
+                    arguments.Replace("\"", "^\"");
+                command = "cmd.exe";
             }
-            else
-            {
-                File.WriteAllText(batch, command + " " + arguments + " > " + outputFile);
-                prepareProcess(proc, batch, "", visible, workingDir);
-            }
+
+            prepareProcess(proc, command, arguments, visible, workingDir);
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
 
             if (proc.Start())
             {
-                if (Environment.OSVersion.Platform == PlatformID.Unix ||
-                    Environment.OSVersion.Platform == PlatformID.MacOSX)
+                while (true)
                 {
-                    while (true)
-                    {
-                        var line = proc.StandardOutput.ReadLine();
-                        if (line == null)
-                            break;
-                        yield return line;
-                    }
-                }
-                else
-                {
-                    proc.WaitForExit();
-                    if (File.Exists(outputFile))
-                    {
-                        foreach (var line in File.ReadAllLines(outputFile))
-                            yield return line;
-                        File.Delete(outputFile);
-                    }
-                    File.Delete(batch);
+                    var line = proc.StandardOutput.ReadLine();
+                    if (line == null)
+                        break;
+                    yield return line;
                 }
             }
         }
