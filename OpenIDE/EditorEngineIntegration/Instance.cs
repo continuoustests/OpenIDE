@@ -58,13 +58,16 @@ namespace OpenIDE.EditorEngineIntegration
 			send("setfocus");
 		}
 
-		public string GetDirtyFiles()
+		public string GetDirtyFiles(string file)
 		{
 			var client = _clientFactory.Invoke();
 			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
 				return "";
-			var reply = client.Request("get-dirty-files");
+			var query = "get-dirty-files";
+			if (file != null)
+				query += " " + file;
+			var reply = client.Request(query);
 			client.Disconnect();
 			return reply;
 		}
