@@ -40,7 +40,8 @@ namespace OpenIDE.Arguments.Handlers
 							.Add("END_POSITION", "The position where the text chunk to be replaced ends. Format: LINE|COLUMN");
 				usage.Add("refactor", "Gives the posibility to batch up several insert, remove and replace commands")
 					.Add("CONTENT_FILE", "A file containing insert, remove and replace commands. One command pr line");
-				usage.Add("get-dirty-files", "Queries the editor for all modified files and their content");
+				usage.Add("get-dirty-files", "Queries the editor for all modified files and their content")
+					.Add("[FILE]", "If passed it will only respond with the file specified");
 				return usage;
 			}
 		}
@@ -68,11 +69,14 @@ namespace OpenIDE.Arguments.Handlers
 				else
 					instance = null;
 			}
-			else if (arguments.Length == 1 && arguments[0] == "get-dirty-files")
+			else if (arguments.Length >= 1 && arguments[0] == "get-dirty-files")
 			{
 				if (instance == null)
 					return;
-				Console.WriteLine(instance.GetDirtyFiles());
+				string file = null;
+				if (arguments.Length > 1)
+					file = arguments[1];
+				Console.WriteLine(instance.GetDirtyFiles(file));
 			}
 			else
 			{
