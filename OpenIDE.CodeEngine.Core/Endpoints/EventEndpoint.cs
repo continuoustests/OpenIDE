@@ -11,6 +11,7 @@ using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.CodeEngine.Core.ReactiveScripts;
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
 	public class EventEndpoint
@@ -18,6 +19,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private string _keyPath;
 		private TcpServer _server;
 		private string _instanceFile;
+		private ReactiveScriptEngine _reactiveEngine;
 		
 		public EventEndpoint(string keyPath)
 		{
@@ -25,6 +27,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
+			_reactiveEngine = new ReactiveScriptEngine(_keyPath);
 		}
  
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
@@ -39,6 +42,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void Send(string message)
 		{
 			_server.Send(message);
+			_reactiveEngine.Handle(message);
 		}
 		
 		public void Start()

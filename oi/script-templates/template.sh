@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-if ($1 == "get-command-definitions")
+if [ "$1" = "get-command-definitions" ]; then
 	# Definition format usually represented as a single line:
 
 	# Script description|
