@@ -123,6 +123,7 @@
     <Compile Include="Arguments\Handlers\EditScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\DeleteScriptHandler.cs" />
     <Compile Include="EventIntegration\EventDispatcher.cs" />
+    <Compile Include="Arguments\Handlers\ProcessStartHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
