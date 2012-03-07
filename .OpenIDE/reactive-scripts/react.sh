@@ -5,7 +5,7 @@
 			
 #!/bin/bash 
 
-if [ "$1" = "reactive-script-reacts-to" ]; then
+if [ "$1" = "" ]; then
 	echo "goto"
 	exit
 fi

@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
 namespace OpenIDE.Arguments.Handlers
 {
@@ -149,7 +150,10 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			if (!Directory.Exists(folder))
 				return;
-			var initscript = Directory.GetFiles(folder, "initialize.*").FirstOrDefault();
+			var initscript = 
+				new ScriptFilter()
+					.FilterScripts(Directory.GetFiles(folder, "initialize.*"))
+					.FirstOrDefault();
 			if (initscript == null)
 				return;
 			var defaultLanguage = getDefaultLanguage();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Scripts;
 
 namespace OpenIDE.FileSystem
 {
@@ -19,7 +20,7 @@ namespace OpenIDE.FileSystem
 					"templates");
 			if (!Directory.Exists(dir))
 				return null;
-			return Directory.GetFiles(dir)
+			return new ScriptFilter().GetScripts(dir)
 				.Where(x => x.EndsWith(extension))
 				.FirstOrDefault();
 		}

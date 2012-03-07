@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Scripts;
 
 namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 {
@@ -26,12 +27,14 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		
 		private void readScripts(string path)
 		{
+			if (path == null)
+				return;
 			Logging.Logger.Write("Reading scripts from " + path);
 			if (!Directory.Exists(path))
 				return;
 			_scripts.AddRange(
-				Directory.GetFiles(path, "*.rscript")
-					.Select(x => ReadScript(path))
+				new ScriptFilter().GetScripts(path)
+					.Select(x => ReadScript(x))
 					.Where(x => x != null));
 		}
 
@@ -51,8 +54,10 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 
 		private string getLocal()
 		{
-				return getPath(Path.GetDirectoryName(
-					Configuration.GetConfigFile(_keyPath)));
+			var config = Configuration.GetConfigFile(_keyPath);
+			if (config == null)
+				return null;
+			return getPath(Path.GetDirectoryName(config));
 		}
 
 		private string getPath(string path)

@@ -73,6 +73,7 @@
     <Compile Include="Caching\ISignatureReference.cs" />
     <Compile Include="Caching\ICrawlResult.cs" />
     <Compile Include="Caching\CrawlHandler.cs" />
+    <Compile Include="Scripts\ScriptFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
