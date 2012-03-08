@@ -11,7 +11,7 @@ using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
 {
-	class CreateScriptHandler : ICommandHandler
+	class CreateReactiveScriptHandler : ICommandHandler
 	{
 		private Action<string> _dispatch;
 
@@ -21,17 +21,17 @@ namespace OpenIDE.Arguments.Handlers
 						"All",
 						CommandType.FileCommand,
 						Command,
-						"Creates a script. Run scripts with 'oi x [script-name]'.");
+						"Creates a script that is triggered by it's specified events");
 					usage.Add("SCRIPT-NAME", "Script name with optional file extension.")
 						.Add("[--global]", "Will create the new script in the main script folder")
 							.Add("[-g]", "Short for --global");
-				return usage;
+					return usage;
 			}
 		}
-
-		public string Command { get { return "script-create"; } }
-
-		public CreateScriptHandler(Action<string> dispatch)
+	
+		public string Command { get { return "reactive-script-create"; } }
+		
+		public CreateReactiveScriptHandler(Action<string> dispatch)
 		{
 			_dispatch = dispatch;
 		}
@@ -56,7 +56,7 @@ namespace OpenIDE.Arguments.Handlers
 			var content = "";
 			if (template != null)
 				File.Copy(template, file);
-			else
+			else 
 				File.WriteAllText(file, content);
 			if (Environment.OSVersion.Platform == PlatformID.Unix ||
 				Environment.OSVersion.Platform == PlatformID.MacOSX)
@@ -83,7 +83,7 @@ namespace OpenIDE.Arguments.Handlers
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
 				return new ScriptLocator().GetGlobalPath();
 			else
-				return new ScriptLocator().GetLocalPath();
+				return new ReactiveScriptLocator().GetLocalPath();
 		}
 		
 		private void run(string cmd, string arguments)

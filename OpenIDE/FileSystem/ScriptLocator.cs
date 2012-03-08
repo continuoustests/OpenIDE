@@ -8,8 +8,26 @@ using OpenIDE.Core.Scripts;
 
 namespace OpenIDE.FileSystem
 {
-	class ScriptLocator
+	class ReactiveScriptLocator : TemplateLocator 
 	{
+		public ReactiveScriptLocator()
+		{
+			_directory = "reactive-scripts";
+		}
+	}
+	
+	class ScriptLocator : TemplateLocator
+	{
+		public ScriptLocator()
+		{
+			_directory = "scripts";
+		}
+	}
+
+	class TemplateLocator 
+	{
+		protected string _directory;
+
 		public string GetTemplateFor(string extension)
 		{
 			if (extension == null)
@@ -52,7 +70,7 @@ namespace OpenIDE.FileSystem
 
 		private string getPath(string location)
 		{
-			return Path.Combine(location, "scripts");
+			return Path.Combine(location, _directory);
 		}
 
 		private IEnumerable<Script> getScripts(string path)

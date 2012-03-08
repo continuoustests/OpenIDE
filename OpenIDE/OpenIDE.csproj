@@ -10,8 +10,10 @@
     <RootNamespace>OpenIDE</RootNamespace>
     <AssemblyName>OpenIDE</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -124,6 +126,7 @@
     <Compile Include="Arguments\Handlers\DeleteScriptHandler.cs" />
     <Compile Include="EventIntegration\EventDispatcher.cs" />
     <Compile Include="Arguments\Handlers\ProcessStartHandler.cs" />
+    <Compile Include="Arguments\Handlers\CreateReactiveScriptHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
