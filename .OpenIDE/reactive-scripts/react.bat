@@ -1,6 +1,6 @@
 @ECHO OFF
 
-if "%1" == "reactive-script-reacts-to" (
+if "%1" == "" (
 	echo "goto C:"
 	GOTO end
 )

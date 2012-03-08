@@ -33,17 +33,17 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 			if (Environment.OSVersion.Platform != PlatformID.Unix &&
 				Environment.OSVersion.Platform != PlatformID.MacOSX)
 			{
-				message = "\"" +
-						  message
+				message = message
 						  	.Replace("\"", "^\"")
 							.Replace(" ", "^ ")
 							.Replace("|", "^|")
 							.Replace("%", "^&")
 							.Replace("&", "^&")
 							.Replace("<", "^<")
-							.Replace(">", "^>") + 
-						  "\"";
+							.Replace(">", "^>");
 			}
+			message = "\"" + message + "\"";
+			Logging.Logger.Write("running {0} with {1}", _file, message);
 			var process = new Process();
 			process.Run(_file, message, false, _keyPath);
 		}

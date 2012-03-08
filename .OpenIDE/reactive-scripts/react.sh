@@ -5,8 +5,8 @@
 			
 #!/bin/bash 
 
-if [ "$1" = "" ]; then
+if [ "$1" = "reactive-script-reacts-to" ]; then
 	echo "goto"
 	exit
 fi
-notify-send "\"I am here " + $1 + "\""
+notify-send "I am here "$1""
