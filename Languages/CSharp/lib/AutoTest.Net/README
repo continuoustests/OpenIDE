@@ -68,3 +68,8 @@ deploy part. Now download Inno Setup and install it to the path specified in pac
 After it's installed run package.bat and find the installer in ReleaseBinaries\Installer.
 
 PS!! For building on mono you need 2.8 or later and it uses Git's core.autocrlf=true
+
+
+Special thanks:
+Thanks to Philip Laureano for letting us embed the Linfu Dynamic Proxy source into the
+MSpec runner enabling us to support all MSpec versions out of the box.
