@@ -28,7 +28,9 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_cache = cache;
 			_crawlReader = crawlReader;
 			_eventDispatcher = eventDispatcher;
-			_tracker = new FileChangeTracker();
+			_tracker = new FileChangeTracker((x) => {
+					_eventDispatcher.Send("codemodel raw-file-changed \"" + x + "\"");
+				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
 					{
