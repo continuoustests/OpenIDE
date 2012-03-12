@@ -73,6 +73,7 @@ namespace OpenIDE.Bootstrapping
 					new DeleteScriptHandler(),
 					new CreateReactiveScriptHandler(dispatchMessage),
 					new EditReactiveScriptHandler(dispatchMessage),
+					new DeleteReactiveScriptHandler(),
 					new ProcessStartHandler()
 				});
 			return handlers;

@@ -128,6 +128,7 @@
     <Compile Include="Arguments\Handlers\ProcessStartHandler.cs" />
     <Compile Include="Arguments\Handlers\CreateReactiveScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\EditReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\DeleteReactiveScriptHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
