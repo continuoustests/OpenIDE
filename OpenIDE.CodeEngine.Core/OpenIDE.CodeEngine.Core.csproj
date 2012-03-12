@@ -115,8 +115,6 @@
     <Compile Include="Handlers\SnippetDeleteHandler.cs" />
     <Compile Include="Endpoints\EventEndpoint.cs" />
     <Compile Include="ReactiveScripts\ReactiveScriptEngine.cs" />
-    <Compile Include="ReactiveScripts\ReactiveScriptReader.cs" />
-    <Compile Include="ReactiveScripts\ReactiveScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -1,7 +1,6 @@
-#!/usr/bin/env ruby
-# First parameter is the execution location of this script instance
+#!/bin/bash 
 
-if ARGV[1] == "get-command-definitions"
+if [ "$2" = "get-command-definitions" ]; then
 	# Definition format usually represented as a single line:
 
 	# Script description|
@@ -12,6 +11,7 @@ if ARGV[1] == "get-command-definitions"
 	# 	param|"Param description" end
 	# end
 
-	puts "Script description"
+	echo "Starts the run dialog (oi run)"
 	exit
-end
+fi
+./oi/bin/AutoTest.Net/oi.exe run

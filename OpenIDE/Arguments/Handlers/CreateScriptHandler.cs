@@ -57,10 +57,21 @@ namespace OpenIDE.Arguments.Handlers
 			if (template != null)
 				File.Copy(template, file);
 			else
-				File.WriteAllText(file, content);
-			if (Environment.OSVersion.Platform == PlatformID.Unix ||
-				Environment.OSVersion.Platform == PlatformID.MacOSX)
-				run("chmod", "+x \"" + file + "\"");
+			{
+				var templates = new ScriptLocator().GetTemplates().ToArray();
+				if (templates.Length == 0)
+				{
+					File.WriteAllText(file, content);
+					if (Environment.OSVersion.Platform == PlatformID.Unix ||
+						Environment.OSVersion.Platform == PlatformID.MacOSX)
+						run("chmod", "+x \"" + file + "\"");
+				}
+				else
+				{
+					File.WriteAllText(file, "");
+					File.Copy(templates[0], file);
+				}
+			}
 			_dispatch("editor goto \"" + file + "|0|0\"");
 		}
 

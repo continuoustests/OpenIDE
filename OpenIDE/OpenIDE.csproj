@@ -127,6 +127,7 @@
     <Compile Include="EventIntegration\EventDispatcher.cs" />
     <Compile Include="Arguments\Handlers\ProcessStartHandler.cs" />
     <Compile Include="Arguments\Handlers\CreateReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\EditReactiveScriptHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

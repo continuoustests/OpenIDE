@@ -12,7 +12,7 @@ namespace OpenIDE.FileSystem
 	{
 		public ReactiveScriptLocator()
 		{
-			_directory = "reactive-scripts";
+			_directory = "rscripts";
 		}
 	}
 	
@@ -28,17 +28,22 @@ namespace OpenIDE.FileSystem
 	{
 		protected string _directory;
 
-		public string GetTemplateFor(string extension)
+		public IEnumerable<string> GetTemplates()
 		{
-			if (extension == null)
-				return null;
 			var dir =
 				Path.Combine(
 					GetGlobalPath(),
 					"templates");
 			if (!Directory.Exists(dir))
 				return null;
-			return new ScriptFilter().GetScripts(dir)
+			return new ScriptFilter().GetScripts(dir);
+		}
+
+		public string GetTemplateFor(string extension)
+		{
+			if (extension == null)
+				return null;
+			return GetTemplates()
 				.Where(x => x.EndsWith(extension))
 				.FirstOrDefault();
 		}
@@ -77,8 +82,9 @@ namespace OpenIDE.FileSystem
 		{
 			if (!Directory.Exists(path))
 				return new Script[] {};
+			var workingDir = Path.GetDirectoryName(Path.GetDirectoryName(path));
 			return Directory.GetFiles(path)
-				.Select(x => new Script(x));
+				.Select(x => new Script(workingDir, x));
 		}
 	}
 }

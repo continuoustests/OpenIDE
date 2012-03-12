@@ -29,7 +29,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "reactive-script-create"; } }
+		public string Command { get { return "rscript-create"; } }
 		
 		public CreateReactiveScriptHandler(Action<string> dispatch)
 		{
@@ -52,15 +52,27 @@ namespace OpenIDE.Arguments.Handlers
 			if (File.Exists(file))
 				return;
 			PathExtensions.CreateDirectories(file);
-			var template = new ScriptLocator().GetTemplateFor(extension);
+			var template = new ReactiveScriptLocator().GetTemplateFor(extension);
 			var content = "";
 			if (template != null)
 				File.Copy(template, file);
 			else 
-				File.WriteAllText(file, content);
-			if (Environment.OSVersion.Platform == PlatformID.Unix ||
-				Environment.OSVersion.Platform == PlatformID.MacOSX)
-				run("chmod", "+x \"" + file + "\"");
+			{
+				var templates = new ReactiveScriptLocator().GetTemplates().ToArray();
+				if (templates.Length == 0)
+				{
+					File.WriteAllText(file, content);
+					if (Environment.OSVersion.Platform == PlatformID.Unix ||
+						Environment.OSVersion.Platform == PlatformID.MacOSX)
+						run("chmod", "+x \"" + file + "\"");
+				}
+				else
+				{
+					File.WriteAllText(file, "");
+					File.Copy(templates[0], file);
+				}
+			}
+
 			_dispatch("editor goto \"" + file + "|0|0\"");
 		}
 
@@ -81,7 +93,7 @@ namespace OpenIDE.Arguments.Handlers
 		private string getPath(string[] arguments)
 		{
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ScriptLocator().GetGlobalPath();
+				return new ReactiveScriptLocator().GetGlobalPath();
 			else
 				return new ReactiveScriptLocator().GetLocalPath();
 		}

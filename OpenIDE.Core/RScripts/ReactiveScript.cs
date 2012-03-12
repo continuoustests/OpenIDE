@@ -1,20 +1,24 @@
 using System;
+using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using CoreExtensions;
 
-namespace OpenIDE.CodeEngine.Core.ReactiveScripts
+namespace OpenIDE.Core.RScripts
 {
-	class ReactiveScript
+	public class ReactiveScript
 	{
 		private string _file;
 		private string _keyPath;
 		private List<string> _events = new List<string>();	
 
+		public string Name { get { return Path.GetFileNameWithoutExtension(_file); } }
+		public string File { get { return _file; } }
+
 		public ReactiveScript(string file, string keyPath)
 		{
-			Logging.Logger.Write("Adding reactive script {0} with path {1}", file, keyPath);
 			_file = file;
 			_keyPath = keyPath;
 			getEvents();
@@ -23,7 +27,7 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		public bool ReactsTo(string @event)
 		{
 			foreach (var reactEvent in _events)
-				if (@event.StartsWith(reactEvent))
+				if (wildcardmatch(@event, reactEvent))
 					return true;
 			return false;
 		}
@@ -43,7 +47,6 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 							.Replace(">", "^>");
 			}
 			message = "\"" + message + "\"";
-			Logging.Logger.Write("running {0} with {1}", _file, message);
 			var process = new Process();
 			process.Run(_file, message, false, _keyPath);
 		}
@@ -56,8 +59,15 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 					.Query(_file, "reactive-script-reacts-to", false, _keyPath)
 					.Where(x => x.Length > 0)
 					.Select(x => x.Trim(new[] {'\"'})));
-			_events
-				.ForEach(x => Logging.Logger.Write("\tReacting to " + x));
+		}
+		
+		private bool wildcardmatch(string str, string pattern)
+		{
+			var rgx = new Regex(
+				"^" + Regex.Escape(pattern)
+					.Replace( "\\*", ".*" )
+					.Replace( "\\?", "." ) + "$");
+			return rgx.IsMatch(str);
 		}
 	}
 }

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Scripts;
 
-namespace OpenIDE.CodeEngine.Core.ReactiveScripts
+namespace OpenIDE.Core.RScripts
 {
-	class ReactiveScriptReader
+	public class ReactiveScriptReader
 	{
 		private string _keyPath;
 		private List<ReactiveScript> _scripts = new List<ReactiveScript>();
@@ -29,7 +29,6 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		{
 			if (path == null)
 				return;
-			Logging.Logger.Write("Reading scripts from " + path);
 			if (!Directory.Exists(path))
 				return;
 			_scripts.AddRange(
@@ -62,7 +61,7 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 
 		private string getPath(string path)
 		{
-			return Path.Combine(path, "reactive-scripts");
+			return Path.Combine(path, "rscripts");
 		}
 	}
 }

@@ -11,6 +11,7 @@ namespace OpenIDE.FileSystem
 	class Script
 	{
 		private string _file;
+		private string _workingDirectory;
 
 		public IEnumerable<BaseCommandHandlerParameter> Usages { get { return getUsages(); } }
 
@@ -18,11 +19,12 @@ namespace OpenIDE.FileSystem
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 
-		public Script(string file)
+		public Script(string workingDirectory, string file)
 		{
 			_file = file;
 			Name = Path.GetFileNameWithoutExtension(file);
 			Description = "";
+			_workingDirectory = workingDirectory;
 		}
 
 		public IEnumerable<string> Run(string arguments)
@@ -88,6 +90,7 @@ namespace OpenIDE.FileSystem
 			var proc = new Process();
 			var startedSuccessfully = true;
 			try {
+				arguments = "\"" + Environment.CurrentDirectory + "\" " + arguments;
 				if (Environment.OSVersion.Platform != PlatformID.Unix &&
 					Environment.OSVersion.Platform != PlatformID.MacOSX)
 				{
@@ -99,6 +102,7 @@ namespace OpenIDE.FileSystem
 				proc.StartInfo.UseShellExecute = false;
 				proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 				proc.StartInfo.RedirectStandardOutput = true;
+				proc.StartInfo.WorkingDirectory = _workingDirectory;
 				proc.Start();
 			} catch {
 				startedSuccessfully = false;

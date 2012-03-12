@@ -74,6 +74,8 @@
     <Compile Include="Caching\ICrawlResult.cs" />
     <Compile Include="Caching\CrawlHandler.cs" />
     <Compile Include="Scripts\ScriptFilter.cs" />
+    <Compile Include="RScripts\ReactiveScriptReader.cs" />
+    <Compile Include="RScripts\ReactiveScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

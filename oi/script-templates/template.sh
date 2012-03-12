@@ -1,6 +1,7 @@
 #!/bin/bash 
+# First parameter is the execution location of this script instance
 
-if [ "$1" = "get-command-definitions" ]; then
+if [ "$2" = "get-command-definitions" ]; then
 	# Definition format usually represented as a single line:
 
 	# Script description|

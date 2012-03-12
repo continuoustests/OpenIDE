@@ -1,13 +1,11 @@
 using System;
 using System.Linq;
-using System.Text;
-using System.Collections.Generic;
-using OpenIDE.FileSystem;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.RScripts;
 
 namespace OpenIDE.Arguments.Handlers
 {
-	class EditScriptHandler : ICommandHandler
+	class EditReactiveScriptHandler : ICommandHandler
 	{
 		private Action<string> _dispatch;
 
@@ -17,27 +15,22 @@ namespace OpenIDE.Arguments.Handlers
 						"All",
 						CommandType.FileCommand,
 						Command,
-						"Opens a script for edit");
-					usage.Add("SCRIPT-NAME", "Script name. Local are picked over global");
+						"Opens an existing reactive script for editor");
+					usage.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
 					return usage;
 			}
 		}
 	
-		public string Command { get { return "script-edit"; } }
-	
-		public EditScriptHandler(Action<string> dispatch)
+		public string Command { get { return "rscript-edit"; } }
+		
+		public EditReactiveScriptHandler(Action<string> dispatch)
 		{
 			_dispatch = dispatch;
 		}
-
+	
 		public void Execute(string[] arguments)
 		{
-			var scripts = new List<Script>();
-			scripts.AddRange(new ScriptLocator().GetLocalScripts());
-			new ScriptLocator()
-				.GetGlobalScripts()
-				.Where(x => scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
-				.ForEach(x => scripts.Add(x));
+			var scripts = new ReactiveScriptReader().Read(Environment.CurrentDirectory);
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;
