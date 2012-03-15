@@ -119,6 +119,7 @@ namespace OpenIDE.Arguments.Handlers
 					var language = plugin.GetLanguage();
 					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language)));
 				});
+			runInitScript(Environment.CurrentDirectory);
 		}
 
 		private void initCodeEngine(string folder)

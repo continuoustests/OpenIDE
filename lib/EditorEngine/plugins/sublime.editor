@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<editor>
+	<launch>
+		<executable>C:\Program Files\Sublime Text 2\sublime_text.exe</executable>
+		<parameters></parameters>
+	</launch>
+	<alive>
+		<executable>tasklist</executable>
+		<parameters>/FI "IMAGENAME eq sublime_text.exe"</parameters>
+		<text_to_look_for>sublime_text.exe</text_to_look_for>
+	</alive>
+	<goto>
+		<executable>C:\Program Files\Sublime Text 2\sublime_text.exe</executable>
+		<parameters>"{0}:{1}:{2}"</parameters>
+	</goto>
+	<setfocus>
+		<executable>cmd.exe</executable>
+		<parameters>/c "oi set-to-foreground sublime_text ^"Sublime Text^""</parameters>
+	</setfocus>
+</editor>
