@@ -37,7 +37,9 @@ namespace OpenIDE.Arguments.Handlers
 				Console.WriteLine("Invalid number of arguments. Usage " + Command + " SETTING");
 				return;
 			}
-			var path = Directory.GetCurrentDirectory();
+			var path = Environment.CurrentDirectory;
+			//var path = Directory.GetCurrentDirectory();
+			Console.WriteLine("using path " + path);
 
 			if (arguments[0] == "init")
 				initializingConfiguration(path);
@@ -81,6 +83,7 @@ namespace OpenIDE.Arguments.Handlers
 			var dir = Path.Combine(path, ".OpenIDE");
 			if (!Directory.Exists(dir))
 				Directory.CreateDirectory(dir);
+			File.WriteAllText(Path.Combine(dir, "oi.config"), "");
 		}
 
 		private bool isInitialized(string path)
