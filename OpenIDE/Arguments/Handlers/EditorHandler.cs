@@ -119,7 +119,7 @@ namespace OpenIDE.Arguments.Handlers
 					var language = plugin.GetLanguage();
 					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language)));
 				});
-			runInitScript(Environment.CurrentDirectory);
+			runInitScript(Environment.CurrentDirectory, "openide_");
 		}
 
 		private void initCodeEngine(string folder)
@@ -149,11 +149,16 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private void runInitScript(string folder)
 		{
+			runInitScript(folder, "");
+		}
+
+		private void runInitScript(string folder, string namePrefix)
+		{
 			if (!Directory.Exists(folder))
 				return;
 			var initscript = 
 				new ScriptFilter()
-					.FilterScripts(Directory.GetFiles(folder, "initialize.*"))
+					.FilterScripts(Directory.GetFiles(folder, namePrefix + "initialize.*"))
 					.FirstOrDefault();
 			if (initscript == null)
 				return;
