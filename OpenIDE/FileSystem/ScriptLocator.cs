@@ -83,7 +83,7 @@ namespace OpenIDE.FileSystem
 			if (!Directory.Exists(path))
 				return new Script[] {};
 			var workingDir = Path.GetDirectoryName(Path.GetDirectoryName(path));
-			return Directory.GetFiles(path)
+			return new ScriptFilter().GetScripts(path)
 				.Select(x => new Script(workingDir, x));
 		}
 	}
