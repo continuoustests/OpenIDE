@@ -59,6 +59,6 @@ cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/rscripts/templates
 
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
 cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#
-cp $ROOT/Languages/CSharp/initialize.rb $DEPLOYDIR/Languages/C#
+cp $ROOT/Languages/CSharp/initialize.sh $DEPLOYDIR/Languages/C#
 cp -r $CSHARP_BIN/AutoTest.Net/* $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
 cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#/bin/ContinuousTests

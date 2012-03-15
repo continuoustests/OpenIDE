@@ -48,6 +48,6 @@ xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
 
 copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#
-copy %ROOT%\Languages\CSharp\initialize.rb %DEPLOYDIR%\Languages\C#
+copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#\bin\AutoTest.Net
 xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\Languages\C#\bin\ContinuousTests
