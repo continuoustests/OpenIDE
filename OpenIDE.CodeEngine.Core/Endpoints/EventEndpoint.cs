@@ -5,6 +5,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Language;
 using OpenIDE.CodeEngine.Core.UI;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Commands;
@@ -21,13 +22,13 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private string _instanceFile;
 		private ReactiveScriptEngine _reactiveEngine;
 		
-		public EventEndpoint(string keyPath)
+		public EventEndpoint(string keyPath, PluginLocator locator)
 		{
 			_keyPath = keyPath;
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
-			_reactiveEngine = new ReactiveScriptEngine(_keyPath);
+			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator);
 		}
  
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)

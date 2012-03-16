@@ -22,9 +22,11 @@ namespace OpenIDE.Arguments.Handlers
 						CommandType.FileCommand,
 						Command,
 						"Creates a script that is triggered by it's specified events");
-					usage.Add("SCRIPT-NAME", "Script name with optional file extension.")
-						.Add("[--global]", "Will create the new script in the main script folder")
-							.Add("[-g]", "Short for --global");
+					var name = usage.Add("SCRIPT-NAME", "Script name with optional file extension.");
+					name.Add("[--global]", "Will create the new script in the main script folder")
+						.Add("[-g]", "Short for --global");
+					name.Add("[--language=LANGUAGE]", "Language to add the reactive script to")
+						.Add("[-l=LANGUAGE]", "Short for --language");
 					return usage;
 			}
 		}
@@ -51,6 +53,7 @@ namespace OpenIDE.Arguments.Handlers
 				file += extension;
 			if (File.Exists(file))
 				return;
+			Console.WriteLine("Creating " + file);
 			PathExtensions.CreateDirectories(file);
 			var template = new ReactiveScriptLocator().GetTemplateFor(extension);
 			var content = "";
@@ -94,8 +97,27 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
 				return new ReactiveScriptLocator().GetGlobalPath();
+			else if (arguments.Count(x => x.StartsWith("--language=")) > 0 || 
+					 arguments.Count(x => x.StartsWith("-l=")) > 0)
+				return new ReactiveScriptLocator().GetLanguagePath(getLanguage(arguments));
 			else
 				return new ReactiveScriptLocator().GetLocalPath();
+		}
+
+		private string getLanguage(string[] arguments)
+		{
+			var language = getLanguage("--language=", arguments);
+			if (language != null)
+				return language;
+			return getLanguage("--l", arguments);
+		}
+
+		private string getLanguage(string pattern, string[] arguments)
+		{
+			var parameter = arguments.FirstOrDefault(x => x.StartsWith(pattern));
+			if (parameter != null)
+				return parameter.Substring(pattern.Length, parameter.Length - pattern.Length);
+			return null;
 		}
 		
 		private void run(string cmd, string arguments)

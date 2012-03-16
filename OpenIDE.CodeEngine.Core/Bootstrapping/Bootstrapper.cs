@@ -40,7 +40,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 				(msg) => {});
 			initPlugins(pluginLocator, crawlHandler);
 
-			_eventEndpoint = new EventEndpoint(_path);
+			_eventEndpoint = new EventEndpoint(_path, pluginLocator);
 			_eventEndpoint.Start();
 
 			_tracker = new PluginFileTracker();

@@ -5,13 +5,22 @@ using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Scripts;
+using OpenIDE.Core.Language;
 
 namespace OpenIDE.Core.RScripts
 {
 	public class ReactiveScriptReader
 	{
 		private string _keyPath;
+		private string _oiRootPath;
 		private List<ReactiveScript> _scripts = new List<ReactiveScript>();
+		private Func<PluginLocator> _pluginLocator;
+
+		public ReactiveScriptReader(string oiRootPath, Func<PluginLocator> locator)
+		{
+			_oiRootPath = oiRootPath;
+			_pluginLocator = locator;
+		}
 
 		public List<ReactiveScript> Read(string path)
 		{
@@ -40,15 +49,22 @@ namespace OpenIDE.Core.RScripts
 		private void readScripts()
 		{
 			readScripts(getLocal());
+			_pluginLocator().Locate().ToList()
+				.ForEach(plugin => 
+					readScripts(
+						Path.Combine(
+							_oiRootPath,
+							Path.Combine(
+								"Languages",
+								Path.Combine(
+									plugin.GetLanguage(),
+									"rscripts")))));
 			readScripts(getGlobal());
 		}
 		
 		private string getGlobal()
 		{
-				return getPath(
-					Path.GetDirectoryName(
-						Path.GetDirectoryName(
-							Assembly.GetExecutingAssembly().Location)));
+				return getPath(_oiRootPath);
 		}
 
 		private string getLocal()

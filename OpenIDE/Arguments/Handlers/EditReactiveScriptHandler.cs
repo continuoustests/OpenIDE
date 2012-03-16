@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.RScripts;
 
@@ -8,6 +10,7 @@ namespace OpenIDE.Arguments.Handlers
 	class EditReactiveScriptHandler : ICommandHandler
 	{
 		private Action<string> _dispatch;
+		private PluginLocator _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -23,14 +26,18 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "rscript-edit"; } }
 		
-		public EditReactiveScriptHandler(Action<string> dispatch)
+		public EditReactiveScriptHandler(Action<string> dispatch, PluginLocator locator)
 		{
 			_dispatch = dispatch;
+			_pluginLocator = locator;
 		}
 	
 		public void Execute(string[] arguments)
 		{
-			var scripts = new ReactiveScriptReader().Read(Environment.CurrentDirectory);
+			var scripts = new ReactiveScriptReader(
+				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				() => { return _pluginLocator; })
+				.Read(Environment.CurrentDirectory);
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;

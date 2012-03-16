@@ -73,6 +73,14 @@ namespace OpenIDE.FileSystem
 			return getPath(Path.GetDirectoryName(configFile));
 		}
 
+		public string GetLanguagePath(string language)
+		{
+			return getPath(
+				Path.Combine(
+					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
+					Path.Combine("Languages", language)));
+		}
+
 		private string getPath(string location)
 		{
 			return Path.Combine(location, _directory);
