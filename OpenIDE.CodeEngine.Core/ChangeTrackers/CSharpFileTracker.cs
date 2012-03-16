@@ -29,7 +29,10 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_crawlReader = crawlReader;
 			_eventDispatcher = eventDispatcher;
 			_tracker = new FileChangeTracker((x) => {
-					_eventDispatcher.Send("codemodel raw-file-changed \"" + x + "\"");
+					_eventDispatcher.Send(
+						"codemodel raw-filesystem-change-" +
+						x.ChangeType.ToString().ToLower() +
+						"\"" + x.FullPath + "\"");
 				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
@@ -92,7 +95,10 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			if (extension == null)
 				return;
 			
-			_eventDispatcher.Send("codemodel file-changed \"" + file.FullPath + "\"");
+			_eventDispatcher.Send(
+				"codemodel filesystem-change-" +
+				file.ChangeType.ToString().ToLower() +
+				"\"" + file.FullPath + "\"");
 			
 			_plugins.ForEach(x =>
 				{

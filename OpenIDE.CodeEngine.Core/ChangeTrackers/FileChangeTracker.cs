@@ -16,9 +16,9 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private FileSystemWatcher _watcher;
 		private Stack<FileSystemEventArgs> _buffer = new Stack<FileSystemEventArgs>();
 		private Action<Stack<FileSystemEventArgs>> _changeHandler;
-		private Action<string> _rawHandler;
+		private Action<FileSystemEventArgs> _rawHandler;
 
-		public FileChangeTracker(Action<string> rawHandler)
+		public FileChangeTracker(Action<FileSystemEventArgs> rawHandler)
 		{
 			_rawHandler = rawHandler;
 		}
@@ -77,7 +77,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		
 		private void WatcherChangeHandler(object sender, FileSystemEventArgs e)
         {
-			_rawHandler(e.FullPath);
+			_rawHandler(e);
 			if (!_patterns.Contains(Path.GetExtension(e.FullPath)))
 				return;
             addToBuffer(e);
