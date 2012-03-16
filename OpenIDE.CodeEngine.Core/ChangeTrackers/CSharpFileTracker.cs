@@ -32,7 +32,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.ChangeType.ToString().ToLower() +
-						"\"" + x.FullPath + "\"");
+						" \"" + x.FullPath + "\"");
 				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
@@ -98,7 +98,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_eventDispatcher.Send(
 				"codemodel filesystem-change-" +
 				file.ChangeType.ToString().ToLower() +
-				"\"" + file.FullPath + "\"");
+				" \"" + file.FullPath + "\"");
 			
 			_plugins.ForEach(x =>
 				{
