@@ -34,7 +34,6 @@ namespace CSharp.Tests.Integration
 
 		private void createLibrary1()
 		{
-			int l = 3;
 			// Create library 1
 			var project = combine("library1","library1.csproj");
 			run("create", "library", project);
