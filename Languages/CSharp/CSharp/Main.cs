@@ -87,13 +87,20 @@ namespace CSharp
 		
 		static ProviderSettings getTypesProvider(string location)
 		{
-			if (File.Exists(location) || Path.GetFileName(location).Contains("*"))
-				location = Path.GetDirectoryName(location);
-			location = Path.GetFullPath(location);
-			var projectFile = new ProjectLocator().Locate(location);
+			var path = "";
+			if (location.Contains(".." + Path.DirectorySeparatorChar))
+				path = new PathParser(Environment.CurrentDirectory).ToAbsolute(location);
+			else
+				path = Path.GetFullPath(location);
+
+			if (File.Exists(path) || Path.GetFileName(path).Contains("*"))
+				path = Path.GetDirectoryName(path);
+
+			path = Path.GetFullPath(path);
+			var projectFile = new ProjectLocator().Locate(path);
 			if (projectFile == null)
 			{
-				Console.WriteLine("error|Could not locate a project file for {0}", location);
+				Console.WriteLine("error|Could not locate a project file for {0}", path);
 				return null;
 			}
 			return getTypesProviderByProject(projectFile);
