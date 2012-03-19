@@ -78,7 +78,6 @@ namespace CSharp.Tests.Integration
 			var project2 = combine("library2", "library2.csproj");
 			run("create", "library", project2);
 			assertExists(project2);
-			int i = 3;
 			
 			var projectReference = 
 				"    <ProjectReference Include=\"..\\library1\\library1.csproj\">" + Environment.NewLine +
