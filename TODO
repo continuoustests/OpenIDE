@@ -3,12 +3,12 @@ Needs to be done before 0.1 alpha
 * Done - Support initialize in language as well as oi
 * Move CSharp to it's own git project
 * Done - Rename OpenIDENet ot OpenIDE
-* Change GoToType in code engine to gototype and Explore to explore
-* Make EditorEngine use normal commands not keypress t and stuff
+* Done - Change GoToType in code engine to gototype and Explore to explore
+* Done - Make EditorEngine use normal commands not keypress t and stuff
 * Greater than and less than search on line and column in code engine search
 * F1 to bring up keyboard shortcuts for all forms
 * General stabilisation
-* Support local initialization file within .OpenIDE folder
+* Done - Support local initialization file within .OpenIDE folder
 * Make get usage also return wiki url
 
 
