@@ -89,10 +89,9 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		
 		private void addToBuffer(FileSystemEventArgs file)
         {
+            _buffer.Push(file);
 			if (Directory.Exists(file.FullPath) && (file.ChangeType == WatcherChangeTypes.Created || file.ChangeType == WatcherChangeTypes.Renamed))
 				startListener();
-			
-            _buffer.Push(file);
         }
 
 		public void Dispose()
