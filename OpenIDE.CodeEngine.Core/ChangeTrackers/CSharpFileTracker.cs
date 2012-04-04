@@ -31,8 +31,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_tracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
-						x.ChangeType.ToString().ToLower() +
-						" \"" + x.FullPath + "\"");
+						x.Type.ToString().ToLower() +
+						" \"" + x.Path + "\"");
 				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
@@ -63,50 +63,50 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			return pattern;
 		}
 			               
-		private void handleChanges(Stack<FileSystemEventArgs> buffer)
+		private void handleChanges(Stack<Change> buffer)
 		{
 			var cacheHandler = new CrawlHandler(_crawlReader, (s) => Logger.Write(s));
 			var files = getChanges(buffer);
 			files.ForEach(x =>
 				{
-					_cache.Invalidate(x.FullPath);
+					_cache.Invalidate(x.Path);
 					handle(x);
 				});
 			_plugins.ForEach(x => x.Handle(cacheHandler));
 		}
 		
-		private List<FileSystemEventArgs> getChanges(Stack<FileSystemEventArgs> buffer)
+		private List<Change> getChanges(Stack<Change> buffer)
 		{
-			var list = new List<FileSystemEventArgs>();
+			var list = new List<Change>();
 			while (buffer.Count != 0)
 			{
 				var item = buffer.Pop();
-				if (item != null && !list.Exists(x => x.FullPath.Equals(item.FullPath)))
+				if (item != null && !list.Exists(x => x.Path.Equals(item.Path)))
 					list.Add(item);
 			}
 			return list;
 		}
 		
-		private void handle(FileSystemEventArgs file)
+		private void handle(Change file)
 		{
 			if (file == null)
 				return;
-			var extension = Path.GetExtension(file.FullPath).ToLower();
+			var extension = Path.GetExtension(file.Path).ToLower();
 			if (extension == null)
 				return;
 			
 			_eventDispatcher.Send(
 				"codemodel filesystem-change-" +
-				file.ChangeType.ToString().ToLower() +
-				" \"" + file.FullPath + "\"");
+				file.Type.ToString().ToLower() +
+				" \"" + file.Path + "\"");
 			
 			_plugins.ForEach(x =>
 				{
-					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.FullPath))
-						x.FilesToHandle.Add(file.FullPath);
+					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.Path))
+						x.FilesToHandle.Add(file.Path);
 				});
 
-			_eventDispatcher.Send("codemodel file-crawled \"" + file.FullPath + "\"");
+			_eventDispatcher.Send("codemodel file-crawled \"" + file.Path + "\"");
 		}
 
 		public void Dispose()

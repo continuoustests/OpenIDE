@@ -45,7 +45,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			var msg = CommandMessage.New(e.Message);
 			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
 			var fullCommand = msg.Command + " " + command;
-			Logger.Write(fullCommand);
 			handle(new MessageArgs(Guid.Empty, fullCommand.Trim()));
 		}
 		 

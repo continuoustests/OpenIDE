@@ -57,6 +57,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="..\lib\FSWatcher\FSWatcher.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Handlers\SnippetDeleteHandler.cs" />
     <Compile Include="Endpoints\EventEndpoint.cs" />
     <Compile Include="ReactiveScripts\ReactiveScriptEngine.cs" />
+    <Compile Include="ChangeTrackers\Change.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

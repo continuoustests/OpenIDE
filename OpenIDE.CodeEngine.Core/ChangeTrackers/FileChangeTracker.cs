@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.IO;
+using FSWatcher;
 using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Logging;
@@ -12,18 +13,17 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private string _watchPath;
 		private string[] _patterns;
 		private Thread _changeHandlerThread;
-		private Thread _listenerThread;
-		private FileSystemWatcher _watcher;
-		private Stack<FileSystemEventArgs> _buffer = new Stack<FileSystemEventArgs>();
-		private Action<Stack<FileSystemEventArgs>> _changeHandler;
-		private Action<FileSystemEventArgs> _rawHandler;
+		private Watcher _watcher;
+		private Stack<Change> _buffer = new Stack<Change>();
+		private Action<Stack<Change>> _changeHandler;
+		private Action<Change> _rawHandler;
 
-		public FileChangeTracker(Action<FileSystemEventArgs> rawHandler)
+		public FileChangeTracker(Action<Change> rawHandler)
 		{
 			_rawHandler = rawHandler;
 		}
 		
-		public void Start(string path, string pattern, Action<Stack<FileSystemEventArgs>> changeHandler)
+		public void Start(string path, string pattern, Action<Stack<Change>> changeHandler)
 		{
 			_watchPath = path;
 			_patterns = pattern
@@ -31,9 +31,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 				.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 			_changeHandler = changeHandler;
 			_changeHandlerThread = new Thread(startChangeHandler);
-			_listenerThread = new Thread(start);
 			_changeHandlerThread.Start();
-			_listenerThread.Start();
+			start();
 		}
 		
 		private void startChangeHandler(object state)
@@ -45,59 +44,31 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			}
 		}
 		
-		private void start(object state)
+		private void start()
 		{
-			startListener();
+			_watcher = new Watcher(
+				_watchPath,
+				(dir) => WatcherChangeHandler(ChangeType.DirectoryCreated, dir),
+				(dir) => WatcherChangeHandler(ChangeType.DirectoryDeleted, dir),
+				(file) => WatcherChangeHandler(ChangeType.FileCreated, file),
+				(file) => WatcherChangeHandler(ChangeType.FileChanged, file),
+				(file) => WatcherChangeHandler(ChangeType.FileDeleted, file));
+			_watcher.Watch();
 		}
 		
-		private void startListener()
-		{
-			if (_watcher != null)
-			{
-				_watcher.Changed -= WatcherChangeHandler;
-	            _watcher.Created -= WatcherChangeHandler;
-	            _watcher.Deleted -= WatcherChangeHandler;
-	            _watcher.Renamed -= WatcherChangeHandler;
-	            _watcher.Error -= WatcherErrorHandler;
-			}
-			
-			_watcher = new FileSystemWatcher
-                           {
-                               NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.Attributes,
-                               IncludeSubdirectories = true
-                           };
-			_watcher.Changed += WatcherChangeHandler;
-            _watcher.Created += WatcherChangeHandler;
-            _watcher.Deleted += WatcherChangeHandler;
-            _watcher.Renamed += WatcherChangeHandler;
-            _watcher.Error += WatcherErrorHandler;
-			_watcher.Path = _watchPath;
-			_watcher.EnableRaisingEvents = true;
-		}
-		
-		private void WatcherChangeHandler(object sender, FileSystemEventArgs e)
+		private void WatcherChangeHandler(ChangeType type, string path)
         {
-			_rawHandler(e);
-			if (!_patterns.Contains(Path.GetExtension(e.FullPath)))
+			var change = new Change(type, path);
+			_rawHandler(change);
+			if (!_patterns.Contains(Path.GetExtension(path)))
 				return;
-            addToBuffer(e);
-        }
-
-        private void WatcherErrorHandler(object sender, ErrorEventArgs e)
-        {
-        }
-		
-		private void addToBuffer(FileSystemEventArgs file)
-        {
-            _buffer.Push(file);
-			if (Directory.Exists(file.FullPath) && (file.ChangeType == WatcherChangeTypes.Created || file.ChangeType == WatcherChangeTypes.Renamed))
-				startListener();
+			_buffer.Push(change);
         }
 
 		public void Dispose()
 		{
+			_watcher.StopWatching();
 			_changeHandlerThread.Abort();
-			_listenerThread.Abort();
 		}
 	}
 }

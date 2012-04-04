@@ -53,6 +53,7 @@ cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.ex
 cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/CodeEngine/
+cp $ROOT/lib/FSWatcher/FSWatcher.dll $DEPLOYDIR/CodeEngine/
 
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/rscripts/templates
