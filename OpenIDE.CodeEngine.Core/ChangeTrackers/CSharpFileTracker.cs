@@ -104,7 +104,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 				{
 					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.Path))
 						x.FilesToHandle.Add(file.Path);
-				});
+			 	});
 
 			_eventDispatcher.Send("codemodel file-crawled \"" + file.Path + "\"");
 		}

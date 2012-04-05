@@ -33,6 +33,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_changeHandlerThread = new Thread(startChangeHandler);
 			_changeHandlerThread.Start();
 			start();
+			_patterns.ToList().ForEach(x => Logger.Write(x));
 		}
 		
 		private void startChangeHandler(object state)
@@ -60,6 +61,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
         {
 			var change = new Change(type, path);
 			_rawHandler(change);
+			
 			if (!_patterns.Contains(Path.GetExtension(path)))
 				return;
 			_buffer.Push(change);
