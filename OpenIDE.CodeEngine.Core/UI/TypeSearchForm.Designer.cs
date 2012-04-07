@@ -33,6 +33,8 @@ namespace OpenIDE.CodeEngine.Core.UI
 			this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.informationList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
 			
 			//
@@ -62,7 +64,7 @@ namespace OpenIDE.CodeEngine.Core.UI
             this.informationList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom)));
             this.informationList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+            this.columnHeader1,this.columnHeader2,this.columnHeader3});
             this.informationList.Location = new System.Drawing.Point(12, 57);
             this.informationList.Name = "informationList";
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -74,11 +76,22 @@ namespace OpenIDE.CodeEngine.Core.UI
             this.informationList.View = System.Windows.Forms.View.Details;
 			this.informationList.HideSelection = false;
 			this.informationList.MultiSelect = false;
+			this.informationList.FullRowSelect = true;
             // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "Type";
-            this.columnHeader1.Width = 723;
+            this.columnHeader1.Width = 70;
+			// 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            this.columnHeader2.Width = 270;
+			// 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Signature";
+            this.columnHeader3.Width = 520;
             // 
             // TypeSearchForm
             // 
@@ -103,5 +116,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 		private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.ListView informationList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+		private System.Windows.Forms.ColumnHeader columnHeader2;
+		private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }

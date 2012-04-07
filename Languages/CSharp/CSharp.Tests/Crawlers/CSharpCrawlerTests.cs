@@ -22,11 +22,11 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cache.Classes.Count, Is.GreaterThan(0));
 			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("CSharp.Tests.Crawlers"));
 			Assert.That(cache.Namespaces[0].Line, Is.EqualTo(10));
-			Assert.That(cache.Namespaces[0].Column, Is.EqualTo(10));
+			Assert.That(cache.Namespaces[0].Column, Is.EqualTo(11));
 			Assert.That(cache.Classes[0].Name, Is.EqualTo("CSharpCommentParserTests"));
 			Assert.That(cache.Classes[0].Signature, Is.EqualTo("CSharp.Tests.Crawlers.CSharpCommentParserTests"));
 			Assert.That(cache.Classes[0].Line, Is.EqualTo(13));
-			Assert.That(cache.Classes[0].Column, Is.EqualTo(14));
+			Assert.That(cache.Classes[0].Column, Is.EqualTo(15));
 			
 			Assert.That(cache.Classes.Exists(x => x.Name.Equals("Fake_CacheBuilder")), Is.True);
 		}

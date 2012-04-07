@@ -5,6 +5,7 @@ SET BINARYDIR="%ROOT%build_output"
 SET DEPLOYDIR="%ROOT%ReleaseBinaries"
 SET LIB="%ROOT%lib"
 SET CSHARP_BIN="%ROOT%Languages\CSharp\lib"
+SET LANGUAGES="%ROOT%Languages\"
 
 IF EXIST %BINARYDIR% (
   rmdir /Q /S %BINARYDIR%
@@ -47,7 +48,7 @@ copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
 
-copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
+copy %ROOT%\C#.exe %DEPLOYDIR%\Languages\C#.exe
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#
 copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#\bin\AutoTest.Net

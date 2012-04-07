@@ -135,7 +135,7 @@ namespace CSharp.Crawlers
                 signature.Text,
                 signature.Offset,
                 signature.Line,
-                signature.Column);
+                signature.Column + 1);
             _builder.AddNamespace(ns);
             _currentNamespace = ns;
         }
@@ -154,7 +154,7 @@ namespace CSharp.Crawlers
                     getNameFromSignature(signature.Text),
                     signature.Offset,
                     signature.Line,
-                    signature.Column));
+                    signature.Column + 1));
         }
 
         private void handleInterface(Word word)
@@ -171,7 +171,7 @@ namespace CSharp.Crawlers
                     getNameFromSignature(signature.Text),
                     signature.Offset,
                     signature.Line,
-                    signature.Column));
+                    signature.Column + 1));
         }
 
         private void handleStruct(Word word)
@@ -188,7 +188,7 @@ namespace CSharp.Crawlers
                     signature.Text,
                     signature.Offset,
                     signature.Line,
-                    signature.Column));
+                    signature.Column + 1));
         }
 
         private void handleEnum(Word word)
@@ -205,7 +205,7 @@ namespace CSharp.Crawlers
                     signature.Text,
                     signature.Offset,
                     signature.Line,
-                    signature.Column));
+                    signature.Column + 1));
         }
 
         private string getNameFromSignature(string signature)

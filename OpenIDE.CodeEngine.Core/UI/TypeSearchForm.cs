@@ -106,7 +106,9 @@ namespace OpenIDE.CodeEngine.Core.UI
 		
 		private void addItem(ICodeReference type)
 		{
-			var item = informationList.Items.Add(type.Signature);
+			var item = informationList.Items.Add(type.Type);
+			item.SubItems.Add(type.Name);
+			item.SubItems.Add(type.Signature);
 			item.Tag = type;
 		}
     }

@@ -43,7 +43,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(ns.Name, Is.EqualTo("MyFirstNS"));
 			Assert.That(ns.Offset, Is.EqualTo(11));
 			Assert.That(ns.Line, Is.EqualTo(1));
-			Assert.That(ns.Column, Is.EqualTo(11));
+			Assert.That(ns.Column, Is.EqualTo(12));
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace1"));
 			xPlatformAssert(ns.Offset, 26, 28);
 			Assert.That(ns.Line, Is.EqualTo(3));
-			Assert.That(ns.Column, Is.EqualTo(10));
+			Assert.That(ns.Column, Is.EqualTo(11));
 		}
 		
 		[Test]
@@ -68,7 +68,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
 			xPlatformAssert(cls.Offset, 48, 52);
 			Assert.That(cls.Line, Is.EqualTo(5));
-			Assert.That(cls.Column, Is.EqualTo(7));
+			Assert.That(cls.Column, Is.EqualTo(8));
 		}
 		
 		[Test]
@@ -81,7 +81,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Name, Is.EqualTo("MyClass1"));
 			xPlatformAssert(cls.Offset, 80, 88);
 			Assert.That(cls.Line, Is.EqualTo(9));
-			Assert.That(cls.Column, Is.EqualTo(7));
+			Assert.That(cls.Column, Is.EqualTo(8));
 		}
 		
 		[Test]
@@ -93,7 +93,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace2"));
 			xPlatformAssert(ns.Offset, 123, 137);
 			Assert.That(ns.Line, Is.EqualTo(15));
-			Assert.That(ns.Column, Is.EqualTo(0));
+			Assert.That(ns.Column, Is.EqualTo(1));
 		}
 		
 		[Test]
@@ -106,7 +106,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Name, Is.EqualTo("MyClass2"));
 			xPlatformAssert(cls.Offset, 154, 172);
 			Assert.That(cls.Line, Is.EqualTo(19));
-			Assert.That(cls.Column, Is.EqualTo(1));
+			Assert.That(cls.Column, Is.EqualTo(2));
 		}
 		
 		[Test]
@@ -118,7 +118,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace3"));
 			xPlatformAssert(ns.Offset, 182, 205);
 			Assert.That(ns.Line, Is.EqualTo(24));
-			Assert.That(ns.Column, Is.EqualTo(10));
+			Assert.That(ns.Column, Is.EqualTo(11));
 		}
 		
 		[Test]
@@ -131,7 +131,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Name, Is.EqualTo("MyClass3"));
 			xPlatformAssert(cls.Offset, 212, 235);
 			Assert.That(cls.Line, Is.EqualTo(24));
-			Assert.That(cls.Column, Is.EqualTo(40));
+			Assert.That(cls.Column, Is.EqualTo(41));
 		}
 		
 		[Test]
@@ -143,7 +143,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace4"));
 			xPlatformAssert(ns.Offset, 248, 277);
 			Assert.That(ns.Line, Is.EqualTo(30));
-			Assert.That(ns.Column, Is.EqualTo(4));
+			Assert.That(ns.Column, Is.EqualTo(5));
 		}
 		
 		[Test]
@@ -156,7 +156,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Name, Is.EqualTo("MyClass4"));
 			xPlatformAssert(cls.Offset, 294, 332);
 			Assert.That(cls.Line, Is.EqualTo(39));
-			Assert.That(cls.Column, Is.EqualTo(5));
+			Assert.That(cls.Column, Is.EqualTo(6));
 		}
 		
 		[Test]
@@ -169,7 +169,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(str.Name, Is.EqualTo("MyStruct1"));
 			xPlatformAssert(str.Offset, 349, 393);
 			Assert.That(str.Line, Is.EqualTo(45));
-			Assert.That(str.Column, Is.EqualTo(8));
+			Assert.That(str.Column, Is.EqualTo(9));
 		}
 		
 		[Test]
@@ -182,7 +182,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(str.Name, Is.EqualTo("MyEnum1"));
 			xPlatformAssert(str.Offset, 373, 421);
 			Assert.That(str.Line, Is.EqualTo(49));
-			Assert.That(str.Column, Is.EqualTo(6));
+			Assert.That(str.Column, Is.EqualTo(7));
 		}
 		
 		[Test]
@@ -195,7 +195,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(iface.Name, Is.EqualTo("MyInterface1"));
 			xPlatformAssert(iface.Offset, 416, 469);
 			Assert.That(iface.Line, Is.EqualTo(54));
-			Assert.That(iface.Column, Is.EqualTo(11));
+			Assert.That(iface.Column, Is.EqualTo(12));
 		}
 		
 		private string getContent()

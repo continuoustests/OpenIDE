@@ -5,6 +5,7 @@ BINARYDIR=$(cd $(dirname "$0"); pwd)/build_output
 DEPLOYDIR=$(cd $(dirname "$0"); pwd)/ReleaseBinaries
 LIB=$(cd $(dirname "$0"); pwd)/lib
 CSHARP_BIN=$(cd $(dirname "$0"); pwd)/Languages/CSharp/lib
+LANGUAGES=$(cd $(dirname "$0"); pwd)/Languages
 
 if [ ! -d $BINARYDIR ]; then
 {
@@ -63,3 +64,5 @@ cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#
 cp $ROOT/Languages/CSharp/initialize.sh $DEPLOYDIR/Languages/C#
 cp -r $CSHARP_BIN/AutoTest.Net/* $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
 cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#/bin/ContinuousTests
+
+cp $LANGUAGES/go/bin/go $DEPLOYDIR/Languages/go
