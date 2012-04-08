@@ -19,7 +19,16 @@ cd "$dirlocation"
 output=$(go build)
 if [ "$output" = "" ]; then
 	testoutput=`go test|sed '{s/---//g}'`
+	failed=false
 	if [[ "$testoutput" == *FAIL* ]]; then
+		failed=true
+	fi
+	if [ "$testoutput" == "" ]; then
+		failed=true
+		testoutput="Tests did not compile"
+	fi
+	
+	if [ failed ]; then
 		notify-send --icon="$iconFAIL" "Tests Failed" "$testoutput"
 	else
 		notify-send --icon="$iconOK" "Build And Tests Succeeded" "$testoutput"
@@ -27,4 +36,5 @@ if [ "$output" = "" ]; then
 else
 	notify-send --icon="$iconFAIL" "Build Failed" "$output"
 fi
+
 
