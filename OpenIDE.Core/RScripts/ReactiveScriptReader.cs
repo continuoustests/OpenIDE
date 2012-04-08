@@ -57,7 +57,7 @@ namespace OpenIDE.Core.RScripts
 							Path.Combine(
 								"Languages",
 								Path.Combine(
-									plugin.GetLanguage(),
+									plugin.GetLanguage() + "-plugin",
 									"rscripts")))));
 			readScripts(getGlobal());
 		}

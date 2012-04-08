@@ -24,10 +24,13 @@ mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
 
 mkdir $DEPLOYDIR/Languages
-mkdir $DEPLOYDIR/Languages/C#
-mkdir $DEPLOYDIR/Languages/C#/bin
-mkdir $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
-mkdir $DEPLOYDIR/Languages/C#/bin/ContinuousTests
+mkdir $DEPLOYDIR/Languages/C#-plugin
+mkdir $DEPLOYDIR/Languages/C#-plugin/bin
+mkdir $DEPLOYDIR/Languages/C#-plugin/bin/AutoTest.Net
+mkdir $DEPLOYDIR/Languages/C#-plugin/bin/ContinuousTests
+mkdir $DEPLOYDIR/Languages/go-plugin
+mkdir $DEPLOYDIR/Languages/go-plugin/rscripts
+mkdir $DEPLOYDIR/Languages/go-plugin/graphics
 
 mkdir $DEPLOYDIR/scripts
 mkdir $DEPLOYDIR/scripts/templates
@@ -60,9 +63,11 @@ cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/rscripts/templates
 
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#.exe
-cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#
-cp $ROOT/Languages/CSharp/initialize.sh $DEPLOYDIR/Languages/C#
-cp -r $CSHARP_BIN/AutoTest.Net/* $DEPLOYDIR/Languages/C#/bin/AutoTest.Net
-cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#/bin/ContinuousTests
+cp -r $ROOT/Languages/CSharp/templates/* $DEPLOYDIR/Languages/C#-plugin
+cp $ROOT/Languages/CSharp/initialize.sh $DEPLOYDIR/Languages/C#-plugin
+cp -r $CSHARP_BIN/AutoTest.Net/* $DEPLOYDIR/Languages/C#-plugin/bin/AutoTest.Net
+cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#-plugin/bin/ContinuousTests
 
 cp $LANGUAGES/go/bin/go $DEPLOYDIR/Languages/go
+cp $LANGUAGES/go/rscripts/go-build.sh $DEPLOYDIR/Languages/go-plugin/rscripts/go-build.sh
+cp $LANGUAGES/go/graphics/* $DEPLOYDIR/Languages/go-plugin/graphics/

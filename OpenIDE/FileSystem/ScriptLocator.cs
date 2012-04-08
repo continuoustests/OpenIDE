@@ -78,7 +78,7 @@ namespace OpenIDE.FileSystem
 			return getPath(
 				Path.Combine(
 					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
-					Path.Combine("Languages", language)));
+					Path.Combine("Languages", language + "-plugin")));
 		}
 
 		private string getPath(string location)

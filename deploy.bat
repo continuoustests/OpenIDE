@@ -20,10 +20,12 @@ mkdir %DEPLOYDIR%
 mkdir %DEPLOYDIR%\CodeEngine
 mkdir %DEPLOYDIR%\EditorEngine
 mkdir %DEPLOYDIR%\Languages
-mkdir %DEPLOYDIR%\Languages\C#
-mkdir %DEPLOYDIR%\Languages\C#\bin
-mkdir %DEPLOYDIR%\Languages\C#\bin\AutoTest.Net
-mkdir %DEPLOYDIR%\Languages\C#\bin\ContinuousTests
+mkdir %DEPLOYDIR%\Languages\C#-plugin
+mkdir %DEPLOYDIR%\Languages\C#-plugin\bin
+mkdir %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
+mkdir %DEPLOYDIR%\Languages\C#-plugin\bin\ContinuousTests
+mkdir %DEPLOYDIR%\Languages\go-plugin
+mkdir %DEPLOYDIR%\Languages\go-plugin\rscripts
 mkdir %DEPLOYDIR%\scripts
 mkdir %DEPLOYDIR%\scripts\templates
 mkdir %DEPLOYDIR%\rscripts
@@ -49,7 +51,7 @@ xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
 
 copy %ROOT%\C#.exe %DEPLOYDIR%\Languages\C#.exe
-xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#
-copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#
-xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#\bin\AutoTest.Net
-xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\Languages\C#\bin\ContinuousTests
+xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#-plugin
+copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#-plugin
+xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
+xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\Languages\C#-plugin\bin\ContinuousTests

@@ -117,7 +117,7 @@ namespace OpenIDE.Arguments.Handlers
 			_pluginLocator().Locate().ToList()
 				.ForEach(plugin => {
 					var language = plugin.GetLanguage();
-					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language)));
+					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language + "-plugin")));
 				});
 			runInitScript(Path.Combine(Environment.CurrentDirectory, ".OpenIDE"));
 		}
