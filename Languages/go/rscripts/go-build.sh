@@ -25,7 +25,7 @@ if [ "$output" = "" ]; then
 	fi
 	if [ "$testoutput" == "" ]; then
 		failed=true
-		testoutput="Tests did not compile"
+		testoutput="Encountered a Fatal error while compiling the tests. For more information check your terminal window."
 	fi
 	
 	if [ failed ]; then
@@ -36,5 +36,3 @@ if [ "$output" = "" ]; then
 else
 	notify-send --icon="$iconFAIL" "Build Failed" "$output"
 fi
-
-
