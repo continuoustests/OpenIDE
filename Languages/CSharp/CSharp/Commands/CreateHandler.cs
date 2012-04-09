@@ -105,7 +105,7 @@ namespace CSharp.Commands
 				System.IO.Path.Combine(
 					System.IO.Path.Combine(
 						System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"C#"), "create");
+					"C#-plugin"), "create");
 			return System.IO.Directory.GetFiles(templateDir)
 				.Where(x => !x.EndsWith(".swp") && !x.EndsWith("~"));
 		}

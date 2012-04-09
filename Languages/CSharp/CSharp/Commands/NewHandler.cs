@@ -134,7 +134,7 @@ namespace CSharp.Commands
 			var templateDir = 
 				Path.Combine(
 					Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"C#"), "new");
+					"C#-plugin"), "new");
 			return Directory.GetFiles(templateDir)
 				.Where(x => !x.EndsWith(".swp") && !x.EndsWith("~")).ToArray();
 		}
