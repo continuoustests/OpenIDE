@@ -28,11 +28,13 @@ if [ "$output" = "" ]; then
 		testoutput="Encountered a Fatal error while compiling the tests. For more information check your terminal window."
 	fi
 	
-	if [ failed ]; then
+	if [ $failed == true ]; then
 		notify-send --icon="$iconFAIL" "Tests Failed" "$testoutput"
+		echo "$testoutput"
 	else
 		notify-send --icon="$iconOK" "Build And Tests Succeeded" "$testoutput"
 	fi
 else
 	notify-send --icon="$iconFAIL" "Build Failed" "$output"
+	echo "$testoutput"
 fi
