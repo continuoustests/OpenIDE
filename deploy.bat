@@ -24,8 +24,6 @@ mkdir %DEPLOYDIR%\Languages\C#-plugin
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin\ContinuousTests
-mkdir %DEPLOYDIR%\Languages\go-plugin
-mkdir %DEPLOYDIR%\Languages\go-plugin\rscripts
 mkdir %DEPLOYDIR%\scripts
 mkdir %DEPLOYDIR%\scripts\templates
 mkdir %DEPLOYDIR%\rscripts
@@ -50,7 +48,7 @@ copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
 
-copy %ROOT%\C#.exe %DEPLOYDIR%\Languages\C#.exe
+copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#-plugin
 copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#-plugin
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
