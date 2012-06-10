@@ -24,6 +24,9 @@ mkdir %DEPLOYDIR%\Languages\C#-plugin
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin\ContinuousTests
+mkdir %DEPLOYDIR%\Languages\python-plugin
+mkdir %DEPLOYDIR%\Languages\python-plugin\rscripts
+mkdir %DEPLOYDIR%\Languages\python-plugin\graphics
 mkdir %DEPLOYDIR%\scripts
 mkdir %DEPLOYDIR%\scripts\templates
 mkdir %DEPLOYDIR%\rscripts
@@ -53,3 +56,5 @@ xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#-plugin
 copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#-plugin
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
 xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\Languages\C#-plugin\bin\ContinuousTests
+
+xcopy %LANGUAGES%\python\python.py %DEPLOYDIR%\Languages\python.py

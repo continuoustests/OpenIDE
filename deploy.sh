@@ -31,6 +31,9 @@ mkdir $DEPLOYDIR/Languages/C#-plugin/bin/ContinuousTests
 mkdir $DEPLOYDIR/Languages/go-plugin
 mkdir $DEPLOYDIR/Languages/go-plugin/rscripts
 mkdir $DEPLOYDIR/Languages/go-plugin/graphics
+mkdir $DEPLOYDIR/Languages/python-plugin
+mkdir $DEPLOYDIR/Languages/python-plugin/rscripts
+mkdir $DEPLOYDIR/Languages/python-plugin/graphics
 
 mkdir $DEPLOYDIR/scripts
 mkdir $DEPLOYDIR/scripts/templates
@@ -71,3 +74,5 @@ cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#-plugin/bin/Continuou
 cp $LANGUAGES/go/bin/go $DEPLOYDIR/Languages/go
 cp $LANGUAGES/go/rscripts/go-build.sh $DEPLOYDIR/Languages/go-plugin/rscripts/go-build.sh
 cp $LANGUAGES/go/graphics/* $DEPLOYDIR/Languages/go-plugin/graphics/
+
+cp $LANGUAGES/python/python.py $DEPLOYDIR/Languages/python
