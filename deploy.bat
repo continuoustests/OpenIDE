@@ -29,6 +29,7 @@ mkdir %DEPLOYDIR%\Languages\python-plugin\rscripts
 mkdir %DEPLOYDIR%\Languages\python-plugin\graphics
 mkdir %DEPLOYDIR%\Languages\js-plugin
 mkdir %DEPLOYDIR%\Languages\js-plugin\lib
+mkdir %DEPLOYDIR%\Languages\php-plugin
 mkdir %DEPLOYDIR%\scripts
 mkdir %DEPLOYDIR%\scripts\templates
 mkdir %DEPLOYDIR%\rscripts
@@ -66,3 +67,5 @@ xcopy %LANGUAGES%\js\js-plugin\lib\parse-js.js %DEPLOYDIR%\Languages\js-plugin\l
 xcopy %LANGUAGES%\js\js-plugin\lib\parse-js.License %DEPLOYDIR%\Languages\js-plugin\lib\parse-js.License
 xcopy %LANGUAGES%\js\js-plugin\lib\carrier.js %DEPLOYDIR%\Languages\js-plugin\lib\carrier.js
 xcopy %LANGUAGES%\js\js-plugin\lib\carrier.License %DEPLOYDIR%\Languages\js-plugin\lib\carrier.License
+
+xcopy %LANGUAGES%\php\php.php %DEPLOYDIR%\Languages\php.php

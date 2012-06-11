@@ -36,6 +36,7 @@ mkdir $DEPLOYDIR/Languages/python-plugin/rscripts
 mkdir $DEPLOYDIR/Languages/python-plugin/graphics
 mkdir $DEPLOYDIR/Languages/js-plugin
 mkdir $DEPLOYDIR/Languages/js-plugin/lib
+mkdir $DEPLOYDIR/Languages/php-plugin
 
 mkdir $DEPLOYDIR/scripts
 mkdir $DEPLOYDIR/scripts/templates
@@ -84,3 +85,5 @@ cp $LANGUAGES/js/js-plugin/lib/parse-js.js $DEPLOYDIR/Languages/js-plugin/lib/pa
 cp $LANGUAGES/js/js-plugin/lib/parse-js.License $DEPLOYDIR/Languages/js-plugin/lib/parse-js.License
 cp $LANGUAGES/js/js-plugin/lib/carrier.js $DEPLOYDIR/Languages/js-plugin/lib/carrier.js
 cp $LANGUAGES/js/js-plugin/lib/carrier.License $DEPLOYDIR/Languages/js-plugin/lib/carrier.License
+
+cp $LANGUAGES/php/php.php $DEPLOYDIR/Languages/php
