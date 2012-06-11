@@ -43,8 +43,13 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		public List<ICodeReference> Find(string name)
 		{
 			return _codeReferences
-				.Where(x => x.TypeSearch && x.Signature.ToLower().Contains(name.ToLower()))
-				.OrderBy(x => nameSort(x.Name, x.Signature, name)).ToList();
+				.Where(x => x.TypeSearch &&
+					  	(
+					  		x.Signature.ToLower().Contains(name.ToLower()) ||
+							x.File.ToLower().Contains(name.ToLower())
+					  	)
+					  )
+				.OrderBy(x => nameSort(x.Name, x.Signature, x.File, name)).ToList();
 		}
 
         public List<FileFindResult> FindFiles(string searchString)
@@ -142,9 +147,9 @@ namespace OpenIDE.CodeEngine.Core.Caching
 				_signatureReferences.Add(reference);
 		}
 		
-		private int nameSort(string name, string signature, string compareString)
+		private int nameSort(string name, string signature, string filename, string compareString)
 		{
-			return new SearchSorter().Sort(name, signature, compareString);
+			return new SearchSorter().Sort(name, signature, filename, compareString);
 		}
     }
 }

@@ -75,7 +75,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 					.Where(x => 
 						x.Name.ToLower().Contains(pattern.ToLower()) ||
 						x.Description.ToLower().Contains(pattern.ToLower()))
-					.OrderBy(x => new SearchSorter().Sort(x.Name, x.Description, pattern)).ToList()
+					.OrderBy(x => new SearchSorter().Sort(x.Name, x.Description, "", pattern)).ToList()
 					.ForEach(x => addItem(x));
 			if (informationList.Items.Count == 0)
 				return;

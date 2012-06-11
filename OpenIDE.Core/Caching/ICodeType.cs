@@ -3,6 +3,7 @@ namespace OpenIDE.Core.Caching
 {
 	public interface ICodeReference
 	{
+		string Language { get; }
 		string Type { get; }
 		string File { get; }
 		string Signature { get; }
@@ -16,6 +17,7 @@ namespace OpenIDE.Core.Caching
 	
 	public class CodeReference : ICodeReference
 	{
+		public string Language { get; private set; }
 		public string Type { get; private set; }
 		public string File { get; private set; }
 		public string Signature { get; private set; }
@@ -26,6 +28,7 @@ namespace OpenIDE.Core.Caching
 		public bool TypeSearch { get; private set; }
 
 		public CodeReference(
+			string language,
 			string type,
 			string file,
 			string signature,
@@ -34,6 +37,7 @@ namespace OpenIDE.Core.Caching
 			int line,
 			int column)
 		{
+			Language = language;
 			Type = type;
 			File = file;
 			Signature = signature;

@@ -94,6 +94,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 						.ForEach(x => 
 							{
 								try {
+									handler.SetLanguage(x.GetLanguage());
 									foreach (var line in x.Crawl(new string[] { _path }))
 										handler.Handle(line);
 								} catch (Exception ex) {
