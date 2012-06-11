@@ -8,18 +8,22 @@ class AstVisitor(ast.NodeVisitor):
 	def visit_ClassDef(self, node):
 		print 'signature|' + node.name + '|' + node.name + \
 			  '|class|0|' + str(node.lineno) + '|' + \
-			  str(node.col_offset + 1) + '|typesearch'
+			  str(node.col_offset + len('class ') + 1) + '|typesearch'
 		for item in node.body:
 			if item.name.startswith('__') == False:
 				print 'signature|' + node.name + '|' + node.name + \
 					  '|classmethod|0|' + str(node.lineno) + '|' + \
-					  str(node.col_offset + 1)
+					  str(node.col_offset + len('def ') + 1)
 
 	def visit_FunctionDef(self, node):
 		if node.name.startswith('__') == False:
 			print 'signature|' + node.name + '|' + node.name + \
 				  '|method|0|' + str(node.lineno) + '|' + \
-				  str(node.col_offset + 1) + '|typesearch'
+				  str(node.col_offset + len('def ') + 1) + '|typesearch'
+		else:
+			print 'signature|' + node.name + '|' + node.name + \
+				  '|method|0|' + str(node.lineno) + '|' + \
+				  str(node.col_offset + len('def ') + 1)
 
 def __handleDirectory(path):
 	items = os.listdir(path);
