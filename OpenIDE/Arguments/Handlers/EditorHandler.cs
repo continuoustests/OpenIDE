@@ -89,11 +89,20 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private Instance startInstance()
 		{
-			var exe = Path.Combine(
-				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "EditorEngine"),
-				"EditorEngine.exe");
+			var assembly = 
+				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+					Path.Combine("EditorEngine", "EditorEngine.exe"));
+			var exe = "mono";
+			var arg = assembly + " ";
+			if (Environment.OSVersion.Platform != PlatformID.Unix &&
+				Environment.OSVersion.Platform != PlatformID.MacOSX)
+			{
+				exe = assembly;
+				arg = "";
+			}
+			arg += "\"" + Environment.CurrentDirectory + "\"";
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(exe, "\"" + Environment.CurrentDirectory + "\"");
+			proc.StartInfo = new ProcessStartInfo(exe, arg);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
