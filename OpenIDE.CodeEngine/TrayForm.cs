@@ -1,7 +1,10 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
+using System.Reflection;
+using System.Diagnostics;
 using System.Windows.Forms;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Endpoints;
@@ -93,12 +96,15 @@ namespace OpenIDE.CodeEngine
         {
             _ctx.Post((s) =>
                 {
-                    _gotoType = new TypeSearchForm(
-						cache,
-						(file, line, column) => { editor.GoTo(file, line, column); },
-						() => { new System.Threading.Thread(() => { System.Threading.Thread.Sleep(1000); editor.SetFocus(); }).Start(); });
-                    _gotoType.Show();
-                    _gotoType.BringToFront();
+					if (_gotoType == null || !_gotoType.Visible)
+					{
+						_gotoType = new TypeSearchForm(
+							cache,
+							(file, line, column) => { editor.GoTo(file, line, column); },
+							() => { new System.Threading.Thread(() => { System.Threading.Thread.Sleep(1000); editor.SetFocus(); }).Start(); });
+						_gotoType.Show(this);
+					}
+					setToForeground(_gotoType);
                 }, null);
         }
 
@@ -107,13 +113,16 @@ namespace OpenIDE.CodeEngine
         {
             _ctx.Post((s) =>
                 {
-                    _exploreForm = new FileExplorer(
-						cache,
-						_defaultLanguage,
-						(file, line, column) => { editor.GoTo(file, line, column); },
-						() => { editor.SetFocus(); });
-                    _exploreForm.Show();
-                    _exploreForm.BringToFront();
+					if (_exploreForm == null || !_exploreForm.Visible)
+					{
+						_exploreForm = new FileExplorer(
+							cache,
+							_defaultLanguage,
+							(file, line, column) => { editor.GoTo(file, line, column); },
+							() => { editor.SetFocus(); });
+						_exploreForm.Show(this);
+					}
+                    setToForeground(_exploreForm);
                 }, null);
         }
 
@@ -154,8 +163,8 @@ namespace OpenIDE.CodeEngine
 							"Parse(string[], bool)|Return Type: string[[newline]]\tstring[]: Line Array[[newline]]\tbool: Remove Empty entries"
 						};
 					_memberLookup = new MemberLookupForm(members);
-                    _memberLookup.Show();
-                    _memberLookup.BringToFront();
+                    _memberLookup.Show(this);
+                    setToForeground(_memberLookup);
 				}, null);
 		}
 
@@ -170,5 +179,23 @@ namespace OpenIDE.CodeEngine
                 trayIcon.Dispose();
             base.Dispose(isDisposing);
         }
+
+		private void setToForeground(Form form)
+		{
+			var extension = ".bat";
+			if (Environment.OSVersion.Platform == PlatformID.Unix ||
+				Environment.OSVersion.Platform == PlatformID.MacOSX)
+				extension = "";
+			var startInfo = new ProcessStartInfo(						
+					Path.Combine(
+						Path.GetDirectoryName(
+							Path.GetDirectoryName(
+								Assembly.GetExecutingAssembly().Location)),
+							"oi" + extension),
+					"set-to-foreground " + form.Handle);
+			startInfo.CreateNoWindow = true;
+			startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			Process.Start(startInfo);
+		}
     }
 }

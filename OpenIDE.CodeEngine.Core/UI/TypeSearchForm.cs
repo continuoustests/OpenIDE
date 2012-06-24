@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -39,7 +40,10 @@ namespace OpenIDE.CodeEngine.Core.UI
 		
 		void writeStatistics()
 		{
-			var text = string.Format("Projects: {2}, Files: {0}, Code References: {1}", _cache.FileCount, _cache.CodeReferences, _cache.ProjectCount);
+			var text = string.Format("Projects: {2}, Files: {0}, Code References: {1}",
+				_cache.FileCount,
+				_cache.CodeReferences,
+				_cache.ProjectCount);
 			if (labelInfo.Text != text)
         		labelInfo.Text = text;
 		}
@@ -68,7 +72,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 				Console.WriteLine(ex.ToString());
 			}
         }
-		
+
 		void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)
         {
 			if (e.KeyCode == Keys.Enter)
@@ -106,9 +110,13 @@ namespace OpenIDE.CodeEngine.Core.UI
 		
 		private void addItem(ICodeReference type)
 		{
-			var item = informationList.Items.Add(type.Type);
+			var item = informationList.Items.Add(type.Language);
+			item.SubItems.Add(type.Type);
 			item.SubItems.Add(type.Name);
-			item.SubItems.Add(type.Signature);
+			item.SubItems.Add(
+				string.Format("{0} ({1})",
+					type.Signature,
+					Path.GetFileName(type.File)));
 			item.Tag = type;
 		}
     }

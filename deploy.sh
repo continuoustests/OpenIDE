@@ -31,6 +31,12 @@ mkdir $DEPLOYDIR/Languages/C#-plugin/bin/ContinuousTests
 mkdir $DEPLOYDIR/Languages/go-plugin
 mkdir $DEPLOYDIR/Languages/go-plugin/rscripts
 mkdir $DEPLOYDIR/Languages/go-plugin/graphics
+mkdir $DEPLOYDIR/Languages/python-plugin
+mkdir $DEPLOYDIR/Languages/python-plugin/rscripts
+mkdir $DEPLOYDIR/Languages/python-plugin/graphics
+mkdir $DEPLOYDIR/Languages/js-plugin
+mkdir $DEPLOYDIR/Languages/js-plugin/lib
+mkdir $DEPLOYDIR/Languages/php-plugin
 
 mkdir $DEPLOYDIR/scripts
 mkdir $DEPLOYDIR/scripts/templates
@@ -71,3 +77,13 @@ cp -r $CSHARP_BIN/ContinuousTests/* $DEPLOYDIR/Languages/C#-plugin/bin/Continuou
 cp $LANGUAGES/go/bin/go $DEPLOYDIR/Languages/go
 cp $LANGUAGES/go/rscripts/go-build.sh $DEPLOYDIR/Languages/go-plugin/rscripts/go-build.sh
 cp $LANGUAGES/go/graphics/* $DEPLOYDIR/Languages/go-plugin/graphics/
+
+cp $LANGUAGES/python/python.py $DEPLOYDIR/Languages/python
+
+cp $LANGUAGES/js/js.js $DEPLOYDIR/Languages/js
+cp $LANGUAGES/js/js-plugin/lib/parse-js.js $DEPLOYDIR/Languages/js-plugin/lib/parse-js.js
+cp $LANGUAGES/js/js-plugin/lib/parse-js.License $DEPLOYDIR/Languages/js-plugin/lib/parse-js.License
+cp $LANGUAGES/js/js-plugin/lib/carrier.js $DEPLOYDIR/Languages/js-plugin/lib/carrier.js
+cp $LANGUAGES/js/js-plugin/lib/carrier.License $DEPLOYDIR/Languages/js-plugin/lib/carrier.License
+
+cp $LANGUAGES/php/php.php $DEPLOYDIR/Languages/php

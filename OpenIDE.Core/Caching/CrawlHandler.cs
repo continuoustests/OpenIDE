@@ -5,6 +5,7 @@ namespace OpenIDE.Core.Caching
 {
 	public class CrawlHandler
 	{
+		private string _language;
 		private string _currentProject = null;
 		private string _currentFile = null;
 		private Action<string> _logWrite;
@@ -15,6 +16,11 @@ namespace OpenIDE.Core.Caching
 		{
 			_builder = builder;
 			_logWrite = logWrite;
+		}
+
+		public void SetLanguage(string language)
+		{
+			_language = language;
 		}
 
 		public void Handle(string command)
@@ -64,6 +70,7 @@ namespace OpenIDE.Core.Caching
 		private void handleSignature(string[] chunks)
 		{
 			var reference = new CodeReference(
+				_language,
 				chunks[3],
 				_currentFile,
 				chunks[1],

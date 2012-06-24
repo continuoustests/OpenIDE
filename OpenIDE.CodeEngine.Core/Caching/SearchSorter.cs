@@ -4,7 +4,7 @@ namespace OpenIDE.CodeEngine.Core.Caching
 {
 	class SearchSorter
 	{
-		public int Sort(string name, string signature, string compareString)
+		public int Sort(string name, string signature, string filename, string compareString)
 		{
 			if (name.Equals(compareString))
 				return 1000;
@@ -37,6 +37,9 @@ namespace OpenIDE.CodeEngine.Core.Caching
 				return 14000 + (signature.Length - signature.IndexOf(compareString));
 			if (signature.ToLower().Contains(compareString.ToLower()))
 				return 14000 + (signature.Length - signature.IndexOf(compareString));
+
+			if (filename.Contains(compareString))
+				return 14000 + (filename.Length - filename.IndexOf(compareString));
 			return 100000;
 		}
 	}

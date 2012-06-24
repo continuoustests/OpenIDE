@@ -35,6 +35,7 @@ namespace OpenIDE.CodeEngine.Core.UI
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
 			
 			//
@@ -44,7 +45,7 @@ namespace OpenIDE.CodeEngine.Core.UI
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.labelInfo.Location = new System.Drawing.Point(12, 2);
             this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(760, 21);
+            this.labelInfo.Size = new System.Drawing.Size(770, 21);
             this.labelInfo.TabIndex = 3;
 			this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			//
@@ -54,7 +55,7 @@ namespace OpenIDE.CodeEngine.Core.UI
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(12, 25);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(760, 45);
+            this.textBoxSearch.Size = new System.Drawing.Size(770, 45);
             this.textBoxSearch.TabIndex = 1;
 			this.textBoxSearch.TextChanged += HandleTextBoxSearchhandleTextChanged;
 			this.textBoxSearch.KeyDown += HandleTextBoxSearchhandleKeyDown;
@@ -64,40 +65,46 @@ namespace OpenIDE.CodeEngine.Core.UI
             this.informationList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom)));
             this.informationList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,this.columnHeader2,this.columnHeader3});
+            this.columnHeader1,this.columnHeader2,this.columnHeader3,this.columnHeader4});
             this.informationList.Location = new System.Drawing.Point(12, 57);
             this.informationList.Name = "informationList";
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				this.informationList.Size = new System.Drawing.Size(760, 291);
+				this.informationList.Size = new System.Drawing.Size(770, 291);
 			else
-            	this.informationList.Size = new System.Drawing.Size(760, 304);
+            	this.informationList.Size = new System.Drawing.Size(770, 304);
             this.informationList.TabIndex = 2;
             this.informationList.UseCompatibleStateImageBehavior = false;
             this.informationList.View = System.Windows.Forms.View.Details;
 			this.informationList.HideSelection = false;
 			this.informationList.MultiSelect = false;
 			this.informationList.FullRowSelect = true;
+			this.informationList.KeyDown += HandleTextBoxSearchhandleKeyDown;
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Type";
+            this.columnHeader1.Text = "Language";
             this.columnHeader1.Width = 70;
 			// 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Name";
-            this.columnHeader2.Width = 270;
+            this.columnHeader2.Text = "Type";
+            this.columnHeader2.Width = 70;
 			// 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Signature";
-            this.columnHeader3.Width = 520;
+            this.columnHeader3.Text = "Name";
+            this.columnHeader3.Width = 270;
+			// 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Signature";
+            this.columnHeader4.Width = 465;
             // 
             // TypeSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 362);
+            this.ClientSize = new System.Drawing.Size(794, 362);
 			this.Controls.Add(this.labelInfo);
 			this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.informationList);
@@ -118,5 +125,6 @@ namespace OpenIDE.CodeEngine.Core.UI
         private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
+		private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }
