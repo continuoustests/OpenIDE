@@ -60,12 +60,13 @@ copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#-plugin
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net
 xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\Languages\C#-plugin\bin\ContinuousTests
 
-xcopy %LANGUAGES%\python\python.py %DEPLOYDIR%\Languages\python.py
+rem To deploy the following languages uncomment these lines
+rem xcopy %LANGUAGES%python\python.py %DEPLOYDIR%\Languages
 
-xcopy %LANGUAGES%\js\js.js %DEPLOYDIR%\Languages\js.js
-xcopy %LANGUAGES%\js\js-plugin\lib\parse-js.js %DEPLOYDIR%\Languages\js-plugin\lib\parse-js.js
-xcopy %LANGUAGES%\js\js-plugin\lib\parse-js.License %DEPLOYDIR%\Languages\js-plugin\lib\parse-js.License
-xcopy %LANGUAGES%\js\js-plugin\lib\carrier.js %DEPLOYDIR%\Languages\js-plugin\lib\carrier.js
-xcopy %LANGUAGES%\js\js-plugin\lib\carrier.License %DEPLOYDIR%\Languages\js-plugin\lib\carrier.License
+rem xcopy %LANGUAGES%js\js.js %DEPLOYDIR%\Languages
+rem xcopy %LANGUAGES%js\js-plugin\lib\parse-js.js %DEPLOYDIR%\Languages\js-plugin\lib
+rem xcopy %LANGUAGES%js\js-plugin\lib\parse-js.License %DEPLOYDIR%\Languages\js-plugin\lib
+rem xcopy %LANGUAGES%js\js-plugin\lib\carrier.js %DEPLOYDIR%\Languages\js-plugin\lib
+rem xcopy %LANGUAGES%js\js-plugin\lib\carrier.License %DEPLOYDIR%\Languages\js-plugin\lib
 
-xcopy %LANGUAGES%\php\php.php %DEPLOYDIR%\Languages\php.php
+rem xcopy %LANGUAGES%php\php.php %DEPLOYDIR%\Languages
