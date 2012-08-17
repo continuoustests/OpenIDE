@@ -45,9 +45,15 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
-			var script = _scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
-			if (script == null || arguments.Length < 1)
+			if (arguments.Length == 0) {
+				printAvailableCommands();
 				return;
+			}
+			var script = _scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
+			if (script == null || arguments.Length < 1) {
+				printAvailableCommands();
+				return;
+			}
 
 			var sb = new StringBuilder();
 			for (int i = 1; i < arguments.Length; i++)
@@ -62,6 +68,27 @@ namespace OpenIDE.Arguments.Handlers
 				else
 					_dispatch("comment|" + line);
 			}
+		}
+
+		private void printAvailableCommands()
+		{
+			Console.WriteLine("Available commands:");
+			var level = 0;
+			Usage.Parameters.ToList()
+				.ForEach(y =>  printParameter(y, ref level));
+			Console.WriteLine("");
+		}
+		
+		private void printParameter(BaseCommandHandlerParameter parameter, ref int level)
+		{
+			level++;
+			var name = parameter.Name;
+			if (!parameter.Required)
+				name = "[" + name + "]";
+			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, parameter.Description);
+			foreach (var child in parameter.Parameters)
+				printParameter(child, ref level);
+			level--;
 		}
 	}
 }
