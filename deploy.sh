@@ -49,9 +49,9 @@ chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
 
 echo $BINARYDIR
 
-xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
-xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
-xbuild Languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/;Configuration=Release;
+xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
+xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
+xbuild Languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 
 cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
