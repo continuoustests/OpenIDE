@@ -1,3 +1,4 @@
 #!/bin/bash
 
-mono oi.exe "$@"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+mono $SCRIPT_DIR/oi.exe "$@"
