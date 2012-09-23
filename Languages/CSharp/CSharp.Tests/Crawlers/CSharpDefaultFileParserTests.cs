@@ -10,14 +10,16 @@ namespace CSharp.Tests.Crawlers
 	[TestFixture]
 	public class CSharpDefaultFileParserTests
 	{
-		private CSharpFileParser _parser;
+		private ICSharpParser _parser;
 		private Fake_CacheBuilder _cache;
 		
 		[SetUp]
 		public void Setup()
 		{
 			_cache = new Fake_CacheBuilder();
-			_parser = new CSharpFileParser(_cache);
+			_parser = new NRefactoryParser()
+			//_parser = new CSharpFileParser()
+				.SetOutputWriter(_cache);
 			_parser.ParseFile("file1", () => { return getContent(); });
 		}
 		
@@ -32,7 +34,8 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_basic_namespace()
 		{
 			var cache = new Fake_CacheBuilder();
-			_parser = new CSharpFileParser(cache);
+			_parser = new CSharpFileParser()
+				.SetOutputWriter(cache);
 			_parser.ParseFile("TestFile", () =>
 				{
 					return "namespace MyFirstNS {}";

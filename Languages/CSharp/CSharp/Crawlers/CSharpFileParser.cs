@@ -4,6 +4,12 @@ using System.Linq;
 
 namespace CSharp.Crawlers
 {
+    public interface ICSharpParser
+    {
+        ICSharpParser SetOutputWriter(IOutputWriter writer);
+        void ParseFile(string file, Func<string> getContent);
+    }
+
 	enum Location
 	{
         Unknown,
@@ -22,7 +28,7 @@ namespace CSharp.Crawlers
 		public Location Location { get; set; }
 	}
 
-    public class CSharpFileParser
+    public class CSharpFileParser : ICSharpParser
     {
         private object _padLock = new object();
         private string _file;
@@ -36,11 +42,12 @@ namespace CSharp.Crawlers
         private CSharpCodeNavigator _navigator;
 
         private Namespace _currentNamespace = null;
-		
-		public CSharpFileParser(IOutputWriter writer)
-		{
-			_builder = writer;
-		}
+
+        public ICSharpParser SetOutputWriter(IOutputWriter writer)
+        {
+            _builder = writer;
+            return this;
+        }
 
         public void ParseFile(string file, Func<string> getContent)
         {
