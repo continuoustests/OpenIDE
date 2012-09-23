@@ -19,7 +19,8 @@ namespace CSharp.Tests.Crawlers
 		public void Setup()
 		{
 			_cache = new Fake_CacheBuilder();
-			_parser = new CSharpFileParser()
+            _parser = new NRefactoryParser()
+			//_parser = new CSharpFileParser()
 				.SetOutputWriter(_cache);
 			_parser.ParseFile("file1", () => { return getContent(); });
 		}

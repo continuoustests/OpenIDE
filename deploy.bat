@@ -54,7 +54,11 @@ copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
 
-copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#.exe
+copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\Languages\C#.bat
+copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#-plugin\C#.exe
+copy %BINARYDIR%\ICSharpCode.NRefactory.CSharp.dll %DEPLOYDIR%\Languages\C#-plugin\ICSharpCode.NRefactory.CSharp.dll
+copy %BINARYDIR%\ICSharpCode.NRefactory.dll %DEPLOYDIR%\Languages\C#-plugin\ICSharpCode.NRefactory.dll
+copy %BINARYDIR%\Mono.Cecil.dll %DEPLOYDIR%\Languages\C#-plugin\Mono.Cecil.dll
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\Languages\C#-plugin
 copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\Languages\C#-plugin
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\Languages\C#-plugin\bin\AutoTest.Net

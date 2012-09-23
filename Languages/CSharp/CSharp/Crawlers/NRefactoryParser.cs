@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace CSharp.Crawlers
@@ -6,6 +7,9 @@ namespace CSharp.Crawlers
 	public class NRefactoryParser : ICSharpParser
 	{
 		private IOutputWriter _writer;
+        private string _file = "";
+        private string _namespace = "";
+        private string _type = "";
 
 		public ICSharpParser SetOutputWriter(IOutputWriter writer) {
             _writer = writer;
@@ -15,6 +19,8 @@ namespace CSharp.Crawlers
         public void ParseFile(string file, Func<string> getContent) {
         	var parser = new CSharpParser();
         	var ast = parser.Parse(getContent());
+            _file = file;
+            _writer.AddFile(file);
         	scanNode(ast);
         }
 
@@ -40,15 +46,68 @@ namespace CSharp.Crawlers
 		}
 
 		private void handleUsing(UsingDeclaration usng) {
-			Console.WriteLine("using " + usng.Namespace);
 		}
 		
 		private void handleNamespace(NamespaceDeclaration ns) {
-			Console.WriteLine("Namespace: " + ns.Name);
+            var location = ns.NamespaceToken.EndLocation;
+            var id = ns.Children
+                .Where(x => x.GetType() == typeof(Identifier))
+                .FirstOrDefault();
+            if (id != null)
+                location = id.StartLocation;
+            _writer.AddNamespace(
+                new Namespace(
+                    _file,
+                    ns.Name,
+                    0,
+                    location.Line,
+                    location.Column));
+            _namespace = ns.Name;
 		}
 		
 		private void handleType(TypeDeclaration type) {
-			Console.WriteLine("Type: " + type.Name);
+            switch (type.ClassType) {
+                case ClassType.Class:
+                    _writer.AddClass(
+                        new Class(
+                            _file,
+                            _namespace,
+                            type.Name,
+                            0,
+                            type.NameToken.StartLocation.Line,
+                            type.NameToken.StartLocation.Column));
+                    break;
+                case ClassType.Interface:
+                    _writer.AddInterface(
+                        new Interface(
+                            _file,
+                            _namespace,
+                            type.Name,
+                            0,
+                            type.NameToken.StartLocation.Line,
+                            type.NameToken.StartLocation.Column));
+                    break;
+                case ClassType.Struct:
+                    _writer.AddStruct(
+                        new Struct(
+                            _file,
+                            _namespace,
+                            type.Name,
+                            0,
+                            type.NameToken.StartLocation.Line,
+                            type.NameToken.StartLocation.Column));
+                    break;
+                case ClassType.Enum:
+                    _writer.AddEnum(
+                        new EnumType(
+                            _file,
+                            _namespace,
+                            type.Name,
+                            0,
+                            type.NameToken.StartLocation.Line,
+                            type.NameToken.StartLocation.Column));
+                    break;
+            }
 		}
 		
 		private void handleField(FieldDeclaration field) {
@@ -58,7 +117,6 @@ namespace CSharp.Crawlers
             var parameters = "";
             foreach (var param in method.Parameters)
                 parameters += (parameters.Length == 0 ? "" : ",") + signatureFrom(param);
-            Console.WriteLine("Method: " + signatureFrom(method.ReturnType) + " "  + method.Name + "(" + parameters + ")");
 		}
 		
 		private void handleVariableInitializer(VariableInitializer variable) {
@@ -69,7 +127,6 @@ namespace CSharp.Crawlers
 				type = signatureFrom(variable);
 			else
 				type = variable.Parent.GetType().ToString();
-			Console.WriteLine("Var: " + variable.Name + " " + type);
 		}
 
         private string signatureFrom(object expr) {

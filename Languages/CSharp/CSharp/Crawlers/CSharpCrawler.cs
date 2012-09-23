@@ -54,7 +54,7 @@ namespace CSharp.Crawlers
 		{
 			try
 			{
-				new CSharpFileParser()
+				new NRefactoryParser()
 					.SetOutputWriter(_builder)
 					.ParseFile(x, () => { return File.ReadAllText(x); });
 			}
