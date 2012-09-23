@@ -1,0 +1,4 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+mono $SCRIPT_DIR/C#-plugin/C#.exe "$@"
