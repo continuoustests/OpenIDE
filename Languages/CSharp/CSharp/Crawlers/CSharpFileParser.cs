@@ -140,7 +140,6 @@ namespace CSharp.Crawlers
             var ns = new Namespace(
                 _file,
                 signature.Text,
-                signature.Offset,
                 signature.Line,
                 signature.Column + 1);
             _builder.AddNamespace(ns);
@@ -159,9 +158,10 @@ namespace CSharp.Crawlers
                     _file,
                     ns,
                     getNameFromSignature(signature.Text),
-                    signature.Offset,
+                    "",
                     signature.Line,
-                    signature.Column + 1));
+                    signature.Column + 1,
+                    ""));
         }
 
         private void handleInterface(Word word)
@@ -176,9 +176,10 @@ namespace CSharp.Crawlers
                     _file,
                     ns,
                     getNameFromSignature(signature.Text),
-                    signature.Offset,
+                    "",
                     signature.Line,
-                    signature.Column + 1));
+                    signature.Column + 1,
+                    ""));
         }
 
         private void handleStruct(Word word)
@@ -193,9 +194,10 @@ namespace CSharp.Crawlers
                     _file,
                     ns,
                     signature.Text,
-                    signature.Offset,
+                    "",
                     signature.Line,
-                    signature.Column + 1));
+                    signature.Column + 1,
+                    ""));
         }
 
         private void handleEnum(Word word)
@@ -210,9 +212,10 @@ namespace CSharp.Crawlers
                     _file,
                     ns,
                     signature.Text,
-                    signature.Offset,
+                    "",
                     signature.Line,
-                    signature.Column + 1));
+                    signature.Column + 1,
+                    ""));
         }
 
         private string getNameFromSignature(string signature)

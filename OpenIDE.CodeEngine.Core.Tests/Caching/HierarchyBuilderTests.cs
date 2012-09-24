@@ -33,7 +33,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.Caching
         public void When_given_a_project_it_will_pull_out_files_and_directories_contained_by_it()
         {
             var cache = new TypeCache();
-            var project = new Project(to("/Some/Path/MyProject.csproj"));
+            var project = new Project(to("/Some/Path/MyProject.csproj"), "");
             cache.Add(toFile("/Some/Path/File1.cs", project.File));
             cache.Add(toFile("/Some/Path/File2.cs", project.File));
             cache.Add(toFile("/Some/Path/In/AnotherpathPlace/File2.cs", project.File));
@@ -51,7 +51,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.Caching
         public void When_given_a_project_and_a_directory_it_will_pull_out_files_and_directories_contained_by_it()
         {
             var cache = new TypeCache();
-            var project = new Project(to("/Some/Path/MyProject.csproj"));
+            var project = new Project(to("/Some/Path/MyProject.csproj"), "");
             cache.Add(toFile("/Some/Path/File1.cs", project.File));
             cache.Add(toFile("/Some/Path/File2.cs", project.File));
             cache.Add(toFile("/Some/Path/In/AnotherpathPlace/File2.cs", project.File));

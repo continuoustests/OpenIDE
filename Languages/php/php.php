@@ -70,10 +70,10 @@
                 write("signature|" .
 					  $signature . "|" . 
 					  $name . 
-					  "|function|0|" . 
+					  "|function||" . 
 					  $lineNum . "|" . 
 					  $column . 
-					  "|typesearch");
+					  "||typesearch");
             }
         }
 	}

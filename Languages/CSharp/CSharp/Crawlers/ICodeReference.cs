@@ -7,9 +7,10 @@ namespace CSharp.Crawlers
 		string File { get; }
 		string Signature { get; }
 		string Name { get; }
-		int Offset { get; }
+        string Scope { get; }
 		int Line { get; }
 		int Column { get; }
+        string JSON { get; }
 	}
 }
 

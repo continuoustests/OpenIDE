@@ -52,10 +52,10 @@ Crawl directories and/or files
 		//	typesearch => Is searchable under typesearch
 		//	filesearch => Is searchable under file browse list
 
-		[project|PROJECT-PATH [|filesearch]]
+		[project|PROJECT-PATH|CUSTOM-JSON-INFO [|filesearch]]
 			file|FILE-PATH [|filesearch]
-				signature|SIGNATURE|NAME|TYPE|OFFSET|LINE|COLUMN [|typesearch]
-				reference|SIGNATURE|OFFSET|LINE|COLUMN
+				signature|SIGNATURE|NAME|TYPE|SCOPE|LINE|COLUMN|CUSTOM-JSON-INFO [|typesearch]
+				reference|SIGNATURE|LINE|COLUMN|CUSTOM-JSON-INFO
 
 Retrieve signature from a location inside code
 	PARAMETER:

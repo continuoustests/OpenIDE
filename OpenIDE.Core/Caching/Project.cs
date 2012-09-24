@@ -25,12 +25,15 @@ namespace OpenIDE.Core.Caching
 	public class Project
 	{
 		public string File { get; private set; }
+
+        public string JSON { get; private set; }
 		
 		public bool FileSearch { get; private set; }
 		
-		public Project(string file)
+		public Project(string file, string json)
 		{
 			File = file;
+            JSON = json;
 		}
 
 		public Project SetFileSearch()

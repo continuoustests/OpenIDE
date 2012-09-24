@@ -79,7 +79,7 @@ function readDefinitions(tokenizer) {
 			var line = func.line + 1;
 			var col = func.col + 1;
 			console.log('signature|' + func.value + '|' + func.value + 
-						'|function|0|' + line + '|' + col + '|typesearch');
+						'|function||' + line + '|' + col + '||typesearch');
 		} else if (token.type == "name" && token.nlb == true) {
 			name = token.value;
 			while (true) {
@@ -99,7 +99,7 @@ function readDefinitions(tokenizer) {
 				var col = token.col - name.length;
 				if (name.substr(-10) === ".prototype") {
 					console.log('signature|' + name + '|' + name + 
-								'|prototype|0|' + line + '|' + col + '|typesearch');
+								'|prototype||' + line + '|' + col + '||typesearch');
 				}
 			}
 		} else if (token.type == "keyword" && token.value == "function" && name != null && assigned == true) {

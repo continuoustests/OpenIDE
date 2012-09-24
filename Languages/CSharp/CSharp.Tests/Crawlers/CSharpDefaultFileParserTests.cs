@@ -68,6 +68,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.AVerySimpleClass"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
+            Assert.That(cls.Scope, Is.EqualTo("private"));
 			Assert.That(cls.Line, Is.EqualTo(5));
 			Assert.That(cls.Column, Is.EqualTo(8));
 		}
@@ -80,8 +81,9 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.MyClass1"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass1"));
+            Assert.That(cls.Scope, Is.EqualTo("internal"));
 			Assert.That(cls.Line, Is.EqualTo(9));
-			Assert.That(cls.Column, Is.EqualTo(8));
+			Assert.That(cls.Column, Is.EqualTo(17));
 		}
 		
 		[Test]
@@ -103,6 +105,7 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace2.MyClass2"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace2"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass2"));
+            Assert.That(cls.Scope, Is.EqualTo("public"));
 			Assert.That(cls.Line, Is.EqualTo(19));
 			Assert.That(cls.Column, Is.EqualTo(2));
 		}
@@ -161,8 +164,9 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyStruct1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyStruct1"));
+            Assert.That(str.Scope, Is.EqualTo("public"));
 			Assert.That(str.Line, Is.EqualTo(45));
-			Assert.That(str.Column, Is.EqualTo(9));
+			Assert.That(str.Column, Is.EqualTo(16));
 		}
 		
 		[Test]
@@ -173,8 +177,9 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyEnum1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyEnum1"));
+            Assert.That(str.Scope, Is.EqualTo("internal"));
 			Assert.That(str.Line, Is.EqualTo(49));
-			Assert.That(str.Column, Is.EqualTo(7));
+			Assert.That(str.Column, Is.EqualTo(16));
 		}
 		
 		[Test]
@@ -185,8 +190,9 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(iface.Signature, Is.EqualTo("MyNamespace5.MyInterface1"));
 			Assert.That(iface.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(iface.Name, Is.EqualTo("MyInterface1"));
+            Assert.That(iface.Scope, Is.EqualTo("public"));
 			Assert.That(iface.Line, Is.EqualTo(54));
-			Assert.That(iface.Column, Is.EqualTo(12));
+			Assert.That(iface.Column, Is.EqualTo(19));
 		}
 		
 		private string getContent()

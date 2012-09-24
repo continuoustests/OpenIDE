@@ -59,12 +59,11 @@ namespace CSharp.Crawlers
                 new Namespace(
                     _file,
                     ns.Name,
-                    0,
                     location.Line,
                     location.Column));
             _namespace = ns.Name;
 		}
-		
+
 		private void handleType(TypeDeclaration type) {
             switch (type.ClassType) {
                 case ClassType.Class:
@@ -73,9 +72,10 @@ namespace CSharp.Crawlers
                             _file,
                             _namespace,
                             type.Name,
-                            0,
+                            getTypeModifier(type.Modifiers),
                             type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column));
+                            type.NameToken.StartLocation.Column,
+                            ""));
                     break;
                 case ClassType.Interface:
                     _writer.AddInterface(
@@ -83,9 +83,10 @@ namespace CSharp.Crawlers
                             _file,
                             _namespace,
                             type.Name,
-                            0,
+                            getTypeModifier(type.Modifiers),
                             type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column));
+                            type.NameToken.StartLocation.Column,
+                            ""));
                     break;
                 case ClassType.Struct:
                     _writer.AddStruct(
@@ -93,9 +94,10 @@ namespace CSharp.Crawlers
                             _file,
                             _namespace,
                             type.Name,
-                            0,
+                            getTypeModifier(type.Modifiers),
                             type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column));
+                            type.NameToken.StartLocation.Column,
+                            ""));
                     break;
                 case ClassType.Enum:
                     _writer.AddEnum(
@@ -103,12 +105,21 @@ namespace CSharp.Crawlers
                             _file,
                             _namespace,
                             type.Name,
-                            0,
+                            getTypeModifier(type.Modifiers),
                             type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column));
+                            type.NameToken.StartLocation.Column,
+                            ""));
                     break;
             }
 		}
+
+        private string getTypeModifier(Modifiers modifiers) {
+            if ((modifiers & Modifiers.Public) ==  Modifiers.Public)
+                return "public";
+            if ((modifiers & Modifiers.Internal) ==  Modifiers.Internal)
+                return "internal";
+            return "private";
+        }
 		
 		private void handleField(FieldDeclaration field) {
 		}
