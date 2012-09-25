@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
+using System.Text;
+using System.Collections.Generic;
 
 namespace CSharp.Crawlers
 {
@@ -9,7 +11,7 @@ namespace CSharp.Crawlers
 		private IOutputWriter _writer;
         private string _file = "";
         private string _namespace = "";
-        private string _type = "";
+        private List<string> _types = new List<string>();
 
 		public ICSharpParser SetOutputWriter(IOutputWriter writer) {
             _writer = writer;
@@ -32,20 +34,29 @@ namespace CSharp.Crawlers
 					handleNamespace((NamespaceDeclaration)child);
 				else if (child.GetType() == typeof(TypeDeclaration))
 					handleType((TypeDeclaration)child);
-				else if (child.GetType() == typeof(FieldDeclaration))
-					handleField((FieldDeclaration)child);
+                else if (child.GetType() == typeof(MethodDeclaration))
+                    handleMethod((MethodDeclaration)child);
+                else if (child.GetType() == typeof(PropertyDeclaration))
+                    handleProperty((PropertyDeclaration)child);
 				else if (child.GetType() == typeof(VariableInitializer))
 					handleVariableInitializer((VariableInitializer)child);
-				else if (child.GetType() == typeof(MethodDeclaration))
-					handleMethod((MethodDeclaration)child);
-				else
-                    node = node;
-					//Console.WriteLine("".PadLeft(_level, '\t') + child.GetType().ToString());
+
 				scanNode(child);
+                
+                if (child.GetType() == typeof(UsingDeclaration))
+                    _namespace = "";
+                else if (child.GetType() == typeof(TypeDeclaration))
+                    _types.RemoveAt(_types.Count - 1);
 			}
 		}
 
 		private void handleUsing(UsingDeclaration usng) {
+            _writer.AddUsing(
+                new Using(
+                    _file,
+                    usng.Namespace,
+                    usng.Import.StartLocation.Line,
+                    usng.Import.StartLocation.Column));
 		}
 		
 		private void handleNamespace(NamespaceDeclaration ns) {
@@ -65,79 +76,210 @@ namespace CSharp.Crawlers
 		}
 
 		private void handleType(TypeDeclaration type) {
+            _types.Add(type.Name);
             switch (type.ClassType) {
                 case ClassType.Class:
-                    _writer.AddClass(
-                        new Class(
-                            _file,
-                            _namespace,
-                            type.Name,
-                            getTypeModifier(type.Modifiers),
-                            type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column,
-                            ""));
+                    addClass(type);
                     break;
                 case ClassType.Interface:
-                    _writer.AddInterface(
-                        new Interface(
-                            _file,
-                            _namespace,
-                            type.Name,
-                            getTypeModifier(type.Modifiers),
-                            type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column,
-                            ""));
+                    addInterface(type);
                     break;
                 case ClassType.Struct:
-                    _writer.AddStruct(
-                        new Struct(
-                            _file,
-                            _namespace,
-                            type.Name,
-                            getTypeModifier(type.Modifiers),
-                            type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column,
-                            ""));
+                    addStruct(type);
                     break;
                 case ClassType.Enum:
-                    _writer.AddEnum(
-                        new EnumType(
-                            _file,
-                            _namespace,
-                            type.Name,
-                            getTypeModifier(type.Modifiers),
-                            type.NameToken.StartLocation.Line,
-                            type.NameToken.StartLocation.Column,
-                            ""));
+                    addEnum(type);
                     break;
             }
 		}
 
-        private string getTypeModifier(Modifiers modifiers) {
-            if ((modifiers & Modifiers.Public) ==  Modifiers.Public)
+        private void addEnum(TypeDeclaration type)
+        {
+            _writer.AddEnum(
+                new EnumType(
+                    _file,
+                    _namespace,
+                    type.Name,
+                    getTypeModifier(type.Modifiers),
+                    type.NameToken.StartLocation.Line,
+                    type.NameToken.StartLocation.Column,
+                    getTypeProperties(type)));
+        }
+
+        private void addStruct(TypeDeclaration type)
+        {
+            _writer.AddStruct(
+                new Struct(
+                    _file,
+                    _namespace,
+                    type.Name,
+                    getTypeModifier(type.Modifiers),
+                    type.NameToken.StartLocation.Line,
+                    type.NameToken.StartLocation.Column,
+                    getTypeProperties(type)));
+        }
+
+        private void addInterface(TypeDeclaration type)
+        {
+            _writer.AddInterface(
+                new Interface(
+                    _file,
+                    _namespace,
+                    type.Name,
+                    getTypeModifier(type.Modifiers),
+                    type.NameToken.StartLocation.Line,
+                    type.NameToken.StartLocation.Column,
+                    getTypeProperties(type)));
+        }
+
+        private void addClass(TypeDeclaration type)
+        {
+            Console.WriteLine(type.BaseTypes.ToString());
+            _writer.AddClass(
+                new Class(
+                    _file,
+                    _namespace,
+                    type.Name,
+                    getTypeModifier(type.Modifiers),
+                    type.NameToken.StartLocation.Line,
+                    type.NameToken.StartLocation.Column,
+                    getTypeProperties(type)));
+        }
+
+        private string getTypeModifier(Modifiers modifiers)
+        {
+            if (modifiersContain(modifiers, Modifiers.Public))
                 return "public";
-            if ((modifiers & Modifiers.Internal) ==  Modifiers.Internal)
+            if (modifiersContain(modifiers, Modifiers.Internal))
                 return "internal";
+            if (modifiersContain(modifiers, Modifiers.Protected))
+                return "protected";
             return "private";
         }
-		
-		private void handleField(FieldDeclaration field) {
-		}
+
+        private string getTypeProperties(TypeDeclaration type) {
+            var json = new JSONWriter();
+            var jsonBaseSection = new JSONWriter();
+            foreach (var baseType in type.BaseTypes)
+                jsonBaseSection.Append(signatureFrom(baseType), "");
+            if (type.BaseTypes.Count > 0)
+                json.AppendSection("bases", jsonBaseSection);
+            getMemberProperties(type, json);
+            return json.ToString();
+        }
+
+        private string getMemberProperties(EntityDeclaration type)
+        {
+            var json = new JSONWriter();
+            getTypeModifiers(type, json);
+            getTypeAttributes(type, json);
+            return json.ToString();
+        }
+
+        private void getMemberProperties(EntityDeclaration type, JSONWriter json)
+        {
+            getTypeModifiers(type, json);
+            getTypeAttributes(type, json);
+        }
+
+        private void getTypeModifiers(EntityDeclaration type, JSONWriter json) {
+            if (modifiersContain(type.Modifiers, Modifiers.Abstract))
+                json.Append("abstract", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Sealed))
+                json.Append("sealed", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Partial))
+                json.Append("partial", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Static))
+                json.Append("static", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Virtual))
+                json.Append("virtual", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Const))
+                json.Append("const", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Override))
+                json.Append("override", "1");
+            if (modifiersContain(type.Modifiers, Modifiers.Readonly))
+                json.Append("readonly", "1");
+        }
+
+        private void getTypeAttributes(EntityDeclaration type, JSONWriter json) {
+            if (type.Attributes.Count == 0)
+                return;
+            var attribSection = new JSONWriter();
+            foreach (var typeAttrib in type.Attributes) {
+                foreach (var attribute in typeAttrib.Attributes) {
+                    var value = "";
+                    foreach (var arg in attribute.Arguments) {
+                        if (value.Length > 0)
+                            value += ",";
+                        value += arg.ToString().Replace("\"", "");
+                    }
+                    attribSection.Append(signatureFrom(attribute.Type), value);
+                }
+            }
+            json.AppendSection("attributes", attribSection);
+        }
+
+        private bool modifiersContain(Modifiers modifiers, Modifiers modifier) {
+            return (modifiers & modifier) == modifier;
+        }
 
         private void handleMethod(MethodDeclaration method) {
-            var parameters = "";
+            var parameters = new List<Parameter>();
             foreach (var param in method.Parameters)
-                parameters += (parameters.Length == 0 ? "" : ",") + signatureFrom(param);
+                parameters.Add(new Parameter(signatureFrom(param.Type), param.Name));
+            var json = new JSONWriter();
+            getMemberProperties(method, json);
+            _writer.AddMethod(
+                new Method(
+                    _file,
+                    getMemberNamespace(),
+                    method.Name,
+                    getTypeModifier(method.Modifiers),
+                    method.NameToken.StartLocation.Line,
+                    method.NameToken.StartLocation.Column,
+                    signatureFrom(method.ReturnType),
+                    parameters,
+                    json));
 		}
-		
+
+        private string getMemberNamespace() {
+            var ns = _namespace;
+            foreach (var type in _types)
+                ns += "." + type;
+            return ns;
+        }
+
+        private void handleProperty(PropertyDeclaration property) {
+            _writer.AddField(
+                new Field(
+                    _file,
+                    getMemberNamespace(),
+                    property.Name,
+                    getTypeModifier(property.Modifiers),
+                    property.NameToken.StartLocation.Line,
+                    property.NameToken.StartLocation.Column,
+                    signatureFrom(property.ReturnType),
+                    getMemberProperties(property)));
+        }
+
 		private void handleVariableInitializer(VariableInitializer variable) {
-			var type = "";
-			if (variable.Parent.GetType() == typeof(FieldDeclaration))
-				type = signatureFrom(((FieldDeclaration)variable.Parent).ReturnType);
-			else if (variable.Parent.GetType() == typeof(VariableDeclarationStatement))
+			if (variable.Parent.GetType() == typeof(FieldDeclaration)) {
+                var field = (FieldDeclaration)variable.Parent;
+                _writer.AddField(
+                    new Field(
+                        _file,
+                        getMemberNamespace(),
+                        variable.Name,
+                        getTypeModifier(field.Modifiers),
+                        variable.NameToken.StartLocation.Line,
+                        variable.NameToken.StartLocation.Column,
+                        signatureFrom(field.ReturnType),
+                        getMemberProperties(field)));
+            }
+			/*else if (variable.Parent.GetType() == typeof(VariableDeclarationStatement))
 				type = signatureFrom(variable);
 			else
-				type = variable.Parent.GetType().ToString();
+				type = variable.Parent.GetType().ToString();*/
 		}
 
         private string signatureFrom(object expr) {

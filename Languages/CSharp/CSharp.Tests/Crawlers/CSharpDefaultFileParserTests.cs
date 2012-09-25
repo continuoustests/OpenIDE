@@ -84,6 +84,7 @@ namespace CSharp.Tests.Crawlers
             Assert.That(cls.Scope, Is.EqualTo("internal"));
 			Assert.That(cls.Line, Is.EqualTo(9));
 			Assert.That(cls.Column, Is.EqualTo(17));
+            Assert.That(cls.JSON, Is.EqualTo("{\"bases\":{\"MyClass1Base\":\"\"}}"));
 		}
 		
 		[Test]
@@ -194,7 +195,105 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(iface.Line, Is.EqualTo(54));
 			Assert.That(iface.Column, Is.EqualTo(19));
 		}
+
+        [Test]
+        public void Should_find_abstract_class()
+        {
+            var cls = _cache.Classes.Where(x => x.Name.Equals("AnAbstractClass")).FirstOrDefault();
+            Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.Signature, Is.EqualTo("MyNamespace5.AnAbstractClass"));
+            Assert.That(cls.Namespace, Is.EqualTo("MyNamespace5"));
+            Assert.That(cls.Name, Is.EqualTo("AnAbstractClass"));
+            Assert.That(cls.Scope, Is.EqualTo("private"));
+            Assert.That(cls.JSON, Is.EqualTo("{\"abstract\":\"1\"}"));
+        }
+
+        [Test]
+        public void Should_find_sealed_class()
+        {
+            var cls = _cache.Classes.Where(x => x.Name.Equals("ASealedClass")).FirstOrDefault();
+            Assert.That(cls.JSON, Is.EqualTo("{\"sealed\":\"1\",\"partial\":\"1\"}"));
+        }
+
+        [Test]
+        public void Should_find_static_class()
+        {
+            var cls = _cache.Classes.Where(x => x.Name.Equals("AStaticClass")).FirstOrDefault();
+            Assert.That(cls.JSON, Is.EqualTo("{\"static\":\"1\"}"));
+        }
+
+        [Test]
+        public void Should_find_using()
+        {
+            var usng = _cache.Usings.Where(x => x.Name.Equals("System.Core")).FirstOrDefault();
+            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.Name, Is.EqualTo("System.Core"));
+            Assert.That(usng.Line, Is.EqualTo(1));
+            Assert.That(usng.Column, Is.EqualTo(7));
+        }
 		
+        [Test]
+        public void Should_find_methods()
+        {
+            var usng = _cache.Methods.Where(x => x.Name.Equals("get")).FirstOrDefault();
+            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Name, Is.EqualTo("get"));
+            Assert.That(usng.Signature, Is.EqualTo("System.Void MyNamespace5.Program.get(System.Int32,ASealedClass)"));
+            Assert.That(usng.Scope, Is.EqualTo("public"));
+            Assert.That(usng.Line, Is.EqualTo(82));
+            Assert.That(usng.Column, Is.EqualTo(28));
+            Assert.That(
+                usng.JSON,
+                Is.EqualTo("{\"static\":\"1\",\"attributes\":{\"Category\":\"hello,15\"},\"parameters\":{\"number\":\"System.Int32\",\"cls\":\"ASealedClass\"}}"));
+        }
+
+        [Test]
+        public void Should_find_protected_methods()
+        {
+            var usng = _cache.Methods.Where(x => x.Name.Equals("doIt")).FirstOrDefault();
+            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Signature, Is.EqualTo("System.String MyNamespace5.Program.doIt()"));
+            Assert.That(usng.Scope, Is.EqualTo("protected"));
+            Assert.That(usng.JSON, Is.EqualTo("{\"virtual\":\"1\"}"));
+        }
+
+        [Test]
+        public void Should_find_properties()
+        {
+            var usng = _cache.Fields.Where(x => x.Name.Equals("MYThing")).FirstOrDefault();
+            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Name, Is.EqualTo("MYThing"));
+            Assert.That(usng.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.MYThing"));
+            Assert.That(usng.Scope, Is.EqualTo("private"));
+            Assert.That(usng.Line, Is.EqualTo(77));
+            Assert.That(usng.Column, Is.EqualTo(22));
+            Assert.That(usng.JSON, Is.EqualTo("{\"static\":\"1\"}"));
+        }
+
+        [Test]
+        public void Should_find_fields()
+        {
+            var usng = _cache.Fields.Where(x => x.Name.Equals("_field")).FirstOrDefault();
+            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Name, Is.EqualTo("_field"));
+            Assert.That(usng.Signature, Is.EqualTo("System.String MyNamespace5.Program._field"));
+            Assert.That(usng.Scope, Is.EqualTo("public"));
+            Assert.That(usng.Line, Is.EqualTo(79));
+            Assert.That(usng.Column, Is.EqualTo(23));
+            Assert.That(usng.JSON, Is.EqualTo("{\"const\":\"1\"}"));
+        }
+
+        [Test]
+        public void Should_find_class_attributes()
+        {
+            var cls = _cache.Classes.Where(x => x.Name.Equals("Program")).FirstOrDefault();
+            Assert.That(cls.JSON, Is.EqualTo("{\"attributes\":{\"TestFixture\":\"\"}}"));
+        }
+
 		private string getContent()
 		{
 			return File.ReadAllText(

@@ -4,12 +4,14 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using CSharp.Projects;
+using Mono.Cecil;
 
 namespace CSharp.Crawlers
 {
 	public class CSharpCrawler : ICrawler
 	{
 		private IOutputWriter _builder;
+        private List<string> _handledReferences = new List<string>();
 
 		public CSharpCrawler(IOutputWriter writer)
 		{
@@ -44,11 +46,35 @@ namespace CSharp.Crawlers
 		private void crawl(Project project)
 		{
 			_builder.AddProject(project);
-			var files = new ProjectReader(project.File).ReadFiles();
-			files.ForEach(x => {
+            var reader = new ProjectReader(project.File);
+            reader
+                .ReadFiles()
+                .ForEach(x => {
 					parseFile(x);
 				});
+
+            reader
+                .ReadReferences()
+                .ForEach(x => {
+                    if (!_handledReferences.Any(y => y.Equals(x))) {
+                        parseAssembly(x);
+                        _handledReferences.Add(x);
+                    }
+                });
 		}
+
+        private void parseAssembly(string x)
+        {
+            try
+			{
+                new AssemblyParser(_builder)
+                    .Parse(x);
+            }
+			catch (Exception ex)
+			{
+                parseError(x, ex);
+			}
+        }
 
 		private void parseFile(string x)
 		{
@@ -60,16 +86,21 @@ namespace CSharp.Crawlers
 			}
 			catch (Exception ex)
 			{
-				_builder.Error("Failed to parse " + x);
-				_builder.Error(ex.Message.Replace(Environment.NewLine, ""));
-				if (ex.StackTrace != null)
-				{
-					ex.StackTrace
-						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
-						.ForEach(line => _builder.Error(line));
-				}
+                parseError(x, ex);
 			}
 		}
+
+        private void parseError(string x, Exception ex)
+        {
+            _builder.Error("Failed to parse " + x);
+            _builder.Error(ex.Message.Replace(Environment.NewLine, ""));
+            if (ex.StackTrace != null)
+            {
+                ex.StackTrace
+                    .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+                    .ForEach(line => _builder.Error(line));
+            }
+        }
 	}
 					
 	class Point

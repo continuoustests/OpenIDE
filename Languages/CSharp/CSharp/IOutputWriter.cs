@@ -6,6 +6,7 @@ namespace CSharp
 {
 	public interface IOutputWriter
 	{
+        void AddUsing(Using usng);
 		void AddProject(Project project);
 		void AddFile(string file);
 		void AddNamespace(Namespace ns);
@@ -13,11 +14,17 @@ namespace CSharp
 		void AddInterface(Interface iface);
 		void AddStruct(Struct str);
 		void AddEnum(EnumType enu);
+        void AddField(Field field);
+        void AddMethod(Method method);
 		void Error(string description);
 	}
 
 	class OutputWriter : IOutputWriter
 	{
+        public void AddUsing(Using usng) {
+            writeSignature("using", usng);
+        }
+
 		public void AddProject(Project project)
 		{
             var json = "";
@@ -55,6 +62,16 @@ namespace CSharp
 		{
 			writeSignature("enum", enu, new[] { "typesearch" });
 		}
+
+        public void AddMethod(Method method)
+        {
+            writeSignature("method", method);
+        }
+
+        public void AddField(Field field)
+        {
+            writeSignature("field", field);
+        }
 
 		public void Error(string description)
 		{

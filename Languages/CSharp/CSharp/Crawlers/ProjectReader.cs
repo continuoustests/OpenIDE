@@ -16,6 +16,13 @@ namespace CSharp.Crawlers
 		{
 			_path = path;
 		}
+
+        public List<string> ReadReferences()
+        {
+            if (!readXml())
+                return new List<string>();
+            return getReferences();
+        }
 		
 		public List<string> ReadFiles()
 		{
@@ -26,6 +33,8 @@ namespace CSharp.Crawlers
 		
 		private bool readXml()
 		{
+            if (_xml != null)
+                return true;
 			_xml = new XmlDocument();
 			return tryOpen(_xml, File.ReadAllText(_path));
 		}
@@ -54,6 +63,26 @@ namespace CSharp.Crawlers
 			}
 			return files;
 		}
+
+        private List<string> getReferences()
+        {
+            var refs = new List<string>();
+            foreach (XmlNode node in _xml.SelectNodes("b:Project/b:ItemGroup/b:Reference", _nsManager))
+            {
+                var relativePath = node.Attributes["Include"];
+                if (relativePath == null)
+                    continue;
+                var reference = relativePath.InnerText;
+                var referenceFile = 
+                    new PathParser(reference.Replace('\\', Path.DirectorySeparatorChar))
+                    .ToAbsolute(Path.GetDirectoryName(_path));
+                if (File.Exists(referenceFile))
+                    refs.Add(referenceFile);
+                else
+                    refs.Add(reference);
+            }
+            return refs;
+        }
 		
 		private bool tryOpen(XmlDocument document, string xml)
 		{

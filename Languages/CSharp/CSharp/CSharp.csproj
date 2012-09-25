@@ -61,6 +61,10 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NRefactory\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -68,6 +72,9 @@
     <Reference Include="..\lib\NRefactory\ICSharpCode.NRefactory.CSharp.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Crawlers\AssemblyParser.cs" />
+    <Compile Include="Crawlers\JSONWriter.cs" />
+    <Compile Include="Crawlers\Using.cs" />
     <Compile Include="Processes\ProcessExtensions.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />

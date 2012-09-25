@@ -53,25 +53,35 @@ namespace CSharp.Tests.Crawlers
 
 	class Fake_CacheBuilder : IOutputWriter 
 	{
+        public List<Project> Projects = new List<Project>();
+        public List<Using> Usings = new List<Using>();
 		public List<string> Files = new List<string>();
 		public List<Namespace> Namespaces = new List<Namespace>();
 		public List<Class> Classes = new List<Class>();
 		public List<Interface> Interfaces = new List<Interface>();
 		public List<Struct> Structs = new List<Struct>();
 		public List<EnumType> Enums = new List<EnumType>();
+        public List<Method> Methods = new List<Method>();
+        public List<Field> Fields = new List<Field>();
 
 		public bool ProjectExists(Project project)
 		{
 			return true;
 		}
+
+        public void AddUsing(Using usng)
+        {
+            Usings.Add(usng);
+        }
 		
 		public void AddProject(Project project)
 		{
+            Projects.Add(project);
 		}
 		
 		public Project GetProject(string fullpath)
 		{
-			return null;
+			return Projects.Where(x => x.File == fullpath).FirstOrDefault();
 		}
 		
 		public bool FileExists(string file)
@@ -108,6 +118,16 @@ namespace CSharp.Tests.Crawlers
 		{
 			Enums.Add(enu);
 		}
+
+        public void AddMethod(Method method)
+        {
+            Methods.Add(method);
+        }
+
+        public void AddField(Field field)
+        {
+            Fields.Add(field);
+        }
 
 		public void Error(string description)
 		{
