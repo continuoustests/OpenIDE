@@ -151,7 +151,8 @@ func crawlFile(name string) {
 				}
 		}
 		if (len(typename) > 0) {
-			fmt.Printf("signature|%s|%s|%s||%s|%s||typesearch",
+			fmt.Printf("signature|%s|%s|%s|%s||%s|%s||typesearch",
+				packageName + parent,
 				packageName + parent + "." + typename,
 				typename,
 				typedefinition,
@@ -164,7 +165,7 @@ func crawlFile(name string) {
 
 func getPackageName(fset *token.FileSet, f *ast.File) string {
 	name := f.Name.Name
-	fmt.Printf("signature|%s|%s|package||%s|%s|",
+	fmt.Printf("signature||%s|%s|package||%s|%s|",
 		name,
 		name,
 		strconv.Itoa(fset.Position(f.Name.NamePos).Line),
