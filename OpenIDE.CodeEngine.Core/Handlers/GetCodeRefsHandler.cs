@@ -62,6 +62,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 					File = getValue(queryArgs, "file"),
 					Signature = getValue(queryArgs, "signature"),
 					Name = getValue(queryArgs, "name"),
+                    Parent = getValue(queryArgs, "parent"),
                     Custom = getValue(queryArgs, "custom")
 				};
 		}
@@ -88,6 +89,8 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 				return false;
 			if (query.Name != null && !wildcardmatch(reference.Name, query.Name))
 				return false;
+            if (query.Parent != null && !wildcardmatch(reference.Parent, query.Parent))
+				return false;
             if (query.Custom != null && !wildcardmatch(reference.JSON, query.Custom))
 				return false;
 			return true;
@@ -109,6 +112,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			public string File { get; set; }
 			public string Signature { get; set; }
 			public string Name { get; set; }
+            public string Parent { get; set; }
             public string Custom { get; set; }
 		}
 	}

@@ -56,7 +56,7 @@ namespace CSharp.Tests.Crawlers
         public List<Project> Projects = new List<Project>();
         public List<Using> Usings = new List<Using>();
 		public List<string> Files = new List<string>();
-		public List<Namespace> Namespaces = new List<Namespace>();
+		public List<Namespce> Namespaces = new List<Namespce>();
 		public List<Class> Classes = new List<Class>();
 		public List<Interface> Interfaces = new List<Interface>();
 		public List<Struct> Structs = new List<Struct>();
@@ -68,6 +68,9 @@ namespace CSharp.Tests.Crawlers
 		{
 			return true;
 		}
+
+        public void SetTypeVisibility(bool visibility) {
+        }
 
         public void AddUsing(Using usng)
         {
@@ -94,7 +97,7 @@ namespace CSharp.Tests.Crawlers
 			Files.Add(file);
 		}
 		
-		public void AddNamespace (Namespace ns)
+		public void AddNamespace (Namespce ns)
 		{
 			Namespaces.Add(ns);
 		}

@@ -71,16 +71,17 @@ namespace OpenIDE.Core.Caching
 		{
 			var reference = new CodeReference(
 				_language,
-				chunks[3],
+				chunks[4],
 				_currentFile,
 				chunks[1],
 				chunks[2],
-                chunks[4],
-				int.Parse(chunks[5]),
+                chunks[3],
+                chunks[5],
 				int.Parse(chunks[6]),
-                chunks[7]);
+				int.Parse(chunks[7]),
+                chunks[8]);
 
-			var args = getArguments(chunks, 8);
+			var args = getArguments(chunks, 9);
 			if (args.Contains("typesearch"))
 				reference.SetTypeSearch();
 

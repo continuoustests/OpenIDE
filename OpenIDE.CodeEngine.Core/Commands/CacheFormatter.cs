@@ -30,8 +30,9 @@ namespace OpenIDE.CodeEngine.Core.Commands
 
 		public string Format(ICodeReference reference)
 		{
-			return string.Format("{0}|signature|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+			return string.Format("{0}|signature|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
                 reference.Language,
+                reference.Parent,
 				reference.Signature,
 				reference.Name,
 				reference.Type,

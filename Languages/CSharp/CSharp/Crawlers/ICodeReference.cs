@@ -5,6 +5,7 @@ namespace CSharp.Crawlers
 	{
 		string Type { get; }
 		string File { get; }
+        string Namespace { get; }
 		string Signature { get; }
 		string Name { get; }
         string Scope { get; }

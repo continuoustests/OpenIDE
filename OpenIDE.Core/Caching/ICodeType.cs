@@ -6,6 +6,7 @@ namespace OpenIDE.Core.Caching
 		string Language { get; }
 		string Type { get; }
 		string File { get; }
+        string Parent { get; }
 		string Signature { get; }
 		string Name { get; }
         string Scope { get; }
@@ -22,6 +23,7 @@ namespace OpenIDE.Core.Caching
 		public string Type { get; private set; }
 		public string File { get; private set; }
 		public string Signature { get; private set; }
+        public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
@@ -33,6 +35,7 @@ namespace OpenIDE.Core.Caching
 			string language,
 			string type,
 			string file,
+            string parent,
 			string signature,
 			string name,
             string scope,
@@ -43,6 +46,7 @@ namespace OpenIDE.Core.Caching
 			Language = language;
 			Type = type;
 			File = file;
+            Parent = parent;
 			Signature = signature;
 			Name = name;
             Scope = scope;

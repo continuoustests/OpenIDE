@@ -78,7 +78,7 @@ function readDefinitions(tokenizer) {
 			var func = tokenizer();
 			var line = func.line + 1;
 			var col = func.col + 1;
-			console.log('signature|' + func.value + '|' + func.value + 
+			console.log('signature||' + func.value + '|' + func.value + 
 						'|function||' + line + '|' + col + '||typesearch');
 		} else if (token.type == "name" && token.nlb == true) {
 			name = token.value;
@@ -98,7 +98,7 @@ function readDefinitions(tokenizer) {
 				var line = token.line + 1;
 				var col = token.col - name.length;
 				if (name.substr(-10) === ".prototype") {
-					console.log('signature|' + name + '|' + name + 
+					console.log('signature||' + name + '|' + name + 
 								'|prototype||' + line + '|' + col + '||typesearch');
 				}
 			}

@@ -67,7 +67,7 @@ namespace CSharp.Crawlers
             if (id != null)
                 location = id.StartLocation;
             _writer.AddNamespace(
-                new Namespace(
+                new Namespce(
                     _file,
                     ns.Name,
                     location.Line,

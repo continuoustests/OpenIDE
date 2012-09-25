@@ -54,7 +54,7 @@ Crawl directories and/or files
 
 		[project|PROJECT-PATH|CUSTOM-JSON-INFO [|filesearch]]
 			file|FILE-PATH [|filesearch]
-				signature|SIGNATURE|NAME|TYPE|SCOPE|LINE|COLUMN|CUSTOM-JSON-INFO [|typesearch]
+				signature|PARENT|SIGNATURE|NAME|TYPE|SCOPE|LINE|COLUMN|CUSTOM-JSON-INFO [|typesearch]
 				reference|SIGNATURE|LINE|COLUMN|CUSTOM-JSON-INFO
 
 Retrieve signature from a location inside code

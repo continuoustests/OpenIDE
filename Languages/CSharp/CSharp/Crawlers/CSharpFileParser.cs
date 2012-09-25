@@ -41,7 +41,7 @@ namespace CSharp.Crawlers
 													new List<LocationHierarchyActivity>();
         private CSharpCodeNavigator _navigator;
 
-        private Namespace _currentNamespace = null;
+        private Namespce _currentNamespace = null;
 
         public ICSharpParser SetOutputWriter(IOutputWriter writer)
         {
@@ -137,7 +137,7 @@ namespace CSharp.Crawlers
         {
             suggestLocation(Location.Namespace);
             var signature = _navigator.CollectSignature();
-            var ns = new Namespace(
+            var ns = new Namespce(
                 _file,
                 signature.Text,
                 signature.Line,

@@ -1,10 +1,11 @@
 using System;
 namespace CSharp.Crawlers
 {
-	public class Namespace : ICodeReference
+	public class Namespce : ICodeReference
 	{
 		public string Type { get; private set; }
 		public string File { get; private set; }
+        public string Namespace { get { return ""; } }
 		public string Signature { get { return Name; } }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
@@ -12,7 +13,7 @@ namespace CSharp.Crawlers
 		public int Column { get; private set; }
         public string JSON { get; private set; }
 		
-		public Namespace(string file, string name, int line, int column)
+		public Namespce(string file, string name, int line, int column)
 		{
 			File = file;
 			Name = name;
