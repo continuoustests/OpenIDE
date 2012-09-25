@@ -53,6 +53,7 @@ namespace CSharp.Crawlers
 					parseFile(x);
 				});
 
+            _builder.SetTypeVisibility(false);
             reader
                 .ReadReferences()
                 .ForEach(x => {
@@ -61,6 +62,7 @@ namespace CSharp.Crawlers
                         _handledReferences.Add(x);
                     }
                 });
+            _builder.SetTypeVisibility(true);
 		}
 
         private void parseAssembly(string x)

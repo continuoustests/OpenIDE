@@ -6,10 +6,11 @@ namespace CSharp
 {
 	public interface IOutputWriter
 	{
+        void SetTypeVisibility(bool visibility);
         void AddUsing(Using usng);
 		void AddProject(Project project);
 		void AddFile(string file);
-		void AddNamespace(Namespace ns);
+		void AddNamespace(Namespce ns);
 		void AddClass(Class cls);
 		void AddInterface(Interface iface);
 		void AddStruct(Struct str);
@@ -21,6 +22,12 @@ namespace CSharp
 
 	class OutputWriter : IOutputWriter
 	{
+        private bool _visibility = true;
+
+        public void SetTypeVisibility(bool visibility) {
+            _visibility = visibility;
+        }
+
         public void AddUsing(Using usng) {
             writeSignature("using", usng);
         }
@@ -38,7 +45,7 @@ namespace CSharp
 			Console.WriteLine("file|" + file + "|filesearch");
 		}
 		
-		public void AddNamespace(Namespace ns)
+		public void AddNamespace(Namespce ns)
 		{
 			writeSignature("namespace", ns);
 		}
@@ -89,9 +96,12 @@ namespace CSharp
             if (coderef.JSON != null)
                 json = coderef.JSON;
 			var additionalArguments = "";
-			foreach (var argument in additional)
-				additionalArguments += "|" + argument;
-			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}|{6}{7}",
+            if (_visibility == true) {
+			    foreach (var argument in additional)
+				    additionalArguments += "|" + argument;
+            }
+			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}{8}",
+                coderef.Namespace,
 				coderef.Signature,
 				coderef.Name,
 				type,

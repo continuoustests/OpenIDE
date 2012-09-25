@@ -28,8 +28,8 @@ namespace OpenIDE.CodeEngine.Core.Tests
 			var lines = new string[]
 				{
 					"file|/some/file.cs",
-					"signature|NS.MyClass|MyClass|class|private|2|3|",
-					"signature|NS.MyOtherClass|MyOtherClass|class|public|54|6|{\"property\":\"value\"}",
+					"signature|NS|NS.MyClass|MyClass|class|private|2|3|",
+					"signature|NS|NS.MyOtherClass|MyOtherClass|class|public|54|6|{\"property\":\"value\"}",
 					"reference|NS.MyOtherClass|63|18"
 				};
 			
@@ -113,7 +113,7 @@ namespace OpenIDE.CodeEngine.Core.Tests
 			var lines = new string[]
 				{
 					"file|/some/file.cs",
-					"signature|NS.MyClass|MyClass|class|private|12|2|3||typesearch"
+					"signature|NS|NS.MyClass|MyClass|class|private|12|2|3||typesearch"
 				};
 			
 			lines.ToList()
