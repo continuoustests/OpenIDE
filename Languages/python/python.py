@@ -11,7 +11,7 @@ class AstVisitor(ast.NodeVisitor):
 			  str(node.col_offset + len('class ') + 1) + '||typesearch'
 		for item in node.body:
 			if item.name.startswith('__') == False:
-				print 'signature||' + node.name + '.' + item.name + '|' + item.name + \
+				print 'signature|' + node.name + '|' + node.name + '.' + item.name + '|' + item.name + \
 					  '|classmethod|public|' + str(item.lineno) + '|' + \
 					  str(item.col_offset + len('def ') + 1) + '|'
 
