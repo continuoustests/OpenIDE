@@ -15,7 +15,7 @@ namespace CSharp.Commands
 			var output = new OutputWriter();
 			if (args.Length != 1)
 			{
-				output.Error("crawl-source requires one parameters which is path to the " +
+                output.WriteError("crawl-source requires one parameters which is path to the " +
 							 "file containing files/directories to crawl");
 				return;
 			}

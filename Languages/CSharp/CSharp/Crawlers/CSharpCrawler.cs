@@ -23,15 +23,23 @@ namespace CSharp.Crawlers
 			List<Project> projects;
 			if (!options.IsSolutionFile && options.File != null)
 			{
-				parseFile(options.File);
+				parseFile(new FileRef(options.File, null));
 				return;
 			}
 			else if (options.IsSolutionFile)
 				projects = new SolutionReader(options.File).ReadProjects();
 			else
 				projects = getProjects(options.Directory);
+            loadmscorlib();
 			projects.ForEach(x => crawl(x));	
 		}
+
+        private void loadmscorlib()
+        {
+            var asm = "mscorlib";
+            parseAssembly(asm);
+            _handledReferences.Add(asm);
+        }
 		
 		private List<Project> getProjects(string folder)
 		{
@@ -45,24 +53,27 @@ namespace CSharp.Crawlers
 		
 		private void crawl(Project project)
 		{
-			_builder.AddProject(project);
             var reader = new ProjectReader(project.File);
-            reader
-                .ReadFiles()
-                .ForEach(x => {
-					parseFile(x);
-				});
-
+            // Get base assemblies first to better be equiped to locate variable types
             _builder.SetTypeVisibility(false);
             reader
                 .ReadReferences()
-                .ForEach(x => {
-                    if (!_handledReferences.Any(y => y.Equals(x))) {
+                .ForEach(x =>
+                {
+                    if (!_handledReferences.Any(y => y.Equals(x)))
+                    {
                         parseAssembly(x);
                         _handledReferences.Add(x);
                     }
                 });
             _builder.SetTypeVisibility(true);
+
+            _builder.WriteProject(project);
+            reader
+                .ReadFiles()
+                .ForEach(x => {
+					parseFile(new FileRef(x, project));
+				});
 		}
 
         private void parseAssembly(string x)
@@ -78,34 +89,34 @@ namespace CSharp.Crawlers
 			}
         }
 
-		private void parseFile(string x)
+		private void parseFile(FileRef x)
 		{
 			try
 			{
 				new NRefactoryParser()
 					.SetOutputWriter(_builder)
-					.ParseFile(x, () => { return File.ReadAllText(x); });
+					.ParseFile(x, () => { return File.ReadAllText(x.File); });
 			}
 			catch (Exception ex)
 			{
-                parseError(x, ex);
+                parseError(x.File, ex);
 			}
 		}
 
         private void parseError(string x, Exception ex)
         {
-            _builder.Error("Failed to parse " + x);
-            _builder.Error(ex.Message.Replace(Environment.NewLine, ""));
+            _builder.WriteError("Failed to parse " + x);
+            _builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
             if (ex.StackTrace != null)
             {
                 ex.StackTrace
                     .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
-                    .ForEach(line => _builder.Error(line));
+                    .ForEach(line => _builder.WriteError(line));
             }
         }
 	}
 					
-	class Point
+	public class Point
 	{
 		public int Line { get; set; }
 		public int Column { get; set; }

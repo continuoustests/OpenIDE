@@ -2,6 +2,7 @@ using System;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CSharp.FileSystem;
 using System.Reflection;
 using System.Threading;
@@ -28,10 +29,11 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("CSharp.Tests.Crawlers"));
 			Assert.That(cache.Namespaces[0].Line, Is.EqualTo(8));
 			Assert.That(cache.Namespaces[0].Column, Is.EqualTo(11));
-            Assert.That(cache.Classes[0].Name, Is.EqualTo("AssemblyParserTests"));
-            Assert.That(cache.Classes[0].Signature, Is.EqualTo("CSharp.Tests.Crawlers.AssemblyParserTests"));
-			Assert.That(cache.Classes[0].Line, Is.EqualTo(11));
-			Assert.That(cache.Classes[0].Column, Is.EqualTo(18));
+            var cls = cache.Classes.FirstOrDefault(x => x.Name == "AssemblyParserTests");
+            Assert.That(cls, Is.Not.Null);
+            Assert.That(cls.Signature, Is.EqualTo("CSharp.Tests.Crawlers.AssemblyParserTests"));
+            Assert.That(cls.Line, Is.EqualTo(11));
+            Assert.That(cls.Column, Is.EqualTo(18));
 			
 			Assert.That(cache.Classes.Exists(x => x.Name.Equals("Fake_CacheBuilder")), Is.True);
 		}

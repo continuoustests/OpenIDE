@@ -74,6 +74,9 @@
   <ItemGroup>
     <Compile Include="Crawlers\AssemblyParser.cs" />
     <Compile Include="Crawlers\JSONWriter.cs" />
+    <Compile Include="Crawlers\TypeResolvers\ICacheReader.cs" />
+    <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReader.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeResolver.cs" />
     <Compile Include="Crawlers\Using.cs" />
     <Compile Include="Processes\ProcessExtensions.cs" />
     <Compile Include="Main.cs" />

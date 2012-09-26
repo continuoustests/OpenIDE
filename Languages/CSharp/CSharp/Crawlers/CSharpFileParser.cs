@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CSharp.Projects;
 
 namespace CSharp.Crawlers
 {
     public interface ICSharpParser
     {
         ICSharpParser SetOutputWriter(IOutputWriter writer);
-        void ParseFile(string file, Func<string> getContent);
+        void ParseFile(FileRef file, Func<string> getContent);
     }
 
 	enum Location
@@ -31,7 +32,7 @@ namespace CSharp.Crawlers
     public class CSharpFileParser : ICSharpParser
     {
         private object _padLock = new object();
-        private string _file;
+        private FileRef _file;
         private string _content;
         private Location _suggestedLocation = Location.Unknown;
         private Location _currentLocation;
@@ -49,11 +50,11 @@ namespace CSharp.Crawlers
             return this;
         }
 
-        public void ParseFile(string file, Func<string> getContent)
+        public void ParseFile(FileRef file, Func<string> getContent)
         {
             lock (_padLock)
             {
-                _builder.AddFile(file);
+                _builder.WriteFile(file);
                 _file = file;
                 _content = getContent();
                 _currentLocation = Location.Root;
@@ -142,7 +143,7 @@ namespace CSharp.Crawlers
                 signature.Text,
                 signature.Line,
                 signature.Column + 1);
-            _builder.AddNamespace(ns);
+            _builder.WriteNamespace(ns);
             _currentNamespace = ns;
         }
 
@@ -153,7 +154,7 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddClass(
+            _builder.WriteClass(
                 new Class(
                     _file,
                     ns,
@@ -171,7 +172,7 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddInterface(
+            _builder.WriteInterface(
                 new Interface(
                     _file,
                     ns,
@@ -189,7 +190,7 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddStruct(
+            _builder.WriteStruct(
                 new Struct(
                     _file,
                     ns,
@@ -207,7 +208,7 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddEnum(
+            _builder.WriteEnum(
                 new EnumType(
                     _file,
                     ns,

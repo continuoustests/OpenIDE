@@ -4,6 +4,7 @@ using System.Reflection;
 using System.IO;
 using System.Linq;
 using CSharp.Crawlers;
+using CSharp.Projects;
 
 namespace CSharp.Tests.Crawlers
 {
@@ -20,14 +21,15 @@ namespace CSharp.Tests.Crawlers
 			_parser = new NRefactoryParser()
 			//_parser = new CSharpFileParser()
 				.SetOutputWriter(_cache);
-			_parser.ParseFile("file1", () => { return getContent(); });
+			_parser.ParseFile(new FileRef("file1", null), 
+                () => { return getContent(); });
 		}
 		
 		[Test]
 		public void Should_find_file()
 		{
 			Assert.That(_cache.Files.Count, Is.EqualTo(1));
-			Assert.That(_cache.Files[0], Is.EqualTo("file1"));
+            Assert.That(_cache.Files[0].File, Is.EqualTo("file1"));
 		}
 		
 		[Test]
@@ -37,12 +39,12 @@ namespace CSharp.Tests.Crawlers
             _parser = new NRefactoryParser()
 			//_parser = new CSharpFileParser()
 				.SetOutputWriter(cache);
-			_parser.ParseFile("TestFile", () =>
+			_parser.ParseFile(new FileRef("TestFile", null), () =>
 				{
 					return "namespace MyFirstNS {}";
 				});
 			var ns = cache.Namespaces.ElementAt(0);
-			Assert.That(ns.File, Is.EqualTo("TestFile"));
+            Assert.That(ns.File.File, Is.EqualTo("TestFile"));
 			Assert.That(ns.Signature, Is.EqualTo("MyFirstNS"));
 			Assert.That(ns.Name, Is.EqualTo("MyFirstNS"));
 			Assert.That(ns.Line, Is.EqualTo(1));
@@ -53,7 +55,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_namespace()
 		{
 			var ns = _cache.Namespaces.Where(x => x.Name.Equals("MyNamespace1")).FirstOrDefault();
-			Assert.That(ns.File, Is.EqualTo("file1"));
+            Assert.That(ns.File.File, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace1"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace1"));
 			Assert.That(ns.Line, Is.EqualTo(3));
@@ -64,7 +66,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_class()
 		{
 			var cls = _cache.Classes.Where(x => x.Name.Equals("AVerySimpleClass")).FirstOrDefault();
-			Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.AVerySimpleClass"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
@@ -77,7 +79,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_inherited_class()
 		{
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass1")).FirstOrDefault();
-			Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.MyClass1"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass1"));
@@ -91,7 +93,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_multiline_namespace()
 		{
 			var ns = _cache.Namespaces.Where(x => x.Name.Equals("MyNamespace2")).FirstOrDefault();
-			Assert.That(ns.File, Is.EqualTo("file1"));
+            Assert.That(ns.File.File, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace2"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace2"));
 			Assert.That(ns.Line, Is.EqualTo(15));
@@ -102,7 +104,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_multiline_classes()
 		{
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass2")).FirstOrDefault();
-			Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace2.MyClass2"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace2"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass2"));
@@ -115,7 +117,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_single_line_namespace()
 		{
 			var ns = _cache.Namespaces.Where(x => x.Name.Equals("MyNamespace3")).FirstOrDefault();
-			Assert.That(ns.File, Is.EqualTo("file1"));
+            Assert.That(ns.File.File, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace3"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace3"));
 			Assert.That(ns.Line, Is.EqualTo(24));
@@ -126,7 +128,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_single_line_classes()
 		{
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass3")).FirstOrDefault();
-			Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace3.MyClass3"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace3"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass3"));
@@ -138,7 +140,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_bizarro_namespace()
 		{
 			var ns = _cache.Namespaces.Where(x => x.Name.Equals("MyNamespace4")).FirstOrDefault();
-			Assert.That(ns.File, Is.EqualTo("file1"));
+            Assert.That(ns.File.File, Is.EqualTo("file1"));
 			Assert.That(ns.Signature, Is.EqualTo("MyNamespace4"));
 			Assert.That(ns.Name, Is.EqualTo("MyNamespace4"));
 			Assert.That(ns.Line, Is.EqualTo(30));
@@ -149,7 +151,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_bizarro_classes()
 		{
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass4")).FirstOrDefault();
-			Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace4.MyClass4"));
 			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace4"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass4"));
@@ -161,7 +163,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_struct()
 		{
 			var str = _cache.Structs.Where(x => x.Name.Equals("MyStruct1")).FirstOrDefault();
-			Assert.That(str.File, Is.EqualTo("file1"));
+			Assert.That(str.File.File, Is.EqualTo("file1"));
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyStruct1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyStruct1"));
@@ -174,7 +176,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_enum()
 		{
 			var str = _cache.Enums.Where(x => x.Name.Equals("MyEnum1")).FirstOrDefault();
-			Assert.That(str.File, Is.EqualTo("file1"));
+            Assert.That(str.File.File, Is.EqualTo("file1"));
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyEnum1"));
 			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyEnum1"));
@@ -187,7 +189,7 @@ namespace CSharp.Tests.Crawlers
 		public void Should_find_interface()
 		{
 			var iface = _cache.Interfaces.Where(x => x.Name.Equals("MyInterface1")).FirstOrDefault();
-			Assert.That(iface.File, Is.EqualTo("file1"));
+            Assert.That(iface.File.File, Is.EqualTo("file1"));
 			Assert.That(iface.Signature, Is.EqualTo("MyNamespace5.MyInterface1"));
 			Assert.That(iface.Namespace, Is.EqualTo("MyNamespace5"));
 			Assert.That(iface.Name, Is.EqualTo("MyInterface1"));
@@ -200,7 +202,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_abstract_class()
         {
             var cls = _cache.Classes.Where(x => x.Name.Equals("AnAbstractClass")).FirstOrDefault();
-            Assert.That(cls.File, Is.EqualTo("file1"));
+            Assert.That(cls.File.File, Is.EqualTo("file1"));
             Assert.That(cls.Signature, Is.EqualTo("MyNamespace5.AnAbstractClass"));
             Assert.That(cls.Namespace, Is.EqualTo("MyNamespace5"));
             Assert.That(cls.Name, Is.EqualTo("AnAbstractClass"));
@@ -226,7 +228,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_using()
         {
             var usng = _cache.Usings.Where(x => x.Name.Equals("System.Core")).FirstOrDefault();
-            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.File.File, Is.EqualTo("file1"));
             Assert.That(usng.Name, Is.EqualTo("System.Core"));
             Assert.That(usng.Line, Is.EqualTo(1));
             Assert.That(usng.Column, Is.EqualTo(7));
@@ -236,7 +238,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_methods()
         {
             var usng = _cache.Methods.Where(x => x.Name.Equals("get")).FirstOrDefault();
-            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.File.File, Is.EqualTo("file1"));
             Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Name, Is.EqualTo("get"));
             Assert.That(usng.Signature, Is.EqualTo("System.Void MyNamespace5.Program.get(System.Int32,ASealedClass)"));
@@ -252,7 +254,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_protected_methods()
         {
             var usng = _cache.Methods.Where(x => x.Name.Equals("doIt")).FirstOrDefault();
-            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.File.File, Is.EqualTo("file1"));
             Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Signature, Is.EqualTo("System.String MyNamespace5.Program.doIt()"));
             Assert.That(usng.Scope, Is.EqualTo("protected"));
@@ -263,7 +265,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_properties()
         {
             var usng = _cache.Fields.Where(x => x.Name.Equals("MYThing")).FirstOrDefault();
-            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.File.File, Is.EqualTo("file1"));
             Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Name, Is.EqualTo("MYThing"));
             Assert.That(usng.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.MYThing"));
@@ -277,7 +279,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_fields()
         {
             var usng = _cache.Fields.Where(x => x.Name.Equals("_field")).FirstOrDefault();
-            Assert.That(usng.File, Is.EqualTo("file1"));
+            Assert.That(usng.File.File, Is.EqualTo("file1"));
             Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Name, Is.EqualTo("_field"));
             Assert.That(usng.Signature, Is.EqualTo("System.String MyNamespace5.Program._field"));

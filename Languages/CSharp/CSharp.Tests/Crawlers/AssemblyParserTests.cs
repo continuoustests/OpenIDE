@@ -21,9 +21,9 @@ namespace CSharp.Tests.Crawlers
 
         [Test]
         public void Can_load_types_from_gac_assembly() {
-            _parser.Parse("System.Configuration");
+            _parser.Parse("mscorlib");
             Assert.That(
-                _cache.Classes.FirstOrDefault(x => x.Name == "ConfigurationElement"),
+                _cache.Classes.FirstOrDefault(x => x.Name == "List`1"),
                 Is.Not.Null);
         }
     }

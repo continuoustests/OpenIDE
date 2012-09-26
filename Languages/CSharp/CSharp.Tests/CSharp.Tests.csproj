@@ -49,8 +49,10 @@
     <Compile Include="Crawlers\SolutionReaderTests.cs" />
     <Compile Include="Commands\TemplateDefinitionParserTests.cs" />
     <Compile Include="Commands\CommandDispatcherTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReaderTests.cs" />
     <Compile Include="Files\ComplieFileTests.cs" />
     <Compile Include="FileSystem\PathExtensionsTests.cs" />
+    <Compile Include="OutputWriterTests.cs" />
     <Compile Include="Projects\Appenders\VS2010FileAppenderTests.cs" />
     <Compile Include="Projects\Readers\DefaultReaderTests.cs" />
     <Compile Include="Projects\Removers\DefaultRemoverTests.cs" />
