@@ -6,7 +6,6 @@ namespace OpenIDE.Core.Caching
 	{
 		string File { get; }
 		string Signature { get; }
-		int Offset { get; }
 		int Line { get; }
 		int Column { get; }
 	}
@@ -15,20 +14,17 @@ namespace OpenIDE.Core.Caching
 	{
 		public string File { get; private set; }
 		public string Signature { get; private set; }
-		public int Offset { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
 		public SignatureReference(
 			string file,
 			string signature,
-			int offset,
 			int line,
 			int column)
 		{
 			File = file;
 			Signature = signature;
-			Offset = offset;
 			Line = line;
 			Column = column;
 		}

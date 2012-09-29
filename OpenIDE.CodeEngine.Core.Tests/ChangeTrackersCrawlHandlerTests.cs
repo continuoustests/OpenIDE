@@ -28,9 +28,9 @@ namespace OpenIDE.CodeEngine.Core.Tests
 			var lines = new string[]
 				{
 					"file|/some/file.cs",
-					"signature|NS.MyClass|MyClass|class|12|2|3",
-					"signature|NS.MyOtherClass|MyOtherClass|class|104|54|6",
-					"reference|NS.MyOtherClass|167|63|18"
+					"signature|NS.MyClass|MyClass|class|private|2|3|",
+					"signature|NS.MyOtherClass|MyOtherClass|class|public|54|6|{\"property\":\"value\"}",
+					"reference|NS.MyOtherClass|63|18"
 				};
 			
 			lines.ToList()
@@ -43,20 +43,21 @@ namespace OpenIDE.CodeEngine.Core.Tests
 			Assert.That(_cache.References[0].File, Is.EqualTo("/some/file.cs"));
 			Assert.That(_cache.References[0].Signature, Is.EqualTo("NS.MyClass"));
 			Assert.That(_cache.References[0].Name, Is.EqualTo("MyClass"));
-			Assert.That(_cache.References[0].Offset, Is.EqualTo(12));
+            Assert.That(_cache.References[0].Scope, Is.EqualTo("private"));
 			Assert.That(_cache.References[0].Line, Is.EqualTo(2));
 			Assert.That(_cache.References[0].Column, Is.EqualTo(3));
+            Assert.That(_cache.References[0].JSON, Is.EqualTo(""));
 
 			Assert.That(_cache.References[1].Type, Is.EqualTo("class"));
 			Assert.That(_cache.References[1].File, Is.EqualTo("/some/file.cs"));
 			Assert.That(_cache.References[1].Signature, Is.EqualTo("NS.MyOtherClass"));
 			Assert.That(_cache.References[1].Name, Is.EqualTo("MyOtherClass"));
-			Assert.That(_cache.References[1].Offset, Is.EqualTo(104));
+            Assert.That(_cache.References[1].Scope, Is.EqualTo("public"));
 			Assert.That(_cache.References[1].Line, Is.EqualTo(54));
 			Assert.That(_cache.References[1].Column, Is.EqualTo(6));
+            Assert.That(_cache.References[1].JSON, Is.EqualTo("{\"property\":\"value\"}"));
 
 			Assert.That(_cache.SignatureReferences[0].Signature, Is.EqualTo("NS.MyOtherClass"));
-			Assert.That(_cache.SignatureReferences[0].Offset, Is.EqualTo(167));
 			Assert.That(_cache.SignatureReferences[0].Line, Is.EqualTo(63));
 			Assert.That(_cache.SignatureReferences[0].Column, Is.EqualTo(18));
 		}
@@ -66,17 +67,18 @@ namespace OpenIDE.CodeEngine.Core.Tests
 		{
 			var lines = new string[]
 				{
-					"project|/some/project.csproj",
+					"project|/some/project.csproj|f",
 					"file|/some/file.cs"
 				};
 			
 			lines.ToList()
 				.ForEach(x => _crawlHandler.Handle(x));
 
-			Assert.That(_cache.Projects[0].File, Is.EqualTo("/some/project.csproj"));		
+			Assert.That(_cache.Projects[0].File, Is.EqualTo("/some/project.csproj"));
+            Assert.That(_cache.Projects[0].JSON, Is.EqualTo("f"));
 
 			Assert.That(_cache.Files[0].File, Is.EqualTo("/some/file.cs"));		
-			Assert.That(_cache.Files[0].Project, Is.EqualTo("/some/project.csproj"));		
+			Assert.That(_cache.Files[0].Project, Is.EqualTo("/some/project.csproj"));
 		}
 
 		[Test]
@@ -90,7 +92,7 @@ namespace OpenIDE.CodeEngine.Core.Tests
 		{
 			var lines = new string[]
 				{
-					"project|/some/project.csproj|filesearch",
+					"project|/some/project.csproj||filesearch",
 					"file|/some/file.cs|filesearch"
 				};
 			
@@ -111,7 +113,7 @@ namespace OpenIDE.CodeEngine.Core.Tests
 			var lines = new string[]
 				{
 					"file|/some/file.cs",
-					"signature|NS.MyClass|MyClass|class|12|2|3|typesearch"
+					"signature|NS.MyClass|MyClass|class|private|12|2|3||typesearch"
 				};
 			
 			lines.ToList()

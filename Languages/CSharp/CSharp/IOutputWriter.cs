@@ -20,7 +20,10 @@ namespace CSharp
 	{
 		public void AddProject(Project project)
 		{
-			Console.WriteLine("project|" + project.File + "|filesearch");
+            var json = "";
+            if (project.JSON != null)
+                json = project.JSON;
+			Console.WriteLine("project|" + project.File + "|" + project.JSON + "|filesearch");
 		}
 
 		public void AddFile(string file)
@@ -65,16 +68,20 @@ namespace CSharp
 
 		private void writeSignature(string type, ICodeReference coderef, string[] additional)
 		{
+            var json = "";
+            if (coderef.JSON != null)
+                json = coderef.JSON;
 			var additionalArguments = "";
 			foreach (var argument in additional)
 				additionalArguments += "|" + argument;
-			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}{6}",
+			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}|{6}{7}",
 				coderef.Signature,
 				coderef.Name,
 				type,
-				coderef.Offset,
+                coderef.Scope,
 				coderef.Line,
 				coderef.Column,
+                json,
 				additionalArguments);
 		}
 	}

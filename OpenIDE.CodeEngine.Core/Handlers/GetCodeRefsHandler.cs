@@ -57,6 +57,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 				return null;
 			return new Query()
 				{
+                    Language = getValue(queryArgs, "language"),
 					Type = getValue(queryArgs, "type"),
 					File = getValue(queryArgs, "file"),
 					Signature = getValue(queryArgs, "signature"),
@@ -76,6 +77,8 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 		{
 			if (query == null)
 				return true;
+            if (query.Language != null &&  !wildcardmatch(reference.Language, query.Language))
+                return false;
 			if (query.Type != null && !wildcardmatch(reference.Type, query.Type))
 				return false;
 			if (query.File != null && !wildcardmatch(reference.File, query.File))
@@ -98,6 +101,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 
 		class Query
 		{
+            public string Language { get; set; }
 			public string Type { get; set; }
 			public string File { get; set; }
 			public string Signature { get; set; }

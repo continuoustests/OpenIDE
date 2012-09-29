@@ -8,9 +8,10 @@ namespace OpenIDE.Core.Caching
 		string File { get; }
 		string Signature { get; }
 		string Name { get; }
-		int Offset { get; }
+        string Scope { get; }
 		int Line { get; }
 		int Column { get; }
+        string JSON { get; }
 
 		bool TypeSearch { get; }
 	}
@@ -22,9 +23,10 @@ namespace OpenIDE.Core.Caching
 		public string File { get; private set; }
 		public string Signature { get; private set; }
 		public string Name { get; private set; }
-		public int Offset { get; private set; }
+        public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+        public string JSON { get; private set; }
 		public bool TypeSearch { get; private set; }
 
 		public CodeReference(
@@ -33,18 +35,20 @@ namespace OpenIDE.Core.Caching
 			string file,
 			string signature,
 			string name,
-			int offset,
+            string scope,
 			int line,
-			int column)
+			int column,
+            string json)
 		{
 			Language = language;
 			Type = type;
 			File = file;
 			Signature = signature;
 			Name = name;
-			Offset = offset;
+            Scope = scope;
 			Line = line;
 			Column = column;
+            JSON = json;
 		}
 
 		public CodeReference SetTypeSearch()

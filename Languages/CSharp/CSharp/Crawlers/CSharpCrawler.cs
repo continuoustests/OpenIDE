@@ -54,7 +54,9 @@ namespace CSharp.Crawlers
 		{
 			try
 			{
-				new CSharpFileParser(_builder).ParseFile(x, () => { return File.ReadAllText(x); });
+				new NRefactoryParser()
+					.SetOutputWriter(_builder)
+					.ParseFile(x, () => { return File.ReadAllText(x); });
 			}
 			catch (Exception ex)
 			{
@@ -72,13 +74,11 @@ namespace CSharp.Crawlers
 					
 	class Point
 	{
-		public int Offset { get; set; }
 		public int Line { get; set; }
 		public int Column { get; set; }
 						
-		public Point(int offset, int line, int column)
+		public Point(int line, int column)
 		{
-			Offset = offset;
 			Line  = line;
 			Column = column;
 		}
@@ -90,11 +90,11 @@ namespace CSharp.Crawlers
 		public Point Start { get; private set; }
 		public Point End { get; private set; }
 		
-		public SearchPoint(string pattern, int startOffset, int startLine, int startColumn, int endOffset, int endLine, int endColumn)
+		public SearchPoint(string pattern, int startLine, int startColumn, int endLine, int endColumn)
 		{
 			Pattern = pattern;
-			Start = new Point(startOffset, startLine, startColumn);
-			End = new Point(endOffset, endLine, endColumn);
+			Start = new Point(startLine, startColumn);
+			End = new Point(endLine, endColumn);
 		}
 	}
 }

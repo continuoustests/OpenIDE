@@ -20,6 +20,7 @@ namespace CSharp.Projects
 		public string File { get; private set; }
 		public object Content { get; private set; }
 		public bool IsModified { get; private set; }
+        public string JSON { get; private set; }
 		
 		public ProjectSettings Settings { get; private set; }
 		

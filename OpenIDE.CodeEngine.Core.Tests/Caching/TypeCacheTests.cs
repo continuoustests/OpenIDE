@@ -43,7 +43,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.Caching
         public void When_searching_for_a_project_it_will_return()
         {
             var cache = new TypeCache();
-            cache.Add(new Project(to("/Some/Path/Project1.cs")).SetFileSearch());
+            cache.Add(new Project(to("/Some/Path/Project1.cs"), "").SetFileSearch());
             cache.Add(toFile("/Some/Path/File2.cs").SetFileSearch());
 
             var verifier = new ResultVerifier(cache.FindFiles("Proj"));
@@ -55,7 +55,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.Caching
 		public void When_not_set_as_file_search_it_will_not_find_it()
 		{
 			var cache = new TypeCache();
-            cache.Add(new Project(to("/Some/Path/Project1.cs")));
+            cache.Add(new Project(to("/Some/Path/Project1.cs"), ""));
             cache.Add(toFile("/Some/Path/File2.cs"));
 
             var verifier = new ResultVerifier(cache.FindFiles("Proj"));

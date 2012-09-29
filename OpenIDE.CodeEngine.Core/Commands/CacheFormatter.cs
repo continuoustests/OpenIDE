@@ -8,8 +8,8 @@ namespace OpenIDE.CodeEngine.Core.Commands
 	{
 		public string Format(Project project)
 		{
-			return string.Format("project|{0}",
-				project.File);
+			return string.Format("project|{0}|{1}",
+				project.File, project.JSON);
 		}
 
 		public string FormatProject(string file)
@@ -30,20 +30,21 @@ namespace OpenIDE.CodeEngine.Core.Commands
 
 		public string Format(ICodeReference reference)
 		{
-			return string.Format("signature|{0}|{1}|{2}|{3}|{4}|{5}",
+			return string.Format("{0}|signature|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                reference.Language,
 				reference.Signature,
 				reference.Name,
 				reference.Type,
-				reference.Offset,
+                reference.Scope,
 				reference.Line,
-				reference.Column);
+				reference.Column,
+                reference.JSON);
 		}
 		
 		public string Format(ISignatureReference reference)
 		{
-			return string.Format("reference|{0}|{1}|{2}|{3}",
+			return string.Format("reference|{0}|{1}|{2}",
 				reference.Signature,
-				reference.Offset,
 				reference.Line,
 				reference.Column);
 		}

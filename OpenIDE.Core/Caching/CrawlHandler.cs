@@ -50,8 +50,8 @@ namespace OpenIDE.Core.Caching
 		private void handleProject(string[] chunks)
 		{
 			_currentProject = chunks[1];
-			var project = new Project(_currentProject);
-			var args = getArguments(chunks, 2);
+			var project = new Project(_currentProject, chunks[2]);
+			var args = getArguments(chunks, 3);
 			if (args.Contains("filesearch"))
 				project.SetFileSearch();
 			_builder.Add(project);
@@ -75,11 +75,12 @@ namespace OpenIDE.Core.Caching
 				_currentFile,
 				chunks[1],
 				chunks[2],
-				int.Parse(chunks[4]),
+                chunks[4],
 				int.Parse(chunks[5]),
-				int.Parse(chunks[6]));
+				int.Parse(chunks[6]),
+                chunks[7]);
 
-			var args = getArguments(chunks, 7);
+			var args = getArguments(chunks, 8);
 			if (args.Contains("typesearch"))
 				reference.SetTypeSearch();
 
@@ -92,8 +93,7 @@ namespace OpenIDE.Core.Caching
 				_currentFile,
 				chunks[1],
 				int.Parse(chunks[2]),
-				int.Parse(chunks[3]),
-				int.Parse(chunks[4])));
+				int.Parse(chunks[3])));
 		}
 
 		private List<string> getArguments(string[] args, int fixNumber)

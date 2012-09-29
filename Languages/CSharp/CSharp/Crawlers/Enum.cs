@@ -8,18 +8,20 @@ namespace CSharp.Crawlers
 		public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
-		public int Offset { get; private set; }
+        public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+        public string JSON { get; private set; }
 		
-		public EnumType(string file, string ns, string name, int offset, int line, int column)
+		public EnumType(string file, string ns, string name, string scope, int line, int column, string json)
 		{
 			File = file;
 			Namespace = ns;
 			Name = name;
-			Offset = offset;
+            Scope = scope;
 			Line = line;
 			Column = column;
+            JSON = json;
 		}
 	}
 }
