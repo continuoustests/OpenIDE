@@ -49,8 +49,8 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
-		private const string DEFAULT_LANGUAGE = "--default-language=";
-		private const string ENABLED_LANGUAGES = "--supported-languages";
+		private const string DEFAULT_LANGUAGE = "--default.language=";
+		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
 		private string _path;
 		private ICommandHandler[] _handlers;

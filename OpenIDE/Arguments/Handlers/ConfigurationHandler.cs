@@ -18,7 +18,9 @@ namespace OpenIDE.Arguments.Handlers
 					"Writes a configuration setting in the current path (configs " +
 					"are only read from root folder)");
 				usage.Add("init", "Initializes a configuration point");
-				usage.Add("read", "Prints closest configuration");
+				var read = usage.Add("read", "Prints closest configuration");
+				read.Add("cfgpoint", "Location of nearest configuration file");
+				read.Add("SETTING_NAME", "The name of the setting to print the value of");
 				var setting = usage.Add("SETTING", "The statement to write to the config");
 				setting.Add("[--global]", "Forces configuration command to be directed towards global config");
 				setting.Add("[-g]", "Short version of --global");
@@ -42,7 +44,7 @@ namespace OpenIDE.Arguments.Handlers
 			if (arguments[0] == "init")
 				initializingConfiguration(path);
 			else if (arguments[0] == "read")
-				printClosestConfiguration(path);
+				printClosestConfiguration(path, arguments);
 			else
 				updateConfiguration(path, arguments);
 		}
@@ -90,18 +92,35 @@ namespace OpenIDE.Arguments.Handlers
 			return Directory.Exists(file);
 		}
 
-		private void printClosestConfiguration(string path)
+		private void printClosestConfiguration(string path, string[] arguments)
 		{
 			var file = new Configuration(path, true).ConfigurationFile;
 			if (!File.Exists(file))
 				return;
-			Console.WriteLine("Configuration file: {0}", file);
-			Console.WriteLine("");
+			string pattern =  null;
+			if (arguments.Length == 2)
+				pattern = arguments[1];
+			if (pattern == null) {
+				Console.WriteLine("Configuration file: {0}", file);
+				Console.WriteLine("");
+				File.ReadAllLines(file).ToList()
+					.ForEach(x => {
+							Console.WriteLine("\t" + x);
+						});
+				return;
+			}
+			if (pattern == "cfgpoint") {
+				Console.Write(file);
+				return;
+			}
 			File.ReadAllLines(file).ToList()
-				.ForEach(x =>
-					{
-						Console.WriteLine("\t" + x);
-					});
+				.ForEach(x => {
+					var s = x.Replace(" ", "").Replace("\t", "");
+					if (x.StartsWith(pattern + "=")) {
+						var equals = x.IndexOf("=") + 1;
+						Console.Write(x.Substring(equals, x.Length - equals));
+					}
+				});
 		}
 		
 		private CommandArguments parseArguments(string[] arguments)

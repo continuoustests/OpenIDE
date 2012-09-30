@@ -18,7 +18,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Initializes and sets up a configuration point for OpenIDE");
-				usage.Add("[LANGUAGES]", "Enabled languages for this config point (C#,py)");
+				usage.Add("[LANGUAGES]", "Enabled languages for this config point using the first language as default language (C#,py)");
 				usage.Add("[all]", "Initialize with all languages");
 				return usage;
 			}
@@ -31,20 +31,23 @@ namespace OpenIDE.Arguments.Handlers
 			try {
 				_configHandler.Execute(new[] { "init" });
 				if (arguments.Length == 0) {
-					_configHandler.Execute(new[] { "enabled-languages=" });
+					_configHandler.Execute(new[] { "enabled.languages=" });
 					return;
 				}
 				if (arguments[0] == "all")
 					return;
 
 				var languages = "";
+				var firstLanguage = "";
 				foreach (var lang in arguments[0].Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)) {
-					if (languages == "")
+					if (languages == "") {
 						languages = lang;
-					else
+						firstLanguage = lang;
+					} else
 						languages += "," + lang;
 				}
-				_configHandler.Execute(new[] { "enabled-languages=" + languages });
+				_configHandler.Execute(new[] { "enabled.languages=" + languages });
+				_configHandler.Execute(new[] { "default.language=" + firstLanguage });
 			} catch {
 				Console.WriteLine("Invalid command arguments");
 			}

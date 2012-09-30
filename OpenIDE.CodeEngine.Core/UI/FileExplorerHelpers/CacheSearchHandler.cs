@@ -99,7 +99,7 @@ namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
                 directory = result.File;
 			var additionalParameters = "";
 			if (_defaultLanguage != null)
-				additionalParameters = " --default-language=" + _defaultLanguage;
+				additionalParameters = " --default.language=" + _defaultLanguage;
 
             var proc = new Process();
             proc.Run("oi", additionalParameters, false, directory);

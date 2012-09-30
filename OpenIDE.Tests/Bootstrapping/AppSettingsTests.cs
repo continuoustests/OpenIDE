@@ -42,7 +42,7 @@ namespace OpenIDE.Tests.Bootstrapping
 			var args = _appSettings.Parse(new[]
 				{
 					"arg1",
-					"--default-language=C#"
+					"--default.language=C#"
 				});
 
 			Assert.That(args.Length, Is.EqualTo(1));
@@ -56,7 +56,7 @@ namespace OpenIDE.Tests.Bootstrapping
 			var args = _appSettings.Parse(new[]
 				{
 					"subcommand",
-					"--default-language=fake_language"
+					"--default.language=fake_language"
 				});
 
 			Assert.That(_appSettings.DefaultLanguage, Is.EqualTo("fake_language"));
@@ -72,7 +72,7 @@ namespace OpenIDE.Tests.Bootstrapping
 				{
 					"mycommand",
 					"subcommand",
-					"--default-language=fake_language"
+					"--default.language=fake_language"
 				});
 
 			Assert.That(_appSettings.DefaultLanguage, Is.EqualTo("fake_language"));

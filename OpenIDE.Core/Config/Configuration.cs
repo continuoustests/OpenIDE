@@ -8,8 +8,8 @@ namespace OpenIDE.Core.Config
 {
 	public class Configuration
 	{
-		private const string DEFAULT_LANGUAGE_SETTING = "default-language";
-		private const string ENABLED_LANGUAGES_SETTING = "enabled-languages";
+		private const string DEFAULT_LANGUAGE_SETTING = "default.language";
+		private const string ENABLED_LANGUAGES_SETTING = "enabled.languages";
 		private string[] _operators = new[] { "+=","-=","=" };
 		private string _path;
 		private bool _allowGlobal = false;

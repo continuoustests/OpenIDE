@@ -34,48 +34,48 @@ namespace OpenIDE.Core.Tests.Config
 		[Test]
 		public void Can_write_default_language()
 		{
-			_config.Write("default-language=C#");
-			configIs("default-language=C#");
-			_config.Delete("default-language");
+			_config.Write("default.language=C#");
+			configIs("default.language=C#");
+			_config.Delete("default.language");
 			configIs("");
 		}
 
 		[Test]
 		public void When_given_add_operator_it_will_add_to_setting()
 		{
-			_config.Write("enabled-languages=C#");
-			_config.Write("enabled-languages+=js");
-			configIs("enabled-languages=C#,js");
+			_config.Write("enabled.languages=C#");
+			_config.Write("enabled.languages+=js");
+			configIs("enabled.languages=C#,js");
 		}
 
 		[Test]
 		public void When_given_remove_operator_it_will_remove_given_setting()
 		{
-			_config.Write("enabled-languages=Cobol,C#,js");
-			_config.Write("enabled-languages-=C#");
-			configIs("enabled-languages=Cobol,js");
+			_config.Write("enabled.languages=Cobol,C#,js");
+			_config.Write("enabled.languages-=C#");
+			configIs("enabled.languages=Cobol,js");
 		}
 		
 		[Test]
 		public void When_given_removing_all_items_it_will_remove_the_setting()
 		{
-			_config.Write("enabled-languages=C#,js");
-			_config.Write("enabled-languages-=C#");
-			_config.Write("enabled-languages-=js");
+			_config.Write("enabled.languages=C#,js");
+			_config.Write("enabled.languages-=C#");
+			_config.Write("enabled.languages-=js");
 			configIs("");
 		}
 		
 		[Test]
 		public void When_adding_to_non_existing_setting_it_will_act_as_new()
 		{
-			_config.Write("enabled-languages+=C#");
-			configIs("enabled-languages=C#");
+			_config.Write("enabled.languages+=C#");
+			configIs("enabled.languages=C#");
 		}
 
 		[Test]
 		public void When_given_removing_element_from_non_existing_setting_it_will_do_nothing()
 		{
-			_config.Write("enabled-languages-=C#");
+			_config.Write("enabled.languages-=C#");
 			configIs("");
 		}
 
