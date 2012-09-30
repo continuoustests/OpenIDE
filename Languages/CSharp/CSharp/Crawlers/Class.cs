@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CSharp.Crawlers.TypeResolvers;
+using CSharp.Projects;
 namespace CSharp.Crawlers
 {
 	public class Class : ICodeReference 
 	{
+        public bool AllTypesAreResolved { get; private set; }
+
 		public string Type { get; private set; }
-		public string File { get; private set; }
+        public FileRef File { get; private set; }
 		public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
@@ -14,8 +18,8 @@ namespace CSharp.Crawlers
 		public int Line { get; private set; }
 		public int Column { get; private set; }
         public string JSON { get; private set; }
-		
-		public Class(string file, string ns, string name, string scope, int line, int column, string json)
+
+        public Class(FileRef file, string ns, string name, string scope, int line, int column, string json)
 		{
 			File = file;
 			Namespace = ns;
@@ -25,12 +29,22 @@ namespace CSharp.Crawlers
 			Column = column;
             JSON = json;
 		}
+
+        public string GenerateFullSignature() {
+            return null;
+        }
+
+        public void ResolveTypes(ICacheReader cache) {
+            throw new NotImplementedException();
+        }
     }
 
     public class Field : ICodeReference 
 	{
+        public bool AllTypesAreResolved { get; private set; }
+
 		public string Type { get; private set; }
-		public string File { get; private set; }
+        public FileRef File { get; private set; }
 		public string Signature { get; private set; }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
@@ -39,7 +53,7 @@ namespace CSharp.Crawlers
 		public int Column { get; private set; }
         public string JSON { get; private set; }
 
-        public Field(string file, string ns, string name, string scope, int line, int column, string returnType, string json)
+        public Field(FileRef file, string ns, string name, string scope, int line, int column, string returnType, string json)
 		{
 			File = file;
 			Namespace = ns;
@@ -53,12 +67,22 @@ namespace CSharp.Crawlers
 			Column = column;
             JSON = json;
 		}
+
+        public string GenerateFullSignature() {
+            return null;
+        }
+
+        public void ResolveTypes(ICacheReader cache) {
+            throw new NotImplementedException();
+        }
     }
 
     public class Method : ICodeReference 
 	{
+        public bool AllTypesAreResolved { get; private set; }
+
 		public string Type { get; private set; }
-		public string File { get; private set; }
+        public FileRef File { get; private set; }
 		public string Signature { get; private set; }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
@@ -67,7 +91,7 @@ namespace CSharp.Crawlers
 		public int Column { get; private set; }
         public string JSON { get; private set; }
 
-        public Method(string file, string ns, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters, JSONWriter writer)
+        public Method(FileRef file, string ns, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters, JSONWriter writer)
 		{
             var paramString = getParamString(parameters, writer);
 			File = file;
@@ -83,6 +107,14 @@ namespace CSharp.Crawlers
 			Column = column;
             JSON = writer.ToString();
 		}
+
+        public string GenerateFullSignature() {
+            return null;
+        }
+
+        public void ResolveTypes(ICacheReader cache) {
+            throw new NotImplementedException();
+        }
 
         private string getParamString(IEnumerable<Parameter> parameters, JSONWriter writer)
         {

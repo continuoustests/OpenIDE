@@ -1,10 +1,14 @@
 using System;
+using CSharp.Crawlers.TypeResolvers;
+using CSharp.Projects;
 namespace CSharp.Crawlers
 {
 	public class Namespce : ICodeReference
 	{
+        public bool AllTypesAreResolved { get; private set; }
+
 		public string Type { get; private set; }
-		public string File { get; private set; }
+        public FileRef File { get; private set; }
         public string Namespace { get { return ""; } }
 		public string Signature { get { return Name; } }
 		public string Name { get; private set; }
@@ -12,8 +16,8 @@ namespace CSharp.Crawlers
 		public int Line { get; private set; }
 		public int Column { get; private set; }
         public string JSON { get; private set; }
-		
-		public Namespce(string file, string name, int line, int column)
+
+        public Namespce(FileRef file, string name, int line, int column)
 		{
 			File = file;
 			Name = name;
@@ -22,6 +26,14 @@ namespace CSharp.Crawlers
 			Column = column;
             JSON = "";
 		}
+
+        public string GenerateFullSignature() {
+            return null;
+        }
+
+        public void ResolveTypes(ICacheReader cache) {
+            throw new NotImplementedException();
+        }
 	}
 }
 

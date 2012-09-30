@@ -3,13 +3,14 @@ using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using System.Text;
 using System.Collections.Generic;
+using CSharp.Projects;
 
 namespace CSharp.Crawlers
 {
 	public class NRefactoryParser : ICSharpParser
 	{
 		private IOutputWriter _writer;
-        private string _file = "";
+        private FileRef _file = new FileRef("", null);
         private string _namespace = "";
         private List<string> _types = new List<string>();
 
@@ -18,11 +19,12 @@ namespace CSharp.Crawlers
             return this;
         }
 
-        public void ParseFile(string file, Func<string> getContent) {
+        public void ParseFile(FileRef file, Func<string> getContent)
+        {
         	var parser = new CSharpParser();
         	var ast = parser.Parse(getContent());
             _file = file;
-            _writer.AddFile(file);
+            _writer.WriteFile(file);
         	scanNode(ast);
         }
 
@@ -51,7 +53,7 @@ namespace CSharp.Crawlers
 		}
 
 		private void handleUsing(UsingDeclaration usng) {
-            _writer.AddUsing(
+            _writer.WriteUsing(
                 new Using(
                     _file,
                     usng.Namespace,
@@ -66,7 +68,7 @@ namespace CSharp.Crawlers
                 .FirstOrDefault();
             if (id != null)
                 location = id.StartLocation;
-            _writer.AddNamespace(
+            _writer.WriteNamespace(
                 new Namespce(
                     _file,
                     ns.Name,
@@ -95,7 +97,7 @@ namespace CSharp.Crawlers
 
         private void addEnum(TypeDeclaration type)
         {
-            _writer.AddEnum(
+            _writer.WriteEnum(
                 new EnumType(
                     _file,
                     _namespace,
@@ -108,7 +110,7 @@ namespace CSharp.Crawlers
 
         private void addStruct(TypeDeclaration type)
         {
-            _writer.AddStruct(
+            _writer.WriteStruct(
                 new Struct(
                     _file,
                     _namespace,
@@ -121,7 +123,7 @@ namespace CSharp.Crawlers
 
         private void addInterface(TypeDeclaration type)
         {
-            _writer.AddInterface(
+            _writer.WriteInterface(
                 new Interface(
                     _file,
                     _namespace,
@@ -135,7 +137,7 @@ namespace CSharp.Crawlers
         private void addClass(TypeDeclaration type)
         {
             Console.WriteLine(type.BaseTypes.ToString());
-            _writer.AddClass(
+            _writer.WriteClass(
                 new Class(
                     _file,
                     _namespace,
@@ -229,7 +231,7 @@ namespace CSharp.Crawlers
                 parameters.Add(new Parameter(signatureFrom(param.Type), param.Name));
             var json = new JSONWriter();
             getMemberProperties(method, json);
-            _writer.AddMethod(
+            _writer.WriteMethod(
                 new Method(
                     _file,
                     getMemberNamespace(),
@@ -250,7 +252,7 @@ namespace CSharp.Crawlers
         }
 
         private void handleProperty(PropertyDeclaration property) {
-            _writer.AddField(
+            _writer.WriteField(
                 new Field(
                     _file,
                     getMemberNamespace(),
@@ -265,7 +267,7 @@ namespace CSharp.Crawlers
 		private void handleVariableInitializer(VariableInitializer variable) {
 			if (variable.Parent.GetType() == typeof(FieldDeclaration)) {
                 var field = (FieldDeclaration)variable.Parent;
-                _writer.AddField(
+                _writer.WriteField(
                     new Field(
                         _file,
                         getMemberNamespace(),

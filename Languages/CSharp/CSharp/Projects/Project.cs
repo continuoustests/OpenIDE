@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace CSharp.Projects
 {
-	public class ProjectFile
+	public class FileRef
 	{
 		public string File { get; private set; }
-		public string Project { get; private set; }
+        public Project Project { get; private set; }
 
-		public ProjectFile(string file, string project)
+        public FileRef(string file, Project project)
 		{
 			File = file;
 			Project = project;

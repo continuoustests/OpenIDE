@@ -22,7 +22,7 @@ namespace CSharp.Tests.Crawlers
             _parser = new NRefactoryParser()
 			//_parser = new CSharpFileParser()
 				.SetOutputWriter(_cache);
-			_parser.ParseFile("file1", () => { return getContent(); });
+			_parser.ParseFile(new FileRef("file1", null), () => { return getContent(); });
 		}
 		
 		[Test]
@@ -53,16 +53,30 @@ namespace CSharp.Tests.Crawlers
 
 	class Fake_CacheBuilder : IOutputWriter 
 	{
-        public List<Project> Projects = new List<Project>();
-        public List<Using> Usings = new List<Using>();
-		public List<string> Files = new List<string>();
-		public List<Namespce> Namespaces = new List<Namespce>();
-		public List<Class> Classes = new List<Class>();
-		public List<Interface> Interfaces = new List<Interface>();
-		public List<Struct> Structs = new List<Struct>();
-		public List<EnumType> Enums = new List<EnumType>();
-        public List<Method> Methods = new List<Method>();
-        public List<Field> Fields = new List<Field>();
+        public List<Project> Projects { get; private set; }
+        public List<Using> Usings { get; private set; }
+        public List<FileRef> Files { get; private set; }
+        public List<Namespce> Namespaces { get; private set; }
+        public List<Class> Classes { get; private set; }
+        public List<Interface> Interfaces { get; private set; }
+        public List<Struct> Structs { get; private set; }
+        public List<EnumType> Enums { get; private set; }
+        public List<Method> Methods { get; private set; }
+        public List<Field> Fields { get; private set; }
+
+        public Fake_CacheBuilder()
+        {
+            Projects = new List<Project>();
+            Usings = new List<Using>();
+            Files = new List<FileRef>();
+            Namespaces = new List<Namespce>();
+            Classes = new List<Class>();
+            Interfaces = new List<Interface>();
+            Structs = new List<Struct>();
+            Enums = new List<EnumType>();
+            Methods = new List<Method>();
+            Fields = new List<Field>();
+        }
 
 		public bool ProjectExists(Project project)
 		{
@@ -72,12 +86,12 @@ namespace CSharp.Tests.Crawlers
         public void SetTypeVisibility(bool visibility) {
         }
 
-        public void AddUsing(Using usng)
+        public void WriteUsing(Using usng)
         {
             Usings.Add(usng);
         }
-		
-		public void AddProject(Project project)
+
+        public void WriteProject(Project project)
 		{
             Projects.Add(project);
 		}
@@ -92,47 +106,47 @@ namespace CSharp.Tests.Crawlers
 			return true;
 		}
 
-		public void AddFile (string file)
+        public void WriteFile(FileRef file)
 		{
 			Files.Add(file);
 		}
-		
-		public void AddNamespace (Namespce ns)
+
+        public void WriteNamespace(Namespce ns)
 		{
 			Namespaces.Add(ns);
 		}
 
-		public void AddClass (Class cls)
+        public void WriteClass(Class cls)
 		{
 			Classes.Add(cls);
 		}
-		
-		public void AddInterface(Interface iface)
+
+        public void WriteInterface(Interface iface)
 		{
 			Interfaces.Add(iface);
 		}
-		
-		public void AddStruct(Struct str)
+
+        public void WriteStruct(Struct str)
 		{
 			Structs.Add(str);
 		}
-		
-		public void AddEnum(EnumType enu)
+
+        public void WriteEnum(EnumType enu)
 		{
 			Enums.Add(enu);
 		}
 
-        public void AddMethod(Method method)
+        public void WriteMethod(Method method)
         {
             Methods.Add(method);
         }
 
-        public void AddField(Field field)
+        public void WriteField(Field field)
         {
             Fields.Add(field);
         }
 
-		public void Error(string description)
+        public void WriteError(string description)
 		{
 		}
 	}

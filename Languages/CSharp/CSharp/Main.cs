@@ -31,11 +31,11 @@ namespace CSharp
 				handler.Execute(getParameters(args));
 			} catch (Exception ex) {
 				var builder = new OutputWriter();
-				builder.Error(ex.Message.Replace(Environment.NewLine, ""));
+                builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
 				if (ex.StackTrace != null) {
 					ex.StackTrace
 						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
-						.ForEach(line => builder.Error(line));
+                        .ForEach(line => builder.WriteError(line));
 				}
 			}
 		}
