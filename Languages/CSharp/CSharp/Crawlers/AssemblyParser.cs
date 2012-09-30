@@ -24,6 +24,7 @@ namespace CSharp.Crawlers
                 assembly = AssemblyDefinition.ReadAssembly(_file.File);
             else
                 assembly = new DefaultAssemblyResolver().Resolve(_file.File);
+            _writer.WriteFile(_file);
             assembly
                 .Modules.ToList()
                 .ForEach(x => 
