@@ -20,7 +20,7 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("init", "Initializes a configuration point");
 				var read = usage.Add("read", "Prints closest configuration");
 				read.Add("cfgpoint", "Location of nearest configuration file");
-				read.Add("SETTING_NAME", "The name of the setting to print the value of");
+				read.Add("SETTING_NAME", "The name of the setting to print the value of. If name ends with * it will print all matching settings");
 				var setting = usage.Add("SETTING", "The statement to write to the config");
 				setting.Add("[--global]", "Forces configuration command to be directed towards global config");
 				setting.Add("[-g]", "Short version of --global");
@@ -98,6 +98,7 @@ namespace OpenIDE.Arguments.Handlers
 			if (!File.Exists(file))
 				return;
 			string pattern =  null;
+			var wildcard = false;
 			if (arguments.Length == 2)
 				pattern = arguments[1];
 			if (pattern == null) {
@@ -113,14 +114,29 @@ namespace OpenIDE.Arguments.Handlers
 				Console.Write(file);
 				return;
 			}
-			File.ReadAllLines(file).ToList()
-				.ForEach(x => {
-					var s = x.Replace(" ", "").Replace("\t", "");
-					if (x.StartsWith(pattern + "=")) {
-						var equals = x.IndexOf("=") + 1;
-						Console.Write(x.Substring(equals, x.Length - equals));
-					}
-				});
+			if (pattern.EndsWith("*")) {
+				wildcard = true;
+				pattern = pattern.Substring(0, pattern.Length - 1);
+			}
+			if (wildcard) {
+				File.ReadAllLines(file).ToList()
+					.ForEach(x => {
+						var s = x.Replace(" ", "").Replace("\t", "");
+						if (x.StartsWith(pattern)) {
+							Console.WriteLine(x.Trim(new[] { ' ', '\t' }));
+						}
+					});
+			} else {
+				File.ReadAllLines(file).ToList()
+					.ForEach(x => {
+						var s = x.Replace(" ", "").Replace("\t", "");
+						if (x.StartsWith(pattern + "=")) {
+							var equals = x.IndexOf("=") + 1;
+							Console.Write(x.Substring(equals, x.Length - equals));
+							return;
+						}
+					});
+			}
 		}
 		
 		private CommandArguments parseArguments(string[] arguments)
