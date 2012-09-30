@@ -12,7 +12,7 @@ namespace OpenIDE.Arguments.Handlers
 					"All",
 					CommandType.FileCommand,
 					Command,
-					"Sets the chose window to foreground window (MS Windows)");
+					"Sets the chosen window to foreground window (MS Windows)");
 				usage.Add("HWND", "Window handle of the window you want set to the foreground");
 				usage.Add(
 					"PROCESS_NAME",

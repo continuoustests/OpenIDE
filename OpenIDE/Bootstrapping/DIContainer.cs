@@ -47,26 +47,15 @@ namespace OpenIDE.Bootstrapping
 		private IEnumerable<ICommandHandler> getDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
+			var configHandler = new ConfigurationHandler();
 			handlers.AddRange(
 				new ICommandHandler[]
 				{
+					new InitHandler(configHandler),
+					configHandler,
+					
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
-					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
-					new CodeEngineExploreHandler(ICodeEngineLocator()),
-					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
-					new CodeEngineGetFilesHandler(ICodeEngineLocator()),
-					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
-					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
-					new CodeEngineFindSignatureHandler(ICodeEngineLocator()),
-					new MemberLookupHandler(ICodeEngineLocator()),
-					new GoToDefinitionHandler(ICodeEngineLocator()),
-					new ConfigurationHandler(),
-					new BringToForegroundHandler(),
 					new TouchHandler(dispatchMessage),
-					new CreateSnippetHandler(ICodeEngineLocator()),
-					new PrewievSnippetHandler(ICodeEngineLocator()),
-					new SnippetEditHandler(ICodeEngineLocator()),
-					new SnippetDeleteHandler(ICodeEngineLocator()),
 					new CreateScriptHandler(dispatchMessage),
 					new ScriptHandler(dispatchMessage),
 					new EditScriptHandler(dispatchMessage),
@@ -74,7 +63,25 @@ namespace OpenIDE.Bootstrapping
 					new CreateReactiveScriptHandler(dispatchMessage),
 					new EditReactiveScriptHandler(dispatchMessage, PluginLocator()),
 					new DeleteReactiveScriptHandler(PluginLocator()),
-					new ProcessStartHandler()
+
+					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
+					new CodeEngineExploreHandler(ICodeEngineLocator()),
+
+					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
+					new CodeEngineGetFilesHandler(ICodeEngineLocator()),
+					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
+					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
+					new CodeEngineFindSignatureHandler(ICodeEngineLocator()),
+					new MemberLookupHandler(ICodeEngineLocator()),
+					new GoToDefinitionHandler(ICodeEngineLocator()),
+
+					new CreateSnippetHandler(ICodeEngineLocator()),
+					new SnippetEditHandler(ICodeEngineLocator()),
+					new SnippetDeleteHandler(ICodeEngineLocator()),
+					new PrewievSnippetHandler(ICodeEngineLocator()),
+
+					new ProcessStartHandler(),
+					new BringToForegroundHandler()
 				});
 			return handlers;
 		}
