@@ -55,6 +55,7 @@ xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
 
 copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\Languages\C#.bat
+copy %ROOT%\Languages\CSharp\language.oicfgoptions %DEPLOYDIR%\Languages\C#-plugin\language.oicfgoptions
 copy %BINARYDIR%\C#.exe %DEPLOYDIR%\Languages\C#-plugin\C#.exe
 copy %BINARYDIR%\ICSharpCode.NRefactory.CSharp.dll %DEPLOYDIR%\Languages\C#-plugin\ICSharpCode.NRefactory.CSharp.dll
 copy %BINARYDIR%\ICSharpCode.NRefactory.dll %DEPLOYDIR%\Languages\C#-plugin\ICSharpCode.NRefactory.dll

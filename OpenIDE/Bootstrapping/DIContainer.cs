@@ -47,7 +47,7 @@ namespace OpenIDE.Bootstrapping
 		private IEnumerable<ICommandHandler> getDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
-			var configHandler = new ConfigurationHandler();
+			var configHandler = new ConfigurationHandler(PluginLocator());
 			handlers.AddRange(
 				new ICommandHandler[]
 				{

@@ -24,6 +24,13 @@ namespace OpenIDE.Core.Language
 			_dispatch = dispatch;
 		}
 
+		public string GetPluginDir()
+		{
+			return 
+				Path.Combine(Path.GetDirectoryName(_path),
+				Path.GetFileNameWithoutExtension(_path) + "-plugin");
+		}
+
 		public string GetLanguage()
 		{
 			return Path.GetFileNameWithoutExtension(_path);

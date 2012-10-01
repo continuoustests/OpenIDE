@@ -76,6 +76,7 @@
     <Compile Include="Scripts\ScriptFilter.cs" />
     <Compile Include="RScripts\ReactiveScriptReader.cs" />
     <Compile Include="RScripts\ReactiveScript.cs" />
+    <Compile Include="Config\ConfigOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

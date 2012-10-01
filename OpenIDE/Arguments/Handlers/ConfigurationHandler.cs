@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
 
@@ -9,6 +10,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class ConfigurationHandler : ICommandHandler
 	{
+		private PluginLocator _pluginLocator;
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
@@ -17,9 +19,12 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Writes a configuration setting in the current path (configs " +
 					"are only read from root folder)");
+				usage.Add("list", "List available configuration options (*.oicfgoptions)");
 				usage.Add("init", "Initializes a configuration point");
 				var read = usage.Add("read", "Prints closest configuration");
-				read.Add("cfgpoint", "Location of nearest configuration file");
+				read.Add("cfgfile", "Location of nearest configuration file");
+				read.Add("cfgpoint", "Location of nearest configuration point");
+				read.Add("rootpoint", "Location of current root location");
 				read.Add("SETTING_NAME", "The name of the setting to print the value of. If name ends with * it will print all matching settings");
 				var setting = usage.Add("SETTING", "The statement to write to the config");
 				setting.Add("[--global]", "Forces configuration command to be directed towards global config");
@@ -32,6 +37,10 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "configure"; } }
 
+		public ConfigurationHandler(PluginLocator locator) {
+			_pluginLocator = locator;
+		}
+
 		public void Execute(string[] arguments)
 		{
 			if (arguments.Length < 1)
@@ -43,10 +52,25 @@ namespace OpenIDE.Arguments.Handlers
 
 			if (arguments[0] == "init")
 				initializingConfiguration(path);
+			else if (arguments[0] == "list")
+				printConfigurationOptions(path);
 			else if (arguments[0] == "read")
 				printClosestConfiguration(path, arguments);
 			else
 				updateConfiguration(path, arguments);
+		}
+
+		private void printConfigurationOptions(string path)
+		{
+			var file = new Configuration(path, true).ConfigurationFile;
+			var paths = new List<string>();
+			paths.Add(Path.GetDirectoryName(file));
+			foreach (var plugin in _pluginLocator.Locate())
+				paths.Add(plugin.GetPluginDir());
+			var reader = new ConfigOptionsReader(paths.ToArray());
+			reader.Parse();
+			foreach (var line in reader.Options)
+				Console.WriteLine(line);
 		}
 
 		private void updateConfiguration(string path, string[] arguments)
@@ -111,6 +135,14 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			}
 			if (pattern == "cfgpoint") {
+				Console.Write(Path.GetDirectoryName(file));
+				return;
+			}
+			if (pattern == "rootpoint") {
+				Console.Write(Path.GetDirectoryName(Path.GetDirectoryName(file)));
+				return;
+			}
+			if (pattern == "cfgfile") {
 				Console.Write(file);
 				return;
 			}
