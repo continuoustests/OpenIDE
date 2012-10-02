@@ -98,37 +98,43 @@ namespace CSharp.Crawlers
         private void addEnum(TypeDeclaration type)
         {
             _writer.WriteEnum(
-                new EnumType(
-                    _file,
-                    _namespace,
-                    type.Name,
-                    getTypeModifier(type.Modifiers),
-                    type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column));
+                addTypeInfo(
+                    new EnumType(
+                        _file,
+                        _namespace,
+                        type.Name,
+                        getTypeModifier(type.Modifiers),
+                        type.NameToken.StartLocation.Line,
+                        type.NameToken.StartLocation.Column),
+                    type));
         }
 
         private void addStruct(TypeDeclaration type)
         {
             _writer.WriteStruct(
-                new Struct(
-                    _file,
-                    _namespace,
-                    type.Name,
-                    getTypeModifier(type.Modifiers),
-                    type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column));
+                addTypeInfo(
+                    new Struct(
+                        _file,
+                        _namespace,
+                        type.Name,
+                        getTypeModifier(type.Modifiers),
+                        type.NameToken.StartLocation.Line,
+                        type.NameToken.StartLocation.Column),
+                    type));
         }
 
         private void addInterface(TypeDeclaration type)
         {
             _writer.WriteInterface(
-                new Interface(
-                    _file,
-                    _namespace,
-                    type.Name,
-                    getTypeModifier(type.Modifiers),
-                    type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column));
+                addTypeInfo(
+                    new Interface(
+                        _file,
+                        _namespace,
+                        type.Name,
+                        getTypeModifier(type.Modifiers),
+                        type.NameToken.StartLocation.Line,
+                        type.NameToken.StartLocation.Column),
+                    type));
         }
 
         private void addClass(TypeDeclaration type)
@@ -145,10 +151,13 @@ namespace CSharp.Crawlers
                         type.NameToken.StartLocation.Column),
                     type));
         }
-        
-        private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl) {
-            return type
-                .AddModifiers(getTypeModifiers(decl));
+
+        private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl)
+        {
+            getTypeAttributes(type, decl);
+            foreach (var baseType in decl.BaseTypes)
+                type.AddBaseType(signatureFrom(baseType));
+            return type.AddModifiers(getTypeModifiers(decl));
         }
 
         /*private string getTypeProperties(TypeDeclaration type) {
@@ -177,14 +186,14 @@ namespace CSharp.Crawlers
         {
             var json = new JSONWriter();
             getTypeModifiers(type);
-            getTypeAttributes(type, json);
+            //getTypeAttributes(type, json);
             return json.ToString();
         }
 
         private void getMemberProperties(EntityDeclaration type, JSONWriter json)
         {
             getTypeModifiers(type);
-            getTypeAttributes(type, json);
+            getTypeAttributes(new Class(null, "", "", "", 0, 0), type);
         }
 
         private List<string> getTypeModifiers(EntityDeclaration type) {
@@ -208,23 +217,24 @@ namespace CSharp.Crawlers
             return modifiers;
         }
 
-        private void getTypeAttributes(EntityDeclaration type, JSONWriter json) {
-            if (type.Attributes.Count == 0)
+        private void getTypeAttributes<T>(CodeItemBase<T> type, EntityDeclaration decl)
+        {
+            if (decl.Attributes.Count == 0)
                 return;
             var attribSection = new JSONWriter();
-            foreach (var typeAttrib in type.Attributes) {
+            foreach (var typeAttrib in decl.Attributes) {
                 foreach (var attribute in typeAttrib.Attributes) {
-                    var value = "";
-                    foreach (var arg in attribute.Arguments) {
-                        if (value.Length > 0)
-                            value += ",";
-                        value += arg.ToString().Replace("\"", "");
-                    }
-                    attribSection.Append(signatureFrom(attribute.Type), value);
+                    var codeAttrib = new CodeAttribute() {
+                        Name = signatureFrom(attribute.Type)
+                    };
+                    foreach (var arg in attribute.Arguments)
+                        codeAttrib.AddParameter(arg.ToString().Replace("\"", ""));
+
+                    type.AddAttribute(codeAttrib);
                 }
             }
-            json.AppendSection("attributes", attribSection);
         }
+
 
         private bool modifiersContain(Modifiers modifiers, Modifiers modifier) {
             return (modifiers & modifier) == modifier;
@@ -234,19 +244,18 @@ namespace CSharp.Crawlers
             var parameters = new List<Parameter>();
             foreach (var param in method.Parameters)
                 parameters.Add(new Parameter(signatureFrom(param.Type), param.Name));
-            var json = new JSONWriter();
-            getMemberProperties(method, json);
             _writer.WriteMethod(
-                new Method(
-                    _file,
-                    getMemberNamespace(),
-                    method.Name,
-                    getTypeModifier(method.Modifiers),
-                    method.NameToken.StartLocation.Line,
-                    method.NameToken.StartLocation.Column,
-                    signatureFrom(method.ReturnType),
-                    parameters,
-                    json));
+                addMemberInfo(
+                    new Method(
+                        _file,
+                        getMemberNamespace(),
+                        method.Name,
+                        getTypeModifier(method.Modifiers),
+                        method.NameToken.StartLocation.Line,
+                        method.NameToken.StartLocation.Column,
+                        signatureFrom(method.ReturnType),
+                        parameters),
+                    method));
 		}
 
         private string getMemberNamespace() {
@@ -258,36 +267,44 @@ namespace CSharp.Crawlers
 
         private void handleProperty(PropertyDeclaration property) {
             _writer.WriteField(
-                new Field(
-                    _file,
-                    getMemberNamespace(),
-                    property.Name,
-                    getTypeModifier(property.Modifiers),
-                    property.NameToken.StartLocation.Line,
-                    property.NameToken.StartLocation.Column,
-                    signatureFrom(property.ReturnType),
-                    getMemberProperties(property)));
+                addMemberInfo(
+                    new Field(
+                        _file,
+                        getMemberNamespace(),
+                        property.Name,
+                        getTypeModifier(property.Modifiers),
+                        property.NameToken.StartLocation.Line,
+                        property.NameToken.StartLocation.Column,
+                        signatureFrom(property.ReturnType)),
+                    property));
         }
 
 		private void handleVariableInitializer(VariableInitializer variable) {
 			if (variable.Parent.GetType() == typeof(FieldDeclaration)) {
                 var field = (FieldDeclaration)variable.Parent;
                 _writer.WriteField(
-                    new Field(
-                        _file,
-                        getMemberNamespace(),
-                        variable.Name,
-                        getTypeModifier(field.Modifiers),
-                        variable.NameToken.StartLocation.Line,
-                        variable.NameToken.StartLocation.Column,
-                        signatureFrom(field.ReturnType),
-                        getMemberProperties(field)));
+                    addMemberInfo(
+                        new Field(
+                            _file,
+                            getMemberNamespace(),
+                            variable.Name,
+                            getTypeModifier(field.Modifiers),
+                            variable.NameToken.StartLocation.Line,
+                            variable.NameToken.StartLocation.Column,
+                            signatureFrom(field.ReturnType)),
+                        field));
             }
 			/*else if (variable.Parent.GetType() == typeof(VariableDeclarationStatement))
 				type = signatureFrom(variable);
 			else
 				type = variable.Parent.GetType().ToString();*/
 		}
+
+        private T addMemberInfo<T>(CodeItemBase<T> type, EntityDeclaration decl)
+        {
+            getTypeAttributes(type, decl);
+            return type.AddModifiers(getTypeModifiers(decl));
+        }
 
         private string signatureFrom(object expr) {
             if (isOfType<PrimitiveExpression>(expr))

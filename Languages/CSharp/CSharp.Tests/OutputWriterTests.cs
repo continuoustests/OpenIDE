@@ -24,9 +24,9 @@ namespace CSharp.Tests
             cache.WriteInterface(new Interface(file, "", "", "", 0, 0));
             cache.WriteStruct(new Struct(file, "", "", "", 0, 0));
             cache.WriteEnum(new EnumType(file, "", "", "", 0, 0));
-            cache.WriteField(new Field(file, "", "", "", 0, 0, "", ""));
+            cache.WriteField(new Field(file, "", "", "", 0, 0, ""));
             cache.WriteMethod(
-                new Method(file, "", "", "", 0, 0, "", new Parameter[] { }, new JSONWriter()));
+                new Method(file, "", "", "", 0, 0, "", new Parameter[] { }));
 
             Assert.That(cache.Projects.Count, Is.EqualTo(1));
             Assert.That(cache.Files.Count, Is.EqualTo(1));

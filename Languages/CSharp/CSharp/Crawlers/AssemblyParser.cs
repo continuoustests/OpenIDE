@@ -52,7 +52,7 @@ namespace CSharp.Crawlers
                     _writer.WriteField(
                         new Field(_file,
                             x.DeclaringType.FullName, x.Name, "public",
-                            0,0,x.FieldType.FullName,""));
+                            0,0,x.FieldType.FullName));
                 });
             cls.Properties
                 .Where(y => !y.IsRuntimeSpecialName && !y.IsSpecialName).ToList()
@@ -60,7 +60,7 @@ namespace CSharp.Crawlers
                     _writer.WriteField(
                         new Field(_file,
                             x.DeclaringType.FullName, x.Name, "public",
-                            0,0,x.PropertyType.FullName,"")));
+                            0,0,x.PropertyType.FullName)));
             cls.Methods
                 .Where(y => y.IsPublic && !y.IsRuntimeSpecialName && !y.IsSpecialName).ToList()
                 .ForEach(x => {
@@ -68,8 +68,7 @@ namespace CSharp.Crawlers
                         new Method(_file,
                             x.DeclaringType.FullName, x.Name, "public",
                             0,0,x.MethodReturnType.ReturnType.FullName,
-                            x.Parameters.Select(z => new Parameter(z.ParameterType.FullName, z.Name)),
-                            new JSONWriter()));
+                            x.Parameters.Select(z => new Parameter(z.ParameterType.FullName, z.Name))));
                 });
         }
     }

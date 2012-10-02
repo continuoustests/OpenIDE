@@ -38,7 +38,7 @@ namespace CSharp.Crawlers
         }
     }
 
-    public class Field : ICodeReference 
+    public class Field : CodeItemBase<Field>, ICodeReference 
 	{
         public bool AllTypesAreResolved { get; private set; }
 
@@ -50,10 +50,10 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
-        public string JSON { get; private set; }
 
-        public Field(FileRef file, string ns, string name, string scope, int line, int column, string returnType, string json)
+        public Field(FileRef file, string ns, string name, string scope, int line, int column, string returnType)
 		{
+            setThis(this);
 			File = file;
 			Namespace = ns;
 			Name = name;
@@ -64,7 +64,6 @@ namespace CSharp.Crawlers
             Scope = scope;
 			Line = line;
 			Column = column;
-            JSON = json;
 		}
 
         public string GenerateFullSignature() {
@@ -76,7 +75,7 @@ namespace CSharp.Crawlers
         }
     }
 
-    public class Method : ICodeReference 
+    public class Method : CodeItemBase<Method>, ICodeReference 
 	{
         public bool AllTypesAreResolved { get; private set; }
 
@@ -88,11 +87,10 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
-        public string JSON { get; private set; }
 
-        public Method(FileRef file, string ns, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters, JSONWriter writer)
+        public Method(FileRef file, string ns, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters)
 		{
-            var paramString = getParamString(parameters, writer);
+            var paramString = getParamString(parameters);
 			File = file;
 			Namespace = ns;
 			Name = name;
@@ -104,7 +102,6 @@ namespace CSharp.Crawlers
             Scope = scope;
 			Line = line;
 			Column = column;
-            JSON = writer.ToString();
 		}
 
         public string GenerateFullSignature() {
@@ -115,19 +112,15 @@ namespace CSharp.Crawlers
             throw new NotImplementedException();
         }
 
-        private string getParamString(IEnumerable<Parameter> parameters, JSONWriter writer)
+        private string getParamString(IEnumerable<Parameter> parameters)
         {
-            var json = new JSONWriter();
             var sb = new StringBuilder();
             foreach (var param in parameters) {
-                json.Append(param.Name, param.Type);
                 if (sb.Length == 0)
                     sb.Append(param.Type);
                 else
                     sb.Append("," + param.Type);
             }
-            if (json.ToString().Length > 0)
-                writer.AppendSection("parameters", json);
             return sb.ToString();
         }
     }
