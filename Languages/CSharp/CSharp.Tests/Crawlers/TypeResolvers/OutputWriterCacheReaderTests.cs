@@ -75,16 +75,16 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
             _cache.WriteUsing(new Using(file, "Project1.FirstNamespace", 1, 1));
             _cache.WriteNamespace(new Namespce(file, "Project1", 2, 1));
             _cache.WriteClass(
-                new Class(file, "Project1", "FirstClass", "public", 5, 1, ""));
+                new Class(file, "Project1", "FirstClass", "public", 5, 1));
 
             var file2 = new FileRef("File2", project1);
             _cache.WriteFile(file2);
             _cache.WriteNamespace(new Namespce(file2, "Project1.FirstNamespace", 1, 1));
             _cache.WriteClass(
-                new Class(file2, "Project1.FirstNamespace", "SecondClass", "public", 2, 1, ""));
+                new Class(file2, "Project1.FirstNamespace", "SecondClass", "public", 2, 1));
             _cache.WriteNamespace(new Namespce(file2, "Project1.SecondNamespace", 10, 1));
             _cache.WriteClass(
-                new Class(file2, "Project1.SecondNamespace", "ThirdClass", "public", 12, 2, ""));
+                new Class(file2, "Project1.SecondNamespace", "ThirdClass", "public", 12, 2));
 
             var project2 = new Project("Project2");
             _cache.WriteProject(project2);

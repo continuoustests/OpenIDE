@@ -44,7 +44,7 @@ namespace CSharp.Crawlers
         }
 
         private void handleClass(TypeDefinition cls) {
-            var classDef = new Class(_file, cls.Namespace, cls.Name, "public", 0, 0, "");
+            var classDef = new Class(_file, cls.Namespace, cls.Name, "public", 0, 0);
             _writer.WriteClass(classDef);
             cls.Fields
                 .Where(y => y.IsPublic && !y.IsRuntimeSpecialName && !y.IsSpecialName).ToList()

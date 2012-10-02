@@ -104,8 +104,7 @@ namespace CSharp.Crawlers
                     type.Name,
                     getTypeModifier(type.Modifiers),
                     type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column,
-                    getTypeProperties(type)));
+                    type.NameToken.StartLocation.Column));
         }
 
         private void addStruct(TypeDeclaration type)
@@ -117,8 +116,7 @@ namespace CSharp.Crawlers
                     type.Name,
                     getTypeModifier(type.Modifiers),
                     type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column,
-                    getTypeProperties(type)));
+                    type.NameToken.StartLocation.Column));
         }
 
         private void addInterface(TypeDeclaration type)
@@ -130,23 +128,39 @@ namespace CSharp.Crawlers
                     type.Name,
                     getTypeModifier(type.Modifiers),
                     type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column,
-                    getTypeProperties(type)));
+                    type.NameToken.StartLocation.Column));
         }
 
         private void addClass(TypeDeclaration type)
         {
             Console.WriteLine(type.BaseTypes.ToString());
             _writer.WriteClass(
-                new Class(
-                    _file,
-                    _namespace,
-                    type.Name,
-                    getTypeModifier(type.Modifiers),
-                    type.NameToken.StartLocation.Line,
-                    type.NameToken.StartLocation.Column,
-                    getTypeProperties(type)));
+                addTypeInfo(
+                    new Class(
+                        _file,
+                        _namespace,
+                        type.Name,
+                        getTypeModifier(type.Modifiers),
+                        type.NameToken.StartLocation.Line,
+                        type.NameToken.StartLocation.Column),
+                    type));
         }
+        
+        private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl) {
+            return type
+                .AddModifiers(getTypeModifiers(decl));
+        }
+
+        /*private string getTypeProperties(TypeDeclaration type) {
+            var json = new JSONWriter();
+            var jsonBaseSection = new JSONWriter();
+            foreach (var baseType in type.BaseTypes)
+                jsonBaseSection.Append(signatureFrom(baseType), "");
+            if (type.BaseTypes.Count > 0)
+                json.AppendSection("bases", jsonBaseSection);
+            getMemberProperties(type, json);
+            return json.ToString();
+        }*/
 
         private string getTypeModifier(Modifiers modifiers)
         {
@@ -159,48 +173,39 @@ namespace CSharp.Crawlers
             return "private";
         }
 
-        private string getTypeProperties(TypeDeclaration type) {
-            var json = new JSONWriter();
-            var jsonBaseSection = new JSONWriter();
-            foreach (var baseType in type.BaseTypes)
-                jsonBaseSection.Append(signatureFrom(baseType), "");
-            if (type.BaseTypes.Count > 0)
-                json.AppendSection("bases", jsonBaseSection);
-            getMemberProperties(type, json);
-            return json.ToString();
-        }
-
         private string getMemberProperties(EntityDeclaration type)
         {
             var json = new JSONWriter();
-            getTypeModifiers(type, json);
+            getTypeModifiers(type);
             getTypeAttributes(type, json);
             return json.ToString();
         }
 
         private void getMemberProperties(EntityDeclaration type, JSONWriter json)
         {
-            getTypeModifiers(type, json);
+            getTypeModifiers(type);
             getTypeAttributes(type, json);
         }
 
-        private void getTypeModifiers(EntityDeclaration type, JSONWriter json) {
+        private List<string> getTypeModifiers(EntityDeclaration type) {
+            var modifiers = new List<string>();
             if (modifiersContain(type.Modifiers, Modifiers.Abstract))
-                json.Append("abstract", "1");
+                modifiers.Add("abstract");
             if (modifiersContain(type.Modifiers, Modifiers.Sealed))
-                json.Append("sealed", "1");
+                modifiers.Add("sealed");
             if (modifiersContain(type.Modifiers, Modifiers.Partial))
-                json.Append("partial", "1");
+                modifiers.Add("partial");
             if (modifiersContain(type.Modifiers, Modifiers.Static))
-                json.Append("static", "1");
+                modifiers.Add("static");
             if (modifiersContain(type.Modifiers, Modifiers.Virtual))
-                json.Append("virtual", "1");
+                modifiers.Add("virtual");
             if (modifiersContain(type.Modifiers, Modifiers.Const))
-                json.Append("const", "1");
+                modifiers.Add("const");
             if (modifiersContain(type.Modifiers, Modifiers.Override))
-                json.Append("override", "1");
+                modifiers.Add("override");
             if (modifiersContain(type.Modifiers, Modifiers.Readonly))
-                json.Append("readonly", "1");
+                modifiers.Add("readonly");
+            return modifiers;
         }
 
         private void getTypeAttributes(EntityDeclaration type, JSONWriter json) {

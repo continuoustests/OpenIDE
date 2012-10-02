@@ -5,7 +5,7 @@ using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 namespace CSharp.Crawlers
 {
-	public class Class : ICodeReference 
+	public class Class : TypeBase<Class>, ICodeReference
 	{
         public bool AllTypesAreResolved { get; private set; }
 
@@ -17,17 +17,16 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
-        public string JSON { get; private set; }
 
-        public Class(FileRef file, string ns, string name, string scope, int line, int column, string json)
+        public Class(FileRef file, string ns, string name, string scope, int line, int column)
 		{
+            setThis(this);
 			File = file;
 			Namespace = ns;
 			Name = name;
             Scope = scope;
 			Line = line;
 			Column = column;
-            JSON = json;
 		}
 
         public string GenerateFullSignature() {

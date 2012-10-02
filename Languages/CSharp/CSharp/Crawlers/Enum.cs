@@ -3,7 +3,7 @@ using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 namespace CSharp.Crawlers
 {
-	public class EnumType : ICodeReference 
+	public class EnumType : TypeBase<EnumType>, ICodeReference 
 	{
         public bool AllTypesAreResolved { get; private set; }
 
@@ -15,17 +15,16 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
-        public string JSON { get; private set; }
 
-        public EnumType(FileRef file, string ns, string name, string scope, int line, int column, string json)
+        public EnumType(FileRef file, string ns, string name, string scope, int line, int column)
 		{
+            setThis(this);
 			File = file;
 			Namespace = ns;
 			Name = name;
             Scope = scope;
 			Line = line;
 			Column = column;
-            JSON = json;
 		}
 
         public string GenerateFullSignature() {

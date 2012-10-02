@@ -161,8 +161,7 @@ namespace CSharp.Crawlers
                     getNameFromSignature(signature.Text),
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private void handleInterface(Word word)
@@ -179,8 +178,7 @@ namespace CSharp.Crawlers
                     getNameFromSignature(signature.Text),
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private void handleStruct(Word word)
@@ -197,8 +195,7 @@ namespace CSharp.Crawlers
                     signature.Text,
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private void handleEnum(Word word)
@@ -215,8 +212,7 @@ namespace CSharp.Crawlers
                     signature.Text,
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private string getNameFromSignature(string signature)

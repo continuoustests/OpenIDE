@@ -20,10 +20,10 @@ namespace CSharp.Tests
             cache.WriteFile(file);
             cache.WriteUsing(new Using(file, "", 0, 1));
             cache.WriteNamespace(new Namespce(file, "", 0, 1));
-            cache.WriteClass(new Class(file, "", "", "", 0, 0, ""));
-            cache.WriteInterface(new Interface(file, "", "", "", 0, 0, ""));
-            cache.WriteStruct(new Struct(file, "", "", "", 0, 0, ""));
-            cache.WriteEnum(new EnumType(file, "", "", "", 0, 0, ""));
+            cache.WriteClass(new Class(file, "", "", "", 0, 0));
+            cache.WriteInterface(new Interface(file, "", "", "", 0, 0));
+            cache.WriteStruct(new Struct(file, "", "", "", 0, 0));
+            cache.WriteEnum(new EnumType(file, "", "", "", 0, 0));
             cache.WriteField(new Field(file, "", "", "", 0, 0, "", ""));
             cache.WriteMethod(
                 new Method(file, "", "", "", 0, 0, "", new Parameter[] { }, new JSONWriter()));
