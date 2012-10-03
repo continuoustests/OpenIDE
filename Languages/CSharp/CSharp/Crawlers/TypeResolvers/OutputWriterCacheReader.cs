@@ -13,7 +13,6 @@ namespace CSharp.Crawlers.TypeResolvers
             _writer = writer;
         }
 
-        private HashSet<string> _usedTypes = new HashSet<string>();
         public void ResolveMatchingType(params PartialType[] types) {
             var usingsMap = getUsingsMap(types);
             foreach (var type in types) {
@@ -21,32 +20,15 @@ namespace CSharp.Crawlers.TypeResolvers
                     continue;
                 if (type.Type.StartsWith("System."))
                     continue;
-                string matchingType = null;
-                var time = DateTime.Now.Ticks;
-                var before = DateTime.Now.Ticks - time;
-                string[] usings = getUsings(usingsMap, type);
-                foreach (var usng in usings) {
-                    var signature = usng + "." + type.Type;
-                    if (_usedTypes.Contains(signature))
-                        matchingType = signature;
-                }
-                var afterUsings = DateTime.Now.Ticks - time;
-                if (matchingType == null) {
-                    matchingType = getMatchingType(type, usings);
-                    var afterMatch = DateTime.Now.Ticks - time;
-                }
+                var usings = getUsings(usingsMap, type);
+                var matchingType = getMatchingType(type, usings);
                 if (matchingType != null) {
                     type.Resolve(matchingType);
-                    _usedTypes.Add(matchingType);
-                } else {
-                    Console.WriteLine(type.Type);
                 }
-                var span = DateTime.Now.Ticks - time;
-                //Console.WriteLine(span.ToString().PadLeft(15, ' ') + " " + type.File.File + ": " + type.Type);
             }
         }
 
-        private string[] getUsings(Dictionary<string, string[]> usingsMap, PartialType type) {
+        private List<string> getUsings(Dictionary<string, string[]> usingsMap, PartialType type) {
             string[] usings;
             if (!usingsMap.TryGetValue(type.File.File, out usings))
                 usings = new string[] { };
@@ -60,7 +42,7 @@ namespace CSharp.Crawlers.TypeResolvers
                 list.Add(currentNS);
             }
             list.AddRange(usings);
-            return list.ToArray();
+            return list;
         }
 
         private string getNamespaceFromPoint(PartialType type) {
@@ -73,7 +55,7 @@ namespace CSharp.Crawlers.TypeResolvers
             return null;
         }
 
-        private string getMatchingType(PartialType type, string[] usings) {
+        private string getMatchingType(PartialType type, IEnumerable<string> usings) {
             foreach (var usng in usings) {
                 var signature = usng + "." + type.Type;
                 if (_writer.ContainsType(signature))

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using CSharp.Projects;
 
 namespace CSharp.Crawlers.TypeResolvers
@@ -16,17 +17,28 @@ namespace CSharp.Crawlers.TypeResolvers
         }
 
         public void ResolveAllUnresolved(IOutputWriter cache) {
-            cache.Files.ToList()
-                .ForEach(file => {
-                    var partials = new List<PartialType>();
-                    getPartials(cache.Classes, file, partials);
-                    getPartials(cache.Interfaces, file, partials);
-                    getPartials(cache.Structs, file, partials);
-                    getPartials(cache.Enums, file, partials);
-                    getPartials(cache.Fields, file, partials);
-                    getPartials(cache.Methods, file, partials);
-                    _cache.ResolveMatchingType(partials.ToArray());
-                });
+            var padlock = new object();
+            var numFinished = 0;
+            for (int i = 0; i < cache.Files.Count; i++) {
+                var file = cache.Files[i];
+                ThreadPool
+                    .QueueUserWorkItem((evnt) => {
+                        var partials = new List<PartialType>();
+                        getPartials(cache.Classes, file, partials);
+                        getPartials(cache.Interfaces, file, partials);
+                        getPartials(cache.Structs, file, partials);
+                        getPartials(cache.Enums, file, partials);
+                        getPartials(cache.Fields, file, partials);
+                        getPartials(cache.Methods, file, partials);
+                        _cache.ResolveMatchingType(partials.ToArray());
+                        lock (padlock) {
+                            numFinished++;
+                        }
+                    });
+            }
+            while (numFinished != cache.Files.Count) {
+                Thread.Sleep(100);
+            }
         }
 
         private static void getPartials(IEnumerable<ICodeReference> codeRefs, FileRef file, List<PartialType> partials)
