@@ -44,7 +44,6 @@ namespace CSharp.Crawlers
         {
             var asm = "mscorlib";
             parseAssembly(asm);
-            _handledReferences.Add(asm);
         }
 		
 		private List<Project> getProjects(string folder)
@@ -61,7 +60,6 @@ namespace CSharp.Crawlers
 		{
             var reader = new ProjectReader(project.File);
             // Get base assemblies first to better be equiped to locate variable types
-            _builder.SetTypeVisibility(false);
             reader
                 .ReadReferences()
                 .ForEach(x =>
@@ -72,7 +70,6 @@ namespace CSharp.Crawlers
                         _handledReferences.Add(x);
                     }
                 });
-            _builder.SetTypeVisibility(true);
 
             _builder.WriteProject(project);
             reader
@@ -86,6 +83,10 @@ namespace CSharp.Crawlers
         {
             try
 			{
+                _builder.SetTypeVisibility(false);
+                if (_handledReferences.Contains(x))
+                    return;
+                _handledReferences.Add(x);
                 new AssemblyParser(_builder)
                     .Parse(x);
             }
@@ -93,6 +94,10 @@ namespace CSharp.Crawlers
 			{
                 parseError(x, ex);
 			}
+            finally
+            {
+                _builder.SetTypeVisibility(true);
+            }
         }
 
 		private void parseFile(FileRef x)

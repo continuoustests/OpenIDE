@@ -151,14 +151,14 @@ namespace CSharp
         private void handle(FileRef file)
         {
             Console.WriteLine("file|" + file.File + "|filesearch");
-            Usings.ForEach(x => writeSignature("using", x));
-            Namespaces.ForEach(x => writeSignature("namespace", x));
-            Classes.ForEach(x => writeSignature("class", x, new[] { "typesearch" }));
-            Interfaces.ForEach(x => writeSignature("interface", x, new[] { "typesearch" }));
-            Structs.ForEach(x => writeSignature("struct", x, new[] { "typesearch" }));
-            Enums.ForEach(x => writeSignature("enum", x, new[] { "typesearch" }));
-            Fields.ForEach(x => writeSignature("field", x));
-            Methods.ForEach(x => writeSignature("method", x));
+            Usings.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("using", x));
+            Namespaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("namespace", x));
+            Classes.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("class", x, new[] { "typesearch" }));
+            Interfaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("interface", x, new[] { "typesearch" }));
+            Structs.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("struct", x, new[] { "typesearch" }));
+            Enums.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("enum", x, new[] { "typesearch" }));
+            Fields.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("field", x));
+            Methods.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("method", x));
         }
 
 		private void writeSignature(string type, ICodeReference coderef)

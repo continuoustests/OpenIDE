@@ -16,32 +16,34 @@ namespace CSharp.Crawlers.TypeResolvers
         }
 
         public void ResolveAllUnresolved(IOutputWriter cache) {
-            var partials = new List<PartialType>();
             cache.Files.ToList()
                 .ForEach(file => {
+                    var partials = new List<PartialType>();
                     getPartials(cache.Classes, file, partials);
                     getPartials(cache.Interfaces, file, partials);
                     getPartials(cache.Structs, file, partials);
                     getPartials(cache.Enums, file, partials);
                     getPartials(cache.Fields, file, partials);
                     getPartials(cache.Methods, file, partials);
+                    _cache.ResolveMatchingType(partials.ToArray());
                 });
-            _cache.ResolveMatchingType(partials.ToArray());
         }
 
         private static void getPartials(IEnumerable<ICodeReference> codeRefs, FileRef file, List<PartialType> partials)
         {
             codeRefs
                 .Where(x => !x.AllTypesAreResolved && x.File.File == file.File).ToList()
-                .ForEach(x => partials
-                    .AddRange(
+                .ForEach(x => {
+                    x.AllTypesAreResolved = true;
+                    partials.AddRange(
                         x.GetResolveStatements()
                             .Select(stmnt => 
                                 new PartialType(
                                     file,
                                     new Point(x.Line, x.Column),
                                     stmnt.Value,
-                                    stmnt.Replace))));
+                                    stmnt.Replace)));
+                });
         }
     }
 
