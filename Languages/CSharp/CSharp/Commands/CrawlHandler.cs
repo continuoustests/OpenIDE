@@ -20,16 +20,15 @@ namespace CSharp.Commands
 				return;
 			}
 			var crawler = new CSharpCrawler(output);
-			File.ReadAllText(
-				args[0])
-					.Split(new string[] { 
-						Environment.NewLine
-					}, StringSplitOptions.RemoveEmptyEntries
-					).ToList()
-				.ForEach(x =>
-					{
-						crawler.Crawl(new CrawlOptions(x));
-					});
+            if (Directory.Exists(args[0])) {
+                crawler.Crawl(new CrawlOptions(args[0]));
+            } else {
+			    File.ReadAllText(args[0])
+					    .Split(new string[] {  Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList()
+				        .ForEach(x => {
+						        crawler.Crawl(new CrawlOptions(x));
+					        });
+            }
 		}
 	}
 }

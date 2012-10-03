@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 namespace CSharp.Crawlers
 {
 	public interface ICodeReference
 	{
-        bool AllTypesAreResolved { get; }
+        bool AllTypesAreResolved { get; set; }
 
 		string Type { get; }
 		FileRef File { get; }
@@ -19,7 +20,7 @@ namespace CSharp.Crawlers
 
         string GenerateFullSignature();
 
-        void ResolveTypes(ICacheReader cache);
+        IEnumerable<ResolveStatement> GetResolveStatements();
 	}
 }
 

@@ -35,8 +35,6 @@ namespace CSharp.Crawlers
         private void handleType(TypeDefinition type) {
             if (type.BaseType == null)
                 return;
-            if (type.Name.StartsWith("List"))
-                Console.WriteLine("we are here");
             if (type.IsClass)
                 handleClass(type);
             foreach (var child in type.NestedTypes)

@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 namespace CSharp.Crawlers
 {
 	public class EnumType : TypeBase<EnumType>, ICodeReference 
 	{
-        public bool AllTypesAreResolved { get; private set; }
+        public bool AllTypesAreResolved { get; set; }
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
@@ -31,8 +32,8 @@ namespace CSharp.Crawlers
             return null;
         }
 
-        public void ResolveTypes(ICacheReader cache) {
-            throw new NotImplementedException();
+        public IEnumerable<ResolveStatement> GetResolveStatements() {
+            return getTypeResolveStatements();
         }
 	}
 }

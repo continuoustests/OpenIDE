@@ -139,7 +139,6 @@ namespace CSharp.Crawlers
 
         private void addClass(TypeDeclaration type)
         {
-            Console.WriteLine(type.BaseTypes.ToString());
             _writer.WriteClass(
                 addTypeInfo(
                     new Class(

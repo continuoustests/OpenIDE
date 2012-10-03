@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
@@ -7,7 +8,7 @@ namespace CSharp.Crawlers
 {
 	public class Class : TypeBase<Class>, ICodeReference
 	{
-        public bool AllTypesAreResolved { get; private set; }
+        public bool AllTypesAreResolved { get; set; }
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
@@ -33,14 +34,14 @@ namespace CSharp.Crawlers
             return null;
         }
 
-        public void ResolveTypes(ICacheReader cache) {
-            throw new NotImplementedException();
+        public IEnumerable<ResolveStatement> GetResolveStatements() {
+            return getTypeResolveStatements();
         }
     }
 
     public class Field : CodeItemBase<Field>, ICodeReference 
 	{
-        public bool AllTypesAreResolved { get; private set; }
+        public bool AllTypesAreResolved { get; set; }
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
@@ -51,9 +52,12 @@ namespace CSharp.Crawlers
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
+        public string ReturnType { get; private set; }
+
         public Field(FileRef file, string ns, string name, string scope, int line, int column, string returnType)
 		{
             setThis(this);
+            ReturnType = returnType;
 			File = file;
 			Namespace = ns;
 			Name = name;
@@ -70,14 +74,17 @@ namespace CSharp.Crawlers
             return null;
         }
 
-        public void ResolveTypes(ICacheReader cache) {
-            throw new NotImplementedException();
+        public IEnumerable<ResolveStatement> GetResolveStatements() {
+            var list = new List<ResolveStatement>();
+            list.Add(new ResolveStatement(ReturnType, (s) => ReturnType = s));
+            list.AddRange(getTypeResolveStatements());
+            return list;
         }
     }
 
     public class Method : CodeItemBase<Method>, ICodeReference 
 	{
-        public bool AllTypesAreResolved { get; private set; }
+        public bool AllTypesAreResolved { get; set; }
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
@@ -88,9 +95,15 @@ namespace CSharp.Crawlers
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
+        public Parameter[] Parameters { get; private set; }
+        public string ReturnType { get; private set; }
+
         public Method(FileRef file, string ns, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters)
 		{
-            var paramString = getParamString(parameters);
+            setThis(this);
+            Parameters = parameters.ToArray();
+            ReturnType = returnType;
+            var paramString = getParamString(Parameters);
 			File = file;
 			Namespace = ns;
 			Name = name;
@@ -108,8 +121,32 @@ namespace CSharp.Crawlers
             return null;
         }
 
-        public void ResolveTypes(ICacheReader cache) {
-            throw new NotImplementedException();
+        public IEnumerable<ResolveStatement> GetResolveStatements() {
+            var list = new List<ResolveStatement>();
+            list.Add(new ResolveStatement(ReturnType, (s) => ReturnType = s));
+            for (int i = 0; i < Parameters.Length; i++) {
+                int index = i;
+                list.Add(new ResolveStatement(Parameters[index].Type, (s) => updateParameter(index, s)));
+            }
+            list.AddRange(getTypeResolveStatements());
+            return list;
+        }
+
+        private void updateParameter(int i, string value) {
+            Parameters[i].Type = value;
+        }
+
+        protected override string getJSON()
+        {
+            var json = new JSONWriter();
+            base.getJSON(json);
+            if (Parameters.Length > 0) {
+                var parameters = new JSONWriter();
+                foreach (var param in Parameters)
+                    parameters.Append(param.Name, param.Type);
+                json.AppendSection("parameters", parameters);
+            }
+            return json.ToString();
         }
 
         private string getParamString(IEnumerable<Parameter> parameters)
@@ -127,8 +164,8 @@ namespace CSharp.Crawlers
 
     public class Parameter
     {
-        public string Type { get; private set; }
-        public string Name { get; private set; }
+        public string Type { get; set; }
+        public string Name { get; set; }
 
         public Parameter(string type, string name)
         {

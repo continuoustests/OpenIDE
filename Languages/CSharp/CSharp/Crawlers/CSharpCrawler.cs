@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 using Mono.Cecil;
 
@@ -31,7 +32,12 @@ namespace CSharp.Crawlers
 			else
 				projects = getProjects(options.Directory);
             loadmscorlib();
-			projects.ForEach(x => crawl(x));	
+			projects.ForEach(x => crawl(x));
+
+            new TypeResolver(new OutputWriterCacheReader(_builder))
+                .ResolveAllUnresolved(_builder);
+
+            _builder.WriteToOutput();
 		}
 
         private void loadmscorlib()

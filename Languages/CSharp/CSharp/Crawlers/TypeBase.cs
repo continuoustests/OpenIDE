@@ -25,6 +25,19 @@ namespace CSharp.Crawlers
             }
             return writer.ToString();
         }
+
+        protected override IEnumerable<ResolveStatement> getTypeResolveStatements() {
+            var statements = new List<ResolveStatement>(base.getTypeResolveStatements());
+            for (int i = 0; i < _baseTypes.Count; i++) {
+                int index = i;
+                statements.Add(new ResolveStatement(_baseTypes[index], (s) => updateBaseType(index, s)));
+            }
+            return statements;
+        }
+
+        private void updateBaseType(int i, string value) {
+            _baseTypes[i] = value;
+        }
     }
 
     public abstract class CodeItemBase<T>
@@ -47,6 +60,19 @@ namespace CSharp.Crawlers
 
         protected virtual void setThis(T me) {
             _me = me;
+        }
+
+        protected virtual IEnumerable<ResolveStatement> getTypeResolveStatements() {
+            var statements = new List<ResolveStatement>();
+            for (int i = 0; i < _attributes.Count; i++) {
+                int index = i;
+                statements.Add(new ResolveStatement(_attributes[index].Name, (s) => updateAttribute(index, s)));
+            }
+            return statements;
+        }
+
+        private void updateAttribute(int i, string value) {
+            _attributes[i].Name = value;
         }
 
         protected virtual string getJSON() {
@@ -82,15 +108,24 @@ namespace CSharp.Crawlers
         }
     }
 
-    public struct CodeAttribute
+    public class CodeAttribute
     {
-        public string Name;
-        public List<string> Parameters;
+        public string Name { get; set; }
+        public List<string> Parameters = new List<string>();
 
         public void AddParameter(string value) {
-            if (Parameters == null)
-                Parameters = new List<string>();
             Parameters.Add(value);
+        }
+    }
+
+    public class ResolveStatement
+    {
+        public string Value { get; private set; }
+        public Action<string> Replace { get; private set; }
+
+        public ResolveStatement(string value, Action<string> replace) {
+            Value = value;
+            Replace = replace;
         }
     }
 }

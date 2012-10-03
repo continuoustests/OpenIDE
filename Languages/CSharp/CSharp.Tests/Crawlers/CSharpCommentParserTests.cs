@@ -149,6 +149,10 @@ namespace CSharp.Tests.Crawlers
         public void WriteError(string description)
 		{
 		}
+
+        public void WriteToOutput()
+        {
+        }
 	}
 }
 
