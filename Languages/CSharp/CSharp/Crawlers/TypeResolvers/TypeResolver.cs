@@ -42,6 +42,7 @@ namespace CSharp.Crawlers.TypeResolvers
                                     file,
                                     new Point(x.Line, x.Column),
                                     stmnt.Value,
+                                    stmnt.Namespace,
                                     stmnt.Replace)));
                 });
         }
@@ -52,12 +53,14 @@ namespace CSharp.Crawlers.TypeResolvers
         public FileRef File { get; set; }
         public Point Location { get; set; }
         public string Type { get; set; }
+        public string Namespace { get; set; }
         public Action<string> _resolve;
 
-        public PartialType(FileRef file, Point location, string type, Action<string> resolve) {
+        public PartialType(FileRef file, Point location, string type, string ns, Action<string> resolve) {
             File = file;
             Location = location;
             Type = type;
+            Namespace = ns;
             _resolve = resolve;
         }
 

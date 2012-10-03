@@ -37,6 +37,10 @@ namespace CSharp.Crawlers
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             return getTypeResolveStatements();
         }
+
+        protected override string getNamespace() {
+            return Namespace;
+        }
     }
 
     public class Field : CodeItemBase<Field>, ICodeReference 
@@ -76,9 +80,13 @@ namespace CSharp.Crawlers
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
-            list.Add(new ResolveStatement(ReturnType, (s) => ReturnType = s));
+            list.Add(new ResolveStatement(ReturnType, Namespace, (s) => ReturnType = s));
             list.AddRange(getTypeResolveStatements());
             return list;
+        }
+
+        protected override string getNamespace() {
+            return Namespace;
         }
     }
 
@@ -123,10 +131,10 @@ namespace CSharp.Crawlers
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
-            list.Add(new ResolveStatement(ReturnType, (s) => ReturnType = s));
+            list.Add(new ResolveStatement(ReturnType, Namespace, (s) => ReturnType = s));
             for (int i = 0; i < Parameters.Length; i++) {
                 int index = i;
-                list.Add(new ResolveStatement(Parameters[index].Type, (s) => updateParameter(index, s)));
+                list.Add(new ResolveStatement(Parameters[index].Type, Namespace, (s) => updateParameter(index, s)));
             }
             list.AddRange(getTypeResolveStatements());
             return list;
@@ -147,6 +155,10 @@ namespace CSharp.Crawlers
                 json.AppendSection("parameters", parameters);
             }
             return json.ToString();
+        }
+
+        protected override string getNamespace() {
+            return Namespace;
         }
 
         private string getParamString(IEnumerable<Parameter> parameters)

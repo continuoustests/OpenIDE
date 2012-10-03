@@ -33,17 +33,29 @@ namespace CSharp.Crawlers
         }
 
         private void handleType(TypeDefinition type) {
-            if (type.BaseType == null)
+            if (type.Name == "<Module>")
                 return;
-            if (type.IsClass)
-                handleClass(type);
+            if (type.IsClass) {
+                var classDef = new Class(_file, type.Namespace, type.Name, "public", 0, 0);
+                _writer.WriteClass(classDef);
+                handleTypeMembers(type);
+            }
+            if (type.IsInterface) {
+                var iface = new Interface(_file, type.Namespace, type.Name, "public", 0, 0);
+                _writer.WriteInterface(iface);
+                handleTypeMembers(type);
+            }
+            if (type.IsEnum) {
+                var enm = new EnumType(_file, type.Namespace, type.Name, "public", 0, 0);
+                _writer.WriteEnum(enm);
+                handleTypeMembers(type);
+            }
             foreach (var child in type.NestedTypes)
                 handleType(child);
         }
 
-        private void handleClass(TypeDefinition cls) {
-            var classDef = new Class(_file, cls.Namespace, cls.Name, "public", 0, 0);
-            _writer.WriteClass(classDef);
+        private void handleTypeMembers(TypeDefinition cls) {
+            
             cls.Fields
                 .Where(y => y.IsPublic && !y.IsRuntimeSpecialName && !y.IsSpecialName).ToList()
                 .ForEach(x => {

@@ -32,6 +32,9 @@ namespace CSharp
         void WriteMethod(Method method);
         void WriteError(string description);
 
+        void BuildTypeIndex();
+        bool ContainsType(string fullname);
+
         void WriteToOutput();
 	}
 
@@ -129,6 +132,19 @@ namespace CSharp
 		{
 			Console.WriteLine("error|" + description);
 		}
+
+        private HashSet<string> _typeIndex;
+        public void BuildTypeIndex() {
+            _typeIndex = new HashSet<string>();
+            Classes.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
+            Interfaces.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
+            Structs.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
+            Enums.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
+        }
+
+        public bool ContainsType(string fullname) {
+            return _typeIndex.Contains(fullname);
+        }
 
         public void WriteToOutput()
         {

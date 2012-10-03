@@ -153,6 +153,13 @@ namespace CSharp.Tests.Crawlers
         public void WriteToOutput()
         {
         }
+
+        public void BuildTypeIndex() {
+        }
+
+        public bool ContainsType(string fullname) {
+            return false;
+        }
 	}
 }
 

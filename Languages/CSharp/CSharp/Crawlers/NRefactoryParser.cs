@@ -102,7 +102,7 @@ namespace CSharp.Crawlers
                     new EnumType(
                         _file,
                         _namespace,
-                        type.Name,
+                        getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
                         type.NameToken.StartLocation.Column),
@@ -116,7 +116,7 @@ namespace CSharp.Crawlers
                     new Struct(
                         _file,
                         _namespace,
-                        type.Name,
+                        getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
                         type.NameToken.StartLocation.Column),
@@ -130,7 +130,7 @@ namespace CSharp.Crawlers
                     new Interface(
                         _file,
                         _namespace,
-                        type.Name,
+                        getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
                         type.NameToken.StartLocation.Column),
@@ -144,11 +144,17 @@ namespace CSharp.Crawlers
                     new Class(
                         _file,
                         _namespace,
-                        type.Name,
+                        getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
                         type.NameToken.StartLocation.Column),
                     type));
+        }
+
+        private string getName(TypeDeclaration type) {
+            if (type.TypeParameters.Count == 0)
+                return type.Name;
+            return type.Name + "`" + type.TypeParameters.Count.ToString();
         }
 
         private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl)
@@ -220,12 +226,13 @@ namespace CSharp.Crawlers
         {
             if (decl.Attributes.Count == 0)
                 return;
-            var attribSection = new JSONWriter();
             foreach (var typeAttrib in decl.Attributes) {
                 foreach (var attribute in typeAttrib.Attributes) {
                     var codeAttrib = new CodeAttribute() {
                         Name = signatureFrom(attribute.Type)
                     };
+                    if (!codeAttrib.Name.EndsWith("Attribute"))
+                        codeAttrib.Name +=  "Attribute";
                     foreach (var arg in attribute.Arguments)
                         codeAttrib.AddParameter(arg.ToString().Replace("\"", ""));
 
@@ -320,8 +327,12 @@ namespace CSharp.Crawlers
                 return ((IdentifierExpression)expr).Identifier;
             if (isOfType<PrimitiveType>(expr))
                 return "System." + ((PrimitiveType)expr).KnownTypeCode.ToString();
-            if (isOfType<SimpleType>(expr))
-                return ((SimpleType)expr).Identifier;
+            if (isOfType<SimpleType>(expr)) {
+                var simpleType = (SimpleType)expr;
+                if (simpleType.TypeArguments.Count > 0)
+                    return simpleType.Identifier + "`" + simpleType.TypeArguments.Count.ToString();
+                return simpleType.Identifier;
+            }
             if (isOfType<TypeReferenceExpression>(expr))
                 return signatureFrom(((TypeReferenceExpression)expr).Type);
             if (isOfType<ParameterDeclaration>(expr)) {

@@ -35,6 +35,11 @@ namespace CSharp.Crawlers
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             return getTypeResolveStatements();
         }
-	}
+
+        protected override string getNamespace()
+        {
+            return Namespace;
+        }
+    }
 }
 

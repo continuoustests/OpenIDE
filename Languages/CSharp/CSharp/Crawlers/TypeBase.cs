@@ -30,7 +30,7 @@ namespace CSharp.Crawlers
             var statements = new List<ResolveStatement>(base.getTypeResolveStatements());
             for (int i = 0; i < _baseTypes.Count; i++) {
                 int index = i;
-                statements.Add(new ResolveStatement(_baseTypes[index], (s) => updateBaseType(index, s)));
+                statements.Add(new ResolveStatement(_baseTypes[index], getNamespace(), (s) => updateBaseType(index, s)));
             }
             return statements;
         }
@@ -45,6 +45,8 @@ namespace CSharp.Crawlers
         protected T _me;
         protected List<string> _modifiers = new List<string>();
         protected List<CodeAttribute> _attributes = new List<CodeAttribute>();
+
+        protected abstract string getNamespace();
 
         public string JSON { get { return getJSON(); } }
 
@@ -66,7 +68,7 @@ namespace CSharp.Crawlers
             var statements = new List<ResolveStatement>();
             for (int i = 0; i < _attributes.Count; i++) {
                 int index = i;
-                statements.Add(new ResolveStatement(_attributes[index].Name, (s) => updateAttribute(index, s)));
+                statements.Add(new ResolveStatement(_attributes[index].Name, getNamespace(), (s) => updateAttribute(index, s)));
             }
             return statements;
         }
@@ -121,10 +123,12 @@ namespace CSharp.Crawlers
     public class ResolveStatement
     {
         public string Value { get; private set; }
+        public string Namespace { get; private set; }
         public Action<string> Replace { get; private set; }
 
-        public ResolveStatement(string value, Action<string> replace) {
+        public ResolveStatement(string value, string ns, Action<string> replace) {
             Value = value;
+            Namespace = ns;
             Replace = replace;
         }
     }

@@ -34,6 +34,7 @@ namespace CSharp.Crawlers
             loadmscorlib();
 			projects.ForEach(x => crawl(x));
 
+            _builder.BuildTypeIndex();
             new TypeResolver(new OutputWriterCacheReader(_builder))
                 .ResolveAllUnresolved(_builder);
 

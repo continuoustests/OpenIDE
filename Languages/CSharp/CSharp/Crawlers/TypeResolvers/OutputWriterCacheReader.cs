@@ -13,13 +13,36 @@ namespace CSharp.Crawlers.TypeResolvers
             _writer = writer;
         }
 
+        private HashSet<string> _usedTypes = new HashSet<string>();
         public void ResolveMatchingType(params PartialType[] types) {
             var usingsMap = getUsingsMap(types);
             foreach (var type in types) {
+                if (type.Type == "")
+                    continue;
+                if (type.Type.StartsWith("System."))
+                    continue;
+                string matchingType = null;
+                var time = DateTime.Now.Ticks;
+                var before = DateTime.Now.Ticks - time;
                 string[] usings = getUsings(usingsMap, type);
-                var matchingType = getMatchingType(type, usings);
-                if (matchingType != null)
+                foreach (var usng in usings) {
+                    var signature = usng + "." + type.Type;
+                    if (_usedTypes.Contains(signature))
+                        matchingType = signature;
+                }
+                var afterUsings = DateTime.Now.Ticks - time;
+                if (matchingType == null) {
+                    matchingType = getMatchingType(type, usings);
+                    var afterMatch = DateTime.Now.Ticks - time;
+                }
+                if (matchingType != null) {
                     type.Resolve(matchingType);
+                    _usedTypes.Add(matchingType);
+                } else {
+                    Console.WriteLine(type.Type);
+                }
+                var span = DateTime.Now.Ticks - time;
+                //Console.WriteLine(span.ToString().PadLeft(15, ' ') + " " + type.File.File + ": " + type.Type);
             }
         }
 
@@ -28,9 +51,14 @@ namespace CSharp.Crawlers.TypeResolvers
             if (!usingsMap.TryGetValue(type.File.File, out usings))
                 usings = new string[] { };
             var list = new List<string>();
-            var currentNamespace = getNamespaceFromPoint(type);
-            if (currentNamespace != null)
-                list.Add(currentNamespace);
+            var chunks = type.Namespace.Split(new[] { '.' });
+            var currentNS = "";
+            foreach (var chunk in chunks) {
+                if (currentNS != "")
+                    currentNS += ".";
+                currentNS += chunk;
+                list.Add(currentNS);
+            }
             list.AddRange(usings);
             return list.ToArray();
         }
@@ -46,29 +74,11 @@ namespace CSharp.Crawlers.TypeResolvers
         }
 
         private string getMatchingType(PartialType type, string[] usings) {
-            var match = matchIn(_writer.Enums, type, usings);
-            if (match != null)
-                return match;
-            match = matchIn(_writer.Structs, type, usings);
-            if (match != null)
-                return match;
-            match = matchIn(_writer.Interfaces, type, usings);
-            if (match != null)
-                return match;
-            match = matchIn(_writer.Classes, type, usings);
-            if (match != null)
-                return match;
-            return null;
-        }
-
-        private string matchIn(IEnumerable<ICodeReference> list, PartialType type, string[] usings)
-        {
-            var item = list
-                .FirstOrDefault(x => 
-                    x.Name == type.Type && 
-                    matchToAvailableNamespaces(usings, x));
-            if (item != null)
-                return item.Signature;
+            foreach (var usng in usings) {
+                var signature = usng + "." + type.Type;
+                if (_writer.ContainsType(signature))
+                    return signature;
+            }
             return null;
         }
 
@@ -82,10 +92,6 @@ namespace CSharp.Crawlers.TypeResolvers
                             .Where(y => y.File.File == x.Key)
                             .Select(y => y.Name).ToArray()));
             return usingsMap;
-        }
-
-        private bool matchToAvailableNamespaces(string[] usings, ICodeReference reference) {
-            return usings.Contains(reference.Namespace);
         }
     }
 }
