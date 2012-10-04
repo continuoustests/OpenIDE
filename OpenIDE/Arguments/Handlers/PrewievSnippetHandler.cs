@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using OpenIDE.Core.UI;
 using OpenIDE.CommandBuilding;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Language;
 

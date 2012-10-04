@@ -6,9 +6,9 @@ using System.Collections;
 using System.Threading;
 using System.Linq;
 
-namespace OpenIDE.EditorEngineIntegration
+namespace OpenIDE.Core.EditorEngineIntegration
 {
-	class Client : IClient
+	public class Client : IClient
 	{
 		private NetworkStream _stream;
         readonly byte[] _buffer = new byte[1000000];

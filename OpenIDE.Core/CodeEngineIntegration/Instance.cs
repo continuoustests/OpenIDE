@@ -1,18 +1,20 @@
 using System;
 using System.IO;
 using System.Text;
-namespace OpenIDE.CodeEngineIntegration
+namespace OpenIDE.Core.CodeEngineIntegration
 {
-	public class Instance
+	public class Instance : IDisposable
 	{
-		private Func<OpenIDE.EditorEngineIntegration.IClient> _clientFactory;
+        private bool _keepClientAlive = false;
+        private EditorEngineIntegration.IClient _client;
+		private Func<EditorEngineIntegration.IClient> _clientFactory;
 		
 		public string File { get; private set; }
 		public int ProcessID { get; private set; }
 		public string Key { get; private set; }
 		public int Port { get; private set; }
 		
-		public Instance(Func<OpenIDE.EditorEngineIntegration.IClient> clientFactory, string file, int processID, string key, int port)
+		public Instance(Func<EditorEngineIntegration.IClient> clientFactory, string file, int processID, string key, int port)
 		{
 			_clientFactory = clientFactory;
 			File = file;
@@ -20,8 +22,13 @@ namespace OpenIDE.CodeEngineIntegration
 			Key = key;
 			Port = port;
 		}
+
+        public void KeepAlive()
+        {
+            _keepClientAlive = true;
+        }
 		
-		public static Instance Get(Func<OpenIDE.EditorEngineIntegration.IClient> clientFactory, string file, string[] lines)
+		public static Instance Get(Func<EditorEngineIntegration.IClient> clientFactory, string file, string[] lines)
 		{
 			if (lines.Length != 2)
 				return null;
@@ -110,24 +117,40 @@ namespace OpenIDE.CodeEngineIntegration
 
 		private string queryCodeEngine(string command, string query)
 		{
-			var client = _clientFactory.Invoke();
-			client.Connect(Port, (s) => {});
-			if (!client.IsConnected)
-				return "";
-			var reply = client.Request(command + " " + query);
-			client.Disconnect();
+            if (_client == null) {
+			    _client = _clientFactory.Invoke();
+			    _client.Connect(Port, (s) => {});
+			    if (!_client.IsConnected)
+				    return "";
+            }
+			var reply = _client.Request(command + " " + query);
+			if (!_keepClientAlive) {
+			    _client.Disconnect();
+                _client = null;
+            }
 			return reply;
 		}
 		
 		private void send(string message)
 		{
-			var client = _clientFactory.Invoke();
-			client.Connect(Port, (s) => {});
-			if (!client.IsConnected)
-				return;
-			client.SendAndWait(message);
-			client.Disconnect();
+            if (_client == null) {
+			    _client = _clientFactory.Invoke();
+			    _client.Connect(Port, (s) => {});
+			    if (!_client.IsConnected)
+				    return;
+            }
+			_client.SendAndWait(message);
+            if (!_keepClientAlive) {
+			    _client.Disconnect();
+                _client = null;
+            }
 		}
-	}
+
+        public void Dispose()
+        {
+            if (_client != null)
+                _client.Disconnect();
+        }
+    }
 }
 

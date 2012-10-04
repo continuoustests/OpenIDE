@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using OpenIDE.EditorEngineIntegration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -12,7 +11,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
 	{
-		private ILocateEditorEngine _editorFactory;
+		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorFactory;
 		private Func<PluginLocator> _pluginLocator;
 		
 		public CommandHandlerParameter Usage {
@@ -49,7 +48,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
+		public EditorHandler(OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
 		{
 			_editorFactory = editorFactory;
 			_pluginLocator = locator;
@@ -87,7 +86,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 		
-		private Instance startInstance()
+		private OpenIDE.Core.EditorEngineIntegration.Instance startInstance()
 		{
 			var exe = Path.Combine(
 				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "EditorEngine"),

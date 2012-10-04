@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Scripts;
 
-namespace OpenIDE.FileSystem
+namespace OpenIDE.Core.FileSystem
 {
-	class ReactiveScriptLocator : TemplateLocator 
+	public class ReactiveScriptLocator : TemplateLocator 
 	{
 		public ReactiveScriptLocator()
 		{
@@ -16,7 +16,7 @@ namespace OpenIDE.FileSystem
 		}
 	}
 	
-	class ScriptLocator : TemplateLocator
+	public class ScriptLocator : TemplateLocator
 	{
 		public ScriptLocator()
 		{
@@ -24,7 +24,7 @@ namespace OpenIDE.FileSystem
 		}
 	}
 
-	class TemplateLocator 
+	public class TemplateLocator 
 	{
 		protected string _directory;
 

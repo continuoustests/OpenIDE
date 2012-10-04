@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using OpenIDE.Bootstrapping;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Messaging;
 using OpenIDE.Arguments;
-using OpenIDE.EditorEngineIntegration;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.EditorEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Tests
 {

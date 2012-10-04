@@ -8,6 +8,7 @@ namespace CSharp.Crawlers.TypeResolvers
     public class OutputWriterCacheReader : ICacheReader
     {
         private IOutputWriter _writer;
+        private CodeModelTypeResolver _codeModelResolver = new CodeModelTypeResolver(Environment.CurrentDirectory);
 
         public OutputWriterCacheReader(IOutputWriter writer) {
             _writer = writer;
@@ -20,13 +21,15 @@ namespace CSharp.Crawlers.TypeResolvers
                 if (type.Type.StartsWith("System."))
                     continue;
                 var typeToMatch = type.Type.Replace("[]", "");
+                var usings = getUsings(usingsMap, type);
                 var matchingType = matchToAliases(type.File.File, typeToMatch, usingAliasesMap);
                 if (matchingType == null) {
-                    var usings = getUsings(usingsMap, type);
                     matchingType = getMatchingType(typeToMatch, usings);
                     if (matchingType == null)
                         matchingType = _writer.FirstMatchingTypeFromName(typeToMatch);
                 }
+                if (matchingType == null)
+                    matchingType = _codeModelResolver.MatchTypeName(typeToMatch, usings);
                 if (matchingType != null)
                     type.Resolve(type.Type.Replace(typeToMatch, matchingType));
                 else

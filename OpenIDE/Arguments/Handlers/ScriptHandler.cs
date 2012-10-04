@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
 
 namespace OpenIDE.Arguments.Handlers

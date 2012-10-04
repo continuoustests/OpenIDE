@@ -34,18 +34,48 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			var query = getQuery(message);
 			var sb = new StringBuilder();
 			sb.Append(message.CorrelationID);
-			var formatter = new CacheFormatter();
-			_cache.AllReferences()
-				.Where(x => filter(x, query))
-				.GroupBy(x => x.File).ToList()
-				.ForEach(x =>
-					{
-						sb.AppendLine(formatter.FormatFile(x.Key));
-						x.ToList()
-							.ForEach(y => sb.AppendLine(formatter.Format(y)));
-					});
+            if (query != null) {
+			    var formatter = new CacheFormatter();
+                var matcher = new Func<string,string,bool>((a,b) => a == b);
+                if (isWildCard(query))
+                    matcher = wildcardmatch;
+			    _cache.AllReferences()
+				    .Where(x => filter(x, query, matcher))
+				    .GroupBy(x => x.File).ToList()
+				    .ForEach(x =>
+					    {
+						    sb.AppendLine(formatter.FormatFile(x.Key));
+						    x.ToList()
+							    .ForEach(y => sb.AppendLine(formatter.Format(y)));
+					    });
+            }
 			_endpoint.Send(sb.ToString(), clientID);
 		}
+
+        private bool isWildCard(Query query)
+        {
+            if (containsWildCard(query.Language))
+                return true;
+            if (containsWildCard(query.Type))
+                return true;
+            if (containsWildCard(query.File))
+                return true;
+            if (containsWildCard(query.Signature))
+                return true;
+            if (containsWildCard(query.Name))
+                return true;
+            if (containsWildCard(query.Parent))
+                return true;
+            if (containsWildCard(query.Custom))
+                return true;
+            return false;
+        }
+
+        private bool containsWildCard(string text) {
+            if (text == null)
+                return false;
+            return text.Contains('*') || text.Contains('?');
+        }
 
 		private Query getQuery(CommandMessage message)
 		{
@@ -75,23 +105,23 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			return items.ElementAt(0).Value;
 		}
 
-		private bool filter(ICodeReference reference, Query query)
+		private bool filter(ICodeReference reference, Query query, Func<string, string, bool> matcher)
 		{
 			if (query == null)
 				return true;
-            if (query.Language != null &&  !wildcardmatch(reference.Language, query.Language))
+            if (query.Language != null &&  !matcher(reference.Language, query.Language))
                 return false;
-			if (query.Type != null && !wildcardmatch(reference.Type, query.Type))
+			if (query.Type != null && !matcher(reference.Type, query.Type))
 				return false;
-			if (query.File != null && !wildcardmatch(reference.File, query.File))
+			if (query.File != null && !matcher(reference.File, query.File))
 				return false;
-			if (query.Signature != null && !wildcardmatch(reference.Signature, query.Signature))
+			if (query.Signature != null && !matcher(reference.Signature, query.Signature))
 				return false;
-			if (query.Name != null && !wildcardmatch(reference.Name, query.Name))
+			if (query.Name != null && !matcher(reference.Name, query.Name))
 				return false;
-            if (query.Parent != null && !wildcardmatch(reference.Parent, query.Parent))
+            if (query.Parent != null && !matcher(reference.Parent, query.Parent))
 				return false;
-            if (query.Custom != null && !wildcardmatch(reference.JSON, query.Custom))
+            if (query.Custom != null && !matcher(reference.JSON, query.Custom))
 				return false;
 			return true;
 		}

@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDE.FileSystem
+namespace OpenIDE.Core.FileSystem
 {
 	public interface IFS
 	{

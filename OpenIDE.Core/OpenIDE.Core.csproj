@@ -53,6 +53,18 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
+    <Compile Include="CodeEngineIntegration\Instance.cs" />
+    <Compile Include="EditorEngineIntegration\Client.cs" />
+    <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
+    <Compile Include="EditorEngineIntegration\IClient.cs" />
+    <Compile Include="EditorEngineIntegration\IEngineLocator.cs" />
+    <Compile Include="EditorEngineIntegration\Instance.cs" />
+    <Compile Include="FileSystem\FS.cs" />
+    <Compile Include="FileSystem\IFS.cs" />
+    <Compile Include="FileSystem\PathExtensions.cs" />
+    <Compile Include="FileSystem\Script.cs" />
+    <Compile Include="FileSystem\ScriptLocator.cs" />
     <Compile Include="UI\SnippetForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,4 +119,5 @@
       <Name>CoreExtensions</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
 </Project>

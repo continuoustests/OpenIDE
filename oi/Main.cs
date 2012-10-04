@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using OpenIDE.Messaging;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Arguments;
 using OpenIDE.Core.Language;

@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using System.Reflection;
 using System.IO;
 namespace OpenIDE.Tests

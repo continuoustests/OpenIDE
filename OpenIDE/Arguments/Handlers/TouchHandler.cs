@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenIDE.Core.Language;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 
 namespace OpenIDE.Arguments.Handlers
 {

@@ -49,6 +49,8 @@
     <Compile Include="Crawlers\SolutionReaderTests.cs" />
     <Compile Include="Commands\TemplateDefinitionParserTests.cs" />
     <Compile Include="Commands\CommandDispatcherTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeModelResultParserTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeModelTypeResolverTests.cs" />
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReaderTests.cs" />
     <Compile Include="Crawlers\TypeResolvers\TypeResolverTests.cs" />
     <Compile Include="Files\ComplieFileTests.cs" />

@@ -21,8 +21,8 @@ namespace CSharp.Crawlers.TypeResolvers
             var numFinished = 0;
             for (int i = 0; i < cache.Files.Count; i++) {
                 var file = cache.Files[i];
-                ThreadPool
-                    .QueueUserWorkItem((evnt) => {
+                //ThreadPool
+                //    .QueueUserWorkItem((evnt) => {
                         var partials = new List<PartialType>();
                         getPartials(cache.Classes, file, partials);
                         getPartials(cache.Interfaces, file, partials);
@@ -34,7 +34,7 @@ namespace CSharp.Crawlers.TypeResolvers
                         lock (padlock) {
                             numFinished++;
                         }
-                    });
+                //    });
             }
             while (numFinished != cache.Files.Count) {
                 Thread.Sleep(100);

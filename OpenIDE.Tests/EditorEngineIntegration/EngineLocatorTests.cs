@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
-using OpenIDE.EditorEngineIntegration;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.EditorEngineIntegration;
+using OpenIDE.Core.FileSystem;
 using Rhino.Mocks;
 using System.IO;
 namespace OpenIDE.Tests.EditorEngineIntegration

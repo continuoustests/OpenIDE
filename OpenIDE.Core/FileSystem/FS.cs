@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-namespace OpenIDE.FileSystem
+namespace OpenIDE.Core.FileSystem
 {
 	public class FS : IFS
 	{

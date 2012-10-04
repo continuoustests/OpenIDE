@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers

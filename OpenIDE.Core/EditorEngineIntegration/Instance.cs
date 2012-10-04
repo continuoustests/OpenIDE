@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
-namespace OpenIDE.EditorEngineIntegration
+namespace OpenIDE.Core.EditorEngineIntegration
 {
 	public class Instance
 	{

@@ -1,25 +1,20 @@
 using System;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-namespace OpenIDE.CodeEngineIntegration
+namespace OpenIDE.Core.EditorEngineIntegration
 {
-	public interface ICodeEngineLocator
-	{
-		Instance GetInstance(string path);
-	}
-	
-	public class CodeEngineDispatcher : ICodeEngineLocator
+	public class EngineLocator : ILocateEditorEngine
 	{
 		private IFS _fs;
 		
-		public Func<OpenIDE.EditorEngineIntegration.IClient> ClientFactory { private get; set; }
+		public Func<IClient> ClientFactory { private get; set; }
 		
-		public CodeEngineDispatcher(IFS fs)
+		public EngineLocator(IFS fs)
 		{
 			_fs = fs;
-			ClientFactory = () => { return new OpenIDE.EditorEngineIntegration.Client(); };
+			ClientFactory = () => { return new Client(); };
 		}
 		
 		public Instance GetInstance(string path)
@@ -32,7 +27,7 @@ namespace OpenIDE.CodeEngineIntegration
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			var dir = Path.Combine(Path.GetTempPath(), "OpenIDE.CodeEngine");
+			var dir = Path.Combine(Path.GetTempPath(), "EditorEngine");
 			if (_fs.DirectoryExists(dir))
 			{
 				foreach (var file in _fs.GetFiles(dir, "*.pid"))

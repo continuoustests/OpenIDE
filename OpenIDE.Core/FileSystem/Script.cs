@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 
-namespace OpenIDE.FileSystem
+namespace OpenIDE.Core.FileSystem
 {
-	class Script
+	public class Script
 	{
 		private string _file;
 		private string _workingDirectory;

@@ -75,6 +75,8 @@
     <Compile Include="Crawlers\AssemblyParser.cs" />
     <Compile Include="Crawlers\JSONWriter.cs" />
     <Compile Include="Crawlers\TypeBase.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeModelResultParser.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeModelTypeResolver.cs" />
     <Compile Include="Crawlers\TypeResolvers\ICacheReader.cs" />
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReader.cs" />
     <Compile Include="Crawlers\TypeResolvers\TypeResolver.cs" />
@@ -147,6 +149,12 @@
     <Compile Include="Commands\SignatureFromPositionHandler.cs" />
     <Compile Include="Commands\MembersFromUnknownSignatureHandler.cs" />
     <Compile Include="Crawlers\NRefactoryParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\OpenIDE.Core\OpenIDE.Core.csproj">
+      <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>OpenIDE.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

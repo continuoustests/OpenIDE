@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace OpenIDE.FileSystem
+namespace OpenIDE.Core.FileSystem
 {
 	public static class PathExtensions
 	{

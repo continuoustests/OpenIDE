@@ -1,5 +1,5 @@
 using System;
-namespace OpenIDE.EditorEngineIntegration
+namespace OpenIDE.Core.EditorEngineIntegration
 {
 	public interface ILocateEditorEngine
 	{
