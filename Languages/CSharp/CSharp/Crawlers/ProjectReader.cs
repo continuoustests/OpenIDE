@@ -89,6 +89,7 @@ namespace CSharp.Crawlers
                         refs.Add(reference);
                 }
             } catch {
+
             }
             return refs;
         }

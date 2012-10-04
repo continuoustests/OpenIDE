@@ -32,6 +32,8 @@ namespace CSharp.Crawlers
 			foreach (var child in node.Children) {
 				if (child.GetType() == typeof(UsingDeclaration))
 					handleUsing((UsingDeclaration)child);
+                else if (child.GetType() == typeof(UsingAliasDeclaration))
+                    handleUsing((UsingAliasDeclaration)child);
 				else if (child.GetType() == typeof(NamespaceDeclaration))
 					handleNamespace((NamespaceDeclaration)child);
 				else if (child.GetType() == typeof(TypeDeclaration))
@@ -60,6 +62,16 @@ namespace CSharp.Crawlers
                     usng.Import.StartLocation.Line,
                     usng.Import.StartLocation.Column));
 		}
+
+        private void handleUsing(UsingAliasDeclaration alias) {
+            _writer.WriteUsingAlias(
+                new UsingAlias(
+                    _file,
+                    alias.Alias,
+                    signatureFrom(alias.Import),
+                    alias.Import.StartLocation.Line,
+                    alias.Import.StartLocation.Column));
+        }
 		
 		private void handleNamespace(NamespaceDeclaration ns) {
             var location = ns.NamespaceToken.EndLocation;
@@ -160,8 +172,10 @@ namespace CSharp.Crawlers
         private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl)
         {
             getTypeAttributes(type, decl);
-            foreach (var baseType in decl.BaseTypes)
-                type.AddBaseType(signatureFrom(baseType));
+            foreach (var baseType in decl.BaseTypes) {
+                var signature = signatureFrom(baseType);
+                type.AddBaseType(signature);
+            }
             return type.AddModifiers(getTypeModifiers(decl));
         }
 
@@ -248,8 +262,10 @@ namespace CSharp.Crawlers
 
         private void handleMethod(MethodDeclaration method) {
             var parameters = new List<Parameter>();
-            foreach (var param in method.Parameters)
-                parameters.Add(new Parameter(signatureFrom(param.Type), param.Name));
+            foreach (var param in method.Parameters) {
+                var signature = signatureFrom(param.Type);
+                parameters.Add(new Parameter(signature, param.Name));
+            }
             _writer.WriteMethod(
                 addMemberInfo(
                     new Method(
@@ -288,6 +304,7 @@ namespace CSharp.Crawlers
 		private void handleVariableInitializer(VariableInitializer variable) {
 			if (variable.Parent.GetType() == typeof(FieldDeclaration)) {
                 var field = (FieldDeclaration)variable.Parent;
+                var returnType = signatureFrom(field.ReturnType);
                 _writer.WriteField(
                     addMemberInfo(
                         new Field(
@@ -297,7 +314,7 @@ namespace CSharp.Crawlers
                             getTypeModifier(field.Modifiers),
                             variable.NameToken.StartLocation.Line,
                             variable.NameToken.StartLocation.Column,
-                            signatureFrom(field.ReturnType)),
+                            returnType),
                         field));
             }
 			/*else if (variable.Parent.GetType() == typeof(VariableDeclarationStatement))
@@ -327,12 +344,16 @@ namespace CSharp.Crawlers
                 return ((IdentifierExpression)expr).Identifier;
             if (isOfType<PrimitiveType>(expr))
                 return "System." + ((PrimitiveType)expr).KnownTypeCode.ToString();
-            if (isOfType<SimpleType>(expr)) {
-                var simpleType = (SimpleType)expr;
-                if (simpleType.TypeArguments.Count > 0)
-                    return simpleType.Identifier + "`" + simpleType.TypeArguments.Count.ToString();
-                return simpleType.Identifier;
+            if (isOfType<ComposedType>(expr)) {
+                var composedType = (ComposedType)expr;
+                var fullname = composedType.ToString();
+                var simpleType = signatureFrom(composedType.BaseType);
+                return fullname.Replace(composedType.BaseType.ToString(), simpleType);
             }
+            if (isOfType<MemberType>(expr))
+                return getName((MemberType)expr);
+            if (isOfType<SimpleType>(expr))
+                return getName((SimpleType)expr);
             if (isOfType<TypeReferenceExpression>(expr))
                 return signatureFrom(((TypeReferenceExpression)expr).Type);
             if (isOfType<ParameterDeclaration>(expr)) {
@@ -350,7 +371,24 @@ namespace CSharp.Crawlers
             return "";
         }
 
-        private string signatureFromType(InvocationExpression invocationExpression) {
+        private string getName(MemberType type)
+        {
+            return getName(type.MemberName, type.TypeArguments);
+        }
+
+        private string getName(SimpleType type)
+        {
+            return getName(type.Identifier, type.TypeArguments);
+        }
+
+	    private string getName(string name, AstNodeCollection<AstType> typeArguments)
+	    {
+	        if (typeArguments.Count > 0)
+	            return name + "`" + typeArguments.Count.ToString();
+	        return name;
+	    }
+
+	    private string signatureFromType(InvocationExpression invocationExpression) {
             var target = signatureFrom(invocationExpression.Target);
             var parameters = "";
             foreach (var param in invocationExpression.Arguments)

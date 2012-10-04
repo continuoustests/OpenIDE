@@ -39,4 +39,37 @@ namespace CSharp.Crawlers
             return new ResolveStatement[] {};
         }
     }
+
+    public class UsingAlias : ICodeReference
+    {
+        public bool AllTypesAreResolved { get; set; }
+
+        public string Type { get; private set; }
+        public FileRef File { get; private set; }
+		public string Signature { get { return Name; } }
+		public string Namespace { get; private set; }
+		public string Name { get; private set; }
+        public string Scope { get; private set; }
+		public int Line { get; private set; }
+		public int Column { get; private set; }
+        public string JSON { get; private set; }
+
+        public UsingAlias(FileRef file, string alias, string type, int line, int column) {
+			File = file;
+			Namespace = type;
+			Name = alias;
+            Scope = "";
+			Line = line;
+			Column = column;
+            JSON = "";
+		}
+
+        public string GenerateFullSignature() {
+            return null;
+        }
+
+        public IEnumerable<ResolveStatement> GetResolveStatements() {
+            return new ResolveStatement[] {};
+        }
+    }
 }

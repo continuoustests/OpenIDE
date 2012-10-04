@@ -15,17 +15,39 @@ namespace CSharp.Crawlers.TypeResolvers
 
         public void ResolveMatchingType(params PartialType[] types) {
             var usingsMap = getUsingsMap(types);
+            var usingAliasesMap = getUsingAliasesMap(types);
             foreach (var type in types) {
-                if (type.Type == "")
-                    continue;
                 if (type.Type.StartsWith("System."))
                     continue;
-                var usings = getUsings(usingsMap, type);
-                var matchingType = getMatchingType(type, usings);
-                if (matchingType != null) {
-                    type.Resolve(matchingType);
+                var typeToMatch = type.Type.Replace("[]", "");
+                var matchingType = matchToAliases(type.File.File, typeToMatch, usingAliasesMap);
+                if (matchingType == null) {
+                    var usings = getUsings(usingsMap, type);
+                    matchingType = getMatchingType(typeToMatch, usings);
+                    if (matchingType == null)
+                        matchingType = _writer.FirstMatchingTypeFromName(typeToMatch);
                 }
+                if (matchingType != null)
+                    type.Resolve(type.Type.Replace(typeToMatch, matchingType));
+                else
+                    Console.WriteLine(string.Format("{0} {1}:{2}:{3}", type.Type, type.File.File, type.Location.Line, type.Location.Column));
             }
+        }
+
+        private string matchToAliases(string file, string type, Dictionary<string,UsingAlias[]> usingAliasesMap) {
+            UsingAlias[] aliases;
+            if (!usingAliasesMap.TryGetValue(file, out aliases))
+                return null;
+            var match = aliases.FirstOrDefault(x => x.Name == type);
+            if (match != null) {
+                if (_writer.ContainsType(match.Namespace))
+                    return match.Namespace;
+                var firstMatch = _writer.FirstMatchingTypeFromName(match.Namespace);
+                if (firstMatch != null)
+                    return firstMatch;
+                return match.Namespace;
+            }
+            return null;
         }
 
         private List<string> getUsings(Dictionary<string, string[]> usingsMap, PartialType type) {
@@ -55,9 +77,9 @@ namespace CSharp.Crawlers.TypeResolvers
             return null;
         }
 
-        private string getMatchingType(PartialType type, IEnumerable<string> usings) {
+        private string getMatchingType(string type, IEnumerable<string> usings) {
             foreach (var usng in usings) {
-                var signature = usng + "." + type.Type;
+                var signature = usng + "." + type;
                 if (_writer.ContainsType(signature))
                     return signature;
             }
@@ -74,6 +96,18 @@ namespace CSharp.Crawlers.TypeResolvers
                             .Where(y => y.File.File == x.Key)
                             .Select(y => y.Name).ToArray()));
             return usingsMap;
+        }
+
+        private Dictionary<string,UsingAlias[]> getUsingAliasesMap(PartialType[] types) {
+            var usingsAliasesMap = new Dictionary<string,UsingAlias[]>();
+            types.GroupBy(x => x.File.File).ToList()
+                .ForEach(x => 
+                    usingsAliasesMap.Add(
+                        x.Key, 
+                        _writer.UsingAliases
+                            .Where(y => y.File.File == x.Key)
+                            .Select(y => y).ToArray()));
+            return usingsAliasesMap;
         }
     }
 }

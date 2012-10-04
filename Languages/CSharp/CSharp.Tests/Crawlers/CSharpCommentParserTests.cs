@@ -55,6 +55,7 @@ namespace CSharp.Tests.Crawlers
 	{
         public List<Project> Projects { get; private set; }
         public List<Using> Usings { get; private set; }
+        public List<UsingAlias> UsingAliases { get; private set; }
         public List<FileRef> Files { get; private set; }
         public List<Namespce> Namespaces { get; private set; }
         public List<Class> Classes { get; private set; }
@@ -68,6 +69,7 @@ namespace CSharp.Tests.Crawlers
         {
             Projects = new List<Project>();
             Usings = new List<Using>();
+            UsingAliases = new List<UsingAlias>();
             Files = new List<FileRef>();
             Namespaces = new List<Namespce>();
             Classes = new List<Class>();
@@ -110,6 +112,11 @@ namespace CSharp.Tests.Crawlers
 		{
 			Files.Add(file);
 		}
+
+        public void WriteUsingAlias(UsingAlias alias)
+        {
+            UsingAliases.Add(alias);
+        }
 
         public void WriteNamespace(Namespce ns)
 		{
@@ -159,6 +166,10 @@ namespace CSharp.Tests.Crawlers
 
         public bool ContainsType(string fullname) {
             return false;
+        }
+
+        public string FirstMatchingTypeFromName(string name) {
+            return null;
         }
 	}
 }

@@ -10,6 +10,7 @@ namespace CSharp
 	{
         List<Project> Projects { get; }
         List<Using> Usings { get; }
+        List<UsingAlias> UsingAliases { get; }
         List<FileRef> Files { get; }
         List<Namespce> Namespaces { get; }
         List<Class> Classes { get; }
@@ -21,6 +22,7 @@ namespace CSharp
 
         void SetTypeVisibility(bool visibility);
         void WriteUsing(Using usng);
+        void WriteUsingAlias(UsingAlias usng);
         void WriteProject(Project project);
         void WriteFile(FileRef file);
         void WriteNamespace(Namespce ns);
@@ -34,6 +36,7 @@ namespace CSharp
 
         void BuildTypeIndex();
         bool ContainsType(string fullname);
+        string FirstMatchingTypeFromName(string name);
 
         void WriteToOutput();
 	}
@@ -44,6 +47,7 @@ namespace CSharp
 
         public List<Project> Projects { get; private set; }
         public List<Using> Usings { get; private set; }
+        public List<UsingAlias> UsingAliases { get; private set; }
         public List<FileRef> Files { get; private set; }
         public List<Namespce> Namespaces { get; private set; }
         public List<Class> Classes { get; private set; }
@@ -56,6 +60,7 @@ namespace CSharp
         public OutputWriter() {
             Projects = new List<Project>();
             Usings = new List<Using>();
+            UsingAliases = new List<UsingAlias>();
             Files = new List<FileRef>();
             Namespaces = new List<Namespce>();
             Classes = new List<Class>();
@@ -70,12 +75,6 @@ namespace CSharp
             _visibility = visibility;
         }
 
-        public void WriteUsing(Using usng)
-        {
-            usng.AllTypesAreResolved = !_visibility;
-            Usings.Add(usng);
-        }
-
         public void WriteProject(Project project)
 		{
             Projects.Add(project);
@@ -85,6 +84,18 @@ namespace CSharp
 		{
             Files.Add(file);
 		}
+
+        public void WriteUsing(Using usng)
+        {
+            usng.AllTypesAreResolved = !_visibility;
+            Usings.Add(usng);
+        }
+
+        public void WriteUsingAlias(UsingAlias alias)
+        {
+            alias.AllTypesAreResolved = !_visibility;
+            UsingAliases.Add(alias);
+        }
 
         public void WriteNamespace(Namespce ns)
 		{
@@ -134,16 +145,45 @@ namespace CSharp
 		}
 
         private HashSet<string> _typeIndex;
+        private Dictionary<string, string> _nameIndex;
         public void BuildTypeIndex() {
             _typeIndex = new HashSet<string>();
-            Classes.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
-            Interfaces.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
-            Structs.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
-            Enums.ForEach(x => _typeIndex.Add(x.Namespace + "." + x.Name));
+            _nameIndex = new Dictionary<string,string>();
+            Classes.ForEach(x => {
+                var signature = x.Namespace + "." + x.Name;
+                _typeIndex.Add(signature);
+                if (!_nameIndex.ContainsKey(x.Name))
+                    _nameIndex.Add(x.Name, signature);
+            });
+            Interfaces.ForEach(x => {
+                var signature = x.Namespace + "." + x.Name;
+                _typeIndex.Add(signature);
+                if (!_nameIndex.ContainsKey(x.Name))
+                    _nameIndex.Add(x.Name, signature);
+            });
+            Structs.ForEach(x => {
+                var signature = x.Namespace + "." + x.Name;
+                _typeIndex.Add(signature);
+                if (!_nameIndex.ContainsKey(x.Name))
+                    _nameIndex.Add(x.Name, signature);
+            });
+            Enums.ForEach(x => {
+                var signature = x.Namespace + "." + x.Name;
+                _typeIndex.Add(signature);
+                if (!_nameIndex.ContainsKey(x.Name))
+                    _nameIndex.Add(x.Name, signature);
+            });
         }
 
         public bool ContainsType(string fullname) {
             return _typeIndex.Contains(fullname);
+        }
+
+        public string FirstMatchingTypeFromName(string name) {
+            string signature;
+            if (_nameIndex.TryGetValue(name, out signature))
+                return signature;
+            return null;
         }
 
         public void WriteToOutput()
@@ -168,6 +208,7 @@ namespace CSharp
         {
             Console.WriteLine("file|" + file.File + "|filesearch");
             Usings.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("using", x));
+            Usings.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("alias", x));
             Namespaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("namespace", x));
             Classes.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("class", x, new[] { "typesearch" }));
             Interfaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("interface", x, new[] { "typesearch" }));
