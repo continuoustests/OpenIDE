@@ -208,7 +208,7 @@ namespace CSharp
         {
             Console.WriteLine("file|" + file.File + "|filesearch");
             Usings.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("using", x));
-            Usings.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("alias", x));
+            UsingAliases.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("alias", x));
             Namespaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("namespace", x));
             Classes.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("class", x, new[] { "typesearch" }));
             Interfaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("interface", x, new[] { "typesearch" }));
