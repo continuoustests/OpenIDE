@@ -19,10 +19,14 @@ namespace CSharp.Crawlers.TypeResolvers
         public string MatchTypeName(string typeName, IEnumerable<string> usings) {
             if (_codeModel == null) {
                 _codeModel = new CodeEngineDispatcher(new FS()).GetInstance(_currentDir);
+                if (_codeModel == null)
+                    return null;
                 _codeModel.KeepAlive();
             }
             var refs = new CodeModelResultParser()
                 .ParseRefs( _codeModel.GetCodeRefs("language=C#,name=" + typeName));
+            if (refs.Count == 0)
+                return null;
             foreach (var usng in usings) {
                 var match = refs.FirstOrDefault(x => x.Namespace + "." + x.Name == usng + "." + typeName);
                 if (match != null)

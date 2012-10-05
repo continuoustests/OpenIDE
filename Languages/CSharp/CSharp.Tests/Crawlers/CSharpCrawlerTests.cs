@@ -21,9 +21,9 @@ namespace CSharp.Tests.Crawlers
                 string.Format("..{0}..{0}", Path.DirectorySeparatorChar))
                     .ToAbsolute(
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-			new CSharpCrawler(cache)
-				.Crawl(new CrawlOptions(dir));
-			Thread.Sleep(1500);
+			var crawler = new CSharpCrawler(cache);
+            crawler.SkipTypeMatching();
+	        crawler.Crawl(new CrawlOptions(dir));
             var project = cache.GetProject(Path.Combine(dir, "CSharp.Tests.csproj"));
 			Assert.That(cache.Classes.Count, Is.GreaterThan(0));
 			Assert.That(cache.Namespaces[0].Name, Is.EqualTo("CSharp.Tests.Crawlers"));

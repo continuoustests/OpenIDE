@@ -10,7 +10,14 @@ namespace CSharp.Commands
 		
 		public void Execute(string[] args)
 		{
-			// TODO when the code parsing is done implement this
+			// parse arguments
+            // get all dirty buffers
+            // parse all dirty buffers
+            // parse given file (with variable declaration)
+            // get variable / member / type name under or behind position
+            // find type of declaration
+            // clean up temp buffers
+            // return type
 		}
 	}
 }

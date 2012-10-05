@@ -164,8 +164,9 @@ namespace CSharp.Tests.Crawlers
         public void BuildTypeIndex() {
         }
 
+        public List<string> TypeIndex = new List<string>();
         public bool ContainsType(string fullname) {
-            return false;
+            return TypeIndex.Contains(fullname);
         }
 
         public string FirstMatchingTypeFromName(string name) {

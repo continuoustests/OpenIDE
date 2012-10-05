@@ -11,6 +11,7 @@ namespace CSharp.Crawlers
 {
 	public class CSharpCrawler : ICrawler
 	{
+        private bool _typeMatching = true;
 		private IOutputWriter _builder;
         private List<string> _handledReferences = new List<string>();
 
@@ -18,6 +19,11 @@ namespace CSharp.Crawlers
 		{
 			_builder = writer;
 		}
+
+        public void SkipTypeMatching() 
+        {
+            _typeMatching = false;
+        }
 
 		public void Crawl(CrawlOptions options)
 		{
@@ -34,9 +40,11 @@ namespace CSharp.Crawlers
             loadmscorlib();
 			projects.ForEach(x => crawl(x));
 
-            _builder.BuildTypeIndex();
-            new TypeResolver(new OutputWriterCacheReader(_builder))
-                .ResolveAllUnresolved(_builder);
+            if (_typeMatching) {
+                _builder.BuildTypeIndex();
+                new TypeResolver(new OutputWriterCacheReader(_builder))
+                    .ResolveAllUnresolved(_builder);
+            }
 
             _builder.WriteToOutput();
 		}

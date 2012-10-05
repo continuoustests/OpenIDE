@@ -55,14 +55,14 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
             _resolver
                 .ResolveMatchingType(
                     new PartialType(
-                        file, new Point(3, 1), "ThirdClass", "Project1.SecondNamespace",
+                        file, new Point(3, 1), "ThirdClass", "Project1",
                         (s) => resolvedWith = s));
             Assert.That(resolvedWith, Is.EqualTo("not_set"));
 
             _resolver
                 .ResolveMatchingType(
                     new PartialType(
-                        file, new Point(3, 1), "SecondClass", "Project1.FirstNamespace",
+                        file, new Point(3, 1), "SecondClass", "Project1",
                         (s) => resolvedWith = s));
             Assert.That(resolvedWith, Is.EqualTo("Project1.FirstNamespace.SecondClass"));
         }
@@ -88,6 +88,10 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 
             var project2 = new Project("Project2");
             _cache.WriteProject(project2);
+
+            _cache.TypeIndex.Add("Project1.FirstClass");;
+            _cache.TypeIndex.Add("Project1.FirstNamespace.SecondClass");
+            _cache.TypeIndex.Add("Project1.SecondNamespace.ThirdClass");
         }
     }
 }

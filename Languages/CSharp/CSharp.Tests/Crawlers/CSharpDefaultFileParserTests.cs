@@ -247,7 +247,7 @@ namespace CSharp.Tests.Crawlers
             Assert.That(usng.Column, Is.EqualTo(28));
             Assert.That(
                 usng.JSON,
-                Is.EqualTo("{\"static\":\"1\",\"attributes\":{\"Category\":\"hello,15\"},\"parameters\":{\"number\":\"System.Int32\",\"cls\":\"ASealedClass\"}}"));
+                Is.EqualTo("{\"static\":\"1\",\"attributes\":{\"CategoryAttribute\":\"hello,15\"},\"parameters\":{\"number\":\"System.Int32\",\"cls\":\"ASealedClass\"}}"));
         }
 
         [Test]
@@ -293,7 +293,7 @@ namespace CSharp.Tests.Crawlers
         public void Should_find_class_attributes()
         {
             var cls = _cache.Classes.Where(x => x.Name.Equals("Program")).FirstOrDefault();
-            Assert.That(cls.JSON, Is.EqualTo("{\"attributes\":{\"TestFixture\":\"\"}}"));
+            Assert.That(cls.JSON, Is.EqualTo("{\"attributes\":{\"TestFixtureAttribute\":\"\"}}"));
         }
 
 		private string getContent()
