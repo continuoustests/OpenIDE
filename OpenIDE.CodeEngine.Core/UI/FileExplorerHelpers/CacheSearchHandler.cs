@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching.Search;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 using System.Diagnostics;
 using CoreExtensions;
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.RScripts;
 using OpenIDE.Core.Language;
 

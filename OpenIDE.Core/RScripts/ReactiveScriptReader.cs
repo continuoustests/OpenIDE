@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Core.Language;
 
@@ -31,7 +32,12 @@ namespace OpenIDE.Core.RScripts
 
 		public ReactiveScript ReadScript(string path)
 		{
-			return new ReactiveScript(path, _keyPath);
+            try {
+			    return new ReactiveScript(path, _keyPath);
+            } catch (Exception ex) {
+                Logger.Write(ex);
+            }
+            return null;
 		}
 		
 		private void readScripts(string path)

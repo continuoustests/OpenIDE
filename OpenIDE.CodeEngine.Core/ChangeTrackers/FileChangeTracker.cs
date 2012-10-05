@@ -5,7 +5,7 @@ using System.IO;
 using FSWatcher;
 using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 {
 	public class FileChangeTracker : IDisposable

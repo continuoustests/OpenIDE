@@ -10,7 +10,7 @@ using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
 	public class CommandEndpoint

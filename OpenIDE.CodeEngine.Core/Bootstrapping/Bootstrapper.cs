@@ -10,7 +10,7 @@ using OpenIDE.CodeEngine.Core.Handlers;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.ChangeTrackers;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.Core.Caching;
 using OpenIDE.Core.Language;
@@ -31,7 +31,6 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		public static CommandEndpoint GetEndpoint(string path, string[] enabledLanguages)
 		{
 			_path = path;
-			Logger.Assign(new FileLogger());
             _cache = new TypeCache();
 			var crawlHandler = new CrawlHandler(_cache, (s) => Logger.Write(s));
 			var pluginLocator = new PluginLocator(

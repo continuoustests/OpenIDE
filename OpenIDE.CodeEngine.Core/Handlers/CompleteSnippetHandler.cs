@@ -6,7 +6,7 @@ using System.Reflection;
 using OpenIDE.Core.UI;
 using OpenIDE.Core.Config;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 

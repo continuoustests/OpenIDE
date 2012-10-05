@@ -65,6 +65,9 @@
     <Compile Include="FileSystem\PathExtensions.cs" />
     <Compile Include="FileSystem\Script.cs" />
     <Compile Include="FileSystem\ScriptLocator.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="UI\SnippetForm.cs">
       <SubType>Form</SubType>
     </Compile>

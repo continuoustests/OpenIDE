@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace OpenIDE.CodeEngine.Core.Logging
+namespace OpenIDE.Core.Logging
 {
 	public class FileLogger : ILogger
 	{

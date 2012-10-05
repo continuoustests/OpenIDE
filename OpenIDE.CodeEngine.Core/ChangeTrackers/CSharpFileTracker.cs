@@ -3,7 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using System.Linq;
 using OpenIDE.Core.Language;

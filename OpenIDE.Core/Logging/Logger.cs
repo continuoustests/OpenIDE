@@ -1,6 +1,6 @@
 using System;
 
-namespace OpenIDE.CodeEngine.Core.Logging
+namespace OpenIDE.Core.Logging
 {
 	public static class Logger
 	{
