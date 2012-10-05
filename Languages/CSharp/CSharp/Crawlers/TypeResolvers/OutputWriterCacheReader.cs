@@ -32,8 +32,6 @@ namespace CSharp.Crawlers.TypeResolvers
                     matchingType = _codeModelResolver.MatchTypeName(typeToMatch, usings);
                 if (matchingType != null)
                     type.Resolve(type.Type.Replace(typeToMatch, matchingType));
-                else
-                    Console.WriteLine(string.Format("{0} {1}:{2}:{3}", type.Type, type.File.File, type.Location.Line, type.Location.Column));
             }
         }
 

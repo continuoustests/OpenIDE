@@ -71,6 +71,7 @@ cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/rscripts/templates
 cp $ROOT/Languages/CSharp/C# $DEPLOYDIR/Languages/C#
 cp $ROOT/Languages/CSharp/language.oicfgoptions $DEPLOYDIR/Languages/C#-plugin/language.oicfgoptions
 cp $BINARYDIR/C#.exe $DEPLOYDIR/Languages/C#-plugin/C#.exe
+cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/Languages/C#-plugin/OpenIDE.Core.dll
 cp $BINARYDIR/ICSharpCode.NRefactory.CSharp.dll $DEPLOYDIR/Languages/C#-plugin/ICSharpCode.NRefactory.CSharp.dll
 cp $BINARYDIR/ICSharpCode.NRefactory.dll $DEPLOYDIR/Languages/C#-plugin/ICSharpCode.NRefactory.dll
 cp $BINARYDIR/Mono.Cecil.dll $DEPLOYDIR/Languages/C#-plugin/Mono.Cecil.dll
