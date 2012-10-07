@@ -12,26 +12,33 @@ namespace CSharp.Crawlers.TypeResolvers
     {
         private Func<ICodeEngineInstanceSimple> _codeEngineFactory;
         private Func<string,string> _fileReader;
+        private Action<string> _fileRemover;
         private ICodeEngineInstanceSimple _codeEngine;
 
         public EnclosingSignatureFromPosition(
             Func<ICodeEngineInstanceSimple> codeEngineFactory,
-            Func<string,string> fileReader) {
+            Func<string,string> fileReader,
+            Action<string> fileRemover) {
             _codeEngineFactory = codeEngineFactory;
             _fileReader = fileReader;
+            _fileRemover = fileRemover;
         }
 
         public string GetSignature(string file, int line, int column) {
-            var dirtyFile = getCodeEngine().Query("editor get-dirty-files \"" + file + "\"");
-            if (dirtyFile != "")
+            Console.WriteLine("Getting dirty stuff");
+            var dirtyFile = getCodeEngine().Query("editor get-dirty-files \"" + file + "\"").Trim();
+            Console.WriteLine("Got " + dirtyFile);
+            if (dirtyFile == null || dirtyFile != "")
                 file = dirtyFile;
 
+            Console.WriteLine("Using " + file);
             var parser = new NRefactoryParser();
             var cache = new OutputWriter();
             parser.SetOutputWriter(cache);
             var fileRef = new FileRef(file, null);
             parser.ParseFile(fileRef, () => _fileReader(file));
 
+            Console.WriteLine("Building indexes and resolving");
             cache.BuildTypeIndex();
             new TypeResolver(new OutputWriterCacheReader(cache))
                 .ResolveAllUnresolved(cache);
@@ -47,6 +54,7 @@ namespace CSharp.Crawlers.TypeResolvers
             if (references.Count == 0)
                 return null;
 
+            Console.WriteLine("Locating");
             var insideOf = references
                     .Where(x => x.Line <= line && x.EndLine >= line);
             if (insideOf.Count() == 0)
@@ -57,6 +65,7 @@ namespace CSharp.Crawlers.TypeResolvers
 
             if (match == null)
                 return null;
+            Console.WriteLine("Returning match");
             return match.GenerateFullSignature();
         }
 
