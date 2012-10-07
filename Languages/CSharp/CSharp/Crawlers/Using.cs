@@ -19,6 +19,8 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+        public int EndLine { get; private set; }
+        public int EndColumn { get; private set; }
         public string JSON { get; private set; }
 
         public Using(FileRef file, string name, int line, int column) {
@@ -31,8 +33,14 @@ namespace CSharp.Crawlers
             JSON = "";
 		}
 
+        public Using SetEndPosition(int line, int column) {
+            EndLine = line;
+            EndColumn = column;
+            return this;
+        }
+
         public string GenerateFullSignature() {
-            return null;
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
@@ -52,6 +60,8 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+        public int EndLine { get; private set; }
+        public int EndColumn { get; private set; }
         public string JSON { get; private set; }
 
         public UsingAlias(FileRef file, string alias, string type, int line, int column) {
@@ -63,6 +73,12 @@ namespace CSharp.Crawlers
 			Column = column;
             JSON = "";
 		}
+
+        public UsingAlias SetEndPosition(int line, int column) {
+            EndLine = line;
+            EndColumn = column;
+            return this;
+        }
 
         public string GenerateFullSignature() {
             return null;

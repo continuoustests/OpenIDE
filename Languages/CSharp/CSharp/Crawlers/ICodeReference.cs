@@ -16,6 +16,8 @@ namespace CSharp.Crawlers
         string Scope { get; }
 		int Line { get; }
 		int Column { get; }
+        int EndLine { get; }
+        int EndColumn { get; }
         string JSON { get; }
 
         string GenerateFullSignature();

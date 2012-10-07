@@ -31,7 +31,7 @@ namespace CSharp.Crawlers
 		}
 
         public string GenerateFullSignature() {
-            return null;
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
@@ -49,7 +49,13 @@ namespace CSharp.Crawlers
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
-		public string Signature { get; private set; }
+		public string Signature { get {
+                return string.Format("{0} {1}.{2}",
+                    ReturnType,
+                    Namespace,
+                    Name);
+            }
+        }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
@@ -65,17 +71,13 @@ namespace CSharp.Crawlers
 			File = file;
 			Namespace = ns;
 			Name = name;
-            Signature = string.Format("{0} {1}.{2}",
-                returnType,
-                Namespace,
-                Name);
             Scope = scope;
 			Line = line;
 			Column = column;
 		}
 
         public string GenerateFullSignature() {
-            return null;
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
@@ -96,7 +98,15 @@ namespace CSharp.Crawlers
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
-		public string Signature { get; private set; }
+		public string Signature { get {
+                var paramString = getParamString(Parameters);
+                return string.Format("{0} {1}.{2}({3})",
+                    ReturnType,
+                    Namespace,
+                    Name,
+                    paramString);
+            }
+        }
 		public string Namespace { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
@@ -111,22 +121,16 @@ namespace CSharp.Crawlers
             setThis(this);
             Parameters = parameters.ToArray();
             ReturnType = returnType;
-            var paramString = getParamString(Parameters);
 			File = file;
 			Namespace = ns;
 			Name = name;
-            Signature = string.Format("{0} {1}.{2}({3})",
-                returnType,
-                Namespace,
-                Name,
-                paramString);
             Scope = scope;
 			Line = line;
 			Column = column;
 		}
 
         public string GenerateFullSignature() {
-            return null;
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {

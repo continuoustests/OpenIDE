@@ -16,6 +16,8 @@ namespace CSharp.Crawlers
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+        public int EndLine { get; private set; }
+        public int EndColumn { get; private set; }
         public string JSON { get; private set; }
 
         public Namespce(FileRef file, string name, int line, int column)
@@ -28,8 +30,14 @@ namespace CSharp.Crawlers
             JSON = "";
 		}
 
+        public Namespce SetEndPosition(int line, int column) {
+            EndLine = line;
+            EndColumn = column;
+            return this;
+        }
+
         public string GenerateFullSignature() {
-            return null;
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {

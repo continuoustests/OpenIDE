@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CSharp.Crawlers.TypeResolvers.CodeEngine;
+using OpenIDE.Core.CodeEngineIntegration;
+using OpenIDE.Core.FileSystem;
 
 namespace CSharp.Crawlers.TypeResolvers
 {
     public class OutputWriterCacheReader : ICacheReader
     {
         private IOutputWriter _writer;
-        private CodeModelTypeResolver _codeModelResolver = new CodeModelTypeResolver(Environment.CurrentDirectory);
+        private CodeEngineTypeResolver _codeEngineResolver = new CodeEngineTypeResolver(() => new CodeEngineDispatcher(new FS()).GetInstance(Environment.CurrentDirectory));
 
         public OutputWriterCacheReader(IOutputWriter writer) {
             _writer = writer;
@@ -29,7 +32,7 @@ namespace CSharp.Crawlers.TypeResolvers
                         matchingType = _writer.FirstMatchingTypeFromName(typeToMatch);
                 }
                 if (matchingType == null)
-                    matchingType = _codeModelResolver.MatchTypeName(typeToMatch, usings);
+                    matchingType = _codeEngineResolver.MatchTypeName(typeToMatch, usings);
                 if (matchingType != null)
                     type.Resolve(type.Type.Replace(typeToMatch, matchingType));
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CSharp.Crawlers;
 using CSharp.Crawlers.TypeResolvers;
+using CSharp.Crawlers.TypeResolvers.CodeEngine;
 using NUnit.Framework;
 
 namespace CSharp.Tests.Crawlers.TypeResolvers
@@ -14,7 +15,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
         [Test]
         public void Should_parse_out_various_code_references()
         {
-            var parser = new CodeModelResultParser();
+            var parser = new CodeEngineResultParser();
             var refs = parser.ParseRefs(getResult());
             Assert.That(refs[0].File.File, Is.EqualTo(@"C:\Users\ack\storage\src\OpenIDE\Languages\CSharp\CSharp\IOutputWriter.cs"));
             Assert.That(refs[0] as Class, Is.Not.Null);

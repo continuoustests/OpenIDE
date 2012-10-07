@@ -48,7 +48,16 @@ namespace CSharp.Crawlers
 
         protected abstract string getNamespace();
 
+        public int EndLine { get; private set; }
+        public int EndColumn { get; private set; }
+
         public string JSON { get { return getJSON(); } }
+
+        public T SetEndPosition(int line, int column) {
+            EndLine = line;
+            EndColumn = column;
+            return _me;
+        }
 
         public T AddModifiers(IEnumerable<string> modifiers) {
             _modifiers.AddRange(modifiers);

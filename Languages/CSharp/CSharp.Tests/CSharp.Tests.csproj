@@ -49,8 +49,11 @@
     <Compile Include="Crawlers\SolutionReaderTests.cs" />
     <Compile Include="Commands\TemplateDefinitionParserTests.cs" />
     <Compile Include="Commands\CommandDispatcherTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeEngine\Fake_CodeEngineInstance.cs" />
     <Compile Include="Crawlers\TypeResolvers\CodeModelResultParserTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\EnclosingSignatureFromPositionTests.cs" />
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReaderTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeFromPositionResolverTests.cs" />
     <Compile Include="Files\ComplieFileTests.cs" />
     <Compile Include="FileSystem\PathExtensionsTests.cs" />
     <Compile Include="OutputWriterTests.cs" />
@@ -62,6 +65,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\..\OpenIDE.Core\OpenIDE.Core.csproj">
+      <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>OpenIDE.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CSharp\CSharp.csproj">
       <Project>{FFE638AF-5B7F-4C54-8255-2011DE5560D1}</Project>
       <Name>CSharp</Name>

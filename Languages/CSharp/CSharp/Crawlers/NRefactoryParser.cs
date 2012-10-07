@@ -60,7 +60,10 @@ namespace CSharp.Crawlers
                     _file,
                     usng.Namespace,
                     usng.Import.StartLocation.Line,
-                    usng.Import.StartLocation.Column));
+                    usng.Import.StartLocation.Column)
+                    .SetEndPosition(
+                        usng.SemicolonToken.EndLocation.Line,
+                        usng.SemicolonToken.EndLocation.Column));
 		}
 
         private void handleUsing(UsingAliasDeclaration alias) {
@@ -70,7 +73,10 @@ namespace CSharp.Crawlers
                     alias.Alias,
                     signatureFrom(alias.Import),
                     alias.Import.StartLocation.Line,
-                    alias.Import.StartLocation.Column));
+                    alias.Import.StartLocation.Column)
+                    .SetEndPosition(
+                        alias.SemicolonToken.EndLocation.Line,
+                        alias.SemicolonToken.EndLocation.Column));
         }
 		
 		private void handleNamespace(NamespaceDeclaration ns) {
@@ -85,7 +91,10 @@ namespace CSharp.Crawlers
                     _file,
                     ns.Name,
                     location.Line,
-                    location.Column));
+                    location.Column)
+                    .SetEndPosition(
+                        ns.EndLocation.Line,
+                        ns.EndLocation.Column));
             _namespace = ns.Name;
 		}
 
@@ -117,7 +126,10 @@ namespace CSharp.Crawlers
                         getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
-                        type.NameToken.StartLocation.Column),
+                        type.NameToken.StartLocation.Column)
+                        .SetEndPosition(
+                            type.EndLocation.Line,
+                            type.EndLocation.Column),
                     type));
         }
 
@@ -131,7 +143,10 @@ namespace CSharp.Crawlers
                         getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
-                        type.NameToken.StartLocation.Column),
+                        type.NameToken.StartLocation.Column)
+                        .SetEndPosition(
+                            type.EndLocation.Line,
+                            type.EndLocation.Column),
                     type));
         }
 
@@ -145,7 +160,10 @@ namespace CSharp.Crawlers
                         getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
-                        type.NameToken.StartLocation.Column),
+                        type.NameToken.StartLocation.Column)
+                        .SetEndPosition(
+                            type.EndLocation.Line,
+                            type.EndLocation.Column),
                     type));
         }
 
@@ -159,7 +177,10 @@ namespace CSharp.Crawlers
                         getName(type),
                         getTypeModifier(type.Modifiers),
                         type.NameToken.StartLocation.Line,
-                        type.NameToken.StartLocation.Column),
+                        type.NameToken.StartLocation.Column)
+                        .SetEndPosition(
+                            type.EndLocation.Line,
+                            type.EndLocation.Column),
                     type));
         }
 
@@ -276,7 +297,10 @@ namespace CSharp.Crawlers
                         method.NameToken.StartLocation.Line,
                         method.NameToken.StartLocation.Column,
                         signatureFrom(method.ReturnType),
-                        parameters),
+                        parameters)
+                        .SetEndPosition(
+                            method.EndLocation.Line,
+                            method.EndLocation.Column),
                     method));
 		}
 
@@ -297,7 +321,10 @@ namespace CSharp.Crawlers
                         getTypeModifier(property.Modifiers),
                         property.NameToken.StartLocation.Line,
                         property.NameToken.StartLocation.Column,
-                        signatureFrom(property.ReturnType)),
+                        signatureFrom(property.ReturnType))
+                        .SetEndPosition(
+                            property.EndLocation.Line,
+                            property.EndLocation.Column),
                     property));
         }
 

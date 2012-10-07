@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using CSharp.Projects;
 
-namespace CSharp.Crawlers.TypeResolvers
+namespace CSharp.Crawlers.TypeResolvers.CodeEngine
 {
-    public class CodeModelResultParser
+    public class CodeEngineResultParser
     {
         private FileRef _currentFile = null;
 

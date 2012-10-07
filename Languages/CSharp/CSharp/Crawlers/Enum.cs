@@ -29,7 +29,7 @@ namespace CSharp.Crawlers
 		}
 
         public string GenerateFullSignature() {
-            return null;
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {

@@ -3,8 +3,41 @@ using System.IO;
 using System.Text;
 namespace OpenIDE.Core.CodeEngineIntegration
 {
-	public class Instance : IDisposable
-	{
+    public interface ICodeEngineInstanceSimple : IDisposable
+    {
+        string File { get; }
+        int ProcessID { get; }
+        string Key { get; }
+        int Port { get; }
+        void KeepAlive();
+        void Send(string message);
+        string Query(string query); 
+    }
+
+    public interface ICodeEngineInstance : IDisposable
+    {
+        string File { get; }
+        int ProcessID { get; }
+        string Key { get; }
+        int Port { get; }
+        void KeepAlive();
+        void GoToType();
+        void Explore();
+        string GetProjects(string query);
+        string GetFiles(string query);
+        string GetCodeRefs(string query);
+        string GetSignatureRefs(string query);
+        string FindTypes(string query);
+        void SnippetComplete(string[] arguments);
+        void SnippetCreate(string[] arguments);
+        void SnippetEdit(string[] arguments);
+        void SnippetDelete(string[] arguments);
+        void MemberLookup(string[] arguments);
+        void GoToDefinition(string[] arguments);
+    }
+
+    public class Instance : ICodeEngineInstance, ICodeEngineInstanceSimple
+    {
         private bool _keepClientAlive = false;
         private EditorEngineIntegration.IClient _client;
 		private Func<EditorEngineIntegration.IClient> _clientFactory;
@@ -43,37 +76,37 @@ namespace OpenIDE.Core.CodeEngineIntegration
 		
 		public void GoToType()
 		{
-			send("gototype");
+			Send("gototype");
 		}
 
 		public void Explore()
 		{
-			send("explore");
+			Send("explore");
 		}
 		
 		public string GetProjects(string query)
 		{
-			return queryCodeEngine("get-projects", query);
+			return Query("get-projects " + query);
 		}
 
 		public string GetFiles(string query)
 		{
-			return queryCodeEngine("get-files", query);
+			return Query("get-files " + query);
 		}
 
 		public string GetCodeRefs(string query)
 		{
-			return queryCodeEngine("get-signatures", query);
+			return Query("get-signatures " + query);
 		}
 
 		public string GetSignatureRefs(string query)
 		{
-			return queryCodeEngine("get-signature-refs", query);
+			return Query("get-signature-refs " + query);
 		}
 
 		public string FindTypes(string query)
 		{
-			return queryCodeEngine("find-types", query);
+			return Query("find-types " + query);
 		}
 
 		public void SnippetComplete(string[] arguments)
@@ -112,10 +145,10 @@ namespace OpenIDE.Core.CodeEngineIntegration
 			sb.Append(command);
 			foreach (var arg in arguments)
 				sb.Append(" \"" + arg + "\"");
-			send(sb.ToString());
+			Send(sb.ToString());
 		}
 
-		private string queryCodeEngine(string command, string query)
+		public string Query(string command)
 		{
             if (_client == null) {
 			    _client = _clientFactory.Invoke();
@@ -123,7 +156,7 @@ namespace OpenIDE.Core.CodeEngineIntegration
 			    if (!_client.IsConnected)
 				    return "";
             }
-			var reply = _client.Request(command + " " + query);
+			var reply = _client.Request(command);
 			if (!_keepClientAlive) {
 			    _client.Disconnect();
                 _client = null;
@@ -131,7 +164,7 @@ namespace OpenIDE.Core.CodeEngineIntegration
 			return reply;
 		}
 		
-		private void send(string message)
+		public void Send(string message)
 		{
             if (_client == null) {
 			    _client = _clientFactory.Invoke();
