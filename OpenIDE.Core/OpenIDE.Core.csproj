@@ -78,7 +78,7 @@
     <Compile Include="Language\LanguagePlugin.cs" />
     <Compile Include="Language\PluginLocator.cs" />
     <Compile Include="Language\UsageParser.cs" />
-    <Compile Include="Config\Configuration.cs" />
+    <Compile Include="CodeEngineIntegration\Config\Configuration.cs" />
     <Compile Include="Windowing\BringToForeGround.cs" />
     <Compile Include="CommandBuilding\CommandStringParser.cs" />
     <Compile Include="CommandBuilding\FilePosition.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="Scripts\ScriptFilter.cs" />
     <Compile Include="RScripts\ReactiveScriptReader.cs" />
     <Compile Include="RScripts\ReactiveScript.cs" />
-    <Compile Include="Config\ConfigOptions.cs" />
+    <Compile Include="CodeEngineIntegration\Config\ConfigOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

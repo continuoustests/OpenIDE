@@ -73,6 +73,7 @@
     <Compile Include="EditorEngine\EditorEngineLocator.cs" />
     <Compile Include="Endpoints\Tcp\SocketClient.cs" />
     <Compile Include="EditorEngine\Instance.cs" />
+    <Compile Include="Handlers\LanguageCommandHandler.cs" />
     <Compile Include="UI\FileExplorer.cs">
       <SubType>Form</SubType>
     </Compile>

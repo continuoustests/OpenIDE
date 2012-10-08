@@ -79,12 +79,17 @@ namespace OpenIDE.Core.Language
 			return run("members-from-signature \"" + signature + "\"").ToArray();
 		}
 
-		public void Run(string[] arguments)
+        public string[] Query(string[] arguments)
 		{
 			var sb = new StringBuilder();
 			arguments.ToList()
 				.ForEach(x => sb.Append(" \"" + x + "\""));
-			foreach (var line in run(sb.ToString()))
+			return run(sb.ToString()).ToArray();
+		}
+
+		public void Run(string[] arguments)
+		{
+			foreach (var line in Query(arguments))
 				_dispatch(line);
 		}
 		
