@@ -62,6 +62,7 @@
     <Compile Include="Projects\Removers\DefaultRemoverTests.cs" />
     <Compile Include="Versioning\VS2010Tests.cs" />
     <Compile Include="Integration\BuildupTests.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeUnderPositionResolver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
