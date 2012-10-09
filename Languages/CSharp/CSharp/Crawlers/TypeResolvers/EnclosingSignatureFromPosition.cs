@@ -10,35 +10,38 @@ namespace CSharp.Crawlers.TypeResolvers
 {
     public class EnclosingSignatureFromPosition
     {
-        private Func<ICodeEngineInstanceSimple> _codeEngineFactory;
         private Func<string,string> _fileReader;
         private Action<string> _fileRemover;
-        private ICodeEngineInstanceSimple _codeEngine;
+        private Func<string,string> _getDirtyFile;
 
         public EnclosingSignatureFromPosition(
-            Func<ICodeEngineInstanceSimple> codeEngineFactory,
             Func<string,string> fileReader,
-            Action<string> fileRemover) {
-            _codeEngineFactory = codeEngineFactory;
+            Action<string> fileRemover,
+            Func<string,string> getDirtyFile) {
             _fileReader = fileReader;
             _fileRemover = fileRemover;
+            _getDirtyFile = getDirtyFile;
         }
 
         public string GetSignature(string file, int line, int column) {
-            Console.WriteLine("Getting dirty stuff");
-            var dirtyFile = getCodeEngine().Query("editor get-dirty-files \"" + file + "\"").Trim();
-            Console.WriteLine("Got " + dirtyFile);
-            if (dirtyFile == null || dirtyFile != "")
-                file = dirtyFile;
+            var dirtyFile = _getDirtyFile(file);
+            var usingDirtyFile = false;
+            if (dirtyFile != null) {
+                dirtyFile = parseDirtyFile(dirtyFile);
+                if (dirtyFile.Trim() != "") {
+                    usingDirtyFile = true;
+                    file = dirtyFile.Trim();
+                }
+            }
 
-            Console.WriteLine("Using " + file);
             var parser = new NRefactoryParser();
             var cache = new OutputWriter();
             parser.SetOutputWriter(cache);
             var fileRef = new FileRef(file, null);
             parser.ParseFile(fileRef, () => _fileReader(file));
+            if (usingDirtyFile)
+                _fileRemover(file);
 
-            Console.WriteLine("Building indexes and resolving");
             cache.BuildTypeIndex();
             new TypeResolver(new OutputWriterCacheReader(cache))
                 .ResolveAllUnresolved(cache);
@@ -54,7 +57,6 @@ namespace CSharp.Crawlers.TypeResolvers
             if (references.Count == 0)
                 return null;
 
-            Console.WriteLine("Locating");
             var insideOf = references
                     .Where(x => x.Line <= line && x.EndLine >= line);
             if (insideOf.Count() == 0)
@@ -65,18 +67,16 @@ namespace CSharp.Crawlers.TypeResolvers
 
             if (match == null)
                 return null;
-            Console.WriteLine("Returning match");
+
             return match.GenerateFullSignature();
         }
 
-        public ICodeEngineInstanceSimple getCodeEngine() {
-            if (_codeEngine == null) {
-                _codeEngine = _codeEngineFactory();
-                if (_codeEngine == null)
-                    return null;
-                _codeEngine.KeepAlive();
+        private string parseDirtyFile(string dirtyFile) {
+            try {
+                return dirtyFile.Replace(Environment.NewLine, "").Split(new[] { '|' })[1];
+            } catch {
+                return "";
             }
-            return _codeEngine;
         }
     }
 }

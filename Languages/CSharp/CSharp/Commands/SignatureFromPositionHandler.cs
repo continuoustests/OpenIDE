@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using OpenIDE.Core.EditorEngineIntegration;
 using OpenIDE.Core.FileSystem;
 using CSharp.Crawlers.TypeResolvers;
-using OpenIDE.Core.CodeEngineIntegration;
 
 namespace CSharp.Commands
 {
@@ -26,9 +26,9 @@ namespace CSharp.Commands
 
 				var signatureFetcher = 
 					new EnclosingSignatureFromPosition(
-						() => new CodeEngineDispatcher(new FS()).GetInstance(Environment.CurrentDirectory),
 						(fileName) => File.ReadAllText(fileName),
-						(fileName) => File.Delete(fileName));
+						(fileName) => File.Delete(fileName),
+                        (fileName) => new EngineLocator(new FS()).GetInstance(Environment.CurrentDirectory).GetDirtyFiles(fileName));
 				var signature = signatureFetcher.GetSignature(file, line, column);
 				Console.WriteLine(signature);
 			} catch (Exception ex) {

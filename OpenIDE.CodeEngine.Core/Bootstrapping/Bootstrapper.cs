@@ -61,7 +61,10 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 					new GoToDefinitionHandler(_endpoint, _cache, pluginLocator),
 					new FindTypeHandler(_endpoint, _cache),
 					new SnippetEditHandler(_endpoint, _cache, _path),
-					new SnippetDeleteHandler(_cache, _path)
+					new SnippetDeleteHandler(_cache, _path),
+
+                    // Make sure this handler is the last one since the command can be file extension or language name
+                    new LanguageCommandHandler(_endpoint, _cache, pluginLocator)
 				});
 			return _endpoint;
 		}

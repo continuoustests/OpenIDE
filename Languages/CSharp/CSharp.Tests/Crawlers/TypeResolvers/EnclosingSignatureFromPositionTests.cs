@@ -13,64 +13,56 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
     {
         [Test]
         public void When_outside_a_namespace_it_returns_null() {
-            var instance = new Fake_CodeEngineInstance();
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => null)
                     .GetSignature("file1", 2, 1);
             Assert.That(signature, Is.Null);
         }
 
         [Test]
         public void When_the_closest_code_item_is_a_namespace_it_will_return_the_namespace() {
-            var instance = new Fake_CodeEngineInstance();
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => null)
                     .GetSignature("file1", 4, 1);
             Assert.That(signature, Is.EqualTo("MyNamespace"));
         }
 
         [Test]
         public void When_the_closest_code_item_is_a_class_it_will_return_the_signature() {
-            var instance = new Fake_CodeEngineInstance();
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => "")
                     .GetSignature("file1", 6, 1);
             Assert.That(signature, Is.EqualTo("MyNamespace.TestClass"));
         }
 
         [Test]
         public void When_the_closest_code_is_a_field_it_will_return_the_class() {
-            var instance = new Fake_CodeEngineInstance();
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => null)
                     .GetSignature("file1", 7, 1);
             Assert.That(signature, Is.EqualTo("MyNamespace.TestClass"));
         }
 
         [Test]
         public void When_the_closest_code_item_is_a_method_it_will_return_signature() {
-            var instance = new Fake_CodeEngineInstance();
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => null)
                     .GetSignature("file1", 10, 1);
             Assert.That(signature, Is.EqualTo("MyNamespace.MyStruct MyNamespace.TestClass.MyMethod(System.Int32)"));
         }
 
         [Test]
         public void When_outside_of_the_method_it_will_pick_containing_class() {
-            var instance = new Fake_CodeEngineInstance();
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => null)
                     .GetSignature("file1", 12, 1);
             Assert.That(signature, Is.EqualTo("MyNamespace.TestClass"));
         }
 
         [Test]
         public void When_file_is_changed_it_will_use_the_dirty_buffer() {
-            var instance = new Fake_CodeEngineInstance();
-            instance.OnQueryReturn("DirtyFile");
             var signature = 
-                new EnclosingSignatureFromPosition(() => instance, (filePath) => getFileContent(filePath), (filepath) => {})
+                new EnclosingSignatureFromPosition((filePath) => getFileContent(filePath), (filepath) => {}, (f) => "file1|DirtyFile")
                     .GetSignature("file1", 6, 1);
             Assert.That(signature, Is.EqualTo("MyNamespace.ITestClass"));
         }
