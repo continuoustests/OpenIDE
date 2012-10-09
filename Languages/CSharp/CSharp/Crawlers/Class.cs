@@ -136,16 +136,10 @@ namespace CSharp.Crawlers
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
             list.Add(new ResolveStatement(ReturnType, Namespace, (s) => ReturnType = s));
-            for (int i = 0; i < Parameters.Length; i++) {
-                int index = i;
-                list.Add(new ResolveStatement(Parameters[index].Type, Namespace, (s) => updateParameter(index, s)));
-            }
+            foreach (var parameter in Parameters)
+                list.AddRange(parameter.GetResolveStatements());
             list.AddRange(getTypeResolveStatements());
             return list;
-        }
-
-        private void updateParameter(int i, string value) {
-            Parameters[i].Type = value;
         }
 
         protected override string getJSON()
@@ -155,7 +149,7 @@ namespace CSharp.Crawlers
             if (Parameters.Length > 0) {
                 var parameters = new JSONWriter();
                 foreach (var param in Parameters)
-                    parameters.Append(param.Name, param.Type);
+                    parameters.Append(param.Name, param.DeclaringType);
                 json.AppendSection("parameters", parameters);
             }
             return json.ToString();
@@ -170,24 +164,63 @@ namespace CSharp.Crawlers
             var sb = new StringBuilder();
             foreach (var param in parameters) {
                 if (sb.Length == 0)
-                    sb.Append(param.Type);
+                    sb.Append(param.DeclaringType);
                 else
-                    sb.Append("," + param.Type);
+                    sb.Append("," + param.DeclaringType);
             }
             return sb.ToString();
         }
     }
 
-    public class Parameter
+    public class Parameter : Variable
     {
-        public string Type { get; set; }
-        public string Name { get; set; }
-
-        public Parameter(string type, string name)
+        public Parameter(FileRef file, string ns, string name, string scope, int line, int column, string declaringType)
+            : base(file, ns, name, scope, line, column, declaringType)
         {
-            Type = type;
+        }
+    }
+
+    public class Variable : CodeItemBase<Variable>, ICodeReference
+    {
+        public bool AllTypesAreResolved { get; set; }
+
+        public string Type { get; protected set; }
+        public FileRef File { get; protected set; }
+        public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
+        public string Namespace { get; protected set; }
+        public string Name { get; protected set; }
+        public string Scope { get; protected set; }
+        public int Line { get; protected set; }
+        public int Column { get; protected set; }
+
+        public string DeclaringType { get; protected set; }
+
+        public Variable(FileRef file, string ns, string name, string scope, int line, int column, string declaringType)
+        {
+            setThis(this);
+            File = file;
+            Namespace = ns;
             Name = name;
+            Scope = scope;
+            Line = line;
+            Column = column;
+            DeclaringType = declaringType;
+        }
+
+        public string GenerateFullSignature() {
+            return Signature;
+        }
+
+        public IEnumerable<ResolveStatement> GetResolveStatements() {
+            var list = new List<ResolveStatement>();
+            list.Add(new ResolveStatement(DeclaringType, Namespace, (s) => DeclaringType = s));
+            list.AddRange(getTypeResolveStatements());
+            return list;
+        }
+
+        protected override string getNamespace()
+        {
+            return Namespace;
         }
     }
 }
-

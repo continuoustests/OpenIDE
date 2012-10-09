@@ -64,6 +64,8 @@ namespace CSharp.Tests.Crawlers
         public List<EnumType> Enums { get; private set; }
         public List<Method> Methods { get; private set; }
         public List<Field> Fields { get; private set; }
+        public List<Parameter> Parameters { get; private set; }
+        public List<Variable> Variables { get; private set; }
 
         public Fake_CacheBuilder()
         {
@@ -78,6 +80,8 @@ namespace CSharp.Tests.Crawlers
             Enums = new List<EnumType>();
             Methods = new List<Method>();
             Fields = new List<Field>();
+            Parameters = new List<Parameter>();
+            Variables = new List<Variable>();
         }
 
 		public bool ProjectExists(Project project)

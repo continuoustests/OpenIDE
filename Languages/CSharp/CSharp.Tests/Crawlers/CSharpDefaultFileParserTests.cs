@@ -296,6 +296,18 @@ namespace CSharp.Tests.Crawlers
             Assert.That(cls.JSON, Is.EqualTo("{\"attributes\":{\"TestFixtureAttribute\":\"\"}}"));
         }
 
+        [Test]
+        public void Should_find_parameters()
+        {
+        	throw new NotImplementedException();
+        }
+		
+		[Test]
+        public void Should_find_variables()
+        {
+        	throw new NotImplementedException();
+        }
+
 		private string getContent()
 		{
 			return File.ReadAllText(

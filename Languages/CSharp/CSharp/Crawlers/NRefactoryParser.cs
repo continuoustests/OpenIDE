@@ -282,16 +282,25 @@ namespace CSharp.Crawlers
         }
 
         private void handleMethod(MethodDeclaration method) {
+            var memberNamespace = getMemberNamespace();
             var parameters = new List<Parameter>();
             foreach (var param in method.Parameters) {
                 var signature = signatureFrom(param.Type);
-                parameters.Add(new Parameter(signature, param.Name));
+                parameters.Add(
+                    new Parameter(
+                        _file,
+                        memberNamespace + "." + method.Name,
+                        param.Name,
+                        "parameter",
+                        param.NameToken.StartLocation.Line,
+                        param.NameToken.StartLocation.Column,
+                        signature));
             }
             _writer.WriteMethod(
                 addMemberInfo(
                     new Method(
                         _file,
-                        getMemberNamespace(),
+                        memberNamespace,
                         method.Name,
                         getTypeModifier(method.Modifiers),
                         method.NameToken.StartLocation.Line,

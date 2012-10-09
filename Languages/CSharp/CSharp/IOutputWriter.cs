@@ -17,8 +17,10 @@ namespace CSharp
         List<Interface> Interfaces { get; }
         List<Struct> Structs { get; }
         List<EnumType> Enums { get; }
-        List<Method> Methods { get; }
         List<Field> Fields { get; }
+        List<Method> Methods { get; }
+        List<Parameter> Parameters { get; }
+        List<Variable> Variables { get; }
 
         void SetTypeVisibility(bool visibility);
         void WriteUsing(Using usng);
@@ -54,8 +56,10 @@ namespace CSharp
         public List<Interface> Interfaces { get; private set; }
         public List<Struct> Structs { get; private set; }
         public List<EnumType> Enums { get; private set; }
-        public List<Method> Methods { get; private set; }
         public List<Field> Fields { get; private set; }
+        public List<Method> Methods { get; private set; }
+        public List<Parameter> Parameters { get; private set; }
+        public List<Variable> Variables { get; private set; }
 
         public OutputWriter() {
             Projects = new List<Project>();
@@ -67,8 +71,10 @@ namespace CSharp
             Interfaces = new List<Interface>();
             Structs = new List<Struct>();
             Enums = new List<EnumType>();
-            Methods = new List<Method>();
             Fields = new List<Field>();
+            Methods = new List<Method>();
+            Parameters = new List<Parameter>();
+            Variables = new List<Variable>();
         }
 
         public void SetTypeVisibility(bool visibility) {

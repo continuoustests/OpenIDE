@@ -78,7 +78,13 @@ namespace CSharp.Crawlers
                         new Method(_file,
                             x.DeclaringType.FullName, x.Name, "public",
                             0,0,x.MethodReturnType.ReturnType.FullName,
-                            x.Parameters.Select(z => new Parameter(z.ParameterType.FullName, z.Name))));
+                            x.Parameters.Select(z => 
+                                new Parameter(
+                                    _file,
+                                    x.DeclaringType.FullName + "." + x.Name,
+                                    z.Name,
+                                    "parameter",
+                                    0,0,z.ParameterType.FullName))));
                 });
         }
     }
