@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using CSharp;
 using CSharp.Crawlers;
 
 namespace CSharp.Tests.Crawlers
@@ -10,12 +11,12 @@ namespace CSharp.Tests.Crawlers
     [TestFixture]
     public class AssemblyParserTests
     {
-        private Fake_CacheBuilder _cache;
+        private OutputWriter _cache;
         private AssemblyParser _parser;
 
         [SetUp]
         public void Setup() {
-            _cache = new Fake_CacheBuilder();
+            _cache = new OutputWriter();
             _parser = new AssemblyParser(_cache);
         }
 

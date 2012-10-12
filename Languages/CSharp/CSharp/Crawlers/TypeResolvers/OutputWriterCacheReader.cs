@@ -23,6 +23,7 @@ namespace CSharp.Crawlers.TypeResolvers
             foreach (var type in types) {
                 if (type.Type.StartsWith("System."))
                     continue;
+                // Match to local variable
                 var typeToMatch = type.Type.Replace("[]", "");
                 var usings = getUsings(usingsMap, type);
                 var matchingType = matchToAliases(type.File.File, typeToMatch, usingAliasesMap);

@@ -12,10 +12,17 @@ namespace CSharp.Crawlers
 		private IOutputWriter _writer;
         private FileRef _file = new FileRef("", null);
         private string _namespace = "";
+        private string _containingMethod = "";
         private List<string> _types = new List<string>();
+        private bool _getLocalVariables = false;
 
 		public ICSharpParser SetOutputWriter(IOutputWriter writer) {
             _writer = writer;
+            return this;
+        }
+
+        public ICSharpParser ParseLocalVariables() {
+            _getLocalVariables = true;
             return this;
         }
 
@@ -311,6 +318,7 @@ namespace CSharp.Crawlers
                             method.EndLocation.Line,
                             method.EndLocation.Column),
                     method));
+            _containingMethod = memberNamespace + "." + method.Name;
 		}
 
         private string getMemberNamespace() {
@@ -352,11 +360,31 @@ namespace CSharp.Crawlers
                             variable.NameToken.StartLocation.Column,
                             returnType),
                         field));
+                return;
             }
-			/*else if (variable.Parent.GetType() == typeof(VariableDeclarationStatement))
-				type = signatureFrom(variable);
+
+            if (!_getLocalVariables)
+                return;
+
+            var type = "";
+			if (variable.Parent.GetType() == typeof(VariableDeclarationStatement)) {
+                var varDecl = (VariableDeclarationStatement)variable.Parent;
+                type = signatureFrom(varDecl.Type);
+                if (type == "var")
+                    type = signatureFrom(variable);
+            }
 			else
-				type = variable.Parent.GetType().ToString();*/
+				type = variable.Parent.GetType().ToString();
+
+            _writer.WriteVariable(
+                new Variable(
+                    _file,
+                    _containingMethod,
+                    variable.Name,
+                    "local",
+                    variable.NameToken.StartLocation.Line,
+                    variable.NameToken.StartLocation.Column,
+                    type));
 		}
 
         private T addMemberInfo<T>(CodeItemBase<T> type, EntityDeclaration decl)

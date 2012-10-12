@@ -12,15 +12,16 @@ namespace CSharp.Tests.Crawlers
 	public class CSharpDefaultFileParserTests
 	{
 		private ICSharpParser _parser;
-		private Fake_CacheBuilder _cache;
+		private OutputWriter _cache;
 		
 		[SetUp]
 		public void Setup()
 		{
-			_cache = new Fake_CacheBuilder();
+			_cache = new OutputWriter();
 			_parser = new NRefactoryParser()
 			//_parser = new CSharpFileParser()
-				.SetOutputWriter(_cache);
+				.SetOutputWriter(_cache)
+                .ParseLocalVariables();
 			_parser.ParseFile(new FileRef("file1", null), 
                 () => { return getContent(); });
 		}
@@ -35,9 +36,8 @@ namespace CSharp.Tests.Crawlers
 		[Test]
 		public void Should_find_basic_namespace()
 		{
-			var cache = new Fake_CacheBuilder();
+			var cache = new OutputWriter();
             _parser = new NRefactoryParser()
-			//_parser = new CSharpFileParser()
 				.SetOutputWriter(cache);
 			_parser.ParseFile(new FileRef("TestFile", null), () =>
 				{
@@ -297,15 +297,45 @@ namespace CSharp.Tests.Crawlers
         }
 
         [Test]
-        public void Should_find_parameters()
+        public void Should_find_method_parameters()
         {
-        	throw new NotImplementedException();
+        	var parameter = _cache.Parameters.Where(x => x.Name.Equals("cls")).FirstOrDefault();
+            Assert.That(parameter.File.File, Is.EqualTo("file1"));
+            Assert.That(parameter.Namespace, Is.EqualTo("MyNamespace5.Program.get"));
+            Assert.That(parameter.Name, Is.EqualTo("cls"));
+            Assert.That(parameter.Signature, Is.EqualTo("ASealedClass MyNamespace5.Program.get.cls"));
+            Assert.That(parameter.Scope, Is.EqualTo("parameter"));
+            Assert.That(parameter.Line, Is.EqualTo(82));
+            Assert.That(parameter.Column, Is.EqualTo(57));
+            Assert.That(parameter.JSON, Is.EqualTo(""));
         }
 		
 		[Test]
-        public void Should_find_variables()
+        public void Should_find_type_declared_variables_in_method()
         {
-        	throw new NotImplementedException();
+            var variable = _cache.Variables.Where(x => x.Name.Equals("myInt")).FirstOrDefault();
+            Assert.That(variable.File.File, Is.EqualTo("file1"));
+            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get"));
+            Assert.That(variable.Name, Is.EqualTo("myInt"));
+            Assert.That(variable.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.get.myInt"));
+            Assert.That(variable.Scope, Is.EqualTo("local"));
+            Assert.That(variable.Line, Is.EqualTo(84));
+            Assert.That(variable.Column, Is.EqualTo(8));
+            Assert.That(variable.JSON, Is.EqualTo(""));
+        }
+
+        [Test]
+        public void Should_find_var_declared_variables_in_method()
+        {
+            var variable = _cache.Variables.Where(x => x.Name.Equals("bleh")).FirstOrDefault();
+            Assert.That(variable.File.File, Is.EqualTo("file1"));
+            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get"));
+            Assert.That(variable.Name, Is.EqualTo("bleh"));
+            Assert.That(variable.Signature, Is.EqualTo("cls.ToString() MyNamespace5.Program.get.bleh"));
+            Assert.That(variable.Scope, Is.EqualTo("local"));
+            Assert.That(variable.Line, Is.EqualTo(85));
+            Assert.That(variable.Column, Is.EqualTo(14));
+            Assert.That(variable.JSON, Is.EqualTo(""));
         }
 
 		private string getContent()

@@ -186,7 +186,7 @@ namespace CSharp.Crawlers
 
         public string Type { get; protected set; }
         public FileRef File { get; protected set; }
-        public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
+        public string Signature { get { return string.Format("{0} {1}.{2}", DeclaringType, Namespace, Name); } }
         public string Namespace { get; protected set; }
         public string Name { get; protected set; }
         public string Scope { get; protected set; }

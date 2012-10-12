@@ -13,12 +13,12 @@ namespace CSharp.Tests.Crawlers
 	public class CSharpCommentParserTests
 	{
 		private ICSharpParser _parser;
-		private Fake_CacheBuilder _cache;
+		private OutputWriter _cache;
 		
 		[SetUp]
 		public void Setup()
 		{
-			_cache = new Fake_CacheBuilder();
+			_cache = new OutputWriter();
             _parser = new NRefactoryParser()
 			//_parser = new CSharpFileParser()
 				.SetOutputWriter(_cache);
@@ -49,133 +49,6 @@ namespace CSharp.Tests.Crawlers
 		{
 			return File.ReadAllText(Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "TestResources"), "CSharpComments.txt"));
 		}
-	}
-
-	class Fake_CacheBuilder : IOutputWriter 
-	{
-        public List<Project> Projects { get; private set; }
-        public List<Using> Usings { get; private set; }
-        public List<UsingAlias> UsingAliases { get; private set; }
-        public List<FileRef> Files { get; private set; }
-        public List<Namespce> Namespaces { get; private set; }
-        public List<Class> Classes { get; private set; }
-        public List<Interface> Interfaces { get; private set; }
-        public List<Struct> Structs { get; private set; }
-        public List<EnumType> Enums { get; private set; }
-        public List<Method> Methods { get; private set; }
-        public List<Field> Fields { get; private set; }
-        public List<Parameter> Parameters { get; private set; }
-        public List<Variable> Variables { get; private set; }
-
-        public Fake_CacheBuilder()
-        {
-            Projects = new List<Project>();
-            Usings = new List<Using>();
-            UsingAliases = new List<UsingAlias>();
-            Files = new List<FileRef>();
-            Namespaces = new List<Namespce>();
-            Classes = new List<Class>();
-            Interfaces = new List<Interface>();
-            Structs = new List<Struct>();
-            Enums = new List<EnumType>();
-            Methods = new List<Method>();
-            Fields = new List<Field>();
-            Parameters = new List<Parameter>();
-            Variables = new List<Variable>();
-        }
-
-		public bool ProjectExists(Project project)
-		{
-			return true;
-		}
-
-        public void SetTypeVisibility(bool visibility) {
-        }
-
-        public void WriteUsing(Using usng)
-        {
-            Usings.Add(usng);
-        }
-
-        public void WriteProject(Project project)
-		{
-            Projects.Add(project);
-		}
-		
-		public Project GetProject(string fullpath)
-		{
-			return Projects.Where(x => x.File == fullpath).FirstOrDefault();
-		}
-		
-		public bool FileExists(string file)
-		{
-			return true;
-		}
-
-        public void WriteFile(FileRef file)
-		{
-			Files.Add(file);
-		}
-
-        public void WriteUsingAlias(UsingAlias alias)
-        {
-            UsingAliases.Add(alias);
-        }
-
-        public void WriteNamespace(Namespce ns)
-		{
-			Namespaces.Add(ns);
-		}
-
-        public void WriteClass(Class cls)
-		{
-			Classes.Add(cls);
-		}
-
-        public void WriteInterface(Interface iface)
-		{
-			Interfaces.Add(iface);
-		}
-
-        public void WriteStruct(Struct str)
-		{
-			Structs.Add(str);
-		}
-
-        public void WriteEnum(EnumType enu)
-		{
-			Enums.Add(enu);
-		}
-
-        public void WriteMethod(Method method)
-        {
-            Methods.Add(method);
-        }
-
-        public void WriteField(Field field)
-        {
-            Fields.Add(field);
-        }
-
-        public void WriteError(string description)
-		{
-		}
-
-        public void WriteToOutput()
-        {
-        }
-
-        public void BuildTypeIndex() {
-        }
-
-        public List<string> TypeIndex = new List<string>();
-        public bool ContainsType(string fullname) {
-            return TypeIndex.Contains(fullname);
-        }
-
-        public string FirstMatchingTypeFromName(string name) {
-            return null;
-        }
 	}
 }
 

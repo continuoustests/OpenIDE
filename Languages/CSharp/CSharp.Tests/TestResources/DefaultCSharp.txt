@@ -81,6 +81,8 @@ namespace MyNamespace5
 		[Category("hello", 15)]
         public static void get(int number, ASealedClass cls)
         {
+			int myInt = 2;
+        	var bleh = cls.ToString();
         	string.Format("Test (Thread: {0}}", bleh);
         }
 

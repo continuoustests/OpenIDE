@@ -8,6 +8,7 @@ namespace CSharp.Crawlers
     public interface ICSharpParser
     {
         ICSharpParser SetOutputWriter(IOutputWriter writer);
+        ICSharpParser ParseLocalVariables();
         void ParseFile(FileRef file, Func<string> getContent);
     }
 
@@ -47,6 +48,10 @@ namespace CSharp.Crawlers
         public ICSharpParser SetOutputWriter(IOutputWriter writer)
         {
             _builder = writer;
+            return this;
+        }
+
+        public ICSharpParser ParseLocalVariables() {
             return this;
         }
 

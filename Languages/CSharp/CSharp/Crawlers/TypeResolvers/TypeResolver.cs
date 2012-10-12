@@ -30,6 +30,7 @@ namespace CSharp.Crawlers.TypeResolvers
                         getPartials(cache.Enums, file, partials);
                         getPartials(cache.Fields, file, partials);
                         getPartials(cache.Methods, file, partials);
+                        getPartials(cache.Variables, file, partials);
                         _cache.ResolveMatchingType(partials.ToArray());
                         lock (padlock) {
                             numFinished++;
