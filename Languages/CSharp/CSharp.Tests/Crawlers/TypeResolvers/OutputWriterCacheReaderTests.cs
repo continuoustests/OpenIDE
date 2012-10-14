@@ -78,6 +78,18 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
                         (s) => resolvedWith = s));
             Assert.That(resolvedWith, Is.EqualTo("System.String"));
         }
+        
+        [Test]
+        public void Will_resolve_assignment_expression() {
+            var resolvedWith = "not_set";
+            var file = new FileRef("File1", new Project("Project1"));
+            _resolver
+                .ResolveMatchingType(
+                    new PartialType(
+                        file, new Point(14, 4), "str.ToString()", "Project1.FirstClass.myMethod",
+                        (s) => resolvedWith = s));
+            Assert.That(resolvedWith, Is.EqualTo("System.String"));
+        }
 
         private void buildCache() {
             var project1 = new Project("Project1");
@@ -107,6 +119,13 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 
             var project2 = new Project("Project2");
             _cache.WriteProject(project2);
+
+            var system = new FileRef("mscorlib", null);
+            _cache.WriteFile(system);
+            _cache.WriteClass(
+                new Class(system, "System", "Object", "public", 0, 0));
+            _cache.WriteMethod(
+                new Method(system, "System.Object", "ToString", "public", 0, 0, "System.String", new Parameter[] {}));
 
             _cache.BuildTypeIndex();
         }
