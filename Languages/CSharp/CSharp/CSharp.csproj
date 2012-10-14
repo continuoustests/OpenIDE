@@ -151,6 +151,7 @@
     <Compile Include="Commands\MembersFromUnknownSignatureHandler.cs" />
     <Compile Include="Crawlers\NRefactoryParser.cs" />
     <Compile Include="Crawlers\TypeResolvers\TypeUnderPositionResolver.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeFromPositionResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\OpenIDE.Core\OpenIDE.Core.csproj">

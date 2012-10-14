@@ -75,7 +75,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 				"\t\t}" + Environment.NewLine +
 				"\t}";
 			var ns = _resolver.GetTypeName("file", content, 12, 12);
-			Assert.That(ns.Name, Is.EqualTo("String"));
+			Assert.That(ns.Name, Is.EqualTo("str"));
 		}
 	}
 }

@@ -40,7 +40,8 @@ namespace CSharp
         void BuildTypeIndex();
         bool ContainsType(string fullname);
         string FirstMatchingTypeFromName(string name);
-
+        string VariableTypeFromSignature(string signature);
+        
         void WriteToOutput();
 	}
 
@@ -162,6 +163,7 @@ namespace CSharp
 			Console.WriteLine("error|" + description);
 		}
 
+        private Dictionary<string,string> _declarations;
         private HashSet<string> _typeIndex;
         private Dictionary<string, string> _nameIndex;
         public void BuildTypeIndex() {
@@ -191,6 +193,16 @@ namespace CSharp
                 if (!_nameIndex.ContainsKey(x.Name))
                     _nameIndex.Add(x.Name, signature);
             });
+
+            _declarations = new Dictionary<string,string>();
+            Parameters.ForEach(x => {
+                    var signature = x.Namespace + "." + x.Name;
+                    _declarations.Add(signature, x.DeclaringType);
+                });
+            Variables.ForEach(x => {
+                    var signature = x.Namespace + "." + x.Name;
+                    _declarations.Add(signature, x.DeclaringType);
+                });
         }
 
         public bool ContainsType(string fullname) {
@@ -201,6 +213,13 @@ namespace CSharp
             string signature;
             if (_nameIndex.TryGetValue(name, out signature))
                 return signature;
+            return null;
+        }
+
+        public string VariableTypeFromSignature(string signature) {
+            string type;
+            if (_declarations.TryGetValue(signature, out type))
+                return type;
             return null;
         }
 

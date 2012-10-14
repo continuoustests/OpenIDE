@@ -74,7 +74,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
             _resolver
                 .ResolveMatchingType(
                     new PartialType(
-                        file, new Point(12, 4), "str", "Project1",
+                        file, new Point(12, 4), "str", "Project1.FirstClass.myMethod",
                         (s) => resolvedWith = s));
             Assert.That(resolvedWith, Is.EqualTo("System.String"));
         }

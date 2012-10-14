@@ -37,6 +37,7 @@ namespace CSharp.Crawlers.TypeResolvers
 		public ICodeReference GetTypeName(string filePath, string content, int line, int column) {
 			new NRefactoryParser() 
 				.SetOutputWriter(_cache)
+				.ParseLocalVariables()
 				.ParseFile(new FileRef(filePath, null), () => content);
 
 			var lines = content
