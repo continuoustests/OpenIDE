@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CSharp.FileSystem;
+using CSharp.Responses;
 using CSharp.Versioning;
 using CSharp.Projects.Readers;
 using CSharp.Files;
@@ -31,11 +32,11 @@ namespace CSharp.Commands
 			_getTypesProviderByLocation = provider;
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("error|The handler needs the full path to the reference. " +
+				writer.Write("error|The handler needs the full path to the reference. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
@@ -49,7 +50,7 @@ namespace CSharp.Commands
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("error|The project to remove this reference for does not exist. " +
+				writer.Write("error|The project to remove this reference for does not exist. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
@@ -59,7 +60,7 @@ namespace CSharp.Commands
 			_project.Dereference(file);
 			_project.Write();
 
-			Console.WriteLine("comment|Rereferenced {0} from {1}", file, projectFile);
+			writer.Write("comment|Rereferenced {0} from {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)

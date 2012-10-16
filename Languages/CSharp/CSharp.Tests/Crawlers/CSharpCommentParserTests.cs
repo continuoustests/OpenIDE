@@ -1,4 +1,5 @@
 using System;
+using CSharp.Responses;
 using NUnit.Framework;
 using System.Linq;
 using System.IO;
@@ -18,7 +19,7 @@ namespace CSharp.Tests.Crawlers
 		[SetUp]
 		public void Setup()
 		{
-			_cache = new OutputWriter();
+			_cache = new OutputWriter(new NullResponseWriter());
             _parser = new NRefactoryParser()
 			//_parser = new CSharpFileParser()
 				.SetOutputWriter(_cache);

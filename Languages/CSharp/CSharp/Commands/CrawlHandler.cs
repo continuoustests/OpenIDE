@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.IO;
 using CSharp.Crawlers;
+using CSharp.Responses;
+
 namespace CSharp.Commands
 {
 	class CrawlHandler : ICommandHandler
@@ -10,9 +12,9 @@ namespace CSharp.Commands
 
 		public string Command { get { return "crawl-source"; } }
 
-		public void Execute(string[] args)
+		public void Execute(IResponseWriter writer, string[] args)
 		{
-			var output = new OutputWriter();
+			var output = new OutputWriter(writer);
 			if (args.Length != 1)
 			{
                 output.WriteError("crawl-source requires one parameters which is path to the " +

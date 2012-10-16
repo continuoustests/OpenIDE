@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using CSharp.Responses;
 using OpenIDE.Core.EditorEngineIntegration;
 using OpenIDE.Core.FileSystem;
 using CSharp.Crawlers.TypeResolvers;
@@ -12,7 +13,7 @@ namespace CSharp.Commands
 
 		public string Command { get { return "signature-from-position"; } }
 		
-		public void Execute(string[] args)
+		public void Execute(IResponseWriter writer, string[] args)
 		{
 			if (args.Length != 1)
 				return;
@@ -30,9 +31,9 @@ namespace CSharp.Commands
 						(fileName) => File.Delete(fileName),
                         (fileName) => new EngineLocator(new FS()).GetInstance(Environment.CurrentDirectory).GetDirtyFiles(fileName));
 				var signature = signatureFetcher.GetSignature(file, line, column);
-				Console.WriteLine(signature);
+				writer.Write(signature);
 			} catch (Exception ex) {
-				Console.WriteLine(ex.ToString());
+				writer.Write(ex.ToString());
 			}
 
 			// parse arguments

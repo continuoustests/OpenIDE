@@ -1,17 +1,8 @@
-using System;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Diagnostics;
-using System.Collections.Generic;
-using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Language;
-using OpenIDE.CodeEngine.Core.UI;
-using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Commands;
-using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
-using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.ReactiveScripts;
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using CSharp.Projects;
 using CSharp.Files;
 using CSharp.Processes;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -85,11 +86,11 @@ namespace CSharp.Commands
 			_pickTemplate = picker;
 		}
 		
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("error|Invalid number of arguments. " +
+				writer.Write("error|Invalid number of arguments. " +
 					"Usage: new {template name} {item name} {template arguments}");
 				return;
 			}
@@ -102,7 +103,7 @@ namespace CSharp.Commands
 			var template = _pickTemplate(arguments[0], _project.Type);
 			if (template == null)
 			{
-				Console.WriteLine("error|No template with the name {0} exists.", arguments[0]);
+				writer.Write("error|No template with the name {0} exists.", arguments[0]);
 				return;
 			}
 			var ns = getNamespace(location, _project.Fullpath, _project.DefaultNamespace);
@@ -113,11 +114,10 @@ namespace CSharp.Commands
 			_project.AppendFile(template.File);
 			_project.Write();
 			
-			Console.WriteLine("comment|Created class {0}.{1}", ns, className);
-			Console.WriteLine("comment|Full path {0}", template.File.Fullpath);
-			Console.WriteLine("");
+			writer.Write("comment|Created class {0}.{1}", ns, className);
+			writer.Write("comment|Full path {0}", template.File.Fullpath);
 			
-			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
+			gotoFile(writer, template.File.Fullpath, template.Line, template.Column, location);
 		}
 		
 		private INewTemplate pickTemplate(string templateName, string type)
@@ -182,12 +182,12 @@ namespace CSharp.Commands
 				relativePath.Replace(Path.DirectorySeparatorChar.ToString(), "."));
 		}
 		
-		private void gotoFile(string file, int line, int column, string location)
+		private void gotoFile(IResponseWriter writer, string file, int line, int column, string location)
 		{
-			Console.WriteLine(
+			writer.Write(
 				string.Format("editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			Console.WriteLine("editor setfocus");
+			writer.Write("editor setfocus");
 		}
 	}
 	

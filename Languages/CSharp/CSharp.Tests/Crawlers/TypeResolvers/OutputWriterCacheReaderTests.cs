@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CSharp.Responses;
 using NUnit.Framework;
 using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
@@ -17,7 +18,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 
         [SetUp]
         public void Setup() {
-            _cache = new OutputWriter();
+            _cache = new OutputWriter(new NullResponseWriter());
             _resolver = new OutputWriterCacheReader(_cache);
             buildCache();
         }

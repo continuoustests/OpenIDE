@@ -1,4 +1,5 @@
 using System;
+using CSharp.Responses;
 using NUnit.Framework;
 using CSharp.Crawlers;
 using CSharp.Crawlers.TypeResolvers;
@@ -13,7 +14,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 		[SetUp]
 		public void Setup()
 		{
-			var cache = new OutputWriter();
+			var cache = new OutputWriter(new NullResponseWriter());
 			_resolver = 
 				new TypeUnderPositionResolver(cache, (type) => new Namespce(null,type,0,0));
 		}

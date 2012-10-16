@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Commands;
 using OpenIDE.Core.Language;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Commands;
 
 namespace OpenIDE.CodeEngine.Core.Handlers
 {

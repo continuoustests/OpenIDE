@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CSharp.Crawlers.TypeResolvers.CodeEngine;
 using CSharp.Projects;
+using CSharp.Responses;
 using OpenIDE.Core.CodeEngineIntegration;
 
 namespace CSharp.Crawlers.TypeResolvers
@@ -35,7 +36,7 @@ namespace CSharp.Crawlers.TypeResolvers
             }
 
             var parser = new NRefactoryParser();
-            var cache = new OutputWriter();
+            var cache = new OutputWriter(new NullResponseWriter());
             parser.SetOutputWriter(cache);
             var fileRef = new FileRef(file, null);
             parser.ParseFile(fileRef, () => _fileReader(file));

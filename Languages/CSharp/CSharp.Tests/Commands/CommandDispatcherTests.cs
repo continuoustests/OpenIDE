@@ -1,4 +1,5 @@
 using System;
+using CSharp.Responses;
 using NUnit.Framework;
 using CSharp.Commands;
 using Rhino.Mocks;
@@ -21,7 +22,7 @@ namespace CSharp.Tests.Commands
 		[Test]
 		public void Should_find_named_handler()
 		{
-			_execute.GetHandler("MyCommand").Execute(new string[] {});
+			_execute.GetHandler("MyCommand").Execute(new NullResponseWriter(), new string[] {});
 			_handler.WasCalled();
 		}
 		
@@ -45,7 +46,7 @@ namespace CSharp.Tests.Commands
 
 		public string Command { get { return "MyCommand"; } }
 		
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			_wasExecuted = true;
 		}

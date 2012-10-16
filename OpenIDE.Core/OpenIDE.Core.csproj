@@ -55,6 +55,9 @@
   <ItemGroup>
     <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
     <Compile Include="CodeEngineIntegration\Instance.cs" />
+    <Compile Include="Commands\CacheFormatter.cs" />
+    <Compile Include="Commands\CommandMessage.cs" />
+    <Compile Include="Commands\QueryArgumentParser.cs" />
     <Compile Include="EditorEngineIntegration\Client.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
     <Compile Include="EditorEngineIntegration\IClient.cs" />

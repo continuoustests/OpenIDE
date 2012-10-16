@@ -98,9 +98,6 @@
     <Compile Include="Bootstrapping\Bootstrapper.cs" />
     <Compile Include="Handlers\GetCodeRefsHandler.cs" />
     <Compile Include="Handlers\IHandler.cs" />
-    <Compile Include="Commands\CommandMessage.cs" />
-    <Compile Include="Commands\CacheFormatter.cs" />
-    <Compile Include="Commands\QueryArgumentParser.cs" />
     <Compile Include="Handlers\GetSignatureRefsHandler.cs" />
     <Compile Include="Handlers\GetFilesHandler.cs" />
     <Compile Include="Handlers\GetProjectsHandler.cs" />
@@ -135,7 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\TypeSearchForm.resx" />
-    <None Include="Endpoints\EventEndpoint" />
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\MemberLookupForm.resx" />

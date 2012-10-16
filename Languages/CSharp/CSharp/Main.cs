@@ -6,31 +6,78 @@ using CSharp.Commands;
 using CSharp.Files;
 using CSharp.FileSystem;
 using CSharp.Projects;
+using CSharp.Responses;
+using CSharp.Tcp;
 using CSharp.Versioning;
 using CSharp.Projects.Readers;
 using CSharp.Projects.Writers;
 using CSharp.Projects.Appenders;
 using CSharp.Projects.Removers;
 using CSharp.Projects.Referencers;
+using OpenIDE.Core.CodeEngineIntegration;
+using OpenIDE.Core.Commands;
 
 namespace CSharp
 {
 	public class MainClass
 	{
+        private static bool _startService = false;
+        private static Dispatcher _dispatcher;
+
 		public static void Main(string[] args)
 		{
 			if (args.Length == 0)
 				return;
-			var dispatcher = new Dispatcher();
-			configureHandlers(dispatcher);
-			var handler = dispatcher.GetHandler(args[0]);
+            args = parseParameters(args);
+            _dispatcher = new Dispatcher();
+			configureHandlers(_dispatcher);
+            CommandMessage msg = null;
+            if (args.Length > 0)
+                msg = new CommandMessage(args[0], null, getParameters(args));
+            if (_startService)
+                startServer(msg);
+            else
+                handleMessage(msg, new ConsoleResponseWriter());
+        }
+
+        private static void startServer(CommandMessage startMessage) {
+            var shutdown = false;
+            var path = Environment.CurrentDirectory;
+            var codeEngine = 
+                new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
+                    .GetInstance(Environment.CurrentDirectory);
+            if (codeEngine != null)
+                path = codeEngine.Key;
+            var server = new TcpServer();
+            server.IncomingMessage += (s, m) => {
+                var msg = CommandMessage.New(m.Message);
+                if (msg.Command == "shutdown") {
+                    shutdown = true;
+                    return;
+                }
+                handleMessage(msg, new ConsoleResponseWriter());
+            };
+            server.Start();
+            var token = TokenHandler.WriteInstanceInfo(path, server.Port);
+            handleMessage(startMessage, new ConsoleResponseWriter());
+            while (!shutdown)
+                System.Threading.Thread.Sleep(100);
+            if (File.Exists(token))
+                File.Delete(token);
+        }
+
+        private static void handleMessage(CommandMessage msg, IResponseWriter writer)
+        {
+            if (msg == null)
+                return;
+			var handler = _dispatcher.GetHandler(msg.Command);
 			if (handler == null)
 				return;
 
 			try {
-				handler.Execute(getParameters(args));
+				handler.Execute(writer, msg.Arguments.ToArray());
 			} catch (Exception ex) {
-				var builder = new OutputWriter();
+				var builder = new OutputWriter(writer);
                 builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
 				if (ex.StackTrace != null) {
 					ex.StackTrace
@@ -40,11 +87,17 @@ namespace CSharp
 			}
 		}
 
+        static string[] parseParameters(string[] args) {
+            if (args.Contains("--service"))
+                _startService = true;
+            return args.Where(x => x != "--service").ToArray();
+        }
+
 		static string[] getParameters(string[] args)
 		{
 			var remaining = new List<string>();
 			for (int i = 1; i < args.Length; i++)
-				remaining.Add(args[i]);
+			    remaining.Add(args[i]);
 			return remaining.ToArray();
 		}
 		

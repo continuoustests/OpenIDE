@@ -1,4 +1,5 @@
 using System;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -6,7 +7,7 @@ namespace CSharp.Commands
 	{
 		string Usage { get; }
 		string Command { get; }
-		void Execute(string[] arguments);
+		void Execute(IResponseWriter writer, string[] arguments);
 	}
 }
 

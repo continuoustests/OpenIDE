@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using CSharp.Projects;
 using CSharp.Processes;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -67,11 +68,11 @@ namespace CSharp.Commands
 			_fileTypeResolver = fileTypeResolver;
 		}
 		
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("comment|Invalid number of arguments. " +
+				writer.Write("comment|Invalid number of arguments. " +
 					"Usage: create {template name} {item name} {template arguments}");
 				return;
 			}
@@ -83,11 +84,11 @@ namespace CSharp.Commands
 			
 			template.Run(project, getArguments(arguments));
 
-			Console.WriteLine("comment|Created {0}", project);
+			writer.Write("comment|Created {0}", project);
 
 			if (template.File == null)
 				return;
-			gotoFile(template.File.Fullpath, template.Line, template.Column, Path.GetDirectoryName(project));
+			gotoFile(writer, template.File.Fullpath, template.Line, template.Column, Path.GetDirectoryName(project));
 		}
 		
 		private ICreateTemplate pickTemplate(string templateName)
@@ -134,12 +135,12 @@ namespace CSharp.Commands
 			return newArgs;
 		}
 
-		private void gotoFile(string file, int line, int column, string location)
+		private void gotoFile(IResponseWriter writer, string file, int line, int column, string location)
 		{
-			Console.WriteLine(
+			writer.Write(
 				string.Format("editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			Console.WriteLine("editor setfocus");
+			writer.Write("editor setfocus");
 		}
 	}
 

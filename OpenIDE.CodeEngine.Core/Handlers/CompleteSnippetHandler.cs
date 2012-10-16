@@ -7,7 +7,6 @@ using OpenIDE.Core.UI;
 using OpenIDE.Core.Config;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.Core.Logging;
-using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 
 namespace OpenIDE.CodeEngine.Core.Handlers

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CSharp.Responses;
 using NUnit.Framework;
 using CSharp.Projects;
 using CSharp.Crawlers;
@@ -13,7 +14,7 @@ namespace CSharp.Tests
     {
         [Test]
         public void Should_cache_added_items() {
-            var cache = new OutputWriter();
+            var cache = new OutputWriter(new NullResponseWriter());
 
             cache.WriteProject(new Project(""));
             var file = new FileRef("", null);

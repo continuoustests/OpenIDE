@@ -3,6 +3,7 @@ using System.Linq;
 using CSharp.Projects;
 using CSharp.Crawlers;
 using System.Collections.Generic;
+using CSharp.Responses;
 
 namespace CSharp
 {
@@ -51,6 +52,7 @@ namespace CSharp
 	public class OutputWriter : IOutputWriter
 	{
         private bool _visibility = true;
+        private IResponseWriter _writer;
 
         public List<Project> Projects { get; private set; }
         public List<Using> Usings { get; private set; }
@@ -66,7 +68,8 @@ namespace CSharp
         public List<Parameter> Parameters { get; private set; }
         public List<Variable> Variables { get; private set; }
 
-        public OutputWriter() {
+        public OutputWriter(IResponseWriter writer) {
+            _writer = writer;
             Projects = new List<Project>();
             Usings = new List<Using>();
             UsingAliases = new List<UsingAlias>();
@@ -163,7 +166,7 @@ namespace CSharp
 
         public void WriteError(string description)
 		{
-			Console.WriteLine("error|" + description);
+			_writer.Write("error|" + description);
 		}
 
         private Dictionary<string,string> _declarations;
@@ -281,7 +284,7 @@ namespace CSharp
                     var json = "";
                     if (proj.JSON != null)
                         json = proj.JSON;
-			        Console.WriteLine("project|" + proj.File + "|" + json + "|filesearch");
+			        _writer.Write("project|" + proj.File + "|" + json + "|filesearch");
 
                     Files.Where(file => file.Project != null && file.Project.File == proj.File).ToList()
                         .ForEach(file => handle(file));
@@ -294,7 +297,7 @@ namespace CSharp
 
         private void handle(FileRef file)
         {
-            Console.WriteLine("file|" + file.File + "|filesearch");
+            _writer.Write("file|" + file.File + "|filesearch");
             Usings.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("using", x));
             UsingAliases.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("alias", x));
             Namespaces.Where(x => x.File.File == file.File).ToList().ForEach(x => writeSignature("namespace", x));
@@ -321,7 +324,7 @@ namespace CSharp
 			    foreach (var argument in additional)
 				    additionalArguments += "|" + argument;
             }
-			Console.WriteLine("signature|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}{8}",
+			_writer.Write("signature|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}{8}",
                 coderef.Namespace,
 				coderef.Signature,
 				coderef.Name,

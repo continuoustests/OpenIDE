@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CSharp.FileSystem;
+using CSharp.Responses;
 using CSharp.Versioning;
 using CSharp.Projects.Readers;
 using CSharp.Files;
@@ -31,11 +32,11 @@ namespace CSharp.Commands
 			_provider = provider;
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("error|The handler needs the full path to the reference. " +
+				writer.Write("error|The handler needs the full path to the reference. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
@@ -50,7 +51,7 @@ namespace CSharp.Commands
 			var projectFile = arguments[1];
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("error|The project to add this reference to does not exist. " +
+				writer.Write("error|The project to add this reference to does not exist. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
@@ -60,7 +61,7 @@ namespace CSharp.Commands
 			_project.Reference(file);
 			_project.Write();
 
-			Console.WriteLine("comment|Added reference {0} to {1}", file, projectFile);
+			writer.Write("comment|Added reference {0} to {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)

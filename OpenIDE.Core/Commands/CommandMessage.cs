@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace OpenIDE.CodeEngine.Core.Commands
+namespace OpenIDE.Core.Commands
 {
 	public class CommandMessage
 	{

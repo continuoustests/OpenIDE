@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Endpoints;
+using Commands = OpenIDE.Core.Commands;
 using OpenIDE.Core.Language;
 
 namespace OpenIDE.CodeEngine.Core.Handlers
