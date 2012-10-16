@@ -11,20 +11,29 @@ namespace CSharp.Crawlers.TypeResolvers
     public class OutputWriterCacheReader : ICacheReader
     {
         private IOutputWriter _writer;
+        private ExpressionResolver _expression;
         private CodeEngineTypeResolver _codeEngineResolver = new CodeEngineTypeResolver(() => new CodeEngineDispatcher(new FS()).GetInstance(Environment.CurrentDirectory));
 
         public OutputWriterCacheReader(IOutputWriter writer) {
             _writer = writer;
+            _expression = new ExpressionResolver(_writer, ResolveMatchingType);
+        }
+
+        public void ResolveMatchingType(PartialType type) {
+            ResolveMatchingType(new[] { type });
         }
 
         public void ResolveMatchingType(params PartialType[] types) {
             var usingsMap = getUsingsMap(types);
             var usingAliasesMap = getUsingAliasesMap(types);
             foreach (var type in types) {
-                if (type.Type.StartsWith("System."))
-                    continue;
+                // Cannot do this since expressions might start with System.
+                //if (type.Type.StartsWith("System."))
+                //    continue;
                 var typeToMatch = type.Type.Replace("[]", "");
-                var matchingType = _writer.VariableTypeFromSignature(type.Namespace + "." + type.Type);
+                var matchingType = _expression.Resolve(type, typeToMatch);
+                if (matchingType == null)
+                    matchingType = _writer.VariableTypeFromSignature(type.Namespace + "." + type.Type);
                 var usings = getUsings(usingsMap, type);
                 if (matchingType == null) {
                     matchingType = matchToAliases(type.File.File, typeToMatch, usingAliasesMap);

@@ -5,9 +5,16 @@ using System.Text;
 
 namespace CSharp.Crawlers
 {
-    public abstract class TypeBase<T> : CodeItemBase<T>
+    public interface IType
+    {
+        IEnumerable<string> BaseTypes { get; }
+    }
+
+    public abstract class TypeBase<T> : CodeItemBase<T>, IType
     {
         protected List<string> _baseTypes = new List<string>();
+
+        public IEnumerable<string> BaseTypes { get { return _baseTypes; } }
 
         public T AddBaseType(string baseType) {
             _baseTypes.Add(baseType);
@@ -47,6 +54,8 @@ namespace CSharp.Crawlers
         protected List<CodeAttribute> _attributes = new List<CodeAttribute>();
 
         protected abstract string getNamespace();
+
+        public bool IsStatic { get { return _modifiers.Contains("static"); } }
 
         public int EndLine { get; private set; }
         public int EndColumn { get; private set; }

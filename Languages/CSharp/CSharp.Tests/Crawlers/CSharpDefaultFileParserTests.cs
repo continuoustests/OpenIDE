@@ -338,6 +338,19 @@ namespace CSharp.Tests.Crawlers
             Assert.That(variable.JSON, Is.EqualTo(""));
         }
 
+        [Test]
+        public void Should_find_enum_member()
+        {
+            var str = _cache.Fields.Where(x => x.Name.Equals("Something")).FirstOrDefault();
+            Assert.That(str.File.File, Is.EqualTo("file1"));
+            Assert.That(str.Signature, Is.EqualTo("System.Int32 MyNamespace5.MyEnum1.Something"));
+            Assert.That(str.Namespace, Is.EqualTo("MyNamespace5.MyEnum1"));
+            Assert.That(str.Name, Is.EqualTo("Something"));
+            Assert.That(str.Scope, Is.EqualTo("public"));
+            Assert.That(str.Line, Is.EqualTo(51));
+            Assert.That(str.Column, Is.EqualTo(3));
+        }
+
 		private string getContent()
 		{
 			return File.ReadAllText(

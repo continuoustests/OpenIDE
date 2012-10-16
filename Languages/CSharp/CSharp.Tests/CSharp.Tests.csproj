@@ -53,7 +53,6 @@
     <Compile Include="Crawlers\TypeResolvers\CodeModelResultParserTests.cs" />
     <Compile Include="Crawlers\TypeResolvers\EnclosingSignatureFromPositionTests.cs" />
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReaderTests.cs" />
-    <Compile Include="Crawlers\TypeResolvers\TypeFromPositionResolverTests.cs" />
     <Compile Include="Files\ComplieFileTests.cs" />
     <Compile Include="FileSystem\PathExtensionsTests.cs" />
     <Compile Include="OutputWriterTests.cs" />

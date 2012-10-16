@@ -41,7 +41,10 @@ namespace CSharp
         bool ContainsType(string fullname);
         string FirstMatchingTypeFromName(string name);
         string VariableTypeFromSignature(string signature);
+        string StaticMemberFromSignature(string signature);
         
+        IEnumerable<string> CollectBases(string type);
+
         void WriteToOutput();
 	}
 
@@ -164,6 +167,7 @@ namespace CSharp
 		}
 
         private Dictionary<string,string> _declarations;
+        private Dictionary<string,string> _staticDeclarations;
         private HashSet<string> _typeIndex;
         private Dictionary<string, string> _nameIndex;
         public void BuildTypeIndex() {
@@ -195,14 +199,35 @@ namespace CSharp
             });
 
             _declarations = new Dictionary<string,string>();
+            _staticDeclarations = new Dictionary<string, string>();
             Parameters.ForEach(x => {
                     var signature = x.Namespace + "." + x.Name;
-                    _declarations.Add(signature, x.DeclaringType);
+                    if (x.IsStatic)
+                        _staticDeclarations.Add(signature, x.DeclaringType);
+                    else
+                        _declarations.Add(signature, x.DeclaringType);
                 });
             Variables.ForEach(x => {
                     var signature = x.Namespace + "." + x.Name;
-                    _declarations.Add(signature, x.DeclaringType);
+                    if (x.IsStatic)
+                        _staticDeclarations.Add(signature, x.DeclaringType);
+                    else
+                        _declarations.Add(signature, x.DeclaringType);
                 });
+            Methods.ForEach(x => {
+                var signature = x.GenerateNameSignature();
+                if (x.IsStatic)
+                    _staticDeclarations.Add(signature, x.ReturnType);
+                else
+                    _declarations.Add(signature, x.ReturnType);
+            });
+            Fields.ForEach(x => {
+                var signature = x.Namespace + "." + x.Name;
+                if (x.IsStatic)
+                    _staticDeclarations.Add(signature, x.ReturnType);
+                else
+                    _declarations.Add(signature, x.ReturnType);
+            });
         }
 
         public bool ContainsType(string fullname) {
@@ -221,6 +246,32 @@ namespace CSharp
             if (_declarations.TryGetValue(signature, out type))
                 return type;
             return null;
+        }
+
+        public string StaticMemberFromSignature(string signature) {
+            string type;
+            if (_staticDeclarations.TryGetValue(signature, out type))
+                return type;
+            return null;
+        }
+
+        public IEnumerable<string> CollectBases(string type) {
+            var bases = new List<string>();
+            bases.Add("System.Object");
+            IType current = Interfaces.FirstOrDefault(x => x.Signature == type);
+            if (current == null)
+                current = Classes.FirstOrDefault(x => x.Signature == type);
+            if (current == null)
+                current = Structs.FirstOrDefault(x => x.Signature == type);
+            if (current == null)
+                current = Enums.FirstOrDefault(x => x.Signature == type);
+            if (current == null)
+                return new string[]{};
+            foreach (var baseSignature in current.BaseTypes) {
+                bases.Add(baseSignature);
+                bases.AddRange(CollectBases(baseSignature));
+            }
+            return bases;
         }
 
         public void WriteToOutput()

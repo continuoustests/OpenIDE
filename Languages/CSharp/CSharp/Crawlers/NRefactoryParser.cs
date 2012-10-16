@@ -125,19 +125,31 @@ namespace CSharp.Crawlers
 
         private void addEnum(TypeDeclaration type)
         {
-            _writer.WriteEnum(
-                addTypeInfo(
-                    new EnumType(
-                        _file,
-                        _namespace,
-                        getName(type),
-                        getTypeModifier(type.Modifiers),
-                        type.NameToken.StartLocation.Line,
-                        type.NameToken.StartLocation.Column)
-                        .SetEndPosition(
-                            type.EndLocation.Line,
-                            type.EndLocation.Column),
-                    type));
+            var enm = addEnumInfo(
+                        new EnumType(
+                            _file,
+                            _namespace,
+                            getName(type),
+                            getTypeModifier(type.Modifiers),
+                            type.NameToken.StartLocation.Line,
+                            type.NameToken.StartLocation.Column)
+                            .SetEndPosition(
+                                type.EndLocation.Line,
+                                type.EndLocation.Column),
+                        type);
+            _writer.WriteEnum(enm);
+            foreach (var member in type.Members) {
+                _writer
+                    .WriteField(
+                        new Field(
+                            _file,
+                            enm.Signature,
+                            member.Name,
+                            "public",
+                            member.NameToken.StartLocation.Line,
+                            member.NameToken.StartLocation.Column,
+                            "System.Int32").AddModifiers(new[] { "static" }));
+            }
         }
 
         private void addStruct(TypeDeclaration type)
@@ -197,13 +209,17 @@ namespace CSharp.Crawlers
             return type.Name + "`" + type.TypeParameters.Count.ToString();
         }
 
-        private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl)
-        {
+        private T addTypeInfo<T>(TypeBase<T> type, TypeDeclaration decl) {
             getTypeAttributes(type, decl);
             foreach (var baseType in decl.BaseTypes) {
                 var signature = signatureFrom(baseType);
                 type.AddBaseType(signature);
             }
+            return type.AddModifiers(getTypeModifiers(decl));
+        }
+
+        private EnumType addEnumInfo(EnumType type, TypeDeclaration decl) {
+            getTypeAttributes(type, decl);
             return type.AddModifiers(getTypeModifiers(decl));
         }
 

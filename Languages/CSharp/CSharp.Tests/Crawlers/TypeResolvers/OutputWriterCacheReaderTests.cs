@@ -80,7 +80,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
         }
         
         [Test]
-        public void Will_resolve_assignment_expression() {
+        public void Will_resolve_variable_assignment_expression_local_scope() {
             var resolvedWith = "not_set";
             var file = new FileRef("File1", new Project("Project1"));
             _resolver
@@ -89,6 +89,71 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
                         file, new Point(14, 4), "str.ToString()", "Project1.FirstClass.myMethod",
                         (s) => resolvedWith = s));
             Assert.That(resolvedWith, Is.EqualTo("System.String"));
+        }
+
+        [Test]
+        public void Will_resolve_variable_assignment_expression_local_scope_using_this()
+        {
+            var resolvedWith = "not_set";
+            var file = new FileRef("File1", new Project("Project1"));
+            _resolver
+                .ResolveMatchingType(
+                    new PartialType(
+                        file, new Point(14, 4), "this.str.ToString()", "Project1.FirstClass.myMethod",
+                        (s) => resolvedWith = s));
+            Assert.That(resolvedWith, Is.EqualTo("System.String"));
+        }
+
+        [Test]
+        public void Will_resolve_variable_assignment_expression_from_private_scope()
+        {
+            var resolvedWith = "not_set";
+            var file = new FileRef("File1", new Project("Project1"));
+            _resolver
+                .ResolveMatchingType(
+                    new PartialType(
+                        file, new Point(14, 4), "FCls.Count", "Project1.FirstClass.myMethod",
+                        (s) => resolvedWith = s));
+            Assert.That(resolvedWith, Is.EqualTo("System.Int32"));
+        }
+
+        [Test]
+        public void Will_not_resolve_variable_assignment_expression_from_non_static_type_members()
+        {
+            var resolvedWith = "not_set";
+            var file = new FileRef("File1", new Project("Project1"));
+            _resolver
+                .ResolveMatchingType(
+                    new PartialType(
+                        file, new Point(14, 4), "SecondClass.Count", "Project1.FirstClass.myMethod",
+                        (s) => resolvedWith = s));
+            Assert.That(resolvedWith, Is.EqualTo("not_set"));
+        }
+
+        [Test]
+        public void Will_resolve_variable_assignment_expression_from_static_type_members()
+        {
+            var resolvedWith = "not_set";
+            var file = new FileRef("File1", new Project("Project1"));
+            _resolver
+                .ResolveMatchingType(
+                    new PartialType(
+                        file, new Point(14, 4), "SecondClass.NAME", "Project1.FirstClass.myMethod",
+                        (s) => resolvedWith = s));
+            Assert.That(resolvedWith, Is.EqualTo("System.String"));
+        }
+
+        [Test]
+        public void Will_resolve_variable_assignment_expression_from_enum()
+        {
+            var resolvedWith = "not_set";
+            var file = new FileRef("File1", new Project("Project1"));
+            _resolver
+                .ResolveMatchingType(
+                    new PartialType(
+                        file, new Point(14, 4), "System.More.FunnyBool.True", "Project1.FirstClass.myMethod",
+                        (s) => resolvedWith = s));
+            Assert.That(resolvedWith, Is.EqualTo("System.Int32"));
         }
 
         private void buildCache() {
@@ -100,6 +165,8 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
             _cache.WriteNamespace(new Namespce(file, "Project1", 2, 1));
             _cache.WriteClass(
                 new Class(file, "Project1", "FirstClass", "public", 5, 1));
+            _cache.WriteField(
+                new Field(file, "Project1.FirstClass", "FCls", "public", 6, 2, "SecondClass"));
             _cache.WriteMethod(
                 new Method(file, "Project1.FirstClass", "myMethod", "private", 7, 5, "System.Void", new Parameter[]{}));
             _cache.WriteVariable(
@@ -116,16 +183,30 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
             _cache.WriteNamespace(new Namespce(file2, "Project1.FirstNamespace", 1, 1));
             _cache.WriteClass(
                 new Class(file2, "Project1.FirstNamespace", "SecondClass", "public", 2, 1));
+            _cache.WriteField(
+                new Field(file, "Project1.FirstNamespace.SecondClass", "Count", "public", 3, 2, "System.Int32"));
+
+            var staticField = 
+                new Field(file, "Project1.FirstNamespace.SecondClass", "NAME", "public", 3, 2, "System.String");
+            staticField.AddModifiers(new[]{ "static" });
+            _cache.WriteField(staticField);
 
             var project2 = new Project("Project2");
             _cache.WriteProject(project2);
 
             var system = new FileRef("mscorlib", null);
             _cache.WriteFile(system);
+            _cache.WriteNamespace(new Namespce(system, "System",0,0));
+            _cache.WriteNamespace(new Namespce(system, "System.More", 0, 0));
             _cache.WriteClass(
-                new Class(system, "System", "Object", "public", 0, 0));
+                new Class(system, "System", "String", "public", 0, 0));
             _cache.WriteMethod(
                 new Method(system, "System.Object", "ToString", "public", 0, 0, "System.String", new Parameter[] {}));
+            _cache.WriteEnum(
+                new EnumType(system, "System.More", "FunnyBool", "public", 0, 0));
+            _cache.WriteField(
+                new Field(system, "System.More.FunnyBool", "True", "public", 0, 0, "System.Int32").AddModifiers(new[] { "static" }));
+
 
             _cache.BuildTypeIndex();
         }

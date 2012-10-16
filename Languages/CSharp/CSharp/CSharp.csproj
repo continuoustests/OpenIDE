@@ -78,6 +78,7 @@
     <Compile Include="Crawlers\TypeResolvers\CodeEngine\CodeEngineResultParser.cs" />
     <Compile Include="Crawlers\TypeResolvers\CodeEngine\CodeEngineTypeResolver.cs" />
     <Compile Include="Crawlers\TypeResolvers\EnclosingSignatureFromPosition.cs" />
+    <Compile Include="Crawlers\TypeResolvers\ExpressionResolver.cs" />
     <Compile Include="Crawlers\TypeResolvers\ICacheReader.cs" />
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReader.cs" />
     <Compile Include="Crawlers\TypeResolvers\TypeResolver.cs" />

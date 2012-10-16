@@ -133,6 +133,14 @@ namespace CSharp.Crawlers
             return Signature;
         }
 
+        public string GenerateNameSignature() {
+            var paramString = getParamString(Parameters);
+            return string.Format("{0}.{1}({2})",
+                Namespace,
+                Name,
+                paramString);
+        }
+
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
             list.Add(new ResolveStatement(ReturnType, Namespace, (s) => ReturnType = s));
