@@ -11,14 +11,17 @@ namespace CSharp.Crawlers.TypeResolvers
 {
     public class EnclosingSignatureFromPosition
     {
+        private IOutputWriter _globalCache;
         private Func<string,string> _fileReader;
         private Action<string> _fileRemover;
         private Func<string,string> _getDirtyFile;
 
         public EnclosingSignatureFromPosition(
+            IOutputWriter globalCache,
             Func<string,string> fileReader,
             Action<string> fileRemover,
             Func<string,string> getDirtyFile) {
+            _globalCache = globalCache;
             _fileReader = fileReader;
             _fileRemover = fileRemover;
             _getDirtyFile = getDirtyFile;
@@ -44,7 +47,7 @@ namespace CSharp.Crawlers.TypeResolvers
                 _fileRemover(file);
 
             cache.BuildTypeIndex();
-            new TypeResolver(new OutputWriterCacheReader(cache))
+            new TypeResolver(new OutputWriterCacheReader(cache, _globalCache))
                 .ResolveAllUnresolved(cache);
             
             var references = new List<ICodeReference>();

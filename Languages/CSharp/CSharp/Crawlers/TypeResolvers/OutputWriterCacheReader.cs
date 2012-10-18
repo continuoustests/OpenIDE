@@ -10,13 +10,14 @@ namespace CSharp.Crawlers.TypeResolvers
 {
     public class OutputWriterCacheReader : ICacheReader
     {
-        private IOutputWriter _writer;
+        private IOutputWriter _localCache;
+        private IOutputWriter _globalCache;
         private ExpressionResolver _expression;
-        private CodeEngineTypeResolver _codeEngineResolver = new CodeEngineTypeResolver(() => new CodeEngineDispatcher(new FS()).GetInstance(Environment.CurrentDirectory));
 
-        public OutputWriterCacheReader(IOutputWriter writer) {
-            _writer = writer;
-            _expression = new ExpressionResolver(_writer, ResolveMatchingType);
+        public OutputWriterCacheReader(IOutputWriter localCache, IOutputWriter globalCache) {
+            _localCache = localCache;
+            _globalCache = globalCache;
+            _expression = new ExpressionResolver(_localCache, ResolveMatchingType);
         }
 
         public void ResolveMatchingType(PartialType type) {
@@ -24,41 +25,47 @@ namespace CSharp.Crawlers.TypeResolvers
         }
 
         public void ResolveMatchingType(params PartialType[] types) {
-            var usingsMap = getUsingsMap(types);
-            var usingAliasesMap = getUsingAliasesMap(types);
+            var usingsMap = getUsingsMap(_localCache, types);
+            var usingAliasesMap = getUsingAliasesMap(_localCache, types);
             foreach (var type in types) {
-                // Cannot do this since expressions might start with System.
-                //if (type.Type.StartsWith("System."))
-                //    continue;
-                var typeToMatch = type.Type.Replace("[]", "");
-                var matchingType = _expression.Resolve(type, typeToMatch);
-                if (matchingType == null)
-                    matchingType = _writer.VariableTypeFromSignature(type.Namespace + "." + type.Type);
-                var usings = getUsings(usingsMap, type);
-                if (matchingType == null) {
-                    matchingType = matchToAliases(type.File.File, typeToMatch, usingAliasesMap);
-                }
-                if (matchingType == null) {
-                    matchingType = getMatchingType(typeToMatch, usings);
-                    if (matchingType == null)
-                        matchingType = _writer.FirstMatchingTypeFromName(typeToMatch);
-                }
-                if (matchingType == null)
-                    matchingType = _codeEngineResolver.MatchTypeName(typeToMatch, usings);
-                if (matchingType != null)
-                    type.Resolve(type.Type.Replace(typeToMatch, matchingType));
+                if (!resolveTypeFromCache(_localCache, usingsMap, usingAliasesMap, type))
+                    resolveTypeFromCache(_globalCache, usingsMap, usingAliasesMap, type);
             }
         }
 
-        private string matchToAliases(string file, string type, Dictionary<string,UsingAlias[]> usingAliasesMap) {
+        private bool resolveTypeFromCache(IOutputWriter cache, Dictionary<string, string[]> usingsMap, Dictionary<string, UsingAlias[]> usingAliasesMap, PartialType type) {
+            // Cannot do this since expressions might start with System.
+            //if (type.Type.StartsWith("System."))
+            //    continue;
+            var typeToMatch = type.Type.Replace("[]", "");
+            var matchingType = _expression.Resolve(type, typeToMatch);
+            if (matchingType == null)
+                matchingType = cache.VariableTypeFromSignature(type.Namespace + "." + type.Type);
+            var usings = getUsings(usingsMap, type);
+            if (matchingType == null)
+            {
+                matchingType = matchToAliases(cache, type.File.File, typeToMatch, usingAliasesMap);
+            }
+            if (matchingType == null)
+            {
+                matchingType = getMatchingType(cache, typeToMatch, usings);
+                if (matchingType == null)
+                    matchingType = cache.FirstMatchingTypeFromName(typeToMatch);
+            }
+            if (matchingType != null)
+                type.Resolve(type.Type.Replace(typeToMatch, matchingType));
+            return matchingType != null;
+        }
+
+        private string matchToAliases(IOutputWriter cache, string file, string type, Dictionary<string,UsingAlias[]> usingAliasesMap) {
             UsingAlias[] aliases;
             if (!usingAliasesMap.TryGetValue(file, out aliases))
                 return null;
             var match = aliases.FirstOrDefault(x => x.Name == type);
             if (match != null) {
-                if (_writer.ContainsType(match.Namespace))
+                if (cache.ContainsType(match.Namespace))
                     return match.Namespace;
-                var firstMatch = _writer.FirstMatchingTypeFromName(match.Namespace);
+                var firstMatch = cache.FirstMatchingTypeFromName(match.Namespace);
                 if (firstMatch != null)
                     return firstMatch;
                 return match.Namespace;
@@ -83,8 +90,8 @@ namespace CSharp.Crawlers.TypeResolvers
             return list;
         }
 
-        private string getNamespaceFromPoint(PartialType type) {
-            var currentNamespace = _writer.Namespaces
+        private string getNamespaceFromPoint(IOutputWriter cache, PartialType type) {
+            var currentNamespace = cache.Namespaces
                 .FirstOrDefault(x => 
                     x.File.File == type.File.File &&
                     x.Line <= type.Location.Line);
@@ -93,34 +100,34 @@ namespace CSharp.Crawlers.TypeResolvers
             return null;
         }
 
-        private string getMatchingType(string type, IEnumerable<string> usings) {
+        private string getMatchingType(IOutputWriter cache, string type, IEnumerable<string> usings) {
             foreach (var usng in usings) {
                 var signature = usng + "." + type;
-                if (_writer.ContainsType(signature))
+                if (cache.ContainsType(signature))
                     return signature;
             }
             return null;
         }
 
-        private Dictionary<string,string[]> getUsingsMap(PartialType[] types) {
+        private Dictionary<string,string[]> getUsingsMap(IOutputWriter cache, PartialType[] types) {
             var usingsMap = new Dictionary<string,string[]>();
             types.GroupBy(x => x.File.File).ToList()
                 .ForEach(x => 
                     usingsMap.Add(
-                        x.Key, 
-                        _writer.Usings
+                        x.Key,
+                        cache.Usings
                             .Where(y => y.File.File == x.Key)
                             .Select(y => y.Name).ToArray()));
             return usingsMap;
         }
 
-        private Dictionary<string,UsingAlias[]> getUsingAliasesMap(PartialType[] types) {
+        private Dictionary<string,UsingAlias[]> getUsingAliasesMap(IOutputWriter cache, PartialType[] types) {
             var usingsAliasesMap = new Dictionary<string,UsingAlias[]>();
             types.GroupBy(x => x.File.File).ToList()
                 .ForEach(x => 
                     usingsAliasesMap.Add(
-                        x.Key, 
-                        _writer.UsingAliases
+                        x.Key,
+                        cache.UsingAliases
                             .Where(y => y.File.File == x.Key)
                             .Select(y => y).ToArray()));
             return usingsAliasesMap;

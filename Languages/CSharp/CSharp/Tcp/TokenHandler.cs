@@ -46,10 +46,10 @@ namespace CSharp.Tcp
 			isConnected();
 		}
 
-		public void Send(string message) {
+		public void Request(string message) {
 			if (!isConnected())
 				return;
-			_client.Send(message);
+			_client.Request(message);
 		}
 		
 		private bool isConnected() {

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 namespace OpenIDE.Core.Commands
 {
@@ -15,6 +16,13 @@ namespace OpenIDE.Core.Commands
 			Arguments = new List<string>();
 			Arguments.AddRange(arguments);
 		}
+
+        public static CommandMessage New(string[] args)
+        {
+            if (args.Length == 0)
+                return new CommandMessage("", null, new string[] { });
+            return new CommandMessage(args[0], null, args.Skip(1));
+        }
 		
 		public static CommandMessage New(string message)
 		{
@@ -35,6 +43,14 @@ namespace OpenIDE.Core.Commands
 				return new CommandMessage("", correlationID, new string[] {});
 			return new CommandMessage(chunks[0], correlationID, getRemainingChunks(chunks));
 		}
+
+        public override string ToString()
+        {
+            var cmd = Command;
+            foreach (var arg in Arguments)
+                cmd += " \"" + arg + "\"";
+            return cmd;
+        }
 		
 		private static List<string> splitMessage(string message)
 		{

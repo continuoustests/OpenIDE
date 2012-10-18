@@ -84,7 +84,8 @@ namespace CSharp.Tcp
                         var actual = Encoding.UTF8.GetString(data, 0, data.Length);
 						if (_messageReceived != null)
 							_messageReceived(this, new MessageArgs() { Message = actual });
-                        _onMessage(actual);
+                        else
+                            _onMessage(actual);
                         _readBuffer.SetLength(0);
                     }
                     else
@@ -127,22 +128,22 @@ namespace CSharp.Tcp
 		public string Request(string message)
 		{
 			string recieved= null;
+            var timeout = DateTime.Now;
+            var conversationEnded = false;
 			var correlationID = "correlationID=" + Guid.NewGuid().ToString() + "|";
 			var messageToSend = correlationID + message;
 			EventHandler<MessageArgs> msgHandler = (o,a) => {
-					if (a.Message.StartsWith(correlationID) && a.Message != messageToSend)
-						recieved = a.Message
-							.Substring(
-								correlationID.Length,
-								a.Message.Length - correlationID.Length);
+                    if (a.Message == "EndOfConversation")
+                        conversationEnded = true;
+                    else
+                        _onMessage(a.Message);
+                    timeout = DateTime.Now;
+                    recieved = a.Message;
 				};
 			_messageReceived += msgHandler;
 			Send(messageToSend);
-			var timeout = DateTime.Now;
-            while (DateTime.Now.Subtract(timeout).TotalMilliseconds < 8000)
+            while (!conversationEnded)
 			{
-				if (recieved != null)
-					break;
                 Thread.Sleep(10);
 			}
 			_messageReceived -= msgHandler;

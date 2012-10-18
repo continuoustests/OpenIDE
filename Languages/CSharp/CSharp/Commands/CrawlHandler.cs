@@ -8,6 +8,13 @@ namespace CSharp.Commands
 {
 	class CrawlHandler : ICommandHandler
 	{
+        private IOutputWriter _mainCache;
+
+        public CrawlHandler(IOutputWriter mainCache)
+        {
+            _mainCache = mainCache;
+        }
+
 		public string Usage { get { return null; } }
 
 		public string Command { get { return "crawl-source"; } }
@@ -18,10 +25,10 @@ namespace CSharp.Commands
 			if (args.Length != 1)
 			{
                 output.WriteError("crawl-source requires one parameters which is path to the " +
-							 "file containing files/directories to crawl");
+							    "file containing files/directories to crawl");
 				return;
 			}
-			var crawler = new CSharpCrawler(output);
+			var crawler = new CSharpCrawler(output, _mainCache);
             if (Directory.Exists(args[0])) {
                 crawler.Crawl(new CrawlOptions(args[0]));
             } else {
@@ -31,6 +38,13 @@ namespace CSharp.Commands
 						        crawler.Crawl(new CrawlOptions(x));
 					        });
             }
+            System.Threading.ThreadPool.QueueUserWorkItem((m) => {
+                var cacheToMerge = (IOutputWriter)m;
+                if (_mainCache != null)
+                    _mainCache.MergeWith(cacheToMerge);
+                cacheToMerge.Dispose();
+                GC.Collect(5);
+            }, output);
 		}
 	}
 }

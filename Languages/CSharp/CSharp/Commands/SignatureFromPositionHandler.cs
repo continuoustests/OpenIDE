@@ -9,10 +9,16 @@ namespace CSharp.Commands
 {
 	class SignatureFromPositionHandler : ICommandHandler
 	{
+        private IOutputWriter _globalCache;
 		public string Usage { get { return null; } }
 
 		public string Command { get { return "signature-from-position"; } }
 		
+        public SignatureFromPositionHandler(IOutputWriter globalCache)
+        {
+            _globalCache = globalCache;
+        }
+
 		public void Execute(IResponseWriter writer, string[] args)
 		{
 			if (args.Length != 1)
@@ -27,6 +33,7 @@ namespace CSharp.Commands
 
 				var signatureFetcher = 
 					new EnclosingSignatureFromPosition(
+                        _globalCache,
 						(fileName) => File.ReadAllText(fileName),
 						(fileName) => File.Delete(fileName),
                         (fileName) => new EngineLocator(new FS()).GetInstance(Environment.CurrentDirectory).GetDirtyFiles(fileName));

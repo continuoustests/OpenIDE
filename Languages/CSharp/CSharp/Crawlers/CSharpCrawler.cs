@@ -13,11 +13,13 @@ namespace CSharp.Crawlers
 	{
         private bool _typeMatching = true;
 		private IOutputWriter _builder;
+        private IOutputWriter _globalCache;
         private List<string> _handledReferences = new List<string>();
 
-		public CSharpCrawler(IOutputWriter writer)
+        public CSharpCrawler(IOutputWriter writer, IOutputWriter globalCache)
 		{
 			_builder = writer;
+            _globalCache = globalCache;
 		}
 
         public void SkipTypeMatching() 
@@ -42,11 +44,9 @@ namespace CSharp.Crawlers
 
             if (_typeMatching) {
                 _builder.BuildTypeIndex();
-                new TypeResolver(new OutputWriterCacheReader(_builder))
+                new TypeResolver(new OutputWriterCacheReader(_builder, _globalCache))
                     .ResolveAllUnresolved(_builder);
             }
-
-            _builder.WriteToOutput();
 		}
 
         private void loadmscorlib()

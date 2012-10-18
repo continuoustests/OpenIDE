@@ -14,12 +14,14 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
     public class OutputWriterCacheReaderTests
     {
         private OutputWriter _cache;
+        private OutputWriter _globalCache;
         private OutputWriterCacheReader _resolver;
 
         [SetUp]
         public void Setup() {
+            _globalCache = new OutputWriter(new NullResponseWriter());
             _cache = new OutputWriter(new NullResponseWriter());
-            _resolver = new OutputWriterCacheReader(_cache);
+            _resolver = new OutputWriterCacheReader(_cache, _globalCache);
             buildCache();
         }
 

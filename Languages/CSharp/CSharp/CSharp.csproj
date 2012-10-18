@@ -72,6 +72,7 @@
     <Reference Include="..\lib\NRefactory\ICSharpCode.NRefactory.CSharp.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\SendHandler.cs" />
     <Compile Include="Crawlers\AssemblyParser.cs" />
     <Compile Include="Crawlers\JSONWriter.cs" />
     <Compile Include="Crawlers\TypeBase.cs" />

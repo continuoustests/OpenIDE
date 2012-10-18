@@ -23,6 +23,9 @@ namespace CSharp
 	{
         private static bool _startService = false;
         private static Dispatcher _dispatcher;
+        private static string _keyPath;
+        private static Instance _codeEngine;
+        private static IOutputWriter _cache = new NullOutputWriter();
 
 		public static void Main(string[] args)
 		{
@@ -42,24 +45,20 @@ namespace CSharp
 
         private static void startServer(CommandMessage startMessage) {
             var shutdown = false;
-            var path = Environment.CurrentDirectory;
-            var codeEngine = 
-                new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
-                    .GetInstance(Environment.CurrentDirectory);
-            if (codeEngine != null)
-                path = codeEngine.Key;
+            var path = getKeyPath();
             var server = new TcpServer();
             server.IncomingMessage += (s, m) => {
+                var writer = new ServerResponseWriter(server, m.ClientID);
                 var msg = CommandMessage.New(m.Message);
+                handleMessage(msg, writer);
+                writer.Write("EndOfConversation");
                 if (msg.Command == "shutdown") {
                     shutdown = true;
                     return;
                 }
-                handleMessage(msg, new ConsoleResponseWriter());
             };
             server.Start();
             var token = TokenHandler.WriteInstanceInfo(path, server.Port);
-            handleMessage(startMessage, new ConsoleResponseWriter());
             while (!shutdown)
                 System.Threading.Thread.Sleep(100);
             if (File.Exists(token))
@@ -71,8 +70,13 @@ namespace CSharp
             if (msg == null)
                 return;
 			var handler = _dispatcher.GetHandler(msg.Command);
-			if (handler == null)
-				return;
+			if (handler == null) {
+                // Handle send handler exclusively as it is more expensive to instansiate regarding performance
+                var send = new SendHandler(TokenHandler.GetClient(getKeyPath(), (m) => writer.Write(m)));
+                if (send.Command != msg.Command)
+				    return;
+                handler = send;
+            }
 
 			try {
 				handler.Execute(writer, msg.Arguments.ToArray());
@@ -87,9 +91,24 @@ namespace CSharp
 			}
 		}
 
+        static string getKeyPath() {
+            if (_keyPath == null) {
+                _codeEngine =
+                    new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
+                        .GetInstance(Environment.CurrentDirectory);
+                if (_codeEngine != null)
+                    _keyPath = _codeEngine.Key;
+                else
+                    _keyPath = Environment.CurrentDirectory;
+            }
+            return _keyPath;
+        }
+
         static string[] parseParameters(string[] args) {
-            if (args.Contains("--service"))
+            if (args.Contains("--service")) {
                 _startService = true;
+                _cache = new OutputWriter(new NullResponseWriter());
+            }
             return args.Where(x => x != "--service").ToArray();
         }
 
@@ -104,9 +123,9 @@ namespace CSharp
 		static void configureHandlers(Dispatcher dispatcher)
 		{
 			dispatcher.Register(new GetUsageHandler(dispatcher));
-			dispatcher.Register(new CrawlHandler());
+			dispatcher.Register(new CrawlHandler(_cache));
 			dispatcher.Register(new CrawlFileTypesHandler());
-			dispatcher.Register(new SignatureFromPositionHandler());
+			dispatcher.Register(new SignatureFromPositionHandler(_cache));
 			dispatcher.Register(new MembersFromUnknownSignatureHandler());
 			dispatcher.Register(new CreateHandler(getReferenceTypeResolver()));
 			dispatcher.Register(new AddFileHandler(getTypesProvider));
