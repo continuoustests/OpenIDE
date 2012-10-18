@@ -36,7 +36,12 @@ namespace CSharp.Commands
                         _globalCache,
 						(fileName) => File.ReadAllText(fileName),
 						(fileName) => File.Delete(fileName),
-                        (fileName) => new EngineLocator(new FS()).GetInstance(Environment.CurrentDirectory).GetDirtyFiles(fileName));
+                        (fileName) => {
+                            var instance = new EngineLocator(new FS()).GetInstance(Environment.CurrentDirectory);
+                            if (instance != null)
+                                return instance.GetDirtyFiles(fileName);
+                            return "";
+                        });
 				var signature = signatureFetcher.GetSignature(file, line, column);
 				writer.Write(signature);
 			} catch (Exception ex) {
