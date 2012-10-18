@@ -71,7 +71,7 @@ namespace CSharp
                 return;
 			var handler = _dispatcher.GetHandler(msg.Command);
 			if (handler == null) {
-                // Handle send handler exclusively as it is more expensive to instansiate regarding performance
+                // Handle send handler exclusively as it is more expensive to instansiate
                 var send = new SendHandler(TokenHandler.GetClient(getKeyPath(), (m) => writer.Write(m)));
                 if (send.Command != msg.Command)
 				    return;
