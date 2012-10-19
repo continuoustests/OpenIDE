@@ -45,17 +45,15 @@ namespace CSharp
 
         private static void startServer(CommandMessage startMessage) {
             var shutdown = false;
-            var path = getKeyPath();
+            var path = _keyPath;
             var server = new TcpServer();
             server.IncomingMessage += (s, m) => {
                 var writer = new ServerResponseWriter(server, m.ClientID);
                 var msg = CommandMessage.New(m.Message);
                 handleMessage(msg, writer);
                 writer.Write("EndOfConversation");
-                if (msg.Command == "shutdown") {
+                if (msg.Command == "shutdown")
                     shutdown = true;
-                    return;
-                }
             };
             server.Start();
             var token = TokenHandler.WriteInstanceInfo(path, server.Port);
@@ -72,7 +70,7 @@ namespace CSharp
 			var handler = _dispatcher.GetHandler(msg.Command);
 			if (handler == null) {
                 // Handle send handler exclusively as it is more expensive to instansiate
-                var send = new SendHandler(TokenHandler.GetClient(getKeyPath(), (m) => writer.Write(m)));
+                var send = new SendHandler(TokenHandler.GetClient(_keyPath, (m) => writer.Write(m)));
                 if (send.Command != msg.Command)
 				    return;
                 handler = send;
@@ -91,25 +89,26 @@ namespace CSharp
 			}
 		}
 
-        static string getKeyPath() {
-            if (_keyPath == null) {
+        static string[] parseParameters(string[] args) {
+            if (args.Length > 0 && (args[0] == "initialize" || args[0] == "send")) {
+                _cache = new OutputWriter(new NullResponseWriter());
                 _codeEngine =
                     new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
                         .GetInstance(Environment.CurrentDirectory);
-                if (_codeEngine != null)
-                    _keyPath = _codeEngine.Key;
-                else
-                    _keyPath = Environment.CurrentDirectory;
+                if (args[0] == "initialize") {
+                    _startService = true;
+                    if (args.Length == 2)
+                        _keyPath = args[1];
+                    else
+                        _keyPath = Environment.CurrentDirectory;
+                } else {
+                    if (_codeEngine != null)
+                        _keyPath = _codeEngine.Key;
+                    else
+                        _keyPath = Environment.CurrentDirectory;
+                }
             }
-            return _keyPath;
-        }
-
-        static string[] parseParameters(string[] args) {
-            if (args.Contains("--service")) {
-                _startService = true;
-                _cache = new OutputWriter(new NullResponseWriter());
-            }
-            return args.Where(x => x != "--service").ToArray();
+            return args;
         }
 
 		static string[] getParameters(string[] args)

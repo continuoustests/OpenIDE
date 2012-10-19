@@ -13,6 +13,13 @@ Comment with no line separators
 		comment|COMMENT
 
 ----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
+Initialize is sent to the plugin when the code engine starts
+	PARAMETER:
+		initialize KEY_PATH
+
+Shutdown is sent to the plugin when the code engine is shutting down
+	PARAMETER:
+		shutdown
 
 Getting command definitions for this language extension
 	PARAMETER:

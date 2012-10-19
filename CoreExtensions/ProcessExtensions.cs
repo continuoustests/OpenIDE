@@ -37,7 +37,6 @@ namespace CoreExtensions
             prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
-
             if (proc.Start())
             {
                 while (true)

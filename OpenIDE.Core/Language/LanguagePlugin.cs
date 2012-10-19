@@ -11,12 +11,12 @@ namespace OpenIDE.Core.Language
 	public class LanguagePlugin
 	{
 		private string _path;
-		private Func<string, string, IEnumerable<string>> _execute;
+		private Func<string, string, bool, IEnumerable<string>> _execute;
 		private Action<string> _dispatch;
 
 		public LanguagePlugin(
 			string path,
-			Func<string, string, IEnumerable<string>> execute,
+			Func<string, string, bool, IEnumerable<string>> execute,
 			Action<string> dispatch)
 		{
 			_path = path;
@@ -35,6 +35,17 @@ namespace OpenIDE.Core.Language
 		{
 			return Path.GetFileNameWithoutExtension(_path);
 		}
+
+        public void Initialize(string keyPath)
+        {
+            foreach (var line in run(string.Format("initialize \"{0}\"", keyPath)))
+                _dispatch(line);
+        }
+
+        public void Shutdown()
+        {
+            run("shutdown", false);
+        }
 
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
 		{
@@ -132,7 +143,12 @@ namespace OpenIDE.Core.Language
 
 		private IEnumerable<string> run(string arguments)
 		{
-			return _execute(_path, arguments);
+			return _execute(_path, arguments, true);
+		}
+
+        private IEnumerable<string> run(string arguments, bool waitForExit)
+		{
+			return _execute(_path, arguments, waitForExit);
 		}
 	}
 
