@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -57,7 +57,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="..\lib\FSWatcher\FSWatcher.dll" />
+    <Reference Include="FSWatcher">
+      <HintPath>..\lib\FSWatcher\FSWatcher.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -151,7 +153,7 @@
       <Name>OpenIDE.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\CoreExtensions\CoreExtensions.csproj">
-      <Project>{fb9bd7ea-f2f8-4f9c-8b82-17e703c0c766}</Project>
+      <Project>{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>CoreExtensions</Name>
     </ProjectReference>
   </ItemGroup>

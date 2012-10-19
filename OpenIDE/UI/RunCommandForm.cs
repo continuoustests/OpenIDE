@@ -257,8 +257,7 @@ namespace OpenIDE.UI
         private void run(string arguments)
         {
             var proc = new Process();
-			foreach (var line in proc.Query("oi", arguments, false, _directory))
-				Console.WriteLine(line);
+			proc.Query("oi", arguments, false, _directory, (line) => Console.WriteLine(line));
 
             /*if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
                 proc.StartInfo = new ProcessStartInfo("oi", arguments);

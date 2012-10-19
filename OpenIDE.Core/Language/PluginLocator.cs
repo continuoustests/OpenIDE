@@ -52,13 +52,13 @@ namespace OpenIDE.Core.Language
 			return Directory.GetFiles(dir);
 		}
 
-		private IEnumerable<string> run(string cmd, string arguments, bool waitForExit)
+		private void run(string cmd, string arguments, Action<string> onLineReceived)
 		{
 			var proc = new Process();
-            if (waitForExit)
-                return proc.Query(cmd, arguments, false, Environment.CurrentDirectory);
-            proc.Run(cmd, arguments, false, Environment.CurrentDirectory);
-            return new string[] {};
+            if (onLineReceived != null)
+                proc.Query(cmd, arguments, false, Environment.CurrentDirectory, onLineReceived);
+			else
+            	proc.Run(cmd, arguments, false, Environment.CurrentDirectory);
 		}
 	}
 }

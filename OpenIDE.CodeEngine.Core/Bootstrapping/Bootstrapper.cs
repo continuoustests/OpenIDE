@@ -108,18 +108,16 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		{
 			new Thread(() =>
 				{
-					locator.Locate().ToList()
-						.ForEach(x => 
-							{
-								try {
-									handler.SetLanguage(x.GetLanguage());
-                                    x.Initialize(_path);
-									foreach (var line in x.Crawl(new string[] { _path }))
-										handler.Handle(line);
-								} catch (Exception ex) {
-									Logger.Write(ex.ToString());
-								}
-							});
+					var plugins = locator.Locate();
+					foreach (var plugin in plugins) {
+						try {
+							handler.SetLanguage(plugin.GetLanguage());
+                            plugin.Initialize(_path);
+							plugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
+						} catch (Exception ex) {
+							Logger.Write(ex.ToString());
+						}
+					}
 				}).Start();
 		}
 	}

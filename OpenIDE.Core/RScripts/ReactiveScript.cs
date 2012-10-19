@@ -56,11 +56,16 @@ namespace OpenIDE.Core.RScripts
 		private void getEvents()
 		{
 			_events.Clear();
-			_events.AddRange(
-				new Process()
-					.Query(_file, "reactive-script-reacts-to", false, _keyPath)
-					.Where(x => x.Length > 0)
-					.Select(x => x.Trim(new[] {'\"'})));
+			new Process()
+				.Query(
+					_file,
+					"reactive-script-reacts-to",
+					false,
+					_keyPath,
+					(m) => {
+						if (m.Length > 0)
+							_events.Add(m.Trim(new[] {'\"'}));
+					});
 		}
 		
 		private bool wildcardmatch(string str, string pattern)
