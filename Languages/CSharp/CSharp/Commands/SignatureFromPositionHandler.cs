@@ -10,7 +10,14 @@ namespace CSharp.Commands
 	class SignatureFromPositionHandler : ICommandHandler
 	{
         private IOutputWriter _globalCache;
-		public string Usage { get { return null; } }
+		public string Usage {
+			get {
+				return
+					Command + "|\"Retrieves enclosing signature from position\"" +
+						"POSITION|\"File position as FILE|LINE|COLUMN\" end " +
+					"end ";
+			}
+		}
 
 		public string Command { get { return "signature-from-position"; } }
 		

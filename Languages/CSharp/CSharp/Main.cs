@@ -124,8 +124,6 @@ namespace CSharp
 			dispatcher.Register(new GetUsageHandler(dispatcher));
 			dispatcher.Register(new CrawlHandler(_cache));
 			dispatcher.Register(new CrawlFileTypesHandler());
-			dispatcher.Register(new SignatureFromPositionHandler(_cache));
-			dispatcher.Register(new MembersFromUnknownSignatureHandler());
 			dispatcher.Register(new CreateHandler(getReferenceTypeResolver()));
 			dispatcher.Register(new AddFileHandler(getTypesProvider));
 			dispatcher.Register(new DeleteFileHandler(getTypesProvider));
@@ -133,6 +131,8 @@ namespace CSharp
 			dispatcher.Register(new NewHandler(getFileTypeResolver(), getTypesProvider));
 			dispatcher.Register(new ReferenceHandler(getTypesProvider));
 			dispatcher.Register(new RemoveFileHandler(getTypesProvider));
+			dispatcher.Register(new SignatureFromPositionHandler(_cache));
+			dispatcher.Register(new MembersFromUnknownSignatureHandler());
 		}
 		
 		static VSFileTypeResolver getFileTypeResolver()
