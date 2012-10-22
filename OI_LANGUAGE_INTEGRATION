@@ -78,6 +78,13 @@ Retrieve signature from a location inside code
 		REFERENCE_START_LINE|REFERENCE_START_COLUMN
 		REFERENCE_END_LINE|REFERENCE_END_COLUMN
 
+Go to definition
+	PARAMETER:
+		go-to-definition PATH_TO_FILE|LINE|COLUMN
+
+	RESPONSE FORMAT
+		Whatever specified in command definitions. Hopefully something like editor goto
+
 Retrieve members from signature
 	PARAMETER:
 		members-from-signature SIGNATURE

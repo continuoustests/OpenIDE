@@ -54,15 +54,6 @@ namespace CSharp.Commands
 			} catch (Exception ex) {
 				writer.Write(ex.ToString());
 			}
-
-			// parse arguments
-            // get all dirty buffers
-            // parse all dirty buffers
-            // parse given file (with variable declaration)
-            // get variable / member / type name under or behind position
-            // find type of declaration
-            // clean up temp buffers
-            // return type
 		}
 	}
 }
