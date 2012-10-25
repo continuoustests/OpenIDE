@@ -15,6 +15,7 @@ namespace CSharp.Commands
 {
 	public class NewHandler : ICommandHandler
 	{
+		private string _keyPath;
 		private IProjectHandler _project;
 		private IResolveFileTypes _fileTypeResolver;
 		private Func<string, ProviderSettings> _getTypesProviderByLocation;
@@ -51,7 +52,7 @@ namespace CSharp.Commands
 		private BaseCommandHandlerParameter getUsage(string template)
 		{
 			var name = Path.GetFileNameWithoutExtension(template);
-			var definition = new NewTemplate(template, null).GetUsageDefinition();
+			var definition = new NewTemplate(template, null, _keyPath).GetUsageDefinition();
 			var parser = new TemplateDefinitionParser();
 			var usage = parser.Parse(name, definition);
 			if (usage == null)
@@ -66,8 +67,9 @@ namespace CSharp.Commands
 		
 		public string Command { get { return "new"; } }
 		
-		public NewHandler(IResolveFileTypes fileTypeResolver, Func<string, ProviderSettings> provider)
+		public NewHandler(IResolveFileTypes fileTypeResolver, Func<string, ProviderSettings> provider, string keyPath)
 		{
+			_keyPath = keyPath;
 			_getTypesProviderByLocation = provider;
 			_pickTemplate = pickTemplate;
 			_fileTypeResolver = fileTypeResolver;
@@ -126,7 +128,7 @@ namespace CSharp.Commands
 				.FirstOrDefault(x => x.Contains(Path.DirectorySeparatorChar + templateName + "."));
 			if (template == null)
 				return null;
-			return new NewTemplate(template, _fileTypeResolver);
+			return new NewTemplate(template, _fileTypeResolver, _keyPath);
 		}
 		
 		private string[] getTemplates(string type)
@@ -158,14 +160,14 @@ namespace CSharp.Commands
 		{
 			var dir = Path.GetDirectoryName(className).Trim();
 			if (dir.Length == 0)
-				return Environment.CurrentDirectory;
-			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
-				return Path.Combine(Environment.CurrentDirectory, dir);
+				return _keyPath;
+			if (Directory.Exists(Path.Combine(_keyPath, dir)))
+				return Path.Combine(_keyPath, dir);
 			if (Directory.Exists(dir))
 				return dir;
 			
 			if (!Path.IsPathRooted(dir))
-				dir = Path.Combine(Environment.CurrentDirectory, dir);
+				dir = Path.Combine(_keyPath, dir);
 			Directory.CreateDirectory(dir);
 
 			return dir;
@@ -208,6 +210,7 @@ namespace CSharp.Commands
 
 	class NewTemplate : INewTemplate
 	{
+		private string _keyPath;
 		private IResolveFileTypes _fileTypeResolver;
 		private string _file;
 		
@@ -215,12 +218,13 @@ namespace CSharp.Commands
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 		
-		public NewTemplate(string file, IResolveFileTypes fileTypeResolver)
+		public NewTemplate(string file, IResolveFileTypes fileTypeResolver, string keyPath)
 		{
 			_fileTypeResolver = fileTypeResolver;
 			_file = file;
 			Line = 0;
 			Column = 0;
+			_keyPath = keyPath;
 		}
 
 		public string GetUsageDefinition()
@@ -309,7 +313,7 @@ namespace CSharp.Commands
 		{
             var proc = new Process();
             var sb = new StringBuilder();
-            foreach (var line in proc.Query(_file, arguments, false, Environment.CurrentDirectory))
+            foreach (var line in proc.Query(_file, arguments, false, _keyPath))
                 sb.AppendLine(line);
 			var output = sb.ToString();
 			if (output.Length > Environment.NewLine.Length)

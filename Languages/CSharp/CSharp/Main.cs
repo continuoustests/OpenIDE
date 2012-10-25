@@ -124,12 +124,12 @@ namespace CSharp
 			dispatcher.Register(new GetUsageHandler(dispatcher));
 			dispatcher.Register(new CrawlHandler(_cache));
 			dispatcher.Register(new CrawlFileTypesHandler());
-			dispatcher.Register(new CreateHandler(getReferenceTypeResolver()));
+			dispatcher.Register(new CreateHandler(getReferenceTypeResolver(), _keyPath));
 			dispatcher.Register(new AddFileHandler(getTypesProvider));
 			dispatcher.Register(new DeleteFileHandler(getTypesProvider));
-			dispatcher.Register(new DereferenceHandler(getTypesProvider));
-			dispatcher.Register(new NewHandler(getFileTypeResolver(), getTypesProvider));
-			dispatcher.Register(new ReferenceHandler(getTypesProvider));
+			dispatcher.Register(new ReferenceHandler(getTypesProvider, _keyPath));
+			dispatcher.Register(new DereferenceHandler(getTypesProvider, _keyPath));
+			dispatcher.Register(new NewHandler(getFileTypeResolver(), getTypesProvider, _keyPath));
 			dispatcher.Register(new RemoveFileHandler(getTypesProvider));
 			dispatcher.Register(new SignatureFromPositionHandler(_cache));
 			dispatcher.Register(new MembersFromUnknownSignatureHandler());

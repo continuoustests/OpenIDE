@@ -9,7 +9,6 @@ if [ "$1" == "initialize" ]; then
 }
 else
 {
-	echo mono $SCRIPT_DIR/C#-plugin/C#.exe send "$@"
 	mono $SCRIPT_DIR/C#-plugin/C#.exe send "$@"
 }
 fi
