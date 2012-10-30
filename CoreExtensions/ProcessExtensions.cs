@@ -49,9 +49,18 @@ namespace CoreExtensions
             if (proc.Start())
             {
 				proc.BeginOutputReadLine();
-				while (!exit && !proc.HasExited)
+				while (!exit && isRunning(proc))
 					System.Threading.Thread.Sleep(10);
             }
+        }
+
+        private static bool isRunning(Process proc) {
+            if (Environment.OSVersion.Platform != PlatformID.Unix &&
+                Environment.OSVersion.Platform != PlatformID.MacOSX)
+            {
+                return true;
+            }
+            return !proc.HasExited;
         }
 
         private static void prepareProcess(
