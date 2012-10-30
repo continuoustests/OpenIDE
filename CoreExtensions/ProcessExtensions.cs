@@ -31,8 +31,8 @@ namespace CoreExtensions
                 Environment.OSVersion.Platform != PlatformID.MacOSX)
             {
                 arguments = "/c " +
-                    "^\"" + command + "^\" " +
-                    arguments.Replace("\"", "^\"");
+                    "^\"" + batchEscape(command) + "^\" " +
+                    batchEscape(arguments);
                 command = "cmd.exe";
             }
 			
@@ -52,6 +52,12 @@ namespace CoreExtensions
 				while (!exit && isRunning(proc))
 					System.Threading.Thread.Sleep(10);
             }
+        }
+
+        private static string batchEscape(string text) {
+            foreach (var str in new[] { "^", " ", "&", "(", ")", "[", "]", "{", "}", "=", ";", "!", "'", "+", ",", "`", "~", "\"" })
+                text = text.Replace(str, "^" + str);
+            return text;
         }
 
         private static bool isRunning(Process proc) {
