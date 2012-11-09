@@ -35,8 +35,8 @@ namespace CSharp.Commands
 				var line = int.Parse(chunks[1]);
 				var column = int.Parse(chunks[2]);
 				
-				_resolver = 
-					new TypeUnderPositionResolver(cache, (type) => new Namespce(null,type,0,0));
+				//_resolver = 
+				//	new TypeUnderPositionResolver(cache, (type) => new Namespce(null,type,0,0));
 				
 			} catch (Exception ex) {
 				writer.Write(ex.ToString());
