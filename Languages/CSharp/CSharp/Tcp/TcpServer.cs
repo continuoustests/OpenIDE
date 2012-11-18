@@ -67,8 +67,9 @@ namespace CSharp.Tcp
                 if (ClientConnected != null)
 					ClientConnected(this, new EventArgs());
             }
-            catch
+            catch (Exception ex)
             {
+            	WriteError(ex);
             }
             finally
             {
@@ -104,8 +105,9 @@ namespace CSharp.Tcp
                 }
                 stream.Stream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, stream);
             }
-            catch
+            catch (Exception ex)
             {
+            	WriteError(ex);
                 disconnect(stream);
             }
         }
@@ -164,8 +166,9 @@ namespace CSharp.Tcp
 				{
 					sendToClient(data, client);
 				}
-				catch
-				{
+				catch (Exception ex)
+	            {
+	            	WriteError(ex);
 					disconnect(client);
 				}
 			}
@@ -180,8 +183,9 @@ namespace CSharp.Tcp
                 {
 					sendToClient(data, client);
                 }
-                catch
-                {
+                catch (Exception ex)
+	            {
+	            	WriteError(ex);
                     failingClients.Add(client);
                 }
             }
@@ -201,10 +205,16 @@ namespace CSharp.Tcp
             {
                 client.Stream.EndWrite(result);
             }
-            catch
+            catch (Exception ex)
             {
+            	WriteError(ex);
                 disconnect(client);
             }
+        }
+
+		private void WriteError(Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
         }
 	}
 }

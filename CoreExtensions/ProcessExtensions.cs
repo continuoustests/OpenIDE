@@ -25,14 +25,14 @@ namespace CoreExtensions
             string arguments,
             bool visible,
             string workingDir,
-			Action<string> onRecievedLine)
+			Action<bool, string> onRecievedLine)
         {
             if (Environment.OSVersion.Platform != PlatformID.Unix &&
                 Environment.OSVersion.Platform != PlatformID.MacOSX)
             {
                 arguments = "/c " +
-                    "^\"" + command + "^\" " +
-                    arguments.Replace("\"", "^\"");
+                    "^\"" + batchEscape(command) + "^\" " +
+                    batchEscape(arguments);
                 command = "cmd.exe";
             }
 			
@@ -40,18 +40,40 @@ namespace CoreExtensions
             prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
 			proc.OutputDataReceived += (s, data) => {
 					if (data.Data == null)
 						exit = true;
 					else
-						onRecievedLine(data.Data);
+						onRecievedLine(false, data.Data);
 				};
+            proc.ErrorDataReceived += (s, data) => {
+                    if (data.Data == null)
+                        exit = true;
+                    else
+                        onRecievedLine(true, data.Data);
+                }; 
             if (proc.Start())
             {
 				proc.BeginOutputReadLine();
-				while (!exit && !proc.HasExited)
+				while (!exit && isRunning(proc))
 					System.Threading.Thread.Sleep(10);
             }
+        }
+
+        private static string batchEscape(string text) {
+            foreach (var str in new[] { "^", " ", "&", "(", ")", "[", "]", "{", "}", "=", ";", "!", "'", "+", ",", "`", "~", "\"" })
+                text = text.Replace(str, "^" + str);
+            return text;
+        }
+
+        private static bool isRunning(Process proc) {
+            if (Environment.OSVersion.Platform != PlatformID.Unix &&
+                Environment.OSVersion.Platform != PlatformID.MacOSX)
+            {
+                return true;
+            }
+            return !proc.HasExited;
         }
 
         private static void prepareProcess(

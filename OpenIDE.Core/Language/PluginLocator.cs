@@ -52,7 +52,7 @@ namespace OpenIDE.Core.Language
 			return Directory.GetFiles(dir);
 		}
 
-		private void run(string cmd, string arguments, Action<string> onLineReceived)
+		private void run(string cmd, string arguments, Action<bool, string> onLineReceived)
 		{
 			var proc = new Process();
             if (onLineReceived != null)

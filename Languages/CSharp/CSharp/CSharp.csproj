@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -91,7 +91,6 @@
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReader.cs" />
     <Compile Include="Crawlers\TypeResolvers\TypeResolver.cs" />
     <Compile Include="Crawlers\Using.cs" />
-    <Compile Include="Processes\ProcessExtensions.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Commands\AddFileHandler.cs" />
@@ -172,6 +171,10 @@
     <ProjectReference Include="..\..\..\OpenIDE.Core\OpenIDE.Core.csproj">
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>OpenIDE.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CoreExtensions\CoreExtensions.csproj">
+      <Project>{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>CoreExtensions</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

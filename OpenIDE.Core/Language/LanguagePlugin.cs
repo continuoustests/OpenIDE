@@ -5,18 +5,19 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Language
 {
 	public class LanguagePlugin
 	{
 		private string _path;
-		private Action<string, string, Action<string>> _execute;
+		private Action<string, string, Action<bool, string>> _execute;
 		private Action<string> _dispatch;
 
 		public LanguagePlugin(
 			string path,
-			Action<string, string, Action<string>> execute,
+			Action<string, string, Action<bool, string>> execute,
 			Action<string> dispatch)
 		{
 			_path = path;
@@ -147,7 +148,18 @@ namespace OpenIDE.Core.Language
 
         private void run(string arguments, Action<string> onLineReceived)
 		{
-			_execute(_path, arguments, onLineReceived);
+			_execute(
+				_path,
+				arguments,
+				(error, x) => {
+						if (error) {
+							Logger.Write(
+								string.Format("Failed running {0} with {1}", _path, arguments));
+							Logger.Write(x);
+							return;
+						}
+						onLineReceived(x);
+					});
 		}
 	}
 
