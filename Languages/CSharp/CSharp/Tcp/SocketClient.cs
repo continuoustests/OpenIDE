@@ -72,6 +72,8 @@ namespace CSharp.Tcp
         private void ReadCompleted(IAsyncResult result)
         {
             var stream = (NetworkStream)result.AsyncState;
+            if (!stream.CanRead)
+                return;
             try
             {
                 var x = stream.EndRead(result);
@@ -186,14 +188,16 @@ namespace CSharp.Tcp
 					byte[] toSend = Encoding.UTF8.GetBytes(message).Concat(new byte[] { 0x0 }).ToArray();
                     _stream.BeginWrite(toSend, 0, toSend.Length, WriteCompleted, _stream);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    WriteError(ex);
                 }
             }
         }
 
         private void WriteError(Exception ex)
         {
+            Console.WriteLine(ex.ToString());
         }
 	}
 }

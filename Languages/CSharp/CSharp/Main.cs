@@ -29,6 +29,7 @@ namespace CSharp
 
 		public static void Main(string[] args)
 		{
+			//args = new[] {"send","crawl-source","~/src/OpenIDE"};
 			if (args.Length == 0)
 				return;
             args = parseParameters(args);
@@ -40,7 +41,7 @@ namespace CSharp
             if (_startService)
                 startServer(msg);
             else
-                handleMessage(msg, new ConsoleResponseWriter());
+                handleMessage(msg, new ConsoleResponseWriter(), false);
         }
 
         private static void startServer(CommandMessage startMessage) {
@@ -50,7 +51,7 @@ namespace CSharp
             server.IncomingMessage += (s, m) => {
                 var writer = new ServerResponseWriter(server, m.ClientID);
                 var msg = CommandMessage.New(m.Message);
-                handleMessage(msg, writer);
+                handleMessage(msg, writer, true);
                 writer.Write("EndOfConversation");
                 if (msg.Command == "shutdown")
                     shutdown = true;
@@ -63,50 +64,69 @@ namespace CSharp
                 File.Delete(token);
         }
 
-        private static void handleMessage(CommandMessage msg, IResponseWriter writer)
+        private static void handleMessage(CommandMessage msg, IResponseWriter writer, bool serverMode)
         {
             if (msg == null)
                 return;
 			var handler = _dispatcher.GetHandler(msg.Command);
-			if (handler == null) {
-                // Handle send handler exclusively as it is more expensive to instansiate
-                var send = new SendHandler(TokenHandler.GetClient(_keyPath, (m) => writer.Write(m)));
-                if (send.Command != msg.Command)
-				    return;
-                handler = send;
-            }
-
+			if (!serverMode) {
+				var client = TokenHandler.GetClient(_keyPath, (m) => writer.Write(m));
+	            var send = new SendHandler(client);
+	            if (client.IsConnected) {
+	            	if (send.Command == msg.Command) {
+	            		handler = send;
+					} else {
+						var args = new List<string>();
+						args.Add(msg.Command);
+						args.AddRange(msg.Arguments);
+						msg = new CommandMessage("send", null, args.ToArray());
+	            		handler = send;
+					}
+	            } else {
+					if (msg.Command == "send") {
+						msg = new CommandMessage(msg.Arguments[0], null, getParameters(msg.Arguments.ToArray()));
+	            		handler = _dispatcher.GetHandler(msg.Command);
+					}
+					if (handler == null)
+						return;
+				}
+			}
 			try {
 				handler.Execute(writer, msg.Arguments.ToArray());
 			} catch (Exception ex) {
 				var builder = new OutputWriter(writer);
-                builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
-				if (ex.StackTrace != null) {
-					ex.StackTrace
-						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
-                        .ForEach(line => builder.WriteError(line));
-				}
+                writeException(builder, ex);
 			}
 		}
 
+		static void writeException(OutputWriter builder, Exception ex) {
+			if (ex == null)
+				return;
+			builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
+			if (ex.StackTrace != null) {
+				ex.StackTrace
+					.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+                    .ForEach(line => builder.WriteError(line));
+			}
+			writeException(builder, ex.InnerException);
+		}
+
         static string[] parseParameters(string[] args) {
-            if (args.Length > 0 && (args[0] == "initialize" || args[0] == "send")) {
-                _cache = new OutputWriter(new NullResponseWriter());
-                _codeEngine =
-                    new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
-                        .GetInstance(Environment.CurrentDirectory);
-                if (args[0] == "initialize") {
-                    _startService = true;
-                    if (args.Length == 2)
-                        _keyPath = args[1];
-                    else
-                        _keyPath = Environment.CurrentDirectory;
-                } else {
-                    if (_codeEngine != null)
-                        _keyPath = _codeEngine.Key;
-                    else
-                        _keyPath = Environment.CurrentDirectory;
-                }
+            _cache = new OutputWriter(new NullResponseWriter());
+            _codeEngine =
+                new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
+                    .GetInstance(Environment.CurrentDirectory);
+            if (args[0] == "initialize") {
+                _startService = true;
+                if (args.Length == 2)
+                    _keyPath = args[1];
+                else
+                    _keyPath = Environment.CurrentDirectory;
+            } else {
+                if (_codeEngine != null)
+                    _keyPath = _codeEngine.Key;
+                else
+                    _keyPath = Environment.CurrentDirectory;
             }
             return args;
         }
