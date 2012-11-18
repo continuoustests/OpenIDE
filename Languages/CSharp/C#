@@ -4,11 +4,21 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [ "$1" == "initialize" ]; then
 {
-	mono $SCRIPT_DIR/C#-plugin/C#.exe "$@" &
-	sleep 0.5
+	echo "comment|not in server mode"
 }
 else
 {
-	mono $SCRIPT_DIR/C#-plugin/C#.exe send "$@"
+	mono $SCRIPT_DIR/C#-plugin/C#.exe "$@"
 }
 fi
+
+#if [ "$1" == "initialize" ]; then
+#{
+#	mono $SCRIPT_DIR/C#-plugin/C#.exe "$@" &
+#	sleep 0.5
+#}
+#else
+#{
+#	mono $SCRIPT_DIR/C#-plugin/C#.exe send "$@"
+#}
+#fi

@@ -107,7 +107,9 @@ namespace CSharp
                     else
                         _keyPath = Environment.CurrentDirectory;
                 }
-            }
+            } else {
+				_keyPath = Environment.CurrentDirectory;
+			}
             return args;
         }
 
