@@ -81,7 +81,7 @@ namespace CSharp.Tcp
 	{
 		public Token GetInstance(string path) {
 			var instances = getInstances(path);
-			return instances.Where(x => path.StartsWith(x.Key) && canConnectTo(x))
+			return instances.Where(x => path.StartsWith(x.Key) && CanConnectTo(x))
 				.OrderByDescending(x => x.Key.Length)
 				.FirstOrDefault();
 		}
@@ -99,7 +99,7 @@ namespace CSharp.Tcp
 			}
 		}
 		
-		private bool canConnectTo(Token info)
+		public bool CanConnectTo(Token info)
 		{
 			var client = new SocketClient();
 			client.Connect(info.Port, (s) => {});

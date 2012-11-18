@@ -25,7 +25,7 @@ namespace CoreExtensions
             string arguments,
             bool visible,
             string workingDir,
-			Action<string> onRecievedLine)
+			Action<bool, string> onRecievedLine)
         {
             if (Environment.OSVersion.Platform != PlatformID.Unix &&
                 Environment.OSVersion.Platform != PlatformID.MacOSX)
@@ -40,12 +40,19 @@ namespace CoreExtensions
             prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
 			proc.OutputDataReceived += (s, data) => {
 					if (data.Data == null)
 						exit = true;
 					else
-						onRecievedLine(data.Data);
+						onRecievedLine(false, data.Data);
 				};
+            proc.ErrorDataReceived += (s, data) => {
+                    if (data.Data == null)
+                        exit = true;
+                    else
+                        onRecievedLine(true, data.Data);
+                }; 
             if (proc.Start())
             {
 				proc.BeginOutputReadLine();

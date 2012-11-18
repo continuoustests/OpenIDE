@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using CSharp.Projects;
-using CSharp.Processes;
 using CSharp.Responses;
+using CoreExtensions;
 
 namespace CSharp.Commands
 {
@@ -249,8 +249,18 @@ namespace CSharp.Commands
 		{
             var proc = new Process();
 			var sb = new StringBuilder();
-            foreach (var line in proc.Query(_file, arguments, false, Environment.CurrentDirectory))
-                sb.AppendLine(line);
+            proc.Query(
+            	_file,
+            	arguments,
+            	false,
+            	Environment.CurrentDirectory,
+            	(error, s) => {
+            			if (error) {
+            				sb.AppendLine("error|" + s);
+            				return;
+            			}
+            			sb.AppendLine(s);
+            		});
 			var output = sb.ToString();
 			if (output.Length > Environment.NewLine.Length)
 				return output.Substring(0, output.Length - Environment.NewLine.Length);

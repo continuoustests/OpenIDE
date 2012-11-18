@@ -62,7 +62,14 @@ namespace OpenIDE.Core.RScripts
 					"reactive-script-reacts-to",
 					false,
 					_keyPath,
-					(m) => {
+					(error, m) => {
+						if (error) {
+							Logger.Write(
+								"Failed running reactive script with reactive-script-reacts-to: " +
+								_file);
+							Logger.Write(m);
+							return;
+						}
 						if (m.Length > 0)
 							_events.Add(m.Trim(new[] {'\"'}));
 					});

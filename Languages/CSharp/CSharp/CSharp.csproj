@@ -91,7 +91,6 @@
     <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReader.cs" />
     <Compile Include="Crawlers\TypeResolvers\TypeResolver.cs" />
     <Compile Include="Crawlers\Using.cs" />
-    <Compile Include="Processes\ProcessExtensions.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Commands\AddFileHandler.cs" />
