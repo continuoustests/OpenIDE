@@ -35,8 +35,7 @@ namespace CSharp.Commands
 									usage += " " + listUsages(command);
 							});
 					return usage + " end ";
-				} catch (Exception ex) {
-					Console.WriteLine(ex.ToString());
+				} catch {
 					return null;
 				}
 			}
