@@ -26,7 +26,7 @@ namespace CSharp.Crawlers.TypeResolvers.CodeEngine
                         if (reference != null)
 					        refs.Add(reference);
                     }
-			    } catch (Exception ex) {
+			    } catch {
 			    }
             }
             return refs;

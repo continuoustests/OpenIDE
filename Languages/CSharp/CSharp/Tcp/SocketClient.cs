@@ -130,7 +130,6 @@ namespace CSharp.Tcp
 		public string Request(string message)
 		{
 			string recieved= null;
-            var timeout = DateTime.Now;
             var conversationEnded = false;
 			var correlationID = "correlationID=" + Guid.NewGuid().ToString() + "|";
 			var messageToSend = correlationID + message;
@@ -139,7 +138,6 @@ namespace CSharp.Tcp
                         conversationEnded = true;
                     else
                         _onMessage(a.Message);
-                    timeout = DateTime.Now;
                     recieved = a.Message;
 				};
 			_messageReceived += msgHandler;

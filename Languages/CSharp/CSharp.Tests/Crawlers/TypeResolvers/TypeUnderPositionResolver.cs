@@ -16,7 +16,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 		{
 			var cache = new OutputWriter(new NullResponseWriter());
 			_resolver = 
-				new TypeUnderPositionResolver(cache, (type) => new Namespce(null,type,0,0));
+				new TypeUnderPositionResolver();
 		}
 		
 		[Test]
@@ -29,7 +29,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 				"{" + Environment.NewLine +
 				"}";
 			var ns = _resolver.GetTypeName("file", content, 3, 20);
-			Assert.That(ns.Name, Is.EqualTo("CSharp.Crawlers.TypeResolvers"));
+			Assert.That(ns, Is.EqualTo("CSharp.Crawlers.TypeResolvers"));
 		}
 
 		[Test]
@@ -52,7 +52,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 				"\t\t}" + Environment.NewLine +
 				"\t}";
 			var ns = _resolver.GetTypeName("file", content, 10, 7);
-			Assert.That(ns.Name, Is.EqualTo("MyMethod"));
+			Assert.That(ns, Is.EqualTo("MyMethod"));
 		}
 
 		[Test]
@@ -76,7 +76,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 				"\t\t}" + Environment.NewLine +
 				"\t}";
 			var ns = _resolver.GetTypeName("file", content, 12, 12);
-			Assert.That(ns.Name, Is.EqualTo("str"));
+			Assert.That(ns, Is.EqualTo("str"));
 		}
 	}
 }

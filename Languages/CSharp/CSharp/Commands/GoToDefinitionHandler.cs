@@ -1,5 +1,10 @@
 using System;
+using System.IO;
 using CSharp.Responses;
+using CSharp.Crawlers.TypeResolvers;
+using OpenIDE.Core.EditorEngineIntegration;
+using OpenIDE.Core.FileSystem;
+using CSharp.Crawlers.TypeResolvers;
 
 namespace CSharp.Commands
 {
@@ -35,8 +40,22 @@ namespace CSharp.Commands
 				var line = int.Parse(chunks[1]);
 				var column = int.Parse(chunks[2]);
 				
-				//_resolver = 
-				//	new TypeUnderPositionResolver(cache, (type) => new Namespce(null,type,0,0));
+				var cache = 
+	                new DirtyFileParser(
+	                    _globalCache,
+	                    (fileName) => File.ReadAllText(fileName),
+						(fileName) => File.Delete(fileName),
+                        (fileName) => {
+                            var instance = new EngineLocator(new FS()).GetInstance(Environment.CurrentDirectory);
+                            if (instance != null)
+                                return instance.GetDirtyFiles(fileName);
+                            return "";
+                        }).Parse(file);
+
+				var name = new TypeUnderPositionResolver()
+					.GetTypeName(file, File.ReadAllText(file), line, column);
+				var signature = new FileContextAnalyzer(_globalCache, cache)
+					.GetSignatureFromTypeAndPosition(file, name, line, column);
 				
 			} catch (Exception ex) {
 				writer.Write(ex.ToString());

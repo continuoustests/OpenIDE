@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using CSharp.Crawlers.TypeResolvers.CodeEngine;
 using CSharp.Projects;
@@ -28,59 +26,15 @@ namespace CSharp.Crawlers.TypeResolvers
         }
 
         public string GetSignature(string file, int line, int column) {
-            var dirtyFile = _getDirtyFile(file);
-            var usingDirtyFile = false;
-            if (dirtyFile != null) {
-                dirtyFile = parseDirtyFile(dirtyFile);
-                if (dirtyFile.Trim() != "") {
-                    usingDirtyFile = true;
-                    file = dirtyFile.Trim();
-                }
-            }
-
-            var parser = new NRefactoryParser();
-            var cache = new OutputWriter(new NullResponseWriter());
-            parser.SetOutputWriter(cache);
-            var fileRef = new FileRef(file, null);
-            parser.ParseFile(fileRef, () => _fileReader(file));
-            if (usingDirtyFile)
-                _fileRemover(file);
-
-            cache.BuildTypeIndex();
-            new TypeResolver(new OutputWriterCacheReader(cache, _globalCache))
-                .ResolveAllUnresolved(cache);
+            var cache = 
+                new DirtyFileParser(
+                    _globalCache,
+                    _fileReader,
+                    _fileRemover,
+                    _getDirtyFile).Parse(file);
             
-            var references = new List<ICodeReference>();
-            references.AddRange(cache.Namespaces);
-            references.AddRange(cache.Classes);
-            references.AddRange(cache.Interfaces);
-            references.AddRange(cache.Structs);
-            references.AddRange(cache.Enums);
-            references.AddRange(cache.Methods);
-
-            if (references.Count == 0)
-                return null;
-
-            var insideOf = references
-                    .Where(x => x.Line <= line && x.EndLine >= line);
-            if (insideOf.Count() == 0)
-                return null;
-
-            var match = references
-                .FirstOrDefault(x => x.Line == insideOf.Max(y => y.Line));
-
-            if (match == null)
-                return null;
-
-            return match.GenerateFullSignature();
-        }
-
-        private string parseDirtyFile(string dirtyFile) {
-            try {
-                return dirtyFile.Replace(Environment.NewLine, "").Split(new[] { '|' })[1];
-            } catch {
-                return "";
-            }
+            return new FileContextAnalyzer(_globalCache, cache)
+                .GetEnclosingSignature(file, line, column);
         }
     }
 }

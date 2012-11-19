@@ -447,7 +447,6 @@ namespace CSharp.Crawlers
                     parameters += (parameters.Length == 0 ? "" : ",") + signatureFrom(param);
                 return signatureFrom(create.Type) + "(" + parameters + ")";
             }
-            var type = expr.GetType();
             return "";
         }
 

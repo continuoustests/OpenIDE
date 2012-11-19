@@ -153,6 +153,7 @@ namespace CSharp
 			dispatcher.Register(new RemoveFileHandler(getTypesProvider));
 			dispatcher.Register(new SignatureFromPositionHandler(_cache));
 			dispatcher.Register(new MembersFromUnknownSignatureHandler());
+			dispatcher.Register(new GoToDefinitionHandler(_cache));
 		}
 		
 		static VSFileTypeResolver getFileTypeResolver()

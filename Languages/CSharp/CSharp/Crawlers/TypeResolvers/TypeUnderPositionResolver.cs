@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using CSharp.Crawlers;
 using CSharp.Projects;
@@ -17,8 +18,6 @@ namespace CSharp.Crawlers.TypeResolvers
 			}
 		}
 
-		private IOutputWriter _cache;
-		private Func<string,ICodeReference> _referenceFetcher;
 		private char[] _operators = new char[] 
 			{
 				'(',')',':','+','-','*','/','%','&','|',
@@ -29,23 +28,13 @@ namespace CSharp.Crawlers.TypeResolvers
         private char[] _validBeforeWhitespace = new char[]
             {'.','<','>'};
 
-		public TypeUnderPositionResolver(IOutputWriter cache, Func<string,ICodeReference> referenceFetcher) {
-			_cache = cache;
-			_referenceFetcher = referenceFetcher;
-		}
-
-		public ICodeReference GetTypeName(string filePath, string content, int line, int column) {
-			new NRefactoryParser() 
-				.SetOutputWriter(_cache)
-				.ParseLocalVariables()
-				.ParseFile(new FileRef(filePath, null), () => content);
-
+		public string GetTypeName(string filePath, string content, int line, int column) {
 			var lines = content
 				.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 			var location = rewindToBeginningOfWord(lines, line, column);
 			if (location == null)
 				return null;
-			return _referenceFetcher(readForward(lines, location.Line, location.Column));
+			return readForward(lines, location.Line, location.Column);
 		}
 
 		private TypeUnderPositionResolver.Location rewindToBeginningOfWord(string[] lines, int line, int column) {
