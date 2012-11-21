@@ -7,6 +7,10 @@ var carrier = require('./js-plugin/lib/carrier.js');
 
 if (process.argv.length > 2) {
 	var firstArg = process.argv[2];
+	if (firstArg === "initialize") {
+		console.log("initialized");
+		return;
+	}
 	if (firstArg === "get-command-definitions")
 		return;
 	if (firstArg === "crawl-file-types") {

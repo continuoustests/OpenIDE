@@ -48,6 +48,9 @@ def __handleFile(file):
 
 def main(argv):
 	if len(argv) > 1:
+		if argv[1] == 'initialize':
+			print 'initialized'
+			return
 		if argv[1] == 'get-command-definitions':
 			print ''
 			return

@@ -1,6 +1,9 @@
 #!/usr/bin/env php
 <?php
 	if (count($argv) > 1) {
+		if ($argv[1] == "initialize")
+			write("initialized");
+
 		if ($argv[1] == "get-command-definitions")
 			handleDefinition();
 

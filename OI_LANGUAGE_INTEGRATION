@@ -13,7 +13,10 @@ Comment with no line separators
 		comment|COMMENT
 
 ----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
-Initialize is sent to the plugin when the code engine starts
+Initialize is sent to the plugin when the code engine starts. The CodeEngine will wait
+for 5 seconds or until the plugin responsed with initialized through standard output. 
+For as long as the plugin triggered by initialize is alive it can communicate with the 
+CodeEngine through standard output.
 	PARAMETER:
 		initialize KEY_PATH
 

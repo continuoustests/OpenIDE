@@ -13,6 +13,7 @@ func main() {
 
 func getCommands() []Command {
 	return []Command{
+		InitializeCommand{},
 		GetCommandDefinitionsCommand{},
 		GetCrawlFileTypesCommand{},
 		CrawlCommand{}}
