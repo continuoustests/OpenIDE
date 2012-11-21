@@ -88,8 +88,10 @@ namespace CSharp
 						msg = new CommandMessage(msg.Arguments[0], null, getParameters(msg.Arguments.ToArray()));
 	            		handler = _dispatcher.GetHandler(msg.Command);
 					}
-					if (handler == null)
+					if (handler == null) {
+						writer.Write("comment|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
 						return;
+					}
 				}
 			}
 			try {
