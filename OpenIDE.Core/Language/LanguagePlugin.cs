@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 using System.Collections.Generic;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Logging;
@@ -39,7 +40,20 @@ namespace OpenIDE.Core.Language
 
         public void Initialize(string keyPath)
         {
-			run(string.Format("initialize \"{0}\"", keyPath), (line) => _dispatch(line));
+        	var initialized = false;
+        	new Thread(() => {
+        			run(
+        				string.Format("initialize \"{0}\"", keyPath),
+        				(line) => {
+        						if (line == "initialized")
+        							initialized = true;
+	        					_dispatch(line);
+	        				});
+        		}).Start();
+        	var timeout = DateTime.Now.AddSeconds(30);
+			while (!initialized && DateTime.Now < timeout) {
+				Thread.Sleep(10);
+			}
         }
 
         public void Shutdown()

@@ -58,6 +58,7 @@ namespace CSharp
             };
             server.Start();
             var token = TokenHandler.WriteInstanceInfo(path, server.Port);
+            new ConsoleResponseWriter().Write("initialized");
             while (!shutdown)
                 System.Threading.Thread.Sleep(100);
             if (File.Exists(token))

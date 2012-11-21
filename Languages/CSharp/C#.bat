@@ -2,8 +2,7 @@
 SET SCRIPTDIR=%~dp0
 
 IF "%1" == "initialize" (
-	oi process-start %SCRIPTDIR%\C#-plugin\C#.exe %* --process-hidden
-	timeout 0.5
+	%SCRIPTDIR%\C#-plugin\C#.exe %*
 ) ELSE (
 	%SCRIPTDIR%\C#-plugin\C#.exe send %*
 )
