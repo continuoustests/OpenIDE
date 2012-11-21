@@ -196,25 +196,25 @@ namespace CSharp
 
         public void WriteMethod(Method method)
         {
-            /*method.AllTypesAreResolved = !_visibility;
+            method.AllTypesAreResolved = !_visibility;
             Methods.Add(method);
             method.Parameters.ToList()
                 .ForEach(x => {
                     x.AllTypesAreResolved = !_visibility;
                     Parameters.Add(x);
-                });*/
+                });
         }
 
         public void WriteField(Field field)
         {
-            /*field.AllTypesAreResolved = !_visibility;
-            Fields.Add(field);*/
+            field.AllTypesAreResolved = !_visibility;
+            Fields.Add(field);
         }
 
         public void WriteVariable(Variable variable)
         {
-            /*variable.AllTypesAreResolved = !_visibility;
-            Variables.Add(variable);*/
+            variable.AllTypesAreResolved = !_visibility;
+            Variables.Add(variable);
         }
 
         public void WriteError(string description)
