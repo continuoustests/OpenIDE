@@ -19,6 +19,7 @@ mkdir %DEPLOYDIR%
 
 mkdir %DEPLOYDIR%\CodeEngine
 mkdir %DEPLOYDIR%\EditorEngine
+mkdir %DEPLOYDIR%\EventListener
 mkdir %DEPLOYDIR%\Languages
 mkdir %DEPLOYDIR%\Languages\C#-plugin
 mkdir %DEPLOYDIR%\Languages\C#-plugin\bin
@@ -50,6 +51,7 @@ copy %BINARYDIR%\OpenIDE.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.Code
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.Core.dll
 copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CodeEngine\CoreExtensions.dll
 copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
+copy %BINARYDIR%\OpenIDE.EventListener.dll %DEPLOYDIR%\EventListener\OpenIDE.EventListener.dll
 
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
