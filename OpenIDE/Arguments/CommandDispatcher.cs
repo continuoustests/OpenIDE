@@ -33,8 +33,19 @@ namespace OpenIDE.Arguments
 					_pluginHandlers = _pluginHandlerFactory().ToArray();
 				command = _pluginHandlers.FirstOrDefault(x => x.Command.Equals(name));
 				if (command == null) {
-					Console.WriteLine(name + " is not a valid OpenIDE command. For a list of commands type oi.");
-					Console.WriteLine("Did you mean:");
+					var x = _handlers.First(y => y.Command == "x");
+					if (x != null && x.Usage != null) {
+						if (x.Usage.Parameters.Any(y => y.Name.Equals(name))) {
+							command = x;
+							var modifiedArguments = new List<string>();
+							modifiedArguments.Add(name);
+							modifiedArguments.AddRange(arguments);
+							arguments = modifiedArguments.ToArray();
+						}
+					}
+				}
+				if (command == null) {
+					Console.WriteLine(name + " is not a valid OpenIDE command.");
 					onNoCommandHandled(name);
 					return;
 				}

@@ -46,6 +46,8 @@ namespace oi
 							x.Usage != null && 
 							x.Usage.Parameters.Any(y => y.Required && y.Name.Contains(commandName))
 						));
+				if (handlers.Count() > 0)
+					Console.WriteLine("Did you mean:");
 			}
 			handlers.ToList()
 				.ForEach(x =>
