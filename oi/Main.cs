@@ -44,7 +44,7 @@ namespace oi
 						 x.Command.Contains(commandName) ||
 						(
 							x.Usage != null && 
-							x.Usage.Parameters.Any(y => y.Required && y.Name.Contains(commandName))
+							x.Usage.Parameters.Any(y => y.Required && matchName(y.Name, commandName))
 						));
 				if (handlers.Count() > 0)
 					Console.WriteLine("Did you mean:");
@@ -67,7 +67,7 @@ namespace oi
 
 						command.Parameters.ToList()
 							.ForEach(y =>  {
-								if (commandName == null || y.Required && y.Name.Contains(commandName))
+								if (commandName == null || y.Required && matchName(y.Name, commandName))
 									printParameter(y, ref level);
 							});
 
@@ -75,6 +75,22 @@ namespace oi
 							level++;
 					});
 			Console.WriteLine();
+		}
+
+		private static bool matchName(string actual, string parameter)
+		{
+			if (actual.Contains(parameter))
+				return true;
+			if (Math.Abs(actual.Length - parameter.Length) > 2)
+				return false;
+			var containedCharacters = 0;
+			for (int i = 0; i < actual.Length; i++) {
+				if (parameter.Contains(actual[i]))
+					containedCharacters++;
+			}
+			if (containedCharacters > actual.Length - 2)
+				return true;
+			return false;
 		}
 		
 		private static void printCommand(CommandHandlerParameter command)
