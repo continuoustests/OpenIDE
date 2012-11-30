@@ -63,6 +63,7 @@ namespace OpenIDE.Bootstrapping
 					new CreateReactiveScriptHandler(dispatchMessage),
 					new EditReactiveScriptHandler(dispatchMessage, PluginLocator()),
 					new DeleteReactiveScriptHandler(PluginLocator()),
+					new ListReactiveScriptsHandler(_settings.Path),
 
 					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
