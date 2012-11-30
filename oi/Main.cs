@@ -17,24 +17,36 @@ namespace oi
 			args = Bootstrapper.Settings.Parse(args);
 			if (args.Length == 0)
 			{
-				printUsage();
+				printUsage(null);
 				return;
 			}
 			var execute = Bootstrapper.GetDispatcher();
 			var parser = new CommandStringParser();
 			execute.For(
 				parser.GetCommand(args),
-				parser.GetArguments(args));
+				parser.GetArguments(args),
+				(command) => printUsage(command));
 		}
 
-		private static void printUsage()
+		private static void printUsage(string commandName)
 		{
-			Console.WriteLine("OpenIDE.Net v0.1");
-			Console.WriteLine("OpenIDE.Net is a cross language system that provides simple IDE features around your favorite text exitor.");
-			Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDE)");
-			Console.WriteLine();
+			if (commandName == null) {
+				Console.WriteLine("OpenIDE.Net v0.1");
+				Console.WriteLine("OpenIDE.Net is a cross language system that provides simple IDE features around your favorite text exitor.");
+				Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDE)");
+				Console.WriteLine();
+			}
 			var level = 1;
 			var handlers = Bootstrapper.GetCommandHandlers();
+			if (commandName != null) {
+				handlers = handlers
+					.Where(x => 
+						 x.Command.Contains(commandName) ||
+						(
+							x.Usage != null && 
+							x.Usage.Parameters.Any(y => y.Required && y.Name.Contains(commandName))
+						));
+			}
 			handlers.ToList()
 				.ForEach(x =>
 					{
@@ -52,11 +64,15 @@ namespace oi
 						}
 
 						command.Parameters.ToList()
-							.ForEach(y =>  printParameter(y, ref level));
+							.ForEach(y =>  {
+								if (commandName == null || y.Required && y.Name.Contains(commandName))
+									printParameter(y, ref level);
+							});
 
 						if ((command.Name == Bootstrapper.Settings.DefaultLanguage))
 							level++;
 					});
+			Console.WriteLine();
 		}
 		
 		private static void printCommand(CommandHandlerParameter command)

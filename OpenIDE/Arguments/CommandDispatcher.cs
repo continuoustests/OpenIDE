@@ -23,7 +23,7 @@ namespace OpenIDE.Arguments
 			_eventDispatcher = eventDispatcher;
 		}
 		
-		public void For(string name, string[] arguments)
+		public void For(string name, string[] arguments, Action<string> onNoCommandHandled)
 		{
 			_eventDispatcher.Forward(name, arguments);
 			var command = _handlers.FirstOrDefault(x => x.Command.Equals(name));
@@ -34,6 +34,8 @@ namespace OpenIDE.Arguments
 				command = _pluginHandlers.FirstOrDefault(x => x.Command.Equals(name));
 				if (command == null) {
 					Console.WriteLine(name + " is not a valid OpenIDE command. For a list of commands type oi.");
+					Console.WriteLine("Did you mean:");
+					onNoCommandHandled(name);
 					return;
 				}
 			}

@@ -143,7 +143,8 @@ namespace OpenIDE.Bootstrapping
 			}
 			_dispatcher.For(
 				parser.GetCommand(args),
-				parser.GetArguments(args));
+				parser.GetArguments(args),
+				(m) => {});
 		}
 
 		private bool isError(string command)

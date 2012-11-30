@@ -25,15 +25,19 @@ namespace OpenIDE.Tests
 		[Test]
 		public void Should_find_named_handler()
 		{
-			_execute.For("MyCommand", new string[] {});
+			var calledNoCommandDelegate = false;
+			_execute.For("MyCommand", new string[] {}, (m) => calledNoCommandDelegate = true);
 			_handler.WasCalled();
+			Assert.That(calledNoCommandDelegate, Is.False);
 		}
 		
 		[Test]
 		public void When_no_matching_handlers_it_should_return_null()
 		{
-			_execute.For("MyOtherCommand", new string[] {});
+			var calledNoCommandDelegate = false;
+			_execute.For("MyOtherCommand", new string[] {}, (m) => calledNoCommandDelegate = true);
 			_handler.WasNotCalled();
+			Assert.That(calledNoCommandDelegate, Is.True);
 		}
 	}
 	

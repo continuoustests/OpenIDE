@@ -3,6 +3,6 @@ namespace OpenIDE.Arguments
 {
     public interface ICommandDispatcher
     {
-        void For(string name, string[] arguments);
+        void For(string name, string[] arguments, Action<string> onNoCommandHandled);
     }
 }
