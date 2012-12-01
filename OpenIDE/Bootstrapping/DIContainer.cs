@@ -82,7 +82,9 @@ namespace OpenIDE.Bootstrapping
 					new PrewievSnippetHandler(ICodeEngineLocator()),
 
 					new ProcessStartHandler(),
-					new BringToForegroundHandler()
+					new BringToForegroundHandler(),
+
+					new EventListener(_settings.Path)
 				});
 			return handlers;
 		}
