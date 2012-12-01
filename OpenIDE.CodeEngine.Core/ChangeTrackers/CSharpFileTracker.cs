@@ -15,6 +15,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private EventEndpoint _eventDispatcher;
 		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
+		private FileChangeTracker _localTracker;
 		private ICacheBuilder _cache;
 		private ICrawlResult _crawlReader;
 		
@@ -34,6 +35,12 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			_localTracker = new FileChangeTracker((x) => {
+					_eventDispatcher.Send(
+						"codemodel raw-filesystem-change-" +
+						x.Type.ToString().ToLower() +
+						" \"" + x.Path + "\"");
+				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
 					{
@@ -43,6 +50,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
 					});
 			_tracker.Start(path, getFilter(), handleChanges);
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+				_localTracker.Start(Path.Combine(path, ".OpenIDE"), getFilter(), handleChanges);
 		}
 
 		private string getFilter()
@@ -112,6 +121,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		public void Dispose()
 		{
 			_tracker.Dispose();
+			_localTracker.Dispose();
 		}
 	}
 

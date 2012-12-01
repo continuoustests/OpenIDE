@@ -9,6 +9,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class EditReactiveScriptHandler : ICommandHandler
 	{
+		private string _keyPath;
 		private Action<string> _dispatch;
 		private PluginLocator _pluginLocator;
 
@@ -26,18 +27,20 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "rscript-edit"; } }
 		
-		public EditReactiveScriptHandler(Action<string> dispatch, PluginLocator locator)
+		public EditReactiveScriptHandler(Action<string> dispatch, PluginLocator locator, string keyPath)
 		{
 			_dispatch = dispatch;
 			_pluginLocator = locator;
+			_keyPath = keyPath;
 		}
 	
 		public void Execute(string[] arguments)
 		{
 			var scripts = new ReactiveScriptReader(
 				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				_keyPath,
 				() => { return _pluginLocator; })
-				.Read(Environment.CurrentDirectory);
+				.Read();
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;

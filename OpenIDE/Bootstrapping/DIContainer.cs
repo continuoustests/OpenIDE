@@ -61,9 +61,9 @@ namespace OpenIDE.Bootstrapping
 					new EditScriptHandler(dispatchMessage),
 					new DeleteScriptHandler(),
 					new CreateReactiveScriptHandler(dispatchMessage),
-					new EditReactiveScriptHandler(dispatchMessage, PluginLocator()),
-					new DeleteReactiveScriptHandler(PluginLocator()),
-					new ListReactiveScriptsHandler(_settings.Path),
+					new EditReactiveScriptHandler(dispatchMessage, PluginLocator(), _settings.RootPath),
+					new DeleteReactiveScriptHandler(PluginLocator(), _settings.RootPath),
+					new ListReactiveScriptsHandler(_settings.RootPath),
 
 					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
@@ -84,7 +84,7 @@ namespace OpenIDE.Bootstrapping
 					new ProcessStartHandler(),
 					new BringToForegroundHandler(),
 
-					new EventListener(_settings.Path)
+					new EventListener(_settings.RootPath)
 				});
 			return handlers;
 		}

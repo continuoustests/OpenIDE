@@ -17,15 +17,15 @@ namespace OpenIDE.Core.RScripts
 		private List<ReactiveScript> _scripts = new List<ReactiveScript>();
 		private Func<PluginLocator> _pluginLocator;
 
-		public ReactiveScriptReader(string oiRootPath, Func<PluginLocator> locator)
+		public ReactiveScriptReader(string oiRootPath, string path, Func<PluginLocator> locator)
 		{
+			_keyPath = path;
 			_oiRootPath = oiRootPath;
 			_pluginLocator = locator;
 		}
 
-		public List<ReactiveScript> Read(string path)
+		public List<ReactiveScript> Read()
 		{
-			_keyPath = path;
 			readScripts();
 			return _scripts;
 		}
@@ -54,10 +54,18 @@ namespace OpenIDE.Core.RScripts
 
 		private void readScripts()
 		{
-			readScripts(getLocal());
+			foreach (var path in GetPaths())
+				readScripts(path);
+		}
+
+		public List<string> GetPaths()
+		{
+			var paths = new List<string>();
+			addToList(paths, getLocal());
 			_pluginLocator().Locate().ToList()
 				.ForEach(plugin => 
-					readScripts(
+					addToList(
+						paths,
 						Path.Combine(
 							_oiRootPath,
 							Path.Combine(
@@ -65,7 +73,15 @@ namespace OpenIDE.Core.RScripts
 								Path.Combine(
 									plugin.GetLanguage() + "-plugin",
 									"rscripts")))));
-			readScripts(getGlobal());
+			addToList(paths, getGlobal());
+			return paths;
+		}
+
+		private void addToList(List<string> list, string item)
+		{
+			if (item == null || item.Length == 0)
+				return;
+			list.Add(item);
 		}
 		
 		private string getGlobal()
@@ -75,10 +91,7 @@ namespace OpenIDE.Core.RScripts
 
 		private string getLocal()
 		{
-			var config = Configuration.GetConfigFile(_keyPath);
-			if (config == null)
-				return null;
-			return getPath(Path.GetDirectoryName(config));
+			return getPath(Path.Combine(_keyPath, ".OpenIDE"));
 		}
 
 		private string getPath(string path)

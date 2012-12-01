@@ -50,7 +50,14 @@ namespace OpenIDE.Core.RScripts
             message = "\"" + message + "\"";
 			var process = new Process();
             Logger.Write("Running: " + _file + " " + message);
-			process.Run(_file, message, false, _keyPath);
+            try
+            {
+            	process.Run(_file, message, false, _keyPath);
+            }
+			catch (Exception ex)
+			{
+				Logger.Write(ex.ToString());
+			}
 		}
 
 		private void getEvents()

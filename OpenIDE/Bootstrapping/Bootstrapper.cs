@@ -58,6 +58,7 @@ namespace OpenIDE.Bootstrapping
 		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
 		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
+		public string RootPath { get; private set; }
 		public string Path { get { return _path; } }
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
@@ -65,6 +66,11 @@ namespace OpenIDE.Bootstrapping
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
 			_path = path;
+			RootPath = Configuration.GetConfigPoint(Directory.GetCurrentDirectory());
+			if (RootPath == null)
+				RootPath = Directory.GetCurrentDirectory();
+			else
+				RootPath = System.IO.Path.GetDirectoryName(RootPath);
 			var local = new Configuration(Directory.GetCurrentDirectory(), false);
 			var global = new Configuration(_path, false);
 

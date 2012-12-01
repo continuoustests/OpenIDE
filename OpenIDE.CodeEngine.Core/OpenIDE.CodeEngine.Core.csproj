@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -114,6 +114,7 @@
     <Compile Include="Endpoints\EventEndpoint.cs" />
     <Compile Include="ReactiveScripts\ReactiveScriptEngine.cs" />
     <Compile Include="ChangeTrackers\Change.cs" />
+    <Compile Include="ReactiveScripts\ScriptTouchHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
