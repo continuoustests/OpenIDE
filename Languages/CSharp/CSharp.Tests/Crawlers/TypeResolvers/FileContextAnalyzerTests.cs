@@ -16,8 +16,8 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 		[SetUp]
 		public void Setup()
 		{
-			var globalCache = new OutputWriter(new NullResponseWriter());
-			globalCache.WriteMethod(
+			var cache = new OutputWriter(new NullResponseWriter());
+            cache.WriteMethod(
 				new Method(
 					new FileRef(_file, null),
 					"MyNS.MyClass",
@@ -35,17 +35,26 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 								9,
 								12,
 								"System.String")
-						}));
-			_analyzer = new FileContextAnalyzer(null, null);
+						}).SetEndPosition(17,3));
+            cache.WriteVariable(
+				new Variable(
+					new FileRef(_file, null),
+					"MyNS.MyClass.MyMethod",
+					"str",
+					"local",
+					10,
+					4,
+					"System.String"));
+            _analyzer = new FileContextAnalyzer(
+                new OutputWriter(new NullResponseWriter()),
+                cache);
 		}
 
 		[Test]
 		public void Can_get_signatur_from_method_variable()
 		{
 			var signature = _analyzer.GetSignatureFromTypeAndPosition(_file, "str", 13, 1);
-			Assert.That(signature, Is.EqualTo("MyNS.MyClass.MyMethod(System.String).str"));
+			Assert.That(signature, Is.EqualTo("void MyNS.MyClass.MyMethod(System.String).str"));
 		}
-
-
 	}
 }

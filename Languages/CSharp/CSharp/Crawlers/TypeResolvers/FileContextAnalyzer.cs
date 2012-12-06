@@ -39,9 +39,7 @@ namespace CSharp.Crawlers.TypeResolvers
         public string GetSignatureFromTypeAndPosition(string file, string type, int line, int column)
         {
             var parent = GetEnclosingSignature(file, line, column);
-            var signature = parent + "." + type;
-            
-            return null;
+            return parent + "." + type;
         }
 
         private List<ICodeReference> buildReferenceMap()

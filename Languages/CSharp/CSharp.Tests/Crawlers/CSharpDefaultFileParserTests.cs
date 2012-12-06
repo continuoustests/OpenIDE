@@ -50,6 +50,8 @@ namespace CSharp.Tests.Crawlers
 			Assert.That(ns.Name, Is.EqualTo("MyFirstNS"));
 			Assert.That(ns.Line, Is.EqualTo(1));
 			Assert.That(ns.Column, Is.EqualTo(11));
+			Assert.That(ns.EndLine, Is.EqualTo(1));
+			Assert.That(ns.EndColumn, Is.EqualTo(23));
 		}
 
 		[Test]
@@ -74,6 +76,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(cls.Scope, Is.EqualTo("private"));
 			Assert.That(cls.Line, Is.EqualTo(5));
 			Assert.That(cls.Column, Is.EqualTo(8));
+			Assert.That(cls.EndLine, Is.EqualTo(7));
+			Assert.That(cls.EndColumn, Is.EqualTo(3));
 		}
 		
 		[Test]
@@ -171,6 +175,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(str.Scope, Is.EqualTo("public"));
 			Assert.That(str.Line, Is.EqualTo(45));
 			Assert.That(str.Column, Is.EqualTo(16));
+            Assert.That(str.EndLine, Is.EqualTo(47));
+            Assert.That(str.EndColumn, Is.EqualTo(3));
 		}
 		
 		[Test]
@@ -184,6 +190,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(str.Scope, Is.EqualTo("internal"));
 			Assert.That(str.Line, Is.EqualTo(49));
 			Assert.That(str.Column, Is.EqualTo(16));
+            Assert.That(str.EndLine, Is.EqualTo(52));
+            Assert.That(str.EndColumn, Is.EqualTo(3));
 		}
 		
 		[Test]
@@ -197,6 +205,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(iface.Scope, Is.EqualTo("public"));
 			Assert.That(iface.Line, Is.EqualTo(54));
 			Assert.That(iface.Column, Is.EqualTo(19));
+            Assert.That(iface.EndLine, Is.EqualTo(56));
+            Assert.That(iface.EndColumn, Is.EqualTo(3));
 		}
 
         [Test]
@@ -233,6 +243,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(usng.Name, Is.EqualTo("System.Core"));
             Assert.That(usng.Line, Is.EqualTo(1));
             Assert.That(usng.Column, Is.EqualTo(7));
+            Assert.That(usng.EndLine, Is.EqualTo(1));
+            Assert.That(usng.EndColumn, Is.EqualTo(19));
         }
 		
         [Test]
@@ -246,6 +258,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(usng.Scope, Is.EqualTo("public"));
             Assert.That(usng.Line, Is.EqualTo(82));
             Assert.That(usng.Column, Is.EqualTo(28));
+            Assert.That(usng.EndLine, Is.EqualTo(87));
+            Assert.That(usng.EndColumn, Is.EqualTo(10));
             Assert.That(
                 usng.JSON,
                 Is.EqualTo("{\"static\":\"1\",\"attributes\":{\"CategoryAttribute\":\"hello,15\"},\"parameters\":{\"number\":\"System.Int32\",\"cls\":\"ASealedClass\"}}"));
@@ -273,6 +287,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(usng.Scope, Is.EqualTo("private"));
             Assert.That(usng.Line, Is.EqualTo(77));
             Assert.That(usng.Column, Is.EqualTo(22));
+            Assert.That(usng.EndLine, Is.EqualTo(77));
+            Assert.That(usng.EndColumn, Is.EqualTo(43));
             Assert.That(usng.JSON, Is.EqualTo("{\"static\":\"1\"}"));
         }
 
@@ -287,6 +303,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(usng.Scope, Is.EqualTo("public"));
             Assert.That(usng.Line, Is.EqualTo(79));
             Assert.That(usng.Column, Is.EqualTo(23));
+            Assert.That(usng.EndLine, Is.EqualTo(79));
+            Assert.That(usng.EndColumn, Is.EqualTo(37));
             Assert.That(usng.JSON, Is.EqualTo("{\"const\":\"1\"}"));
         }
 
@@ -308,6 +326,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(parameter.Scope, Is.EqualTo("parameter"));
             Assert.That(parameter.Line, Is.EqualTo(82));
             Assert.That(parameter.Column, Is.EqualTo(57));
+            Assert.That(parameter.EndLine, Is.EqualTo(82));
+            Assert.That(parameter.EndColumn, Is.EqualTo(60));
             Assert.That(parameter.JSON, Is.EqualTo(""));
         }
 		
@@ -322,6 +342,8 @@ namespace CSharp.Tests.Crawlers
             Assert.That(variable.Scope, Is.EqualTo("local"));
             Assert.That(variable.Line, Is.EqualTo(84));
             Assert.That(variable.Column, Is.EqualTo(8));
+            Assert.That(variable.EndLine, Is.EqualTo(84));
+            Assert.That(variable.EndColumn, Is.EqualTo(17));
             Assert.That(variable.JSON, Is.EqualTo(""));
         }
 
