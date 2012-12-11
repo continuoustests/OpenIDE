@@ -60,6 +60,12 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
                 Is.EqualTo("System.Bool MyNS.MyClass._isValid"));
         }
 
+        [Test]
+        public void Have_to_do_this() 
+        {
+            throw new Exception("The namespace field in the types have to be full signature for anything to work here");
+        }
+
         private string signatureFromPosition(int line, int column) {
             var name =
                 new TypeUnderPositionResolver()
