@@ -320,9 +320,9 @@ namespace CSharp.Tests.Crawlers
         {
         	var parameter = _cache.Parameters.Where(x => x.Name.Equals("cls")).FirstOrDefault();
             Assert.That(parameter.File.File, Is.EqualTo("file1"));
-            Assert.That(parameter.Namespace, Is.EqualTo("MyNamespace5.Program.get"));
+            Assert.That(parameter.Namespace, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(parameter.Name, Is.EqualTo("cls"));
-            Assert.That(parameter.Signature, Is.EqualTo("ASealedClass MyNamespace5.Program.get.cls"));
+            Assert.That(parameter.Signature, Is.EqualTo("ASealedClass MyNamespace5.Program.get(System.Int32,ASealedClass).cls"));
             Assert.That(parameter.Scope, Is.EqualTo("parameter"));
             Assert.That(parameter.Line, Is.EqualTo(82));
             Assert.That(parameter.Column, Is.EqualTo(57));
@@ -336,9 +336,9 @@ namespace CSharp.Tests.Crawlers
         {
             var variable = _cache.Variables.Where(x => x.Name.Equals("myInt")).FirstOrDefault();
             Assert.That(variable.File.File, Is.EqualTo("file1"));
-            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get"));
+            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(variable.Name, Is.EqualTo("myInt"));
-            Assert.That(variable.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.get.myInt"));
+            Assert.That(variable.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.get(System.Int32,ASealedClass).myInt"));
             Assert.That(variable.Scope, Is.EqualTo("local"));
             Assert.That(variable.Line, Is.EqualTo(84));
             Assert.That(variable.Column, Is.EqualTo(8));
@@ -352,9 +352,9 @@ namespace CSharp.Tests.Crawlers
         {
             var variable = _cache.Variables.Where(x => x.Name.Equals("bleh")).FirstOrDefault();
             Assert.That(variable.File.File, Is.EqualTo("file1"));
-            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get"));
+            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(variable.Name, Is.EqualTo("bleh"));
-            Assert.That(variable.Signature, Is.EqualTo("cls.ToString() MyNamespace5.Program.get.bleh"));
+            Assert.That(variable.Signature, Is.EqualTo("cls.ToString() MyNamespace5.Program.get(System.Int32,ASealedClass).bleh"));
             Assert.That(variable.Scope, Is.EqualTo("local"));
             Assert.That(variable.Line, Is.EqualTo(85));
             Assert.That(variable.Column, Is.EqualTo(14));

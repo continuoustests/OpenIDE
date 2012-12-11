@@ -34,7 +34,7 @@ namespace CSharp.Crawlers.TypeResolvers
 			var location = rewindToBeginningOfWord(lines, line, column);
 			if (location == null)
 				return null;
-			return readForward(lines, location.Line, location.Column);
+			return readForward(lines, location.Line, location.Column, line, column);
 		}
 
 		private TypeUnderPositionResolver.Location rewindToBeginningOfWord(string[] lines, int line, int column) {
@@ -73,7 +73,7 @@ namespace CSharp.Crawlers.TypeResolvers
 				};
 		}
 
-		private string readForward(string[] lines, int line, int column) {
+		private string readForward(string[] lines, int line, int column, int endLine, int endColumn) {
 			var signature = "";
 			var exit = false;
 			for (int j = line - 1; j >= 0; j++) {
@@ -83,7 +83,8 @@ namespace CSharp.Crawlers.TypeResolvers
 					column = 1;
 				for (int i = column - 1; i < content.Length; i++) {
 					var c = chars[i];
-					if (_operators.Contains(c)) {
+					if ((c == '.' && isPastEndPosition(j + 1, i + 1, endLine, endColumn)) ||
+                        _operators.Contains(c)) {
 						exit = true;
 						break;
 					}
@@ -96,5 +97,11 @@ namespace CSharp.Crawlers.TypeResolvers
 				signature = signature.Replace(c.ToString(), "");
 			return signature;
 		}
+
+        private bool isPastEndPosition(int line, int column, int endLine, int endColumn) {
+            if (line > endLine)
+                return true;
+            return line == endLine && column > endColumn;
+        }
 	}
 }

@@ -8,50 +8,69 @@ namespace CSharp.Crawlers.TypeResolvers
 	{
 		private IOutputWriter _globalCache;
 		private IOutputWriter _cache;
+        private List<ICodeReference> _references;
+        private List<ICodeReference> _referenceContainers;
 
 		public FileContextAnalyzer(IOutputWriter globalCache, IOutputWriter cache)
 		{
 			_globalCache = globalCache;
 			_cache = cache;
+            buildReferenceMap();
 		}
 
 		public string GetEnclosingSignature(string file, int line, int column)
 		{
-			var references = buildReferenceMap();
-
-            if (references.Count == 0)
-                return null;
-
-            var insideOf = references
-                    .Where(x => x.Line <= line && x.EndLine >= line);
-            if (insideOf.Count() == 0)
-                return null;
-
-            var match = references
-                .FirstOrDefault(x => x.Line == insideOf.Max(y => y.Line));
+            var match = getParent(file, line, column);
 
             if (match == null)
                 return null;
-
-            return match.GenerateFullSignature();
+            
+            return match.Signature;
 		}
 
-        public string GetSignatureFromTypeAndPosition(string file, string type, int line, int column)
+        public string GetSignatureFromNameAndPosition(string file, string name, int line, int column)
         {
-            var parent = GetEnclosingSignature(file, line, column);
-            return parent + "." + type;
+            var parent = getParent(file, line, column);
+            var match = _references.FirstOrDefault(
+                x => 
+                    x.Namespace == parent.ToNamespaceSignature() && 
+                    x.Name == name);
+            if (match != null)
+                return match.Signature;
+            return null;
         }
 
-        private List<ICodeReference> buildReferenceMap()
+        private ICodeReference getParent(string file, int line, int column)
         {
-            var references = new List<ICodeReference>();
-            references.AddRange(_cache.Namespaces);
-            references.AddRange(_cache.Classes);
-            references.AddRange(_cache.Interfaces);
-            references.AddRange(_cache.Structs);
-            references.AddRange(_cache.Enums);
-            references.AddRange(_cache.Methods);
-            return references;
+            if (_referenceContainers.Count == 0)
+                return null;
+
+            var insideOf = _referenceContainers
+                    .Where(x => x.Line <= line && x.EndLine >= line)
+                    .ToArray();
+            if (insideOf.Length == 0)
+                return null;
+
+            return _referenceContainers
+                .FirstOrDefault(x => x.Line == insideOf.Max(y => y.Line));
+        }
+
+        private void buildReferenceMap()
+        {
+            _referenceContainers = new List<ICodeReference>();
+            _references = new List<ICodeReference>();
+
+            _referenceContainers.AddRange(_cache.Namespaces);
+            _referenceContainers.AddRange(_cache.Classes);
+            _referenceContainers.AddRange(_cache.Interfaces);
+            _referenceContainers.AddRange(_cache.Structs);
+            _referenceContainers.AddRange(_cache.Enums);
+            _referenceContainers.AddRange(_cache.Methods);
+
+            _references.AddRange(_referenceContainers);
+            _references.AddRange(_cache.Parameters);
+            _references.AddRange(_cache.Fields);
+            _references.AddRange(_cache.Variables);
         }
 	}
 }

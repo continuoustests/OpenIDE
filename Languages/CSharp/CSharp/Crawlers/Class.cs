@@ -30,7 +30,11 @@ namespace CSharp.Crawlers
 			Column = column;
 		}
 
-        public string GenerateFullSignature() {
+        public string ToFullSignature() {
+            return Signature;
+        }
+
+        public string ToNamespaceSignature() {
             return Signature;
         }
 
@@ -76,8 +80,15 @@ namespace CSharp.Crawlers
 			Column = column;
 		}
 
-        public string GenerateFullSignature() {
+        public string ToFullSignature() {
             return Signature;
+        }
+
+        public string ToNamespaceSignature() {
+            return 
+                string.Format("{0}.{1}",
+                    Namespace,
+                    Name);
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
@@ -129,8 +140,12 @@ namespace CSharp.Crawlers
 			Column = column;
 		}
 
-        public string GenerateFullSignature() {
+        public string ToFullSignature() {
             return Signature;
+        }
+
+        public string ToNamespaceSignature() {
+            return GenerateNameSignature();
         }
 
         public string GenerateNameSignature() {
@@ -215,8 +230,12 @@ namespace CSharp.Crawlers
             DeclaringType = declaringType;
         }
 
-        public string GenerateFullSignature() {
+        public string ToFullSignature() {
             return Signature;
+        }
+
+        public string ToNamespaceSignature() {
+            return string.Format("{0}.{1}", Namespace, Name);
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {

@@ -39,7 +39,11 @@ namespace CSharp.Crawlers
             return this;
         }
 
-        public string GenerateFullSignature() {
+        public string ToFullSignature() {
+            return Signature;
+        }
+
+        public string ToNamespaceSignature() {
             return Signature;
         }
 
@@ -80,8 +84,12 @@ namespace CSharp.Crawlers
             return this;
         }
 
-        public string GenerateFullSignature() {
-            return null;
+        public string ToFullSignature() {
+            return Signature;
+        }
+
+        public string ToNamespaceSignature() {
+            return Signature;
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {

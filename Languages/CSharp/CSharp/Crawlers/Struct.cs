@@ -28,7 +28,11 @@ namespace CSharp.Crawlers
 			Column = column;
 		}
 
-        public string GenerateFullSignature() {
+        public string ToFullSignature() {
+            return Signature;
+        }
+
+        public string ToNamespaceSignature() {
             return Signature;
         }
 

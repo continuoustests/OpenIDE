@@ -43,6 +43,7 @@ namespace CSharp
         string FirstMatchingTypeFromName(string name);
         string VariableTypeFromSignature(string signature);
         string StaticMemberFromSignature(string signature);
+        FilePosition PositionFromSignature(string signature);
         
         IEnumerable<string> CollectBases(string type);
 
@@ -86,6 +87,7 @@ namespace CSharp
         public string VariableTypeFromSignature(string signature) { return null; }
         public string StaticMemberFromSignature(string signature) { return null; }
         public IEnumerable<string> CollectBases(string type) { return new string[] {}; }
+        public FilePosition PositionFromSignature(string signature) { return null; }
         public void MergeWith(IOutputWriter cache) { }
         public void Dispose() { }
     }
@@ -226,32 +228,26 @@ namespace CSharp
         private Dictionary<string,string> _staticDeclarations = new Dictionary<string,string>();
         private HashSet<string> _typeIndex = new HashSet<string>();
         private Dictionary<string, string> _nameIndex = new Dictionary<string,string>();
+        private Dictionary<string, FilePosition> _signaturePositions = new Dictionary<string, FilePosition>();
         public void BuildTypeIndex() {
             _typeIndex = new HashSet<string>();
             _nameIndex = new Dictionary<string,string>();
+            _signaturePositions = new Dictionary<string, FilePosition>();
             Classes.ForEach(x => {
-                var signature = x.Namespace + "." + x.Name;
-                _typeIndex.Add(signature);
-                if (!_nameIndex.ContainsKey(x.Name))
-                    _nameIndex.Add(x.Name, signature);
+                addNameAndTypeIndex(x);
+                addSignaturePosition(x);
             });
             Interfaces.ForEach(x => {
-                var signature = x.Namespace + "." + x.Name;
-                _typeIndex.Add(signature);
-                if (!_nameIndex.ContainsKey(x.Name))
-                    _nameIndex.Add(x.Name, signature);
+                addNameAndTypeIndex(x);
+                addSignaturePosition(x);
             });
             Structs.ForEach(x => {
-                var signature = x.Namespace + "." + x.Name;
-                _typeIndex.Add(signature);
-                if (!_nameIndex.ContainsKey(x.Name))
-                    _nameIndex.Add(x.Name, signature);
+                addNameAndTypeIndex(x);
+                addSignaturePosition(x);
             });
             Enums.ForEach(x => {
-                var signature = x.Namespace + "." + x.Name;
-                _typeIndex.Add(signature);
-                if (!_nameIndex.ContainsKey(x.Name))
-                    _nameIndex.Add(x.Name, signature);
+                addNameAndTypeIndex(x);
+                addSignaturePosition(x);
             });
 
             _declarations = new Dictionary<string,string>();
@@ -259,19 +255,36 @@ namespace CSharp
             Parameters.ForEach(x => {
                     var signature = x.Namespace + "." + x.Name;
                     addDeclaration(signature, x.DeclaringType, x.IsStatic);
+                    addSignaturePosition(x);
                 });
             Variables.ForEach(x => {
                     var signature = x.Namespace + "." + x.Name;
                     addDeclaration(signature, x.DeclaringType, x.IsStatic);
+                    addSignaturePosition(x);
                 });
             Methods.ForEach(x => {
                 var signature = x.GenerateNameSignature();
                 addDeclaration(signature, x.ReturnType, x.IsStatic);
+                addSignaturePosition(x);
             });
             Fields.ForEach(x => {
                 var signature = x.Namespace + "." + x.Name;
                 addDeclaration(signature, x.ReturnType, x.IsStatic);
+                addSignaturePosition(x);
             });
+        }
+
+        private void addNameAndTypeIndex(ICodeReference x) {
+            var signature = x.Namespace + "." + x.Name;
+            _typeIndex.Add(signature);
+            if (!_nameIndex.ContainsKey(x.Name))
+                _nameIndex.Add(x.Name, signature);
+        }
+
+        private void addSignaturePosition(ICodeReference x) {
+            var fullSignature = x.Signature;
+            if (!_signaturePositions.ContainsKey(fullSignature))
+                _signaturePositions.Add(fullSignature, new FilePosition(x.File.File, x.Line, x.Column));
         }
 
         private void addDeclaration(string key, string value, bool isStatic) {
@@ -326,6 +339,13 @@ namespace CSharp
                 bases.AddRange(CollectBases(baseSignature));
             }
             return bases;
+        }
+
+        public FilePosition PositionFromSignature(string signature) {
+            FilePosition position;
+            if (_signaturePositions.TryGetValue(signature, out position))
+                return position;
+            return null;
         }
 
 		private void writeSignature(string type, ICodeReference coderef)

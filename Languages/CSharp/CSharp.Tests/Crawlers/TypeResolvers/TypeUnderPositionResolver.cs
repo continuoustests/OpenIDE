@@ -29,7 +29,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 				"{" + Environment.NewLine +
 				"}";
 			var ns = _resolver.GetTypeName("file", content, 3, 20);
-			Assert.That(ns, Is.EqualTo("CSharp.Crawlers.TypeResolvers"));
+			Assert.That(ns, Is.EqualTo("CSharp.Crawlers"));
 		}
 
 		[Test]

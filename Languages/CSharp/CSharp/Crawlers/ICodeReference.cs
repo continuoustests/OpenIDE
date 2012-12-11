@@ -19,8 +19,8 @@ namespace CSharp.Crawlers
         int EndLine { get; }
         int EndColumn { get; }
         string JSON { get; }
-
-        string GenerateFullSignature();
+        
+        string ToNamespaceSignature();
 
         IEnumerable<ResolveStatement> GetResolveStatements();
 	}
