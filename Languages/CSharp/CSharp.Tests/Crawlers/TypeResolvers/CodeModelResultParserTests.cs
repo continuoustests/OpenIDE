@@ -19,7 +19,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
             var refs = parser.ParseRefs(getResult());
             Assert.That(refs[0].File.File, Is.EqualTo(@"C:\Users\ack\storage\src\OpenIDE\Languages\CSharp\CSharp\IOutputWriter.cs"));
             Assert.That(refs[0] as Class, Is.Not.Null);
-            Assert.That(refs[0].Namespace, Is.EqualTo("CSharp"));
+            Assert.That(refs[0].Parent, Is.EqualTo("CSharp"));
             Assert.That(refs[0].Signature, Is.EqualTo("CSharp.OutputWriter"));
             Assert.That(refs[0].Name, Is.EqualTo("OutputWriter"));
             Assert.That(refs[0].Scope, Is.EqualTo("public"));

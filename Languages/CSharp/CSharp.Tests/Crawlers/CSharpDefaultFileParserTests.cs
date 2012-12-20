@@ -71,7 +71,7 @@ namespace CSharp.Tests.Crawlers
 			var cls = _cache.Classes.Where(x => x.Name.Equals("AVerySimpleClass")).FirstOrDefault();
             Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.AVerySimpleClass"));
-			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
+			Assert.That(cls.Parent, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("AVerySimpleClass"));
             Assert.That(cls.Scope, Is.EqualTo("private"));
 			Assert.That(cls.Line, Is.EqualTo(5));
@@ -86,7 +86,7 @@ namespace CSharp.Tests.Crawlers
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass1")).FirstOrDefault();
             Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace1.MyClass1"));
-			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace1"));
+			Assert.That(cls.Parent, Is.EqualTo("MyNamespace1"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass1"));
             Assert.That(cls.Scope, Is.EqualTo("internal"));
 			Assert.That(cls.Line, Is.EqualTo(9));
@@ -111,7 +111,7 @@ namespace CSharp.Tests.Crawlers
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass2")).FirstOrDefault();
             Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace2.MyClass2"));
-			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace2"));
+			Assert.That(cls.Parent, Is.EqualTo("MyNamespace2"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass2"));
             Assert.That(cls.Scope, Is.EqualTo("public"));
 			Assert.That(cls.Line, Is.EqualTo(19));
@@ -135,7 +135,7 @@ namespace CSharp.Tests.Crawlers
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass3")).FirstOrDefault();
             Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace3.MyClass3"));
-			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace3"));
+			Assert.That(cls.Parent, Is.EqualTo("MyNamespace3"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass3"));
 			Assert.That(cls.Line, Is.EqualTo(24));
 			Assert.That(cls.Column, Is.EqualTo(41));
@@ -158,7 +158,7 @@ namespace CSharp.Tests.Crawlers
 			var cls = _cache.Classes.Where(x => x.Name.Equals("MyClass4")).FirstOrDefault();
             Assert.That(cls.File.File, Is.EqualTo("file1"));
 			Assert.That(cls.Signature, Is.EqualTo("MyNamespace4.MyClass4"));
-			Assert.That(cls.Namespace, Is.EqualTo("MyNamespace4"));
+			Assert.That(cls.Parent, Is.EqualTo("MyNamespace4"));
 			Assert.That(cls.Name, Is.EqualTo("MyClass4"));
 			Assert.That(cls.Line, Is.EqualTo(39));
 			Assert.That(cls.Column, Is.EqualTo(6));
@@ -170,7 +170,7 @@ namespace CSharp.Tests.Crawlers
 			var str = _cache.Structs.Where(x => x.Name.Equals("MyStruct1")).FirstOrDefault();
 			Assert.That(str.File.File, Is.EqualTo("file1"));
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyStruct1"));
-			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
+			Assert.That(str.Parent, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyStruct1"));
             Assert.That(str.Scope, Is.EqualTo("public"));
 			Assert.That(str.Line, Is.EqualTo(45));
@@ -185,7 +185,7 @@ namespace CSharp.Tests.Crawlers
 			var str = _cache.Enums.Where(x => x.Name.Equals("MyEnum1")).FirstOrDefault();
             Assert.That(str.File.File, Is.EqualTo("file1"));
 			Assert.That(str.Signature, Is.EqualTo("MyNamespace5.MyEnum1"));
-			Assert.That(str.Namespace, Is.EqualTo("MyNamespace5"));
+			Assert.That(str.Parent, Is.EqualTo("MyNamespace5"));
 			Assert.That(str.Name, Is.EqualTo("MyEnum1"));
             Assert.That(str.Scope, Is.EqualTo("internal"));
 			Assert.That(str.Line, Is.EqualTo(49));
@@ -200,7 +200,7 @@ namespace CSharp.Tests.Crawlers
 			var iface = _cache.Interfaces.Where(x => x.Name.Equals("MyInterface1")).FirstOrDefault();
             Assert.That(iface.File.File, Is.EqualTo("file1"));
 			Assert.That(iface.Signature, Is.EqualTo("MyNamespace5.MyInterface1"));
-			Assert.That(iface.Namespace, Is.EqualTo("MyNamespace5"));
+			Assert.That(iface.Parent, Is.EqualTo("MyNamespace5"));
 			Assert.That(iface.Name, Is.EqualTo("MyInterface1"));
             Assert.That(iface.Scope, Is.EqualTo("public"));
 			Assert.That(iface.Line, Is.EqualTo(54));
@@ -215,7 +215,7 @@ namespace CSharp.Tests.Crawlers
             var cls = _cache.Classes.Where(x => x.Name.Equals("AnAbstractClass")).FirstOrDefault();
             Assert.That(cls.File.File, Is.EqualTo("file1"));
             Assert.That(cls.Signature, Is.EqualTo("MyNamespace5.AnAbstractClass"));
-            Assert.That(cls.Namespace, Is.EqualTo("MyNamespace5"));
+            Assert.That(cls.Parent, Is.EqualTo("MyNamespace5"));
             Assert.That(cls.Name, Is.EqualTo("AnAbstractClass"));
             Assert.That(cls.Scope, Is.EqualTo("private"));
             Assert.That(cls.JSON, Is.EqualTo("{\"abstract\":\"1\"}"));
@@ -252,7 +252,7 @@ namespace CSharp.Tests.Crawlers
         {
             var usng = _cache.Methods.Where(x => x.Name.Equals("get")).FirstOrDefault();
             Assert.That(usng.File.File, Is.EqualTo("file1"));
-            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Parent, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Name, Is.EqualTo("get"));
             Assert.That(usng.Signature, Is.EqualTo("System.Void MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(usng.Scope, Is.EqualTo("public"));
@@ -270,7 +270,7 @@ namespace CSharp.Tests.Crawlers
         {
             var usng = _cache.Methods.Where(x => x.Name.Equals("doIt")).FirstOrDefault();
             Assert.That(usng.File.File, Is.EqualTo("file1"));
-            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Parent, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Signature, Is.EqualTo("System.String MyNamespace5.Program.doIt()"));
             Assert.That(usng.Scope, Is.EqualTo("protected"));
             Assert.That(usng.JSON, Is.EqualTo("{\"virtual\":\"1\"}"));
@@ -281,7 +281,7 @@ namespace CSharp.Tests.Crawlers
         {
             var usng = _cache.Fields.Where(x => x.Name.Equals("MYThing")).FirstOrDefault();
             Assert.That(usng.File.File, Is.EqualTo("file1"));
-            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Parent, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Name, Is.EqualTo("MYThing"));
             Assert.That(usng.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.MYThing"));
             Assert.That(usng.Scope, Is.EqualTo("private"));
@@ -297,7 +297,7 @@ namespace CSharp.Tests.Crawlers
         {
             var usng = _cache.Fields.Where(x => x.Name.Equals("_field")).FirstOrDefault();
             Assert.That(usng.File.File, Is.EqualTo("file1"));
-            Assert.That(usng.Namespace, Is.EqualTo("MyNamespace5.Program"));
+            Assert.That(usng.Parent, Is.EqualTo("MyNamespace5.Program"));
             Assert.That(usng.Name, Is.EqualTo("_field"));
             Assert.That(usng.Signature, Is.EqualTo("System.String MyNamespace5.Program._field"));
             Assert.That(usng.Scope, Is.EqualTo("public"));
@@ -320,7 +320,7 @@ namespace CSharp.Tests.Crawlers
         {
         	var parameter = _cache.Parameters.Where(x => x.Name.Equals("cls")).FirstOrDefault();
             Assert.That(parameter.File.File, Is.EqualTo("file1"));
-            Assert.That(parameter.Namespace, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
+            Assert.That(parameter.Parent, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(parameter.Name, Is.EqualTo("cls"));
             Assert.That(parameter.Signature, Is.EqualTo("ASealedClass MyNamespace5.Program.get(System.Int32,ASealedClass).cls"));
             Assert.That(parameter.Scope, Is.EqualTo("parameter"));
@@ -336,7 +336,7 @@ namespace CSharp.Tests.Crawlers
         {
             var variable = _cache.Variables.Where(x => x.Name.Equals("myInt")).FirstOrDefault();
             Assert.That(variable.File.File, Is.EqualTo("file1"));
-            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
+            Assert.That(variable.Parent, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(variable.Name, Is.EqualTo("myInt"));
             Assert.That(variable.Signature, Is.EqualTo("System.Int32 MyNamespace5.Program.get(System.Int32,ASealedClass).myInt"));
             Assert.That(variable.Scope, Is.EqualTo("local"));
@@ -352,7 +352,7 @@ namespace CSharp.Tests.Crawlers
         {
             var variable = _cache.Variables.Where(x => x.Name.Equals("bleh")).FirstOrDefault();
             Assert.That(variable.File.File, Is.EqualTo("file1"));
-            Assert.That(variable.Namespace, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
+            Assert.That(variable.Parent, Is.EqualTo("MyNamespace5.Program.get(System.Int32,ASealedClass)"));
             Assert.That(variable.Name, Is.EqualTo("bleh"));
             Assert.That(variable.Signature, Is.EqualTo("cls.ToString() MyNamespace5.Program.get(System.Int32,ASealedClass).bleh"));
             Assert.That(variable.Scope, Is.EqualTo("local"));
@@ -367,7 +367,7 @@ namespace CSharp.Tests.Crawlers
             var str = _cache.Fields.Where(x => x.Name.Equals("Something")).FirstOrDefault();
             Assert.That(str.File.File, Is.EqualTo("file1"));
             Assert.That(str.Signature, Is.EqualTo("System.Int32 MyNamespace5.MyEnum1.Something"));
-            Assert.That(str.Namespace, Is.EqualTo("MyNamespace5.MyEnum1"));
+            Assert.That(str.Parent, Is.EqualTo("MyNamespace5.MyEnum1"));
             Assert.That(str.Name, Is.EqualTo("Something"));
             Assert.That(str.Scope, Is.EqualTo("public"));
             Assert.That(str.Line, Is.EqualTo(51));

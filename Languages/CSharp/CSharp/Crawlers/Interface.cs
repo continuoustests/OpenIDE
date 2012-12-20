@@ -10,18 +10,18 @@ namespace CSharp.Crawlers
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
-		public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
-		public string Namespace { get; private set; }
+		public string Signature { get { return string.Format("{0}.{1}", Parent, Name); } }
+		public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
-        public Interface(FileRef file, string ns, string name, string scope, int line, int column)
+        public Interface(FileRef file, string parent, string name, string scope, int line, int column)
 		{
             setThis(this);
 			File = file;
-			Namespace = ns;
+			Parent = parent;
 			Name = name;
             Scope = scope;
 			Line = line;
@@ -42,7 +42,7 @@ namespace CSharp.Crawlers
 
         protected override string getNamespace()
         {
-            return Namespace;
+            return Parent;
         }
     }
 }

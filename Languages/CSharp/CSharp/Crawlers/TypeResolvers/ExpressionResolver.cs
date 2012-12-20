@@ -27,7 +27,7 @@ namespace CSharp.Crawlers.TypeResolvers
             var isUsing = false;
             // As we are dealing with members we need to handle member (method/field) and it's
             // parent class/struct...
-            var parents = new[] { type.Namespace, getParent(type.Namespace) };
+            var parents = new[] { type.Parent, getParent(type.Parent) };
             Func<string, string> typeFromSignature = _writer.VariableTypeFromSignature;
             foreach (var chunk in chunks)
             {
@@ -84,7 +84,7 @@ namespace CSharp.Crawlers.TypeResolvers
         {
             string currentType = defaultValue;
             _typeResolver(
-                new PartialType(type.File, type.Location, unresolvedType, type.Namespace,
+                new PartialType(type.File, type.Location, unresolvedType, type.Parent,
                                 (s) => currentType = s));
             return currentType;
         }

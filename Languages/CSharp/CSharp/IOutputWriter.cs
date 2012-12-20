@@ -253,12 +253,12 @@ namespace CSharp
             _declarations = new Dictionary<string,string>();
             _staticDeclarations = new Dictionary<string, string>();
             Parameters.ForEach(x => {
-                    var signature = x.Namespace + "." + x.Name;
+                    var signature = x.Parent + "." + x.Name;
                     addDeclaration(signature, x.DeclaringType, x.IsStatic);
                     addSignaturePosition(x);
                 });
             Variables.ForEach(x => {
-                    var signature = x.Namespace + "." + x.Name;
+                    var signature = x.Parent + "." + x.Name;
                     addDeclaration(signature, x.DeclaringType, x.IsStatic);
                     addSignaturePosition(x);
                 });
@@ -268,14 +268,14 @@ namespace CSharp
                 addSignaturePosition(x);
             });
             Fields.ForEach(x => {
-                var signature = x.Namespace + "." + x.Name;
+                var signature = x.Parent + "." + x.Name;
                 addDeclaration(signature, x.ReturnType, x.IsStatic);
                 addSignaturePosition(x);
             });
         }
 
         private void addNameAndTypeIndex(ICodeReference x) {
-            var signature = x.Namespace + "." + x.Name;
+            var signature = x.Parent + "." + x.Name;
             _typeIndex.Add(signature);
             if (!_nameIndex.ContainsKey(x.Name))
                 _nameIndex.Add(x.Name, signature);
@@ -364,7 +364,7 @@ namespace CSharp
 				    additionalArguments += "|" + argument;
             }
 			_writer.Write("signature|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}{8}",
-                coderef.Namespace,
+                coderef.Parent,
 				coderef.Signature,
 				coderef.Name,
 				type,

@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Commands\SendHandler.cs" />
     <Compile Include="Crawlers\AssemblyParser.cs" />
+    <Compile Include="Crawlers\IReferenceCache.cs" />
     <Compile Include="Crawlers\JSONWriter.cs" />
     <Compile Include="Crawlers\TypeBase.cs" />
     <Compile Include="Crawlers\TypeResolvers\CodeEngine\CodeEngineResultParser.cs" />

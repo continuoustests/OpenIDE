@@ -4,14 +4,20 @@ using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 namespace CSharp.Crawlers
 {
-	public interface ICodeReference
+    public interface ISourceItem
+    {
+        long ID { get; }
+        string Signature { get; }
+        void SetID(long id);
+    }
+
+	public interface ICodeReference : ISourceItem
 	{
         bool AllTypesAreResolved { get; set; }
 
 		string Type { get; }
 		FileRef File { get; }
-        string Namespace { get; }
-		string Signature { get; }
+        string Parent { get; }
 		string Name { get; }
         string Scope { get; }
 		int Line { get; }
@@ -21,7 +27,6 @@ namespace CSharp.Crawlers
         string JSON { get; }
         
         string ToNamespaceSignature();
-
         IEnumerable<ResolveStatement> GetResolveStatements();
 	}
 }

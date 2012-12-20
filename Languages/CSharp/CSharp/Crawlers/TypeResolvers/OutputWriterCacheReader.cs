@@ -40,7 +40,7 @@ namespace CSharp.Crawlers.TypeResolvers
             var typeToMatch = type.Type.Replace("[]", "");
             var matchingType = _expression.Resolve(type, typeToMatch);
             if (matchingType == null)
-                matchingType = cache.VariableTypeFromSignature(type.Namespace + "." + type.Type);
+                matchingType = cache.VariableTypeFromSignature(type.Parent + "." + type.Type);
             var usings = getUsings(usingsMap, type);
             if (matchingType == null)
             {
@@ -63,12 +63,12 @@ namespace CSharp.Crawlers.TypeResolvers
                 return null;
             var match = aliases.FirstOrDefault(x => x.Name == type);
             if (match != null) {
-                if (cache.ContainsType(match.Namespace))
-                    return match.Namespace;
-                var firstMatch = cache.FirstMatchingTypeFromName(match.Namespace);
+                if (cache.ContainsType(match.Parent))
+                    return match.Parent;
+                var firstMatch = cache.FirstMatchingTypeFromName(match.Parent);
                 if (firstMatch != null)
                     return firstMatch;
-                return match.Namespace;
+                return match.Parent;
             }
             return null;
         }
@@ -78,7 +78,7 @@ namespace CSharp.Crawlers.TypeResolvers
             if (!usingsMap.TryGetValue(type.File.File, out usings))
                 usings = new string[] { };
             var list = new List<string>();
-            var chunks = type.Namespace.Split(new[] { '.' });
+            var chunks = type.Parent.Split(new[] { '.' });
             var currentNS = "";
             foreach (var chunk in chunks) {
                 if (currentNS != "")
