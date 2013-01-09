@@ -50,8 +50,10 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
 					});
 			_tracker.Start(path, getFilter(), handleChanges);
-			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-				_localTracker.Start(Path.Combine(path, ".OpenIDE"), getFilter(), handleChanges);
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
+				if (Directory.Exists(Path.Combine(path, ".OpenIDE")))
+					_localTracker.Start(Path.Combine(path, ".OpenIDE"), getFilter(), handleChanges);
+			}
 		}
 
 		private string getFilter()
