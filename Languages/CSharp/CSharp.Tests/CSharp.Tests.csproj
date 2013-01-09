@@ -43,6 +43,7 @@
     <Compile Include="Crawlers\CSharpCommentParserTests.cs" />
     <Compile Include="Crawlers\CSharpCrawlerTests.cs" />
     <Compile Include="Crawlers\CSharpDefaultFileParserTests.cs" />
+    <Compile Include="Crawlers\ReferenceCacheTests.cs" />
     <Compile Include="Crawlers\SolutionReaderTests.cs" />
     <Compile Include="Commands\TemplateDefinitionParserTests.cs" />
     <Compile Include="Commands\CommandDispatcherTests.cs" />

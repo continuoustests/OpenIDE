@@ -9,12 +9,14 @@ namespace CSharp.Crawlers
 {
     public class Using : ICodeReference
     {
+        public long ID { get; private set; }
+
         public bool AllTypesAreResolved { get; set; }
 
         public string Type { get; private set; }
         public FileRef File { get; private set; }
 		public string Signature { get { return Name; } }
-		public string Namespace { get; private set; }
+		public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
@@ -25,13 +27,17 @@ namespace CSharp.Crawlers
 
         public Using(FileRef file, string name, int line, int column) {
 			File = file;
-			Namespace = "";
+			Parent = "";
 			Name = name;
             Scope = "";
 			Line = line;
 			Column = column;
             JSON = "";
 		}
+
+        public void SetID(long id) {
+            ID = id;
+        }
 
         public Using SetEndPosition(int line, int column) {
             EndLine = line;
@@ -54,12 +60,14 @@ namespace CSharp.Crawlers
 
     public class UsingAlias : ICodeReference
     {
+        public long ID { get; private set; }
+
         public bool AllTypesAreResolved { get; set; }
 
         public string Type { get; private set; }
         public FileRef File { get; private set; }
 		public string Signature { get { return Name; } }
-		public string Namespace { get; private set; }
+		public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
@@ -70,13 +78,17 @@ namespace CSharp.Crawlers
 
         public UsingAlias(FileRef file, string alias, string type, int line, int column) {
 			File = file;
-			Namespace = type;
+			Parent = type;
 			Name = alias;
             Scope = "";
 			Line = line;
 			Column = column;
             JSON = "";
 		}
+
+        public void SetID(long id) {
+            ID = id;
+        }
 
         public UsingAlias SetEndPosition(int line, int column) {
             EndLine = line;

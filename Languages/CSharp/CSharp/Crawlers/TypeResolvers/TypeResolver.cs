@@ -66,14 +66,14 @@ namespace CSharp.Crawlers.TypeResolvers
         public FileRef File { get; set; }
         public Point Location { get; set; }
         public string Type { get; set; }
-        public string Namespace { get; set; }
+        public string Parent { get; set; }
         public Action<string> _resolve;
 
-        public PartialType(FileRef file, Point location, string type, string ns, Action<string> resolve) {
+        public PartialType(FileRef file, Point location, string type, string parent, Action<string> resolve) {
             File = file;
             Location = location;
             Type = type;
-            Namespace = ns;
+            Parent = parent;
             _resolve = resolve;
         }
 

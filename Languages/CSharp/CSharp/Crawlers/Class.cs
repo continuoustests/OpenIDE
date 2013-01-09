@@ -12,18 +12,18 @@ namespace CSharp.Crawlers
 
 		public string Type { get; private set; }
         public FileRef File { get; private set; }
-		public string Signature { get { return string.Format("{0}.{1}", Namespace, Name); } }
-		public string Namespace { get; private set; }
+		public string Signature { get { return string.Format("{0}.{1}", Parent, Name); } }
+		public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
-        public Class(FileRef file, string ns, string name, string scope, int line, int column)
+        public Class(FileRef file, string parent, string name, string scope, int line, int column)
 		{
             setThis(this);
 			File = file;
-			Namespace = ns;
+			Parent = parent;
 			Name = name;
             Scope = scope;
 			Line = line;
@@ -43,7 +43,7 @@ namespace CSharp.Crawlers
         }
 
         protected override string getNamespace() {
-            return Namespace;
+            return Parent;
         }
     }
 
@@ -56,11 +56,11 @@ namespace CSharp.Crawlers
 		public string Signature { get {
                 return string.Format("{0} {1}.{2}",
                     ReturnType,
-                    Namespace,
+                    Parent,
                     Name);
             }
         }
-		public string Namespace { get; private set; }
+		public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
@@ -68,12 +68,12 @@ namespace CSharp.Crawlers
 
         public string ReturnType { get; private set; }
 
-        public Field(FileRef file, string ns, string name, string scope, int line, int column, string returnType)
+        public Field(FileRef file, string parent, string name, string scope, int line, int column, string returnType)
 		{
             setThis(this);
             ReturnType = returnType;
 			File = file;
-			Namespace = ns;
+			Parent = parent;
 			Name = name;
             Scope = scope;
 			Line = line;
@@ -87,19 +87,19 @@ namespace CSharp.Crawlers
         public string ToNamespaceSignature() {
             return 
                 string.Format("{0}.{1}",
-                    Namespace,
+                    Parent,
                     Name);
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
-            list.Add(new ResolveStatement(ReturnType, Namespace, (s) => ReturnType = s));
+            list.Add(new ResolveStatement(ReturnType, Parent, (s) => ReturnType = s));
             list.AddRange(getTypeResolveStatements());
             return list;
         }
 
         protected override string getNamespace() {
-            return Namespace;
+            return Parent;
         }
     }
 
@@ -113,12 +113,12 @@ namespace CSharp.Crawlers
                 var paramString = getParamString(Parameters);
                 return string.Format("{0} {1}.{2}({3})",
                     ReturnType,
-                    Namespace,
+                    Parent,
                     Name,
                     paramString);
             }
         }
-		public string Namespace { get; private set; }
+		public string Parent { get; private set; }
 		public string Name { get; private set; }
         public string Scope { get; private set; }
 		public int Line { get; private set; }
@@ -127,13 +127,13 @@ namespace CSharp.Crawlers
         public Parameter[] Parameters { get; private set; }
         public string ReturnType { get; private set; }
 
-        public Method(FileRef file, string ns, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters)
+        public Method(FileRef file, string parent, string name, string scope, int line, int column, string returnType, IEnumerable<Parameter> parameters)
 		{
             setThis(this);
             Parameters = parameters.ToArray();
             ReturnType = returnType;
 			File = file;
-			Namespace = ns;
+			Parent = parent;
 			Name = name;
             Scope = scope;
 			Line = line;
@@ -151,14 +151,14 @@ namespace CSharp.Crawlers
         public string GenerateNameSignature() {
             var paramString = getParamString(Parameters);
             return string.Format("{0}.{1}({2})",
-                Namespace,
+                Parent,
                 Name,
                 paramString);
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
-            list.Add(new ResolveStatement(ReturnType, Namespace, (s) => ReturnType = s));
+            list.Add(new ResolveStatement(ReturnType, Parent, (s) => ReturnType = s));
             foreach (var parameter in Parameters)
                 list.AddRange(parameter.GetResolveStatements());
             list.AddRange(getTypeResolveStatements());
@@ -179,7 +179,7 @@ namespace CSharp.Crawlers
         }
 
         protected override string getNamespace() {
-            return Namespace;
+            return Parent;
         }
 
         private string getParamString(IEnumerable<Parameter> parameters)
@@ -197,8 +197,8 @@ namespace CSharp.Crawlers
 
     public class Parameter : Variable
     {
-        public Parameter(FileRef file, string ns, string name, string scope, int line, int column, string declaringType)
-            : base(file, ns, name, scope, line, column, declaringType)
+        public Parameter(FileRef file, string parent, string name, string scope, int line, int column, string declaringType)
+            : base(file, parent, name, scope, line, column, declaringType)
         {
         }
     }
@@ -209,8 +209,8 @@ namespace CSharp.Crawlers
 
         public string Type { get; protected set; }
         public FileRef File { get; protected set; }
-        public string Signature { get { return string.Format("{0} {1}.{2}", DeclaringType, Namespace, Name); } }
-        public string Namespace { get; protected set; }
+        public string Signature { get { return string.Format("{0} {1}.{2}", DeclaringType, Parent, Name); } }
+        public string Parent { get; protected set; }
         public string Name { get; protected set; }
         public string Scope { get; protected set; }
         public int Line { get; protected set; }
@@ -218,11 +218,11 @@ namespace CSharp.Crawlers
 
         public string DeclaringType { get; protected set; }
 
-        public Variable(FileRef file, string ns, string name, string scope, int line, int column, string declaringType)
+        public Variable(FileRef file, string parent, string name, string scope, int line, int column, string declaringType)
         {
             setThis(this);
             File = file;
-            Namespace = ns;
+            Parent = parent;
             Name = name;
             Scope = scope;
             Line = line;
@@ -235,19 +235,19 @@ namespace CSharp.Crawlers
         }
 
         public string ToNamespaceSignature() {
-            return string.Format("{0}.{1}", Namespace, Name);
+            return string.Format("{0}.{1}", Parent, Name);
         }
 
         public IEnumerable<ResolveStatement> GetResolveStatements() {
             var list = new List<ResolveStatement>();
-            list.Add(new ResolveStatement(DeclaringType, Namespace, (s) => DeclaringType = s));
+            list.Add(new ResolveStatement(DeclaringType, Parent, (s) => DeclaringType = s));
             list.AddRange(getTypeResolveStatements());
             return list;
         }
 
         protected override string getNamespace()
         {
-            return Namespace;
+            return Parent;
         }
     }
 }

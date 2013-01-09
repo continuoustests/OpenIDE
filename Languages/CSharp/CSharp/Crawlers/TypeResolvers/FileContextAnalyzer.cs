@@ -33,7 +33,7 @@ namespace CSharp.Crawlers.TypeResolvers
             var parent = getParent(file, line, column);
             var match = _references.FirstOrDefault(
                 x => 
-                    x.Namespace == parent.ToNamespaceSignature() && 
+                    x.Parent == parent.ToNamespaceSignature() && 
                     x.Name == name);
             if (match != null)
                 return match.Signature;

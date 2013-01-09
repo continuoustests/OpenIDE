@@ -1,26 +1,35 @@
 using System;
 using System.Collections.Generic;
+using CSharp.Crawlers;
 
 namespace CSharp.Projects
 {
-	public class FileRef
+    public class FileRef : ISourceItem
 	{
+        public long ID { get; private set; }
 		public string File { get; private set; }
         public Project Project { get; private set; }
+        public string Signature { get { return File; } }
 
         public FileRef(string file, Project project)
 		{
 			File = file;
 			Project = project;
 		}
+
+        public void SetID(long id) {
+            ID = id;
+        }
 	}
 
-	public class Project
+    public class Project : ISourceItem
 	{
+        public long ID { get; private set; }
 		public string File { get; private set; }
 		public object Content { get; private set; }
 		public bool IsModified { get; private set; }
         public string JSON { get; private set; }
+        public string Signature { get { return File; } }
 		
 		public ProjectSettings Settings { get; private set; }
 		
@@ -37,6 +46,10 @@ namespace CSharp.Projects
 			Content = xml;
 			Settings = settings;
 		}
+
+        public void SetID(long id) {
+            ID = id;
+        }
 		
 		public void SetContent(object content)
 		{

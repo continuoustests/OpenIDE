@@ -56,7 +56,7 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
         public void Can_get_signatur_from_field()
         {
             Assert.That(
-                signatureFromPosition(12, 15), // le.WriteLine(str + word);
+                signatureFromPosition(12, 15), // if (_isValid)");
                 Is.EqualTo("System.Bool MyNS.MyClass._isValid"));
         }
 

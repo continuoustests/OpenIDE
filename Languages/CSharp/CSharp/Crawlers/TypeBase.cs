@@ -14,7 +14,13 @@ namespace CSharp.Crawlers
     {
         protected List<string> _baseTypes = new List<string>();
 
+        public long ID { get; private set; }
+
         public IEnumerable<string> BaseTypes { get { return _baseTypes; } }
+
+        public void SetID(long id) {
+            ID = id;
+        }
 
         public T AddBaseType(string baseType) {
             _baseTypes.Add(baseType);
@@ -55,12 +61,18 @@ namespace CSharp.Crawlers
 
         protected abstract string getNamespace();
 
+        public long ID { get; private set; }
+
         public bool IsStatic { get { return _modifiers.Contains("static"); } }
 
         public int EndLine { get; private set; }
         public int EndColumn { get; private set; }
 
         public string JSON { get { return getJSON(); } }
+
+        public void SetID(long id) {
+            ID = id;
+        }
 
         public T SetEndPosition(int line, int column) {
             EndLine = line;

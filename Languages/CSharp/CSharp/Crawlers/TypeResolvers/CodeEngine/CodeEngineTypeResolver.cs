@@ -28,9 +28,9 @@ namespace CSharp.Crawlers.TypeResolvers.CodeEngine
             if (refs.Count == 0)
                 return null;
             foreach (var usng in usings) {
-                var match = refs.FirstOrDefault(x => x.Namespace + "." + x.Name == usng + "." + typeName);
+                var match = refs.FirstOrDefault(x => x.Parent + "." + x.Name == usng + "." + typeName);
                 if (match != null)
-                    return match.Namespace + "." + match.Name;
+                    return match.Parent + "." + match.Name;
             }
             return null;
         }
