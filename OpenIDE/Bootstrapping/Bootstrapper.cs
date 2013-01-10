@@ -51,6 +51,7 @@ namespace OpenIDE.Bootstrapping
 	{
 		private const string DEFAULT_LANGUAGE = "--default.language=";
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
+		private const string PROFILE = "--config-rofile";
 
 		private string _path;
 		private ICommandHandler[] _handlers;
@@ -62,6 +63,7 @@ namespace OpenIDE.Bootstrapping
 		public string Path { get { return _path; } }
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
+		public string Plugin = "";
 
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{

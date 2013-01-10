@@ -45,6 +45,9 @@ mkdir $DEPLOYDIR/scripts/templates
 mkdir $DEPLOYDIR/rscripts
 mkdir $DEPLOYDIR/rscripts/templates
 
+mkdir $DEPLOYDIR/.OpenIDE
+touch $DEPLOYDIR/.OpenIDE/oi.config
+
 chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
 chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
 

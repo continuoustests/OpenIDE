@@ -35,6 +35,8 @@ mkdir %DEPLOYDIR%\scripts
 mkdir %DEPLOYDIR%\scripts\templates
 mkdir %DEPLOYDIR%\rscripts
 mkdir %DEPLOYDIR%\rscripts\templates
+mkdir %DEPLOYDIR%\.OpenIDE
+"" > %DEPLOYDIR%\.OpenIDE\oi.config
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild

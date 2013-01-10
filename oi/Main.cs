@@ -38,6 +38,7 @@ namespace oi
 			}
 			var level = 1;
 			var handlers = Bootstrapper.GetCommandHandlers();
+			var isHint = false;
 			if (commandName != null) {
 				handlers = handlers
 					.Where(x => 
@@ -48,6 +49,7 @@ namespace oi
 						));
 				if (handlers.Count() > 0)
 					Console.WriteLine("Did you mean:");
+				isHint = true;
 			}
 			handlers.ToList()
 				.ForEach(x =>
