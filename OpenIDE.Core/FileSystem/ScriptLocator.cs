@@ -60,9 +60,10 @@ namespace OpenIDE.Core.FileSystem
 
 		public string GetGlobalPath()
 		{
-			return getPath(Path
-					.GetDirectoryName(
-						Assembly.GetExecutingAssembly().Location));
+			return getPath(
+					Path.Combine(
+						Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+						".OpenIDE"));
 		}
 
 		public string GetLocalPath()

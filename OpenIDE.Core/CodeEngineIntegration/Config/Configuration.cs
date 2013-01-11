@@ -265,7 +265,6 @@ namespace OpenIDE.Core.Config
 			var dir = Path.Combine(path, ".OpenIDE");
 			if (!Directory.Exists(dir))
 			{
-				Console.WriteLine("Cant find: " + dir);
 				try {
 					return getConfigPoint(Path.GetDirectoryName(path));
 				} catch {

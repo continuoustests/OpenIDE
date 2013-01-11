@@ -40,7 +40,7 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 				_scripts
 					.Where(x => x.ReactsTo(message)).ToList()
 					.ForEach(x => x.Run(message));
-				}
+			}
 		}
 
 		private void handleScriptTouched(string message, ScriptTouchEvents type) {

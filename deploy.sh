@@ -39,14 +39,16 @@ mkdir $DEPLOYDIR/Languages/js-plugin
 mkdir $DEPLOYDIR/Languages/js-plugin/lib
 mkdir $DEPLOYDIR/Languages/php-plugin
 
-mkdir $DEPLOYDIR/scripts
-mkdir $DEPLOYDIR/scripts/templates
-
-mkdir $DEPLOYDIR/rscripts
-mkdir $DEPLOYDIR/rscripts/templates
-
 mkdir $DEPLOYDIR/.OpenIDE
+
 touch $DEPLOYDIR/.OpenIDE/oi.config
+
+mkdir $DEPLOYDIR/.OpenIDE/scripts
+mkdir $DEPLOYDIR/.OpenIDE/scripts/templates
+
+mkdir $DEPLOYDIR/.OpenIDE/rscripts
+mkdir $DEPLOYDIR/.OpenIDE/rscripts/templates
+
 
 chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
 chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
@@ -70,8 +72,8 @@ cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/CodeEngine/
 cp $ROOT/lib/FSWatcher/FSWatcher.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
 
-cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/scripts/templates
-cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/rscripts/templates
+cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
+cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates
 
 cp $ROOT/Languages/CSharp/C# $DEPLOYDIR/Languages/C#
 cp $ROOT/Languages/CSharp/language.oicfgoptions $DEPLOYDIR/Languages/C#-plugin/language.oicfgoptions

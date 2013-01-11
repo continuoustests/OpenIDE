@@ -86,7 +86,7 @@ namespace OpenIDE.Core.RScripts
 		
 		private string getGlobal()
 		{
-				return getPath(_oiRootPath);
+			return getPath(Path.Combine(_oiRootPath, ".OpenIDE"));
 		}
 
 		private string getLocal()

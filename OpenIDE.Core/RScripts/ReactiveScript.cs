@@ -77,7 +77,7 @@ namespace OpenIDE.Core.RScripts
 							Logger.Write(m);
 							return;
 						}
-						if (m.Length > 0)
+						if (m.Length > 0) 
 							_events.Add(m.Trim(new[] {'\"'}));
 					});
 		}

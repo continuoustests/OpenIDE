@@ -31,12 +31,15 @@ mkdir %DEPLOYDIR%\Languages\python-plugin\graphics
 mkdir %DEPLOYDIR%\Languages\js-plugin
 mkdir %DEPLOYDIR%\Languages\js-plugin\lib
 mkdir %DEPLOYDIR%\Languages\php-plugin
-mkdir %DEPLOYDIR%\scripts
-mkdir %DEPLOYDIR%\scripts\templates
-mkdir %DEPLOYDIR%\rscripts
-mkdir %DEPLOYDIR%\rscripts\templates
+
 mkdir %DEPLOYDIR%\.OpenIDE
 "" > %DEPLOYDIR%\.OpenIDE\oi.config
+
+mkdir %DEPLOYDIR%\.OpenIDE\scripts
+mkdir %DEPLOYDIR%\.OpenIDE\scripts\templates
+mkdir %DEPLOYDIR%\.OpenIDE\rscripts
+mkdir %DEPLOYDIR%\.OpenIDE\rscripts\templates
+
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
@@ -55,8 +58,8 @@ copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CodeEngine\CoreExtensions.dll
 copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
 copy %BINARYDIR%\OpenIDE.EventListener.exe %DEPLOYDIR%\EventListener\OpenIDE.EventListener.dll
 
-xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\scripts\templates
-xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\rscripts\templates
+xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
+xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates
 
 copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\Languages\C#.bat
 copy %ROOT%\Languages\CSharp\language.oicfgoptions %DEPLOYDIR%\Languages\C#-plugin\language.oicfgoptions

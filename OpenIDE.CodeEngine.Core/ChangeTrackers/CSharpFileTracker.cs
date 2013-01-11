@@ -8,6 +8,8 @@ using OpenIDE.CodeEngine.Core.Endpoints;
 using System.Linq;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Caching;
+using System.Reflection;
+
 namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 {
 	public class PluginFileTracker : IDisposable
@@ -16,6 +18,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
 		private FileChangeTracker _localTracker;
+		private FileChangeTracker _globalTracker;
 		private ICacheBuilder _cache;
 		private ICrawlResult _crawlReader;
 		
@@ -41,6 +44,12 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			_globalTracker = new FileChangeTracker((x) => {
+					_eventDispatcher.Send(
+						"codemodel raw-filesystem-change-" +
+						x.Type.ToString().ToLower() +
+						" \"" + x.Path + "\"");
+				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
 					{
@@ -54,6 +63,12 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 				if (Directory.Exists(Path.Combine(path, ".OpenIDE")))
 					_localTracker.Start(Path.Combine(path, ".OpenIDE"), getFilter(), handleChanges);
 			}
+			var globalPath = 
+				Path.Combine(
+					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+					".OpenIDE");
+			if (Directory.Exists(globalPath))
+				_globalTracker.Start(globalPath, getFilter(), handleChanges);
 		}
 
 		private string getFilter()
@@ -124,6 +139,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		{
 			_tracker.Dispose();
 			_localTracker.Dispose();
+			_globalTracker.Dispose();
 		}
 	}
 
