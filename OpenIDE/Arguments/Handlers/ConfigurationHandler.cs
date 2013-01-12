@@ -91,11 +91,6 @@ namespace OpenIDE.Arguments.Handlers
 			}
 
 			var config = new Configuration(path, false);
-			/*Console.WriteLine("Writing to " + config.ConfigurationFile);
-			Console.WriteLine("\t{0} setting: {1}",
-				args.Delete ? "Deleting" : "Updating",
-				args.Setting);*/
-
 			if (args.Delete)
 				config.Delete(args.Settings[0]);
 			else

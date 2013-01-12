@@ -52,6 +52,8 @@ namespace OpenIDE.Bootstrapping
 				new ICommandHandler[]
 				{
 					new InitHandler(configHandler),
+					new ProfileHandler(configHandler),
+
 					configHandler,
 					
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),

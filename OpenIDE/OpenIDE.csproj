@@ -120,6 +120,7 @@
     <Compile Include="Arguments\Handlers\InitHandler.cs" />
     <Compile Include="Arguments\Handlers\ListReactiveScriptsHandler.cs" />
     <Compile Include="Arguments\Handlers\EventListener.cs" />
+    <Compile Include="Arguments\Handlers\ProfileHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

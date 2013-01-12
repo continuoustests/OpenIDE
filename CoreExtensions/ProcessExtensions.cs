@@ -86,11 +86,12 @@ namespace CoreExtensions
             if (proc.Start())
             {
 				proc.BeginOutputReadLine();
-				while (!exit && isRunning(proc))
+				while (!exit)
 					System.Threading.Thread.Sleep(10);
             }
             proc.OutputDataReceived -= onOutputLine;
             proc.ErrorDataReceived -= onErrorLine;
+            proc.WaitForExit();
             return proc.ExitCode;
         }
 
@@ -99,16 +100,7 @@ namespace CoreExtensions
                 text = text.Replace(str, "^" + str);
             return text;
         }
-
-        private static bool isRunning(Process proc) {
-            if (Environment.OSVersion.Platform != PlatformID.Unix &&
-                Environment.OSVersion.Platform != PlatformID.MacOSX)
-            {
-                return true;
-            }
-            return !proc.HasExited;
-        }
-
+        
         private static void prepareProcess(
             Process proc,
             string command,

@@ -95,6 +95,7 @@
     <Compile Include="RScripts\ReactiveScriptReader.cs" />
     <Compile Include="RScripts\ReactiveScript.cs" />
     <Compile Include="CodeEngineIntegration\Config\ConfigOptions.cs" />
+    <Compile Include="Profiles\ProfileLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
