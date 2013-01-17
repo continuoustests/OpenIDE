@@ -163,11 +163,11 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			}
 			copyRecursive(
-				profileDir,
+				profileDir + Path.DirectorySeparatorChar,
 				cloneDir,
 				(item, isDir) => {
 					if (isDir)
-						return !item.StartsWith("profile.");
+						return !Path.GetFileName(item).StartsWith("profile.");
 					return true;
 				});
 			Console.WriteLine("Profile '{0}' created", args.Arguments[1]);
@@ -175,6 +175,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void copyRecursive(string source, string destination, Func<string, bool, bool> copyValidator) {
 			var folder = Path.Combine(destination, Path.GetFileName(source));
+			Directory.CreateDirectory(folder);
 			Directory.GetDirectories(source)
 				.Where(x => copyValidator(x, true)).ToList()
 				.ForEach(x => copyRecursive(x, folder, copyValidator));
@@ -201,7 +202,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void removeDir(string dir) {
 			Directory.GetDirectories(dir).ToList()
-				.ForEach(x => removeDir(dir));
+				.ForEach(x => removeDir(x));
 			Directory.GetFiles(dir).ToList()
 				.ForEach(x => File.Delete(x));
 			Directory.Delete(dir);
