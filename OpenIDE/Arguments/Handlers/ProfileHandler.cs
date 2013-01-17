@@ -33,11 +33,6 @@ namespace OpenIDE.Arguments.Handlers
 				name.Add("[--global]", "Creates application global profile");
 				name.Add("[-g]", "Short version of --global");
 
-				var merge = usage.Add("merge", "Merges active profile with an existing profile");
-				name = merge.Add("NAME", "Profile to merge from");
-				name.Add("[--global]", "Merges from named global profile");
-				name.Add("[-g]", "Short version of --global");
-
 				var clone = usage.Add("clone", "Clones active profile");
 				name = clone.Add("NAME", "Name of new cloned profile");
 				name.Add("[--global]", "Clones from active global profile");
@@ -80,6 +75,8 @@ namespace OpenIDE.Arguments.Handlers
 			args.IsGlobal = 
 				arguments.Contains("-g") ||
 				arguments.Contains("--global");
+			args.Overwrite = 
+				arguments.Contains("--overwrite");
 			return args;
 		}
 
@@ -212,6 +209,7 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			public string[] Arguments { get; set; }
 			public bool IsGlobal { get; set;}
+			public bool Overwrite { get; set; }
 		}
 	}
 }
