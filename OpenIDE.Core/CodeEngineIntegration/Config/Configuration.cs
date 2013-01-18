@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using OpenIDE.Core.Profiles;
 using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE.Core.Config
@@ -260,18 +261,8 @@ namespace OpenIDE.Core.Config
 
 		private static string getConfigPoint(string path)
 		{
-			if (path == null)
-				return null;
-			var dir = Path.Combine(path, ".OpenIDE");
-			if (!Directory.Exists(dir))
-			{
-				try {
-					return getConfigPoint(Path.GetDirectoryName(path));
-				} catch {
-					return null;
-				}
-			}
-			return dir;
+			var locator = new ProfileLocator(path);
+			return locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
 		}
 	}
 }

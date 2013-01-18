@@ -53,7 +53,7 @@ namespace OpenIDE.Core.Profiles
 
 		public string GetLocalProfilesRoot() {
 			var path = Environment.CurrentDirectory;
-			return Path.GetDirectoryName(new Configuration(path, false).ConfigurationFile);
+			return getConfigPoint(path);
 		}
 
 		private string getActiveProfile(string rootPath) {
@@ -67,6 +67,21 @@ namespace OpenIDE.Core.Profiles
 					return name;
 			}
 			return "default";
+		}
+
+		private static string getConfigPoint(string path) {
+			if (path == null)
+				return null;
+			var dir = Path.Combine(path, ".OpenIDE");
+			if (!Directory.Exists(dir))
+			{
+				try {
+					return getConfigPoint(Path.GetDirectoryName(path));
+				} catch {
+					return null;
+				}
+			}
+			return dir;
 		}
 	}
 }
