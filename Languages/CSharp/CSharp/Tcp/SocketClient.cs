@@ -99,7 +99,7 @@ namespace CSharp.Tcp
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                //WriteError(ex);
                 Reconnect(0);
             }
         }

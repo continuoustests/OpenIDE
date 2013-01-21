@@ -95,6 +95,8 @@ namespace CSharp
 				}
 			}
 			try {
+				if (handler == null)
+					return;
 				handler.Execute(writer, msg.Arguments.ToArray());
 			} catch (Exception ex) {
 				var builder = new OutputWriter(writer);
