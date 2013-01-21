@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.FileSystem
 {
@@ -12,6 +13,8 @@ namespace OpenIDE.Core.FileSystem
 	{
 		private string _file;
 		private string _workingDirectory;
+		private string _localProfileName;
+		private string _globalProfileName;
 
 		public IEnumerable<BaseCommandHandlerParameter> Usages { get { return getUsages(); } }
 
@@ -25,10 +28,14 @@ namespace OpenIDE.Core.FileSystem
 			Name = Path.GetFileNameWithoutExtension(file);
 			Description = "";
 			_workingDirectory = workingDirectory;
+			var profiles = new ProfileLocator(_workingDirectory);
+			_globalProfileName = profiles.GetActiveGlobalProfile();
+			_localProfileName = profiles.GetActiveLocalProfile();
 		}
 
 		public IEnumerable<string> Run(string arguments)
 		{
+			arguments = " \"" + _globalProfileName + "\" \"" + _localProfileName + "\" " + arguments;
 			return run(arguments);
 		}
 
