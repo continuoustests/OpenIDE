@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Diagnostics;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
@@ -30,7 +31,8 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
-			query(Path.Combine(_path, Path.Combine("EventListener", "OpenIDE.EventListener.exe")), "");
+			var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			query(Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe")), "");
 		}
 
 		private void query(string cmd, string arguments)
@@ -43,7 +45,8 @@ namespace OpenIDE.Arguments.Handlers
                 	false,
                 	_path,
                 	(error, s) => Console.WriteLine(s));
-			} catch {
+			} catch (Exception ex) {
+				Console.WriteLine(ex.ToString());
 			}
 		}
 	}
