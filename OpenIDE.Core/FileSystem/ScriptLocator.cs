@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Scripts;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.FileSystem
 {
@@ -60,10 +61,8 @@ namespace OpenIDE.Core.FileSystem
 
 		public string GetGlobalPath()
 		{
-			return getPath(
-					Path.Combine(
-						Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-						".OpenIDE"));
+			var locator = new ProfileLocator(_directory);
+			return getPath(locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile()));
 		}
 
 		public string GetLocalPath()

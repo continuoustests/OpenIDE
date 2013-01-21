@@ -9,6 +9,7 @@ using System.Linq;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Caching;
 using System.Reflection;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 {
@@ -59,14 +60,13 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
 					});
 			_tracker.Start(path, getFilter(), handleChanges);
+			var locator = new ProfileLocator(path);
 			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
-				if (Directory.Exists(Path.Combine(path, ".OpenIDE")))
-					_localTracker.Start(Path.Combine(path, ".OpenIDE"), getFilter(), handleChanges);
+				var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+				if (Directory.Exists(profilePath))
+					_localTracker.Start(profilePath, getFilter(), handleChanges);
 			}
-			var globalPath = 
-				Path.Combine(
-					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					".OpenIDE");
+			var globalPath = locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile());
 			if (Directory.Exists(globalPath))
 				_globalTracker.Start(globalPath, getFilter(), handleChanges);
 		}

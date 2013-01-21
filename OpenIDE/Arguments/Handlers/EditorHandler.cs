@@ -7,6 +7,7 @@ using System.Threading;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Profiles;
 namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
@@ -118,7 +119,9 @@ namespace OpenIDE.Arguments.Handlers
 					var language = plugin.GetLanguage();
 					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language + "-plugin")));
 				});
-			runInitScript(Path.Combine(Environment.CurrentDirectory, ".OpenIDE"));
+			var locator = new ProfileLocator(Environment.CurrentDirectory);
+			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+			runInitScript(profilePath);
 		}
 
 		private void initCodeEngine(string folder)

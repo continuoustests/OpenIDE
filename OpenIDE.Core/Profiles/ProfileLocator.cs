@@ -52,8 +52,18 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public string GetLocalProfilesRoot() {
-			var path = Environment.CurrentDirectory;
+			var path = _rootPath;
 			return getConfigPoint(path);
+		}
+
+		public string GetGlobalProfileToken() {
+			var appDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ".OpenIDE");
+			return Path.Combine(appDir, "active.profile");
+		}
+
+		public string GetLocalProfileToken() {
+			var appDir = Path.Combine(_rootPath, ".OpenIDE");
+			return Path.Combine(appDir, "active.profile");
 		}
 
 		private string getActiveProfile(string rootPath) {

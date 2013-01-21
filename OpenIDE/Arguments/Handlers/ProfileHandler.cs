@@ -135,7 +135,7 @@ namespace OpenIDE.Arguments.Handlers
 		private void loadProfile(Args args) {
 			var profileDir = getProfilePath(args, args.Arguments[1]);
 			if (args.Arguments[1] == "default") {
-				var activityFile = Path.Combine(Path.GetDirectoryName(profileDir), "active.profile");
+				var activityFile = Path.Combine(profileDir, "active.profile");
 				if (File.Exists(activityFile))
 					File.Delete(activityFile);
 			} else {

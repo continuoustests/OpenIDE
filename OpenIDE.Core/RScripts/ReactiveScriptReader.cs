@@ -7,6 +7,7 @@ using OpenIDE.Core.Config;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.RScripts
 {
@@ -14,12 +15,17 @@ namespace OpenIDE.Core.RScripts
 	{
 		private string _keyPath;
 		private string _oiRootPath;
+		private string _localScriptsPath;
+		private string _globalScriptsPath;
 		private List<ReactiveScript> _scripts = new List<ReactiveScript>();
 		private Func<PluginLocator> _pluginLocator;
 
 		public ReactiveScriptReader(string oiRootPath, string path, Func<PluginLocator> locator)
 		{
 			_keyPath = path;
+			var profiles = new ProfileLocator(_keyPath);
+			_localScriptsPath = getPath(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile()));
+			_globalScriptsPath = getPath(profiles.GetGlobalProfilePath(profiles.GetActiveGlobalProfile()));
 			_oiRootPath = oiRootPath;
 			_pluginLocator = locator;
 		}
@@ -86,12 +92,12 @@ namespace OpenIDE.Core.RScripts
 		
 		private string getGlobal()
 		{
-			return getPath(Path.Combine(_oiRootPath, ".OpenIDE"));
+			return _globalScriptsPath;
 		}
 
 		private string getLocal()
 		{
-			return getPath(Path.Combine(_keyPath, ".OpenIDE"));
+			return _localScriptsPath;
 		}
 
 		private string getPath(string path)

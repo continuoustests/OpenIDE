@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CoreExtensions;
 using OpenIDE.Core.Logging;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.RScripts
 {
@@ -13,7 +14,9 @@ namespace OpenIDE.Core.RScripts
 	{
 		private string _file;
 		private string _keyPath;
-		private List<string> _events = new List<string>();	
+		private List<string> _events = new List<string>();
+		private string _localProfileName;
+		private string _globalProfileName;
 
 		public string Name { get { return Path.GetFileNameWithoutExtension(_file); } }
 		public string File { get { return _file; } }
@@ -22,6 +25,9 @@ namespace OpenIDE.Core.RScripts
 		{
 			_file = file;
 			_keyPath = keyPath;
+			var profiles = new ProfileLocator(_keyPath);
+			_globalProfileName = profiles.GetActiveGlobalProfile();
+			_localProfileName = profiles.GetActiveLocalProfile();
 			getEvents();
 		}
 
@@ -47,7 +53,7 @@ namespace OpenIDE.Core.RScripts
 							.Replace("<", "^<")
 							.Replace(">", "^>");
 			}
-            message = "\"" + message + "\"";
+            message = "\"" + message + "\" \"" + _globalProfileName + "\" \"" + _localProfileName + "\"";
 			var process = new Process();
             Logger.Write("Running: " + _file + " " + message);
             try

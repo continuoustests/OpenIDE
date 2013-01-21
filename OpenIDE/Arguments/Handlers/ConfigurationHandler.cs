@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -142,7 +143,7 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			}
 			if (pattern == "rootpoint") {
-				Console.Write(Path.GetDirectoryName(Path.GetDirectoryName(file)));
+				Console.Write(Path.GetDirectoryName(new ProfileLocator(path).GetLocalProfilesRoot()));
 				return;
 			}
 			if (pattern == "cfgfile") {

@@ -9,7 +9,14 @@ def main(argv):
 			# print "goto*.cs|*"
 			return
 	
-	# Write scirpt code here. First parameter contains the event
+# Write scirpt code here.
+#	Param 1: event
+#	Param 2: global profile name
+#	Param 2: local profile name
+#
+# When calling other commands use the --profile=PROFILE_NAME and 
+# --global-profile=PROFILE_NAME argument to ensure calling scripts
+# with the right profile.
 
 if __name__ == "__main__":
 	main(sys.argv)
