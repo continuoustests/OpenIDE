@@ -54,8 +54,8 @@ namespace oi
 		private static void printUsage(string commandName)
 		{
 			if (commandName == null) {
-				Console.WriteLine("OpenIDE.Net v0.1");
-				Console.WriteLine("OpenIDE.Net is a cross language system that provides simple IDE features around your favorite text exitor.");
+				Console.WriteLine("OpenIDE v0.2");
+				Console.WriteLine("OpenIDE is a scriptable environment that provides simple IDE features around your favorite text exitor.");
 				Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDE)");
 				Console.WriteLine();
 			}
