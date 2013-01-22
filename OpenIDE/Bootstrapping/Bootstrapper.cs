@@ -49,9 +49,8 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
-		private const string DEFAULT_LANGUAGE = "--default.language=";
-		private const string ENABLED_LANGUAGES = "--enabled.languages";
-		private const string PROFILE = "--config-rofile";
+		private const string DEFAULT_LANGUAGE = "--default-language=";
+		private const string ENABLED_LANGUAGES = "--enabled-languages";
 
 		private string _path;
 		private ICommandHandler[] _handlers;
@@ -101,7 +100,7 @@ namespace OpenIDE.Bootstrapping
 						.Substring(DEFAULT_LANGUAGE.Length, arg.Length - DEFAULT_LANGUAGE.Length);
 					continue;
 				}
-				if (arg.StartsWith(ENABLED_LANGUAGES))
+				else if (arg.StartsWith(ENABLED_LANGUAGES))
 				{
 					EnabledLanguages = 
 						new CommandStringParser(',')

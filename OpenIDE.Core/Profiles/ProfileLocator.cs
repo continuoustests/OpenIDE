@@ -11,6 +11,9 @@ namespace OpenIDE.Core.Profiles
 	{
 		private string _rootPath;
 
+		public static string ActiveGlobalProfile { get; set; }
+		public static string ActiveLocalProfile { get; set; }
+
 		public ProfileLocator(string rootPath) {
 			_rootPath = rootPath;
 		}
@@ -39,10 +42,20 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public string  GetActiveGlobalProfile() {
-			return getActiveProfile(GetGlobalProfilesRoot());
+			var rootPath = GetGlobalProfilesRoot();
+			if (ActiveGlobalProfile != null) {
+				if (profileExists(ActiveGlobalProfile, rootPath))
+					return ActiveGlobalProfile;
+			}
+			return getActiveProfile(rootPath);
 		}
 
 		public string GetActiveLocalProfile() {
+			var rootPath = GetLocalProfilesRoot();
+			if (ActiveLocalProfile != null) {
+				if (profileExists(ActiveLocalProfile, rootPath))
+					return ActiveLocalProfile;
+			}
 			return getActiveProfile(GetLocalProfilesRoot());
 		}
 
@@ -73,10 +86,14 @@ namespace OpenIDE.Core.Profiles
 					.Replace("\t", "")
 					.Replace(Environment.NewLine, "")
 					.Trim();
-				if (Directory.Exists(Path.Combine(rootPath, "profile." + name)))
+				if (profileExists(name, rootPath))
 					return name;
 			}
 			return "default";
+		}
+
+		private bool profileExists(string name, string rootPath) {
+			return Directory.Exists(Path.Combine(rootPath, "profile." + name));
 		}
 
 		private static string getConfigPoint(string path) {
