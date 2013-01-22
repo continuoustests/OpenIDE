@@ -86,7 +86,9 @@ namespace OpenIDE.Bootstrapping
 					new ProcessStartHandler(),
 					new BringToForegroundHandler(),
 
-					new EventListener(_settings.RootPath)
+					new EventListener(_settings.RootPath),
+
+					new HelpHandler()
 				});
 			return handlers;
 		}

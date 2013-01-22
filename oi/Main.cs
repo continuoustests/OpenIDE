@@ -9,6 +9,7 @@ using OpenIDE.Core.Language;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Commands;
 namespace oi
 {
 	class MainClass
@@ -74,7 +75,7 @@ namespace oi
 					Console.WriteLine("Did you mean:");
 				isHint = true;
 			}
-			if (handlers.Count() > 0) {
+			if (handlers.Count() > 0 && commandName == null) {
 				Console.WriteLine();
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified profile", PROFILE);
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified global profile", GLOBAL_PROFILE);
@@ -90,7 +91,7 @@ namespace oi
 							return;
 
 						if (command.Name != Bootstrapper.Settings.DefaultLanguage)
-							printCommand(command);
+							UsagePrinter.PrintCommand(command);
 						else
 						{
 							Console.WriteLine("");
@@ -101,7 +102,7 @@ namespace oi
 						command.Parameters.ToList()
 							.ForEach(y =>  {
 								if (commandName == null || y.Required && matchName(y.Name, commandName))
-									printParameter(y, ref level);
+									UsagePrinter.PrintParameter(y, ref level);
 							});
 
 						if ((command.Name == Bootstrapper.Settings.DefaultLanguage))
@@ -124,27 +125,6 @@ namespace oi
 			if (containedCharacters > actual.Length - 2)
 				return true;
 			return false;
-		}
-		
-		private static void printCommand(CommandHandlerParameter command)
-		{
-			Console.WriteLine("");
-			Console.WriteLine("\t{2} : {0} ({1})",
-				command.GetDescription(Environment.NewLine + "\t"),
-				command.Language,
-				command.Name);
-		}
-
-		private static void printParameter(BaseCommandHandlerParameter parameter, ref int level)
-		{
-			level++;
-			var name = parameter.Name;
-			if (!parameter.Required)
-				name = "[" + name + "]";
-			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, parameter.Description);
-			foreach (var child in parameter.Parameters)
-				printParameter(child, ref level);
-			level--;
 		}
 	}
 }
