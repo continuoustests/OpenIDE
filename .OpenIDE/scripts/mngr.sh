@@ -16,5 +16,6 @@ if [ "$2" = "get-command-definitions" ]; then
 	exit
 fi
 
+cd $1
 path=`oi configure read rootpoint`
-mono --debug $path/PackageManager/oipckmngr/bin/AutoTest.Net/oipckmngr.exe ${*:2}
+mono --debug $path/PackageManager/oipckmngr/bin/AutoTest.Net/oipckmngr.exe "${@:4}"

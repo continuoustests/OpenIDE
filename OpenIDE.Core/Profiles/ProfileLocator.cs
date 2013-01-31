@@ -26,10 +26,13 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public string GetLocalProfilePath(string name) {
+			var root = GetLocalProfilesRoot();
+			if (root == null)
+				return null;
 			if (name == "default")
-				return GetLocalProfilesRoot();
+				return root;
 			else
-				return Path.Combine(GetLocalProfilesRoot(), "profile." + name);
+				return Path.Combine(root, "profile." + name);
 		}
 
 		public List<string> GetProfilesForPath(string path) {
@@ -75,11 +78,15 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public string GetLocalProfileToken() {
+			if (_rootPath == null)
+				return null;
 			var appDir = Path.Combine(_rootPath, ".OpenIDE");
 			return Path.Combine(appDir, "active.profile");
 		}
 
 		private string getActiveProfile(string rootPath) {
+			if (rootPath == null)
+				return null;
 			var active = Path.Combine(rootPath, "active.profile");
 			if (File.Exists(active)) {
 				var name = File.ReadAllText(active)

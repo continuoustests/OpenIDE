@@ -102,6 +102,8 @@ namespace OpenIDE.Core.RScripts
 
 		private string getPath(string path)
 		{
+			if (path == null)
+				return null;
 			return Path.Combine(path, "rscripts");
 		}
 	}

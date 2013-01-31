@@ -27,3 +27,5 @@ openlocal.bat
 ~$*
 Debug/
 Release/
+*.sublime-project
+*.sublime-workspace

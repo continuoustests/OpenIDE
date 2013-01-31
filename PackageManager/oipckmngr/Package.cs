@@ -12,27 +12,38 @@ namespace oipckmngr
 			try {
 				var data = JObject.Parse(json);
 				var package = new Package(data["id"].ToString(), data["description"].ToString());
-				data["pre-install-actions"].Children().ToList()
-					.ForEach(x => package.AddPreInstallAction(x.ToString()));
-
-				var contents = data["contents"].Children();
-				contents.ToList()
-					.ForEach(x => {
-							var content = new PackageContent(x["target"].ToString(), x["file-root"].ToString());
-							x["pre-install-actions"].Children().ToList()
-								.ForEach(y => content.AddPreInstallAction(y.ToString()));
-							x["post-install-actions"].Children().ToList()
-								.ForEach(y => content.AddPostInstallAction(y.ToString()));
-							package.AddContent(content);
-						});
-
-				data["dependencies"].Children().ToList()
-					.ForEach(x => package.AddDependency(x.ToString()));
-				data["post-install-actions"].Children().ToList()
-					.ForEach(x => package.AddPostInstallAction(x.ToString()));
+				if (data["pre-install-actions"] != null) {
+					data["pre-install-actions"].Children().ToList()
+						.ForEach(x => package.AddPreInstallAction(x.ToString()));
+				}
+				if (data["contents"] != null) {
+					var contents = data["contents"].Children();
+					contents.ToList()
+						.ForEach(x => {
+								var content = new PackageContent(x["target"].ToString(), x["file-root"].ToString());
+								if (x["pre-install-actions"] != null) {
+									x["pre-install-actions"].Children().ToList()
+										.ForEach(y => content.AddPreInstallAction(y.ToString()));
+								}
+								if (x["post-install-actions"] != null) {
+									x["post-install-actions"].Children().ToList()
+										.ForEach(y => content.AddPostInstallAction(y.ToString()));
+								}
+								package.AddContent(content);
+							});
+				}
+				if (data["dependencies"] != null) {
+					data["dependencies"].Children().ToList()
+						.ForEach(x => package.AddDependency(x.ToString()));
+				}
+				if (data["post-install-actions"] != null) {
+					data["post-install-actions"].Children().ToList()
+						.ForEach(x => package.AddPostInstallAction(x.ToString()));
+				}
 				if (package.IsValid())
 					return package;
-			} catch {
+			} catch (Exception ex) {
+				Console.WriteLine(ex.ToString());
 			}
 			return null;
 		}
