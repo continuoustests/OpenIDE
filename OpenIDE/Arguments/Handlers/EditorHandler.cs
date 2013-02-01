@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Config;
 namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
@@ -59,12 +61,19 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var instance = _editorFactory.GetInstance(Environment.CurrentDirectory);
 			// TODO remove that unbeleavable nasty setfocus solution. Only init if launching editor
-			if (instance == null && arguments.Length == 1 && arguments[0] != "setfocus")
+			if (instance == null && arguments.Length > 0 && arguments[0] != "setfocus")
 			{
 				instance = startInstance();
 				if (instance == null)
 					return;
-				var editor = instance.Start(arguments[0].Trim());
+				var args = new List<string>();
+				args.AddRange(arguments);
+				args.AddRange( 
+					new Configuration(Environment.CurrentDirectory, true)
+						.EditorSettings
+						.Where(x => x.StartsWith("editor." + arguments[0]))
+						.Select(x => "--" + x));
+				var editor = instance.Start(args.ToArray());
 				if (editor != null && editor != "")
 					runInitScripts();
 				else

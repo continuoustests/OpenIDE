@@ -37,13 +37,16 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			return new Instance(clientFactory, file, processID, lines[0], port);
 		}
 		
-		public string Start(string editor)
+		public string Start(string[] arguments)
 		{
 			var client = _clientFactory.Invoke();
 			client.Connect(Port, (s) => {});
 			if (!client.IsConnected)
 				return "";
-			var reply = client.Request(string.Format("editor {0}", editor));
+			var query = "editor";
+			foreach (var arg in arguments)
+				query += " \"" + arg + "\"";
+			var reply = client.Request(query);
 			client.Disconnect();
 			return reply;
 		}
