@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
@@ -12,6 +13,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private TcpServer _server;
 		private string _instanceFile;
 		private ReactiveScriptEngine _reactiveEngine;
+		private Action<string> _dispatch = (m) => {};
 		
 		public EventEndpoint(string keyPath, PluginLocator locator)
 		{
@@ -19,7 +21,15 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
-			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator);
+			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator, dispatch);
+		}
+
+		public void DispatchThrough(Action<string> dispatch) {
+			_dispatch = dispatch;
+		}
+
+		private void dispatch(string message) {
+			_dispatch(message);
 		}
  
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)

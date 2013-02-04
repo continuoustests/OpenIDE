@@ -12,8 +12,8 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 		private string _path = null;
 		private SocketClient _client = null;
 		
-		public event EventHandler<MessageArgs> RecievedMessage;
-		
+		public event EventHandler<MessageArgs> RecievedMessage;	
+	
 		public bool IsConnected
 		{
 			get
