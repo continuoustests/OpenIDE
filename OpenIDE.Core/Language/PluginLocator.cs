@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
-using CoreExtensions;
 
 namespace OpenIDE.Core.Language
 {
@@ -13,6 +12,7 @@ namespace OpenIDE.Core.Language
 		private string[] _enabledLanguages;
 		private string _languageRoot;
 		private Action<string> _dispatchMessage;
+		private List<LanguagePlugin> _plugins = new List<LanguagePlugin>();
 
 		public PluginLocator(string[] enabledLanguages, string languageRoot, Action<string> dispatchMessage)
 		{
@@ -24,9 +24,18 @@ namespace OpenIDE.Core.Language
 		public LanguagePlugin[] Locate()
 		{
 			return getPlugins()
-				.Select(x => new LanguagePlugin(x, run, _dispatchMessage))
+				.Select(x => getPlugin(x))
 				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()))
 				.ToArray();
+		}
+
+		private LanguagePlugin getPlugin(string name) {
+			var plugin = _plugins.FirstOrDefault(x => x.FullPath == name);
+			if (plugin == null) {
+				plugin = new LanguagePlugin(name, _dispatchMessage);
+				_plugins.Add(plugin);
+			}
+			return plugin;
 		}
 		
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
@@ -50,15 +59,6 @@ namespace OpenIDE.Core.Language
 			if (!Directory.Exists(dir))
 				return new string[] {};
 			return Directory.GetFiles(dir);
-		}
-
-		private void run(string cmd, string arguments, Action<bool, string> onLineReceived)
-		{
-			var proc = new Process();
-            if (onLineReceived != null)
-                proc.Query(cmd, arguments, false, Environment.CurrentDirectory, onLineReceived);
-			else
-            	proc.Run(cmd, arguments, false, Environment.CurrentDirectory);
 		}
 	}
 }

@@ -3,28 +3,45 @@ package main
 import (
 	"os"
 	"fmt"
+	"flag"
 	"bufio"
 	"strings"
 )
 
 func main() {
+	flag.Parse()
+	args := flag.Args()
+	if (len(args) == 0) {
+		return
+	}
+
 	cmds := getCommands()
 	prepareCommands(cmds)
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		line, err := reader.ReadString('\n')
-		if (err == nil) {
-			line = strings.TrimSpace(line)
-			args := getArgs(line)
-			if (line == "shutdown") {
-				break;
-			} else {
-				cmd := getCommand(cmds, args)
-				if (cmd != nil) {
-					cmd.Run(args)
+	
+	if (args[0] == "initialize") {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Println("initialized")
+		for {
+			line, err := reader.ReadString('\n')
+			if (err == nil) {
+				line = strings.TrimSpace(line)
+				arguments := getArgs(line)
+				if (line == "shutdown") {
+					fmt.Println("end-of-conversation")
+					break
+				} else {
+					cmd := getCommand(cmds, arguments)
+					if (cmd != nil) {
+						cmd.Run(arguments)
+					}
 				}
-				fmt.Println("end-of-conversation")
 			}
+			fmt.Println("end-of-conversation")
+		}
+	} else {
+		cmd := getCommand(cmds, args)
+		if (cmd != nil) {
+			cmd.Run(args)
 		}
 	}
 }

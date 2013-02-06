@@ -93,15 +93,14 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 
         private static void shutdownPlugins(PluginLocator locator, CrawlHandler handler)
 		{
-			locator.Locate().ToList()
-				.ForEach(x => 
-					{
-						try {
-                            x.Shutdown();
-						} catch (Exception ex) {
-							Logger.Write(ex.ToString());
-						}
-					});
+			var plugins = locator.Locate();
+			foreach (var plugin in plugins) {
+				try {
+                    plugin.Shutdown();
+				} catch (Exception ex) {
+					Logger.Write(ex.ToString());
+				}
+			}
 		}
 		
 		private static void initPlugins(PluginLocator locator, CrawlHandler handler)

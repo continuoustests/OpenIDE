@@ -23,25 +23,34 @@ namespace CSharp
 	{
         private static Dispatcher _dispatcher;
         private static string _keyPath;
-        private static Instance _codeEngine;
         private static IOutputWriter _cache = new NullOutputWriter();
 
 		public static void Main(string[] args)
 		{
+			if (args.Length == 0)
+				return;
+			
 			_cache = new OutputWriter(new NullResponseWriter());
-            _codeEngine =
-                new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
-                    .GetInstance(Environment.CurrentDirectory);
-            _keyPath = args[0];
-
             _dispatcher = new Dispatcher();
 			configureHandlers(_dispatcher);
 
-			while (true) {
-				var msg = CommandMessage.New(Console.ReadLine());
-				if (msg.Command == "shutdown")
-					break;
-	            handleMessage(msg, new ConsoleResponseWriter(), false);
+            if (args[0] == "initialize") {
+				var writer = new ConsoleResponseWriter();
+            	_keyPath = args[1];
+            	writer.Write("initialized");
+            	while (args[0] == "initialize") {
+					var msg = CommandMessage.New(Console.ReadLine());
+					if (msg.Command == "shutdown") {
+						writer.Write("end-of-conversation");
+						break;
+					}
+		            handleMessage(msg, writer, false);
+		            writer.Write("end-of-conversation");
+	            }
+            } else {
+            	_keyPath = Environment.CurrentDirectory;
+            	var msg = new CommandMessage(args[0], null, getParameters(args));
+            	handleMessage(msg, new ConsoleResponseWriter(), false);
             }
         }
 
@@ -61,10 +70,17 @@ namespace CSharp
 			} catch (Exception ex) {
 				var builder = new OutputWriter(writer);
                 writeException(builder, ex);
-			} finally {
-				writer.Write("end-of-conversation");
 			}
 		}
+
+		static string[] getParameters(string[] args)
+		{
+			var remaining = new List<string>();
+		   	for (int i = 1; i < args.Length; i++)
+				remaining.Add(args[i]);
+			return remaining.ToArray();
+		}
+
 
 		static void writeException(OutputWriter builder, Exception ex) {
 			if (ex == null)

@@ -63,6 +63,7 @@ namespace CoreExtensions
 			var exit = false;
             prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
 

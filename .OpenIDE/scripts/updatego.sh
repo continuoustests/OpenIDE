@@ -25,18 +25,8 @@ if [ "$2" = "get-command-definitions" ]; then
 	# 	param|"Param description" end
 	# end
 
-	echo "Running language plugin|LANGUAGE|\"Language to run (cs,go)\" end"
+	echo "Updates go binary"
 	exit
 fi
 
-if [ "$4" = "cs" ]; then
-	mono --debug Languages/CSharp/CSharp/bin/AutoTest.Net/C#.exe "${@:5}"
-fi
-
-if [ "$4" = "go" ]; then
-	Languages/go/src/go/go "${@:5}"
-fi
-
-if [ "$4" = "js" ]; then
-	node Languages/js/js.js "${@:5}"
-fi
+cp Languages/go/src/go/go Languages/go/bin/go

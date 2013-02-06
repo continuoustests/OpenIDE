@@ -2,12 +2,4 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-if [ "$1" == "initialize" ]; then
-{
-	mono $SCRIPT_DIR/C#-plugin/C#.exe "$@"
-}
-else
-{
-	mono $SCRIPT_DIR/C#-plugin/C#.exe send "$@"
-}
-fi
+mono $SCRIPT_DIR/C#-plugin/C#.exe "$@"
