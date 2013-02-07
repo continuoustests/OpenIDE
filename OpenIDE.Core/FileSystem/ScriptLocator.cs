@@ -63,7 +63,9 @@ namespace OpenIDE.Core.FileSystem
 		public Script[] GetLocalScripts()
 		{
 			var locator = new ProfileLocator(_keyPath);
-			var defaultPath = getPath(locator.GetLocalProfilePath("default"));
+			var defaultPath = locator.GetLocalProfilePath("default");
+			if (defaultPath != null)
+				defaultPath = getPath(defaultPath);
 			var profilePath = GetLocalPath();
 			return getMergedScripts(defaultPath, profilePath);
 		}
