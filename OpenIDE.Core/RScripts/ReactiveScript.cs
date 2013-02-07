@@ -77,6 +77,8 @@ namespace OpenIDE.Core.RScripts
 	            		false,
 	            		_keyPath,
 	            		(error, m) => {
+	            			if (m == null)
+	            				return;
 	            			var cmdText = "command|";
 	            			if (error) {
 	            				Logger.Write("rscript-" + Name + " produced an error:");
@@ -113,8 +115,11 @@ namespace OpenIDE.Core.RScripts
 							Logger.Write(m);
 							return;
 						}
-						if (m.Length > 0) 
-							_events.Add(m.Trim(new[] {'\"'}));
+						if (m.Length > 0) {
+							var expression = m.Trim(new[] {'\"'});
+							_events.Add(expression);
+							Logger.Write(_file + " reacts to: " + expression);
+						}
 					});
 		}
 		

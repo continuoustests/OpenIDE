@@ -52,13 +52,13 @@ namespace OpenIDE.Arguments.Handlers
 			if (File.Exists(file))
 				return;
 			PathExtensions.CreateDirectories(file);
-			var template = new ScriptLocator().GetTemplateFor(extension);
+			var template = new ScriptLocator(Environment.CurrentDirectory).GetTemplateFor(extension);
 			var content = "";
 			if (template != null)
 				File.Copy(template, file);
 			else
 			{
-				var templates = new ScriptLocator().GetTemplates().ToArray();
+				var templates = new ScriptLocator(Environment.CurrentDirectory).GetTemplates().ToArray();
 				if (templates.Length == 0)
 				{
 					File.WriteAllText(file, content);
@@ -92,9 +92,9 @@ namespace OpenIDE.Arguments.Handlers
 		private string getPath(string[] arguments)
 		{
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ScriptLocator().GetGlobalPath();
+				return new ScriptLocator(Environment.CurrentDirectory).GetGlobalPath();
 			else
-				return new ScriptLocator().GetLocalPath();
+				return new ScriptLocator(Environment.CurrentDirectory).GetLocalPath();
 		}
 		
 		private void run(string cmd, string arguments)

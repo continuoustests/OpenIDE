@@ -11,16 +11,14 @@ namespace OpenIDE.Core.FileSystem
 {
 	public class ReactiveScriptLocator : TemplateLocator 
 	{
-		public ReactiveScriptLocator()
-		{
+		public ReactiveScriptLocator(string keyPath) : base(keyPath) {
 			_directory = "rscripts";
 		}
 	}
 	
 	public class ScriptLocator : TemplateLocator
 	{
-		public ScriptLocator()
-		{
+		public ScriptLocator(string keyPath) : base(keyPath) {
 			_directory = "scripts";
 		}
 	}
@@ -28,6 +26,11 @@ namespace OpenIDE.Core.FileSystem
 	public class TemplateLocator 
 	{
 		protected string _directory;
+		protected string _keyPath;
+
+		public TemplateLocator(string keyPath) {
+			_keyPath = keyPath;
+		}
 
 		public IEnumerable<string> GetTemplates()
 		{
@@ -51,26 +54,33 @@ namespace OpenIDE.Core.FileSystem
 
 		public Script[] GetGlobalScripts()
 		{
-			return getScripts(GetGlobalPath()).ToArray();
+			var locator = new ProfileLocator(_keyPath);
+			var defaultPath = getPath(locator.GetGlobalProfilePath("default"));
+			var profilePath = GetGlobalPath();
+			return getMergedScripts(defaultPath, profilePath);
 		}
 
 		public Script[] GetLocalScripts()
 		{
-			return getScripts(GetLocalPath()).ToArray();
+			var locator = new ProfileLocator(_keyPath);
+			var defaultPath = getPath(locator.GetLocalProfilePath("default"));
+			var profilePath = GetLocalPath();
+			return getMergedScripts(defaultPath, profilePath);
 		}
 
 		public string GetGlobalPath()
 		{
-			var locator = new ProfileLocator(_directory);
+			var locator = new ProfileLocator(_keyPath);
 			return getPath(locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile()));
 		}
 
 		public string GetLocalPath()
 		{
-			var configFile = Configuration.GetConfigFile(Environment.CurrentDirectory);
-			if (configFile == null)
+			var locator = new ProfileLocator(_keyPath);
+			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+			if (profilePath == null)
 				return null;
-			return getPath(Path.GetDirectoryName(configFile));
+			return getPath(profilePath);
 		}
 
 		public string GetLanguagePath(string language)
@@ -83,13 +93,25 @@ namespace OpenIDE.Core.FileSystem
 
 		private string getPath(string location)
 		{
+			location = Path.GetFullPath(location);
 			return Path.Combine(location, _directory);
+		}
+
+		private Script[] getMergedScripts(string defaultPath, string profilePath) {
+			var scripts = new List<Script>();
+			scripts.AddRange(getScripts(defaultPath));
+			if (profilePath != defaultPath)
+				scripts.AddRange(getScripts(profilePath));
+			return scripts.ToArray();
 		}
 
 		private IEnumerable<Script> getScripts(string path)
 		{
+			if (path == null)
+				return new Script[] {};
 			if (!Directory.Exists(path))
 				return new Script[] {};
+			path = Path.GetFullPath(path);
 			var workingDir = Path.GetDirectoryName(Path.GetDirectoryName(path));
 			return new ScriptFilter().GetScripts(path)
 				.Select(x => new Script(workingDir, x));

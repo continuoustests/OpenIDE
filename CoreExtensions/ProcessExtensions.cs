@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -51,12 +52,25 @@ namespace CoreExtensions
             string workingDir,
 			Action<bool, string> onRecievedLine)
         {
+            string tempFile = null;
             if (Environment.OSVersion.Platform != PlatformID.Unix &&
                 Environment.OSVersion.Platform != PlatformID.MacOSX)
             {
-                arguments = "/c " +
-                    "^\"" + batchEscape(command) + "^\" " +
-                    batchEscape(arguments);
+                var illagalChars = new[] {"&", "<", ">", "(", ")", "@", "^", "|"};
+                if (command.Contains(" ") ||
+                    illagalChars.Any(x => arguments.Contains(x))) {
+                    // Windows freaks when getting the | character
+                    // Have it run a temporary bat file with command as contents
+                    tempFile = Path.GetTempFileName() + ".bat";
+                    if (File.Exists(tempFile))
+                        File.Delete(tempFile);
+                    File.WriteAllText(tempFile, "\"" + command + "\" " + arguments);
+                    arguments = "/c " + tempFile;
+                } else {
+                    arguments = "/c " + 
+                        "^\"" + batchEscape(command) + "^\" " +
+                        batchEscape(arguments);
+                }
                 command = "cmd.exe";
             }
 			
@@ -93,6 +107,8 @@ namespace CoreExtensions
             proc.OutputDataReceived -= onOutputLine;
             proc.ErrorDataReceived -= onErrorLine;
             proc.WaitForExit();
+            if (tempFile != null && File.Exists(tempFile))
+                File.Delete(tempFile);
             return proc.ExitCode;
         }
 

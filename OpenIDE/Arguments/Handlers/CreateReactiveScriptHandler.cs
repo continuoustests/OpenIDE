@@ -55,13 +55,13 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			Console.WriteLine("Creating " + file);
 			PathExtensions.CreateDirectories(file);
-			var template = new ReactiveScriptLocator().GetTemplateFor(extension);
+			var template = new ReactiveScriptLocator(Environment.CurrentDirectory).GetTemplateFor(extension);
 			var content = "";
 			if (template != null)
 				File.Copy(template, file);
 			else 
 			{
-				var templates = new ReactiveScriptLocator().GetTemplates().ToArray();
+				var templates = new ReactiveScriptLocator(Environment.CurrentDirectory).GetTemplates().ToArray();
 				if (templates.Length == 0)
 				{
 					File.WriteAllText(file, content);
@@ -96,12 +96,12 @@ namespace OpenIDE.Arguments.Handlers
 		private string getPath(string[] arguments)
 		{
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ReactiveScriptLocator().GetGlobalPath();
+				return new ReactiveScriptLocator(Environment.CurrentDirectory).GetGlobalPath();
 			else if (arguments.Count(x => x.StartsWith("--language=")) > 0 || 
 					 arguments.Count(x => x.StartsWith("-l=")) > 0)
-				return new ReactiveScriptLocator().GetLanguagePath(getLanguage(arguments));
+				return new ReactiveScriptLocator(Environment.CurrentDirectory).GetLanguagePath(getLanguage(arguments));
 			else
-				return new ReactiveScriptLocator().GetLocalPath();
+				return new ReactiveScriptLocator(Environment.CurrentDirectory).GetLocalPath();
 		}
 
 		private string getLanguage(string[] arguments)

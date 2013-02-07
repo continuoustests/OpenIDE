@@ -36,8 +36,8 @@ namespace OpenIDE.Arguments.Handlers
 		public ScriptHandler(Action<string> dispatch)
 		{
 			_dispatch = dispatch;
-			_scripts.AddRange(new ScriptLocator().GetLocalScripts());
-			new ScriptLocator()
+			_scripts.AddRange(new ScriptLocator(Environment.CurrentDirectory).GetLocalScripts());
+			new ScriptLocator(Environment.CurrentDirectory)
 				.GetGlobalScripts()
 				.Where(x => _scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
 				.ForEach(x => _scripts.Add(x));
