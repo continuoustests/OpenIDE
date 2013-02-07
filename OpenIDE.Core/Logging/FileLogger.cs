@@ -7,6 +7,7 @@ namespace OpenIDE.Core.Logging
 	public class FileLogger : ILogger
 	{
 		private string _file;
+		private object _padlock = new object();
 
 		public FileLogger()
 		{
@@ -37,9 +38,11 @@ namespace OpenIDE.Core.Logging
 
 		private void write(string message)
 		{
-			using (var writer = new StreamWriter(_file, true))
-			{
-				writer.WriteLine(message);	
+			lock (_padlock) {
+				using (var writer = new StreamWriter(_file, true))
+				{
+					writer.WriteLine(message);	
+				}
 			}
 		}
 	}

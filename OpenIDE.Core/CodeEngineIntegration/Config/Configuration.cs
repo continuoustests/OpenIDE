@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.CommandBuilding;
 
@@ -14,11 +15,13 @@ namespace OpenIDE.Core.Config
 		private string[] _operators = new[] { "+=","-=","=" };
 		private string _path;
 		private bool _allowGlobal = false;
+		private List<string> _editorSettings = new List<string>();
 
 		public string ConfigurationFile { get; private set; }
 
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
+		public string[] EditorSettings { get { return _editorSettings.ToArray(); } }
 
 		public Configuration(string path, bool allowGlobal)
 		{
@@ -256,6 +259,9 @@ namespace OpenIDE.Core.Config
 					new CommandStringParser(',')
 						.Parse(line
 								.Substring(space, line.Length - space).Trim()).ToArray();
+			}
+			if (check.StartsWith("editor.")) {
+				_editorSettings.Add(check.Trim(new[] { ' ', '\t' }));
 			}
 		}
 

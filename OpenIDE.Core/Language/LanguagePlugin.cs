@@ -7,22 +7,26 @@ using System.Threading;
 using System.Collections.Generic;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Logging;
+using CoreExtensions;
 
 namespace OpenIDE.Core.Language
 {
 	public class LanguagePlugin
 	{
 		private string _path;
-		private Action<string, string, Action<bool, string>> _execute;
 		private Action<string> _dispatch;
+		private object _processLock = new object();
+		private Process _process;
+		private bool _isQuerying = false;
+		private Action<string> _responseDispatcher = (m) => {};
+
+		public string FullPath { get { return _path; } }
 
 		public LanguagePlugin(
 			string path,
-			Action<string, string, Action<bool, string>> execute,
 			Action<string> dispatch)
 		{
 			_path = path;
-			_execute = execute;
 			_dispatch = dispatch;
 		}
 
@@ -42,18 +46,26 @@ namespace OpenIDE.Core.Language
         {
         	var initialized = false;
         	new Thread(() => {
+        			var proc = new Process();
         			run(
+        				proc,
         				string.Format("initialize \"{0}\"", keyPath),
         				(line) => {
-        						if (line == "initialized")
+        						if (line == "initialized") {
+        							_process = proc;
         							initialized = true;
+        						}
+        						if (line == "end-of-conversation") {
+        							_isQuerying = false;
+        							return;
+        						}
+        						_responseDispatcher(line);
 	        					_dispatch(line);
 	        				});
+        			initialized = true;
         		}).Start();
-        	var timeout = DateTime.Now.AddSeconds(30);
-			while (!initialized && DateTime.Now < timeout) {
-				Thread.Sleep(10);
-			}
+        	while (!initialized)
+        		Thread.Sleep(10);
         }
 
         public void Shutdown()
@@ -157,12 +169,19 @@ namespace OpenIDE.Core.Language
 
 		private void run(string arguments)
 		{
-			_execute(_path, arguments, null);
+			if (queryEngine(arguments, null))
+				return;
+			var proc = new Process();
+			execute(proc, _path, arguments, null);
 		}
 
         private void run(string arguments, Action<string> onLineReceived)
 		{
-			_execute(
+			if (queryEngine(arguments, onLineReceived))
+				return;
+			var proc = new Process();
+			execute(
+				proc,
 				_path,
 				arguments,
 				(error, x) => {
@@ -174,6 +193,48 @@ namespace OpenIDE.Core.Language
 						}
 						onLineReceived(x);
 					});
+		}
+
+		private void run(Process proc, string arguments, Action<string> onLineReceived)
+		{
+			execute(
+				proc,
+				_path,
+				arguments,
+				(error, x) => {
+						if (error) {
+							Logger.Write(
+								string.Format("Failed running {0} with {1}", _path, arguments));
+							Logger.Write(x);
+							return;
+						}
+						onLineReceived(x);
+					});
+		}
+
+		private void execute(Process proc, string cmd, string arguments, Action<bool, string> onLineReceived)
+		{
+            if (onLineReceived != null)
+                proc.Query(cmd, arguments, false, Environment.CurrentDirectory, onLineReceived);
+			else
+            	proc.Run(cmd, arguments, false, Environment.CurrentDirectory);
+		}
+
+		private bool queryEngine(string arguments, Action<string> onLineReceived) {
+			if (_process != null && !_process.HasExited) {
+				lock (_processLock) {
+					_isQuerying = true;
+					if (onLineReceived != null)
+						_responseDispatcher = onLineReceived;
+					_process.StandardInput.WriteLine(arguments);
+					while (_isQuerying)
+						Thread.Sleep(10);
+					if (onLineReceived != null)
+						_responseDispatcher = (m) => {};
+				}
+				return true;
+			}
+			return false;
 		}
 	}
 

@@ -1,8 +1,10 @@
 using System;
+using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 namespace OpenIDE.CodeEngine.Core.EditorEngine
 {
 	public class Editor
@@ -10,8 +12,8 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 		private string _path = null;
 		private SocketClient _client = null;
 		
-		public event EventHandler<MessageArgs> RecievedMessage;
-		
+		public event EventHandler<MessageArgs> RecievedMessage;	
+	
 		public bool IsConnected
 		{
 			get
@@ -52,8 +54,14 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 		
 		private bool isConnected()
 		{
-			try
-			{
+			if (canConnect())
+				return true;
+			Thread.Sleep(100);
+			return canConnect();
+		}
+
+		private bool canConnect() {
+			try {
 				if (_client != null && _client.IsConnected)
 					return true;
 				var instance = new EngineLocator().GetInstance(_path);
@@ -61,16 +69,15 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 					return false;
 				_client = new SocketClient();
 				_client.Connect(instance.Port, (m) => {
-						if (RecievedMessage != null)
+						if (RecievedMessage != null && m != null && m.Trim().Length > 0)
 							RecievedMessage(this, new MessageArgs(Guid.Empty, m));
 					});
 				if (_client.IsConnected)
 					return true;
 				_client = null;
 				return false;
-			}
-			catch
-			{
+			} catch (Exception ex) {
+				Logger.Write(ex);
 				return false;
 			}
 		}

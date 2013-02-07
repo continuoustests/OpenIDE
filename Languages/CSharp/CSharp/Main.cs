@@ -21,48 +21,37 @@ namespace CSharp
 {
 	public class MainClass
 	{
-        private static bool _startService = false;
         private static Dispatcher _dispatcher;
         private static string _keyPath;
-        private static Instance _codeEngine;
         private static IOutputWriter _cache = new NullOutputWriter();
 
 		public static void Main(string[] args)
 		{
-			//args = new[] {"send","crawl-source","~/src/OpenIDE"};
 			if (args.Length == 0)
 				return;
-            args = parseParameters(args);
+			
+			_cache = new OutputWriter(new NullResponseWriter());
             _dispatcher = new Dispatcher();
 			configureHandlers(_dispatcher);
-            CommandMessage msg = null;
-            if (args.Length > 0)
-                msg = new CommandMessage(args[0], null, getParameters(args));
-            if (_startService)
-                startServer(msg);
-            else
-                handleMessage(msg, new ConsoleResponseWriter(), false);
-        }
 
-        private static void startServer(CommandMessage startMessage) {
-            var shutdown = false;
-            var path = _keyPath;
-            var server = new TcpServer();
-            server.IncomingMessage += (s, m) => {
-                var writer = new ServerResponseWriter(server, m.ClientID);
-                var msg = CommandMessage.New(m.Message);
-                handleMessage(msg, writer, true);
-                writer.Write("EndOfConversation");
-                if (msg.Command == "shutdown")
-                    shutdown = true;
-            };
-            server.Start();
-            var token = TokenHandler.WriteInstanceInfo(path, server.Port);
-            new ConsoleResponseWriter().Write("initialized");
-            while (!shutdown)
-                System.Threading.Thread.Sleep(100);
-            if (File.Exists(token))
-                File.Delete(token);
+            if (args[0] == "initialize") {
+				var writer = new ConsoleResponseWriter();
+            	_keyPath = args[1];
+            	writer.Write("initialized");
+            	while (args[0] == "initialize") {
+					var msg = CommandMessage.New(Console.ReadLine());
+					if (msg.Command == "shutdown") {
+						writer.Write("end-of-conversation");
+						break;
+					}
+		            handleMessage(msg, writer, false);
+		            writer.Write("end-of-conversation");
+	            }
+            } else {
+            	_keyPath = Environment.CurrentDirectory;
+            	var msg = new CommandMessage(args[0], null, getParameters(args));
+            	handleMessage(msg, new ConsoleResponseWriter(), false);
+            }
         }
 
         private static void handleMessage(CommandMessage msg, IResponseWriter writer, bool serverMode)
@@ -70,29 +59,9 @@ namespace CSharp
             if (msg == null)
                 return;
 			var handler = _dispatcher.GetHandler(msg.Command);
-			if (!serverMode) {
-				var client = TokenHandler.GetClient(_keyPath, (m) => writer.Write(m));
-	            var send = new SendHandler(client);
-	            if (client.IsConnected) {
-	            	if (send.Command == msg.Command) {
-	            		handler = send;
-					} else {
-						var args = new List<string>();
-						args.Add(msg.Command);
-						args.AddRange(msg.Arguments);
-						msg = new CommandMessage("send", null, args.ToArray());
-	            		handler = send;
-					}
-	            } else {
-					if (msg.Command == "send") {
-						msg = new CommandMessage(msg.Arguments[0], null, getParameters(msg.Arguments.ToArray()));
-	            		handler = _dispatcher.GetHandler(msg.Command);
-					}
-					if (handler == null) {
-						writer.Write("comment|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
-						return;
-					}
-				}
+			if (handler == null) {
+				writer.Write("comment|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
+				return;
 			}
 			try {
 				if (handler == null)
@@ -104,6 +73,15 @@ namespace CSharp
 			}
 		}
 
+		static string[] getParameters(string[] args)
+		{
+			var remaining = new List<string>();
+		   	for (int i = 1; i < args.Length; i++)
+				remaining.Add(args[i]);
+			return remaining.ToArray();
+		}
+
+
 		static void writeException(OutputWriter builder, Exception ex) {
 			if (ex == null)
 				return;
@@ -114,34 +92,6 @@ namespace CSharp
                     .ForEach(line => builder.WriteError(line));
 			}
 			writeException(builder, ex.InnerException);
-		}
-
-        static string[] parseParameters(string[] args) {
-            _cache = new OutputWriter(new NullResponseWriter());
-            _codeEngine =
-                new CodeEngineDispatcher(new OpenIDE.Core.FileSystem.FS())
-                    .GetInstance(Environment.CurrentDirectory);
-            if (args[0] == "initialize") {
-                _startService = true;
-                if (args.Length == 2)
-                    _keyPath = args[1];
-                else
-                    _keyPath = Environment.CurrentDirectory;
-            } else {
-                if (_codeEngine != null)
-                    _keyPath = _codeEngine.Key;
-                else
-                    _keyPath = Environment.CurrentDirectory;
-            }
-            return args;
-        }
-
-		static string[] getParameters(string[] args)
-		{
-			var remaining = new List<string>();
-			for (int i = 1; i < args.Length; i++)
-			    remaining.Add(args[i]);
-			return remaining.ToArray();
 		}
 		
 		static void configureHandlers(Dispatcher dispatcher)

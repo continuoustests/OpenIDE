@@ -32,6 +32,9 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_keyPath = editorKey;
 			_cache = cache;
 			_eventEndpoint = eventEndpoint;
+			_eventEndpoint.DispatchThrough((m) => {
+					handle(new MessageArgs(Guid.Empty, m));
+				});
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
