@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="..\lib\SharpZipLib\ICSharpCode.SharpZipLib.dll" />
     <Reference Include="..\lib\JSON.NET\Net35\Newtonsoft.Json.dll" />
   </ItemGroup>
