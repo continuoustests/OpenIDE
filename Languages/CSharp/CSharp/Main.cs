@@ -30,13 +30,12 @@ namespace CSharp
 			if (args.Length == 0)
 				return;
 			
-			_cache = new OutputWriter(new NullResponseWriter());
-            _dispatcher = new Dispatcher();
-			configureHandlers(_dispatcher);
+			
 
             if (args[0] == "initialize") {
 				var writer = new ConsoleResponseWriter();
             	_keyPath = args[1];
+
             	writer.Write("initialized");
             	while (args[0] == "initialize") {
 					var msg = CommandMessage.New(Console.ReadLine());
@@ -49,6 +48,10 @@ namespace CSharp
 	            }
             } else {
             	_keyPath = Environment.CurrentDirectory;
+            	_cache = new OutputWriter(new NullResponseWriter());
+            	_dispatcher = new Dispatcher();
+				configureHandlers(_dispatcher);
+
             	var msg = new CommandMessage(args[0], null, getParameters(args));
             	handleMessage(msg, new ConsoleResponseWriter(), false);
             }
