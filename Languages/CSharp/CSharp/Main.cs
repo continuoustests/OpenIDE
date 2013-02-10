@@ -29,12 +29,13 @@ namespace CSharp
 		{
 			if (args.Length == 0)
 				return;
-			
-			
 
             if (args[0] == "initialize") {
 				var writer = new ConsoleResponseWriter();
             	_keyPath = args[1];
+            	_cache = new OutputWriter(new NullResponseWriter());
+            	_dispatcher = new Dispatcher();
+				configureHandlers(_dispatcher);
 
             	writer.Write("initialized");
             	while (args[0] == "initialize") {
