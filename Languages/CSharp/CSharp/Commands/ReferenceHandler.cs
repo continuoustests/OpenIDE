@@ -16,7 +16,7 @@ namespace CSharp.Commands
 		private IProjectHandler _project = new ProjectHandler();
 		
 		public string Usage {
-			get {d
+			get {
 				return
 					Command + "|\"Adds a reference to a project file\"" +
 						"REFERENCE|\"The path to the project or assembly to be referenced\"" +
@@ -30,7 +30,7 @@ namespace CSharp.Commands
 		
 		public ReferenceHandler(Func<string, ProviderSettings> provider, string keyPath)
 		{
-			_provider = provider;f
+			_provider = provider;
 			_keyPath = keyPath;
 		}
 
