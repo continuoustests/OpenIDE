@@ -7,4 +7,3 @@ namespace OpenIDE.Messaging
         void Consume(IMessage message);
     }
 }
-
