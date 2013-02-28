@@ -122,6 +122,7 @@
     <Compile Include="Arguments\Handlers\HelpHandler.cs" />
     <Compile Include="Arguments\Handlers\HandleScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\HandleReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\HandleSnippetHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

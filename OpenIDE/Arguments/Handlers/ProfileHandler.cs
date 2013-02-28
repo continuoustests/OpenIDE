@@ -38,7 +38,7 @@ namespace OpenIDE.Arguments.Handlers
 				name.Add("[--global]", "Clones from active global profile");
 				name.Add("[-g]", "Short version of --global");
 
-				var del = usage.Add("remove", "Removes profile");
+				var del = usage.Add("rm", "Removes profile");
 				name = del.Add("NAME", "Profile name");
 				name.Add("[--global]", "Removes the globally defined profile");
 				name.Add("[-g]", "Short version of --global");
@@ -59,7 +59,7 @@ namespace OpenIDE.Arguments.Handlers
 				listProfiles();
 			else if (args.Arguments.Length == 2 && args.Arguments[0] == "init")
 				createProfile(args);
-			else if (args.Arguments.Length == 2 && args.Arguments[0] == "remove")
+			else if (args.Arguments.Length == 2 && args.Arguments[0] == "rm")
 				deleteProfile(args);
 			else if (args.Arguments.Length == 2 && args.Arguments[0] == "load")
 				loadProfile(args);

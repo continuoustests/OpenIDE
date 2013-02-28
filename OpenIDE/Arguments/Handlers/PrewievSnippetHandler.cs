@@ -31,7 +31,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 
-		public string Command { get { return "snippet-complete"; } }
+		public string Command { get { return "complete"; } }
 		
 		public PrewievSnippetHandler(ICodeEngineLocator codeEngineFactory)
 		{

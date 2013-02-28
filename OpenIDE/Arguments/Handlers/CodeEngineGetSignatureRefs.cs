@@ -1,10 +1,61 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.Language;
 
 namespace OpenIDE.Arguments.Handlers
 {
+	class CodeModelQueryHandler : ICommandHandler
+	{
+		private List<CodeEngineQueryHandler> _handlers = new List<CodeEngineQueryHandler>();
+		private ICodeEngineLocator _codeEngineFactory;
+
+
+		public CommandHandlerParameter Usage {
+			get {
+				var usage = new CommandHandlerParameter(
+					"All",
+					CommandType.FileCommand,
+					Command,
+					"Handles queries against the code model cache");
+				foreach (var handler in _handlers)
+					usage.Add(handler.Usage);
+				return usage;
+			}
+		}
+
+		public CodeModelQueryHandler(ICodeEngineLocator locator)
+		{
+			_codeEngineFactory = locator;
+			_handlers.Add(new CodeEngineGetProjectsHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineGetFilesHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineGetCodeRefsHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineGetSignatureRefsHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineFindSignatureHandler(_codeEngineFactory));
+		}
+
+		public string Command { get { return "codemodel"; } }
+		
+		public void Execute (string[] arguments)
+		{
+			if (arguments.Length == 0)
+				return;
+			var handler = _handlers.FirstOrDefault(x => x.Command == arguments[0]);
+			if (handler == null)
+				return;
+			handler.Execute(getArguments(arguments));
+		}
+
+		private string[] getArguments(string[] args)
+		{
+			var arguments = new List<string>();
+			for (int i = 1; i < args.Length; i++)
+				arguments.Add(args[i]);
+			return arguments.ToArray();
+		}
+	}
+
 	class CodeEngineGetProjectsHandler : CodeEngineQueryHandler 
 	{
 		protected override string _commandDescription {

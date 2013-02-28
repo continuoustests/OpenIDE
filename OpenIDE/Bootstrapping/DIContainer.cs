@@ -61,22 +61,14 @@ namespace OpenIDE.Bootstrapping
 					new ScriptHandler(dispatchMessage),
 					new HandleScriptHandler(dispatchMessage),
 					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
+					new HandleSnippetHandler(ICodeEngineLocator()),
+
+					new CodeModelQueryHandler(ICodeEngineLocator()),
 
 					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
-
-					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
-					new CodeEngineGetFilesHandler(ICodeEngineLocator()),
-					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
-					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
-					new CodeEngineFindSignatureHandler(ICodeEngineLocator()),
 					new MemberLookupHandler(ICodeEngineLocator()),
 					new GoToDefinitionHandler(ICodeEngineLocator()),
-
-					new CreateSnippetHandler(ICodeEngineLocator()),
-					new SnippetEditHandler(ICodeEngineLocator()),
-					new SnippetDeleteHandler(ICodeEngineLocator()),
-					new PrewievSnippetHandler(ICodeEngineLocator()),
 
 					new ProcessStartHandler(),
 					new BringToForegroundHandler(),

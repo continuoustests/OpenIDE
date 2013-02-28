@@ -22,7 +22,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "snippet-delete"; } }
+		public string Command { get { return "rm"; } }
 		
 		public SnippetDeleteHandler(ICodeEngineLocator codeEngineFactory)
 		{

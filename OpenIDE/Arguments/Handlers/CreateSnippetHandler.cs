@@ -23,7 +23,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 
-		public string Command { get { return "snippet-create"; } }
+		public string Command { get { return "new"; } }
 
 		public CreateSnippetHandler(ICodeEngineLocator locator)
 		{

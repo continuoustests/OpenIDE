@@ -22,7 +22,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "snippet-edit"; } }
+		public string Command { get { return "edit"; } }
 		
 		public SnippetEditHandler(ICodeEngineLocator codeEngineFactory)
 		{
