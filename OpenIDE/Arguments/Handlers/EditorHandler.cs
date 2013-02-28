@@ -23,10 +23,7 @@ namespace OpenIDE.Arguments.Handlers
 					"All",
 					CommandType.Run,
 					Command,
-					"Starts the editor of your choice depending on the plugins available in ||newline||" +
-					"addition to launching the code engine backend providing features like ||newline||" +
-					"type search and file explorer. It also initializes the system by running ||newline||" +
-					"whatever is specified in the initialize(.rb) script.");
+					"Initializes the environment by staring the editor, code model and editor engine");
 				usage.Add("PLUGIN_NAME", "The name of the plugin to launch");
 				usage.Add("goto", "Open file on spesific line and column")
 					.Add("FILE|LINE|COLUMN", "| separated filepath, line and column");
