@@ -25,7 +25,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "rscript-edit"; } }
+		public string Command { get { return "edit"; } }
 		
 		public EditReactiveScriptHandler(Action<string> dispatch, PluginLocator locator, string keyPath)
 		{

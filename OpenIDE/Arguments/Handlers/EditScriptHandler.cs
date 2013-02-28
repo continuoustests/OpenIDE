@@ -23,7 +23,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "script-edit"; } }
+		public string Command { get { return "edit"; } }
 	
 		public EditScriptHandler(Action<string> dispatch)
 		{

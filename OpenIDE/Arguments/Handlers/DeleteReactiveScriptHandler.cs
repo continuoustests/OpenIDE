@@ -24,7 +24,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "rscript-delete"; } }
+		public string Command { get { return "rm"; } }
 
 		public DeleteReactiveScriptHandler(PluginLocator locator, string keyPath)
 		{

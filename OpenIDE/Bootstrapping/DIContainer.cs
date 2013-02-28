@@ -58,14 +58,9 @@ namespace OpenIDE.Bootstrapping
 					
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
 					new TouchHandler(dispatchMessage),
-					new CreateScriptHandler(dispatchMessage),
 					new ScriptHandler(dispatchMessage),
-					new EditScriptHandler(dispatchMessage),
-					new DeleteScriptHandler(),
-					new CreateReactiveScriptHandler(dispatchMessage),
-					new EditReactiveScriptHandler(dispatchMessage, PluginLocator(), _settings.RootPath),
-					new DeleteReactiveScriptHandler(PluginLocator(), _settings.RootPath),
-					new ListReactiveScriptsHandler(_settings.RootPath),
+					new HandleScriptHandler(dispatchMessage),
+					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 
 					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),

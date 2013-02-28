@@ -20,7 +20,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "rscript-list"; } }
+		public string Command { get { return "list"; } }
 
 		public ListReactiveScriptsHandler(string token)
 		{

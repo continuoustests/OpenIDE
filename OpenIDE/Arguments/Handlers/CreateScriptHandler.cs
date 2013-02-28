@@ -29,7 +29,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 
-		public string Command { get { return "script-create"; } }
+		public string Command { get { return "new"; } }
 
 		public CreateScriptHandler(Action<string> dispatch)
 		{

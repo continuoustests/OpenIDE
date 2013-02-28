@@ -31,7 +31,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "rscript-create"; } }
+		public string Command { get { return "new"; } }
 		
 		public CreateReactiveScriptHandler(Action<string> dispatch)
 		{

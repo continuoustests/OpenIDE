@@ -22,7 +22,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "script-delete"; } }
+		public string Command { get { return "rm"; } }
 
 		public void Execute(string[] arguments)
 		{
