@@ -38,7 +38,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 
-		public string Command { get { return "configure"; } }
+		public string Command { get { return "conf"; } }
 
 		public ConfigurationHandler(PluginLocator locator) {
 			_pluginLocator = locator;
@@ -47,10 +47,8 @@ namespace OpenIDE.Arguments.Handlers
 		public void Execute(string[] arguments)
 		{
 			if (arguments.Length < 1)
-			{
-				Console.WriteLine("Invalid number of arguments. Usage " + Command + " SETTING");
-				return;
-			}
+				arguments = new[] { "read" }; 
+			
 			var path = Environment.CurrentDirectory;
 
 			if (arguments[0] == "init")

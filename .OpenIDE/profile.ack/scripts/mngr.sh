@@ -17,5 +17,5 @@ if [ "$2" = "get-command-definitions" ]; then
 fi
 
 cd $1
-path=`oi configure read rootpoint`
+path=`oi conf read rootpoint`
 mono --debug $path/PackageManager/oipckmngr/bin/AutoTest.Net/oipckmngr.exe "${@:4}"

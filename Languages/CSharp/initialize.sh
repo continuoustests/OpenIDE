@@ -6,8 +6,8 @@ DEFAULT_LANGUAGE="$2"
 ENABLED_LANGUAGES="$3"
 
 cd "$WORKING_DIR"
-CONFIG_DIR="$(oi configure read rootpoint)"
-SLN="$(oi configure read autotest.solution)"
+CONFIG_DIR="$(oi conf read rootpoint)"
+SLN="$(oi conf read autotest.solution)"
 cd "$ROOT"
 
 WATCH_PATH="$WORKING_DIR"

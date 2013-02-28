@@ -10,11 +10,11 @@ SET ROOTPOINT="null"
 SET SOLUTION="null"
 cd "%WORKING_DIR%"
 
-for /f "" %%i IN ('oi configure read rootpoint') do (
+for /f "" %%i IN ('oi conf read rootpoint') do (
 	SET ROOTPOINT=%%i
 	for /l %%a in (1,1,31) do if "!ROOTPOINT:~-1!"==" " set ROOTPOINT=!ROOTPOINT:~0,-1!
 )
-for /f "" %%i IN ('oi configure read autotest.solution') do (
+for /f "" %%i IN ('oi conf read autotest.solution') do (
 	SET SOLUTION=%%i
 	for /l %%a in (1,1,31) do if "!SOLUTION:~-1!"==" " set SOLUTION=!SOLUTION:~0,-1!
 )
