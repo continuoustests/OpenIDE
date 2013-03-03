@@ -117,13 +117,12 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void runInitScripts()
 		{
-			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			initCodeEngine(appdir);
 			runInitScript(appdir);
 			_pluginLocator().Locate().ToList()
 				.ForEach(plugin => {
 					var language = plugin.GetLanguage();
-					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language + "-plugin")));
+					runInitScript(Path.Combine(Path.GetDirectoryName(plugin.FullPath), language + "-plugin"));
 				});
 			var locator = new ProfileLocator(Environment.CurrentDirectory);
 			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());

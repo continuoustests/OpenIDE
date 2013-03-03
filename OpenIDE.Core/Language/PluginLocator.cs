@@ -4,20 +4,21 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
+using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.Language
 {
 	public class PluginLocator
 	{
 		private string[] _enabledLanguages;
-		private string _languageRoot;
+		private ProfileLocator _profiles;
 		private Action<string> _dispatchMessage;
 		private List<LanguagePlugin> _plugins = new List<LanguagePlugin>();
 
-		public PluginLocator(string[] enabledLanguages, string languageRoot, Action<string> dispatchMessage)
+		public PluginLocator(string[] enabledLanguages, ProfileLocator profiles, Action<string> dispatchMessage)
 		{
 			_enabledLanguages = enabledLanguages;
-			_languageRoot = languageRoot;
+			_profiles = profiles;
 			_dispatchMessage = dispatchMessage;
 		}
 
@@ -52,13 +53,38 @@ namespace OpenIDE.Core.Language
 
 		private string[] getPlugins()
 		{
-			var dir = 
-				Path.Combine(
-					_languageRoot,
-					"Languages");
+			var plugins = new List<string>();
+			var dirs = 
+				new[] {
+					Path.Combine(
+						_profiles.GetLocalProfilePath(
+							_profiles.GetActiveLocalProfile()), "Languages"),
+					Path.Combine(
+						_profiles.GetLocalProfilePath(
+							"default"), "Languages"),
+					Path.Combine(
+						_profiles.GetGlobalProfilePath(
+							_profiles.GetActiveGlobalProfile()), "Languages"),
+					Path.Combine(
+						_profiles.GetGlobalProfilePath(
+							"default"), "Languages")
+				};
+			foreach (var dir in dirs) {
+				var list = getPlugins(dir);
+				plugins.AddRange(
+						list
+							.Where(x => 
+								!plugins.Any(y => Path.GetFileNameWithoutExtension(y) == Path.GetFileNameWithoutExtension(x)))
+							.ToArray());
+			}
+			return plugins.ToArray();
+		}
+
+		private IEnumerable<string> getPlugins(string dir)
+		{
 			if (!Directory.Exists(dir))
 				return new string[] {};
-			return Directory.GetFiles(dir);
+			return Directory.GetFiles(dir);	
 		}
 	}
 }

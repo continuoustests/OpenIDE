@@ -10,12 +10,22 @@ namespace OpenIDE.Core.Profiles
 	public class ProfileLocator
 	{
 		private string _rootPath;
+		private string _appRoot;
 
 		public static string ActiveGlobalProfile { get; set; }
 		public static string ActiveLocalProfile { get; set; }
 
-		public ProfileLocator(string rootPath) {
-			_rootPath = rootPath;
+		public ProfileLocator(string tokenPath) {
+			_rootPath = tokenPath;
+			_appRoot = getAppRoot();
+		}
+
+
+		private string getAppRoot() {
+			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			if (!File.Exists(Path.Combine(path, "oi.exe")))
+				path = Path.GetDirectoryName(path);
+			return path;
 		}
 
 		public string GetGlobalProfilePath(string name) {
@@ -63,7 +73,8 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public string GetGlobalProfilesRoot() {
-			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			//var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var appDir = _appRoot;
 			return Path.Combine(appDir, ".OpenIDE");
 		}
 
@@ -73,7 +84,8 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public string GetGlobalProfileToken() {
-			var appDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ".OpenIDE");
+			//var appDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ".OpenIDE");
+			var appDir = Path.Combine(_appRoot, ".OpenIDE");
 			return Path.Combine(appDir, "active.profile");
 		}
 

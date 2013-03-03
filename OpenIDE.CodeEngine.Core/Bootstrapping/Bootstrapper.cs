@@ -13,6 +13,7 @@ using OpenIDE.Core.Commands;
 using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.Core.Caching;
+using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Windowing;
 
@@ -37,7 +38,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_crawlHandler = new CrawlHandler(_cache, (s) => Logger.Write(s));
 			_pluginLocator = new PluginLocator(
 				enabledLanguages,
-				Path.GetDirectoryName(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)),
+				new ProfileLocator(_path),
 				(msg) => {});
 			initPlugins(_pluginLocator, _crawlHandler);
 

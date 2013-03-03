@@ -10,6 +10,7 @@ using OpenIDE.Arguments.Handlers;
 using OpenIDE.Core.EditorEngineIntegration;
 using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Profiles;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 
@@ -115,7 +116,7 @@ namespace OpenIDE.Bootstrapping
 		{
 			return new PluginLocator(
 				_settings.EnabledLanguages,
-				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				new ProfileLocator(_settings.Path),
 				(command) => dispatchMessage(command));
 		}
 
