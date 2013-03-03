@@ -117,6 +117,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void runInitScripts()
 		{
+			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			initCodeEngine(appdir);
 			runInitScript(appdir);
 			_pluginLocator().Locate().ToList()
