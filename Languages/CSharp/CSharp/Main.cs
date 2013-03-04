@@ -175,7 +175,7 @@ namespace CSharp
 					});
 			var project = resolver.ResolveFor(projectFile);
 			if (project == null)
-				Console.WriteLine("Unsupported poject version for project {0}", projectFile);
+				Console.WriteLine("error|Unsupported poject version for project {0}", projectFile);
 			return new ProviderSettings(projectFile, project);
 		}
 	}
