@@ -76,6 +76,8 @@ namespace OpenIDE.Bootstrapping
 
 					new EventListener(_settings.RootPath),
 
+					new PkgTestHandler(),
+
 					new HelpHandler()
 				});
 			return handlers;
