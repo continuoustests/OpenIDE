@@ -10,6 +10,8 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class DeleteScriptHandler : ICommandHandler
 	{
+		private string _token;
+
 		public CommandHandlerParameter Usage {
 			get {
 					var usage = new CommandHandlerParameter(
@@ -24,11 +26,15 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "rm"; } }
 
+		public DeleteScriptHandler(string token) {
+			_token = token;
+		}
+
 		public void Execute(string[] arguments)
 		{
 			var scripts = new List<Script>();
-			scripts.AddRange(new ScriptLocator(Environment.CurrentDirectory).GetLocalScripts());
-			new ScriptLocator(Environment.CurrentDirectory)
+			scripts.AddRange(new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts());
+			new ScriptLocator(_token, Environment.CurrentDirectory)
 				.GetGlobalScripts()
 				.Where(x => scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
 				.ForEach(x => scripts.Add(x));

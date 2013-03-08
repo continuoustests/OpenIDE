@@ -10,6 +10,11 @@ namespace CoreExtensions
 {
     public static class ProcessExtensions
     {
+        public static void Write(this Process proc, string msg)
+        {
+            proc.StandardInput.WriteLine(msg);
+        }
+
         public static void Run(
             this Process proc,
             string command,

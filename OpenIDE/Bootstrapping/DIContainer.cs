@@ -59,8 +59,8 @@ namespace OpenIDE.Bootstrapping
 					
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
 					new TouchHandler(dispatchMessage),
-					new ScriptHandler(dispatchMessage),
-					new HandleScriptHandler(dispatchMessage),
+					new ScriptHandler(_settings.RootPath, dispatchMessage),
+					new HandleScriptHandler(_settings.RootPath, dispatchMessage),
 					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 					new HandleSnippetHandler(ICodeEngineLocator()),
 
@@ -76,7 +76,7 @@ namespace OpenIDE.Bootstrapping
 
 					new EventListener(_settings.RootPath),
 
-					new PkgTestHandler(),
+					new PkgTestHandler(_settings.RootPath),
 
 					new HelpHandler()
 				});

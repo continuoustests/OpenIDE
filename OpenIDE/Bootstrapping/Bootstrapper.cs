@@ -7,6 +7,7 @@ using System.Linq;
 using OpenIDE.Arguments;
 using OpenIDE.Arguments.Handlers;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Profiles;
 using OpenIDE.Core.CommandBuilding;
 namespace OpenIDE.Bootstrapping
 {
@@ -49,8 +50,8 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
-		private const string DEFAULT_LANGUAGE = "--default-language=";
-		private const string ENABLED_LANGUAGES = "--enabled-languages";
+		private const string DEFAULT_LANGUAGE = "--default.language=";
+		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
 		private string _path;
 		private ICommandHandler[] _handlers;
@@ -58,6 +59,7 @@ namespace OpenIDE.Bootstrapping
 		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
 		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
+		public string TokenPath { get; private set; }
 		public string RootPath { get; private set; }
 		public string Path { get { return _path; } }
 		public string DefaultLanguage { get; private set; }
@@ -67,7 +69,8 @@ namespace OpenIDE.Bootstrapping
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
 			_path = path;
-			RootPath = Configuration.GetConfigPoint(Directory.GetCurrentDirectory());
+			var locator = new ProfileLocator(Environment.CurrentDirectory);
+			RootPath = locator.GetLocalProfilePath("default");
 			if (RootPath == null)
 				RootPath = Directory.GetCurrentDirectory();
 			else

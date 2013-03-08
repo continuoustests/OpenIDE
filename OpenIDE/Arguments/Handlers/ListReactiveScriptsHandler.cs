@@ -29,7 +29,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
-			var globalScripts = new ReactiveScriptLocator(Environment.CurrentDirectory).GetGlobalScripts();
+			var globalScripts = new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetGlobalScripts();
 			if (globalScripts.Length > 0)
 				Console.WriteLine("Global scripts:");
 			foreach (var script in globalScripts)
@@ -38,7 +38,7 @@ namespace OpenIDE.Arguments.Handlers
 			if (globalScripts.Length > 0)
 				Console.WriteLine("");
 				
-			var localScripts = new ReactiveScriptLocator(Environment.CurrentDirectory).GetLocalScripts();
+			var localScripts = new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts();
 			if (localScripts.Length > 0)
 				Console.WriteLine("Local scripts:");
 			foreach (var script in localScripts)

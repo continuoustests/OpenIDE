@@ -12,6 +12,7 @@ namespace OpenIDE.Core.FileSystem
 	public class Script
 	{
 		private string _file;
+		private string _token;
 		private string _workingDirectory;
 		private string _localProfileName;
 		private string _globalProfileName;
@@ -22,13 +23,14 @@ namespace OpenIDE.Core.FileSystem
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 
-		public Script(string workingDirectory, string file)
+		public Script(string token, string workingDirectory, string file)
 		{
 			_file = file;
+			_token = token;
 			Name = Path.GetFileNameWithoutExtension(file);
 			Description = "";
 			_workingDirectory = workingDirectory;
-			var profiles = new ProfileLocator(_workingDirectory);
+			var profiles = new ProfileLocator(_token);
 			_globalProfileName = profiles.GetActiveGlobalProfile();
 			_localProfileName = profiles.GetActiveLocalProfile();
 		}
@@ -97,7 +99,7 @@ namespace OpenIDE.Core.FileSystem
 			var proc = new Process();
 			var startedSuccessfully = true;
 			try {
-				arguments = "\"" + Environment.CurrentDirectory + "\" " + arguments;
+				arguments = "\"" + _workingDirectory + "\" " + arguments;
 				if (Environment.OSVersion.Platform != PlatformID.Unix &&
 					Environment.OSVersion.Platform != PlatformID.MacOSX)
 				{
@@ -109,7 +111,7 @@ namespace OpenIDE.Core.FileSystem
 				proc.StartInfo.UseShellExecute = false;
 				proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 				proc.StartInfo.RedirectStandardOutput = true;
-				proc.StartInfo.WorkingDirectory = _workingDirectory;
+				proc.StartInfo.WorkingDirectory = _token;
 				proc.Start();
 			} catch {
 				startedSuccessfully = false;

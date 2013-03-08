@@ -13,6 +13,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class CreateScriptHandler : ICommandHandler
 	{
+		private string _token;
 		private Action<string> _dispatch;
 
 		public CommandHandlerParameter Usage {
@@ -31,9 +32,10 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "new"; } }
 
-		public CreateScriptHandler(Action<string> dispatch)
+		public CreateScriptHandler(string token, Action<string> dispatch)
 		{
 			_dispatch = dispatch;
+			_token = token;
 		}
 
 		public void Execute(string[] arguments)
@@ -52,13 +54,13 @@ namespace OpenIDE.Arguments.Handlers
 			if (File.Exists(file))
 				return;
 			PathExtensions.CreateDirectories(file);
-			var template = new ScriptLocator(Environment.CurrentDirectory).GetTemplateFor(extension);
+			var template = new ScriptLocator(_token, Environment.CurrentDirectory).GetTemplateFor(extension);
 			var content = "";
 			if (template != null)
 				File.Copy(template, file);
 			else
 			{
-				var templates = new ScriptLocator(Environment.CurrentDirectory).GetTemplates().ToArray();
+				var templates = new ScriptLocator(_token, Environment.CurrentDirectory).GetTemplates().ToArray();
 				if (templates.Length == 0)
 				{
 					File.WriteAllText(file, content);
@@ -92,9 +94,9 @@ namespace OpenIDE.Arguments.Handlers
 		private string getPath(string[] arguments)
 		{
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ScriptLocator(Environment.CurrentDirectory).GetGlobalPath();
+				return new ScriptLocator(_token, Environment.CurrentDirectory).GetGlobalPath();
 			else
-				return new ScriptLocator(Environment.CurrentDirectory).GetLocalPath();
+				return new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalPath();
 		}
 		
 		private void run(string cmd, string arguments)

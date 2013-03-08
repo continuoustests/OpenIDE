@@ -42,6 +42,7 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("CONTENT_FILE", "A file containing insert, remove and replace commands. One command pr line");
 				usage.Add("get-dirty-files", "Queries the editor for all modified files and their content")
 					.Add("[FILE]", "If passed it will only respond with the file specified");
+				usage.Add("command", "Custom editor commands");
 				return usage;
 			}
 		}
@@ -133,7 +134,11 @@ namespace OpenIDE.Arguments.Handlers
 		private void initCodeEngine(string folder)
 		{
 			var defaultLanguage = getDefaultLanguage();
+			if (defaultLanguage == null)
+				defaultLanguage = "none-default-language";
 			var enabledLanguages = getEnabledLanguages();
+			if (enabledLanguages == null)
+				enabledLanguages = "none-enabled-language";
 
 			var cmd = "mono";
 			var arg = "./CodeEngine/OpenIDE.CodeEngine.exe ";
@@ -189,7 +194,7 @@ namespace OpenIDE.Arguments.Handlers
 		private string getEnabledLanguages()
 		{
 			var enabledLanguages = "";
-			if (Bootstrapper.Settings.EnabledLanguages != null)
+			if (Bootstrapper.Settings.EnabledLanguages != null && Bootstrapper.Settings.EnabledLanguages.Length > 0)
 			{
 				enabledLanguages = " \"";
 				Bootstrapper.Settings.EnabledLanguages.ToList()

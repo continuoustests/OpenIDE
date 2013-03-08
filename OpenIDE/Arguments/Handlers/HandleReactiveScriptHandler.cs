@@ -47,7 +47,7 @@ namespace OpenIDE.Arguments.Handlers
 			_dispatch = dispatch;
 			_locator = locator;
 			_handlers.Add(new ListReactiveScriptsHandler(_token));
-			_handlers.Add(new CreateReactiveScriptHandler(_dispatch));
+			_handlers.Add(new CreateReactiveScriptHandler(_token, _dispatch));
 			_handlers.Add(new EditReactiveScriptHandler(_dispatch, _locator, _token));
 			_handlers.Add(new DeleteReactiveScriptHandler(_locator, _token));
 		}

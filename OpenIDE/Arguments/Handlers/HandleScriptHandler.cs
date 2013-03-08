@@ -7,6 +7,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class HandleScriptHandler : ICommandHandler
 	{
+		private string _token;
 		private Action<string> _dispatch;
 		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
 
@@ -34,13 +35,14 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "script"; } }
 
-		public HandleScriptHandler(Action<string> dispatch)
+		public HandleScriptHandler(string token, Action<string> dispatch)
 		{
+			_token = token;
 			_dispatch = dispatch;
-			_handlers.Add(new ScriptHandler(_dispatch));
-			_handlers.Add(new CreateScriptHandler(_dispatch));
-			_handlers.Add(new EditScriptHandler(_dispatch));
-			_handlers.Add(new DeleteScriptHandler());
+			_handlers.Add(new ScriptHandler(_token, _dispatch));
+			_handlers.Add(new CreateScriptHandler(_token, _dispatch));
+			_handlers.Add(new EditScriptHandler(_token, _dispatch));
+			_handlers.Add(new DeleteScriptHandler(_token));
 		}
 
 		public void Execute(string[] arguments)

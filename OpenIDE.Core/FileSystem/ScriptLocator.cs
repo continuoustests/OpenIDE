@@ -11,14 +11,14 @@ namespace OpenIDE.Core.FileSystem
 {
 	public class ReactiveScriptLocator : TemplateLocator 
 	{
-		public ReactiveScriptLocator(string keyPath) : base(keyPath) {
+		public ReactiveScriptLocator(string keyPath, string currentPath) : base(keyPath, currentPath) {
 			_directory = "rscripts";
 		}
 	}
 	
 	public class ScriptLocator : TemplateLocator
 	{
-		public ScriptLocator(string keyPath) : base(keyPath) {
+		public ScriptLocator(string keyPath, string currentPath) : base(keyPath, currentPath) {
 			_directory = "scripts";
 		}
 	}
@@ -27,9 +27,11 @@ namespace OpenIDE.Core.FileSystem
 	{
 		protected string _directory;
 		protected string _keyPath;
+		protected string _currentPath;
 
-		public TemplateLocator(string keyPath) {
+		public TemplateLocator(string keyPath, string currentPath) {
 			_keyPath = keyPath;
+			_currentPath = currentPath;
 		}
 
 		public IEnumerable<string> GetTemplates()
@@ -54,7 +56,7 @@ namespace OpenIDE.Core.FileSystem
 
 		public Script[] GetGlobalScripts()
 		{
-			var locator = new ProfileLocator(_keyPath);
+			var locator = new ProfileLocator(_currentPath);
 			var defaultPath = getPath(locator.GetGlobalProfilePath("default"));
 			var profilePath = GetGlobalPath();
 			return getMergedScripts(defaultPath, profilePath);
@@ -62,7 +64,7 @@ namespace OpenIDE.Core.FileSystem
 
 		public Script[] GetLocalScripts()
 		{
-			var locator = new ProfileLocator(_keyPath);
+			var locator = new ProfileLocator(_currentPath);
 			var defaultPath = locator.GetLocalProfilePath("default");
 			if (defaultPath != null)
 				defaultPath = getPath(defaultPath);
@@ -72,13 +74,13 @@ namespace OpenIDE.Core.FileSystem
 
 		public string GetGlobalPath()
 		{
-			var locator = new ProfileLocator(_keyPath);
+			var locator = new ProfileLocator(_currentPath);
 			return getPath(locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile()));
 		}
 
 		public string GetLocalPath()
 		{
-			var locator = new ProfileLocator(_keyPath);
+			var locator = new ProfileLocator(_currentPath);
 			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
 			if (profilePath == null)
 				return null;
@@ -116,7 +118,7 @@ namespace OpenIDE.Core.FileSystem
 			path = Path.GetFullPath(path);
 			var workingDir = Path.GetDirectoryName(Path.GetDirectoryName(path));
 			return new ScriptFilter().GetScripts(path)
-				.Select(x => new Script(workingDir, x));
+				.Select(x => new Script(_keyPath, _currentPath, x));
 		}
 	}
 }
