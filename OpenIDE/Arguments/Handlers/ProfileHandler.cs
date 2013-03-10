@@ -72,6 +72,8 @@ namespace OpenIDE.Arguments.Handlers
 		private Args getArgs(string[] arguments) {
 			var args = new Args();
 			args.Arguments = arguments.Where(x => !x.StartsWith("-")).ToArray();
+			if (args.Arguments.Length == 0)
+				args.Arguments = new[] { "list" };
 			args.IsGlobal = 
 				arguments.Contains("-g") ||
 				arguments.Contains("--global");

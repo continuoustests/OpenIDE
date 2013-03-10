@@ -68,7 +68,6 @@ namespace oi
 					.Where(x => 
 						 x.Command.Contains(commandName) ||
 						(
-							x.Usage != null && 
 							x.Usage.Parameters.Any(y => y.Required && matchName(y.Name, commandName))
 						));
 				if (handlers.Count() > 0)
@@ -87,9 +86,6 @@ namespace oi
 				.ForEach(x =>
 					{
 						var command = x.Usage;
-						if (command == null)
-							return;
-
 						if (command.Name != Bootstrapper.Settings.DefaultLanguage)
 							UsagePrinter.PrintCommand(command);
 						else

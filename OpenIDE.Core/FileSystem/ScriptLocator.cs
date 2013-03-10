@@ -22,6 +22,13 @@ namespace OpenIDE.Core.FileSystem
 			_directory = "scripts";
 		}
 	}
+	
+	public class TestTemplateLocator : TemplateLocator
+	{
+		public TestTemplateLocator(string keyPath, string currentPath) : base(keyPath, currentPath) {
+			_directory = "test";
+		}
+	}
 
 	public class TemplateLocator 
 	{

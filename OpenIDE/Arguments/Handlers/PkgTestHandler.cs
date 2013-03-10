@@ -92,7 +92,7 @@ namespace OpenIDE.Arguments.Handlers
 									false,
 									Environment.CurrentDirectory,
 									(error, line) => {
-											if (line.StartsWith("initialized|")) {
+											if (line == "initialized" || line.StartsWith("initialized|")) {
 												var chunks = line.Split(new[] {'|'});
 												if (chunks.Length > 1 && chunks[1] == "editor") {
 													new Process().Run("oi", "editor test", false, _testRunLocation);
@@ -172,9 +172,9 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void handleFeedback(Process proc, bool error, string line) {
-			if (line.StartsWith("passed|")) {
+			if (line == "passed" || line.StartsWith("passed|")) {
 				handleTestDone("PASSED ", ConsoleColor.Green);
-			} else if (error || line.StartsWith("failed|")) {
+			} else if (error || line == "failed" || line.StartsWith("failed|")) {
 				if (error)
 					_summary.AppendLine(line);
 				else {

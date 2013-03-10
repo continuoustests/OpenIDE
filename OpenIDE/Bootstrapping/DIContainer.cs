@@ -78,6 +78,8 @@ namespace OpenIDE.Bootstrapping
 
 					new PkgTestHandler(_settings.RootPath),
 
+					new GetCommandsHandler(),
+
 					new HelpHandler()
 				});
 			return handlers;

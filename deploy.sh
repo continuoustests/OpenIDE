@@ -50,6 +50,8 @@ mkdir $DEPLOYDIR/.OpenIDE/scripts/templates
 mkdir $DEPLOYDIR/.OpenIDE/rscripts
 mkdir $DEPLOYDIR/.OpenIDE/rscripts/templates
 
+mkdir $DEPLOYDIR/.OpenIDE/test
+mkdir $DEPLOYDIR/.OpenIDE/test/templates
 
 chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
 chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
@@ -75,6 +77,7 @@ cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
 
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates
+cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
 
 cp $ROOT/Languages/CSharp/C# $DEPLOYDIR/.OpenIDE/Languages/C#
 cp $ROOT/Languages/CSharp/language.oicfgoptions $DEPLOYDIR/.OpenIDE/Languages/C#-plugin/language.oicfgoptions

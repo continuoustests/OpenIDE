@@ -10,8 +10,10 @@
     <RootNamespace>OpenIDE</RootNamespace>
     <AssemblyName>OpenIDE</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags></FileUpgradeFlags>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -124,6 +126,7 @@
     <Compile Include="Arguments\Handlers\HandleReactiveScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\HandleSnippetHandler.cs" />
     <Compile Include="Arguments\Handlers\PkgTestHandler.cs" />
+    <Compile Include="Arguments\Handlers\GetCommandsHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

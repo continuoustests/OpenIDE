@@ -39,7 +39,8 @@ mkdir %DEPLOYDIR%\.OpenIDE\scripts
 mkdir %DEPLOYDIR%\.OpenIDE\scripts\templates
 mkdir %DEPLOYDIR%\.OpenIDE\rscripts
 mkdir %DEPLOYDIR%\.OpenIDE\rscripts\templates
-
+mkdir %DEPLOYDIR%\.OpenIDE\test
+mkdir %DEPLOYDIR%\.OpenIDE\test\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
@@ -60,6 +61,7 @@ copy %BINARYDIR%\OpenIDE.EventListener.exe %DEPLOYDIR%\EventListener\OpenIDE.Eve
 
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates
+xcopy /S /I /E %ROOT%\oi\test-templates %DEPLOYDIR%\.OpenIDE\test\templates
 
 copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\.OpenIDE\Languages\C#.bat
 copy %ROOT%\Languages\CSharp\language.oicfgoptions %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\language.oicfgoptions
