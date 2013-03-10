@@ -22,6 +22,13 @@ namespace OpenIDE.Arguments.Handlers
 		public string Command { get { return "get-commands"; } }
 
 		public void Execute(string[] arguments) {
+			if ((new[] {1,2}).Contains(arguments.Length) && arguments[0] == "help") {
+				if (arguments.Length == 2)
+					arguments = new[] { arguments[1] };
+				else
+					arguments = new string[] { };
+			}
+
 			var args = new Stack<string>();
 			for (int i = arguments.Length - 1; i >= 0; i--) 
 				args.Push(arguments[i]);
@@ -51,7 +58,6 @@ namespace OpenIDE.Arguments.Handlers
 						x.Command == Bootstrapper.Settings.DefaultLanguage);
 			if (defaultLang != null) {
 				parameters.AddRange(defaultLang.Usage.Parameters);
-				parameters.RemoveAll(x => x.Name == defaultLang.Command);
 			}
 
 			printOptions(
