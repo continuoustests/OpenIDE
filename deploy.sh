@@ -79,6 +79,8 @@ cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates
 cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
 
+cp -r $ROOT/oi/rscripts/* $DEPLOYDIR/.OpenIDE/rscripts
+
 cp $ROOT/Languages/CSharp/C# $DEPLOYDIR/.OpenIDE/Languages/C#
 cp $ROOT/Languages/CSharp/language.oicfgoptions $DEPLOYDIR/.OpenIDE/Languages/C#-plugin/language.oicfgoptions
 cp $BINARYDIR/C#.exe $DEPLOYDIR/.OpenIDE/Languages/C#-plugin/C#.exe

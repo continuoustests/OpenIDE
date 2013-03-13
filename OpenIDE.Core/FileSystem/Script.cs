@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Profiles;
+using CoreExtensions;
 
 namespace OpenIDE.Core.FileSystem
 {
@@ -35,10 +36,10 @@ namespace OpenIDE.Core.FileSystem
 			_localProfileName = profiles.GetActiveLocalProfile();
 		}
 
-		public IEnumerable<string> Run(string arguments)
+		public void Run(string arguments, Action<string> onLine)
 		{
 			arguments = " \"" + _globalProfileName + "\" \"" + _localProfileName + "\" " + arguments;
-			return run(arguments);
+			run(arguments, onLine);
 		}
 
 		private IEnumerable<BaseCommandHandlerParameter> getUsages()
@@ -85,47 +86,27 @@ namespace OpenIDE.Core.FileSystem
 		private string ToSingleLine(string arguments)
 		{
 			var sb = new StringBuilder();
-			run(arguments).ToList()
-				.ForEach(x => 
-					{
-						sb.Append(x);
-					});
+			run(arguments, (line) => sb.Append(line));
 			return sb.ToString();
 		}
 
-		private IEnumerable<string> run(string arguments)
+		private void run(string arguments, Action<string> onLine)
 		{
 			var cmd = _file;
+            arguments = "\"" + _workingDirectory + "\" " + arguments;
 			var proc = new Process();
-			var startedSuccessfully = true;
-			try {
-				arguments = "\"" + _workingDirectory + "\" " + arguments;
-				if (Environment.OSVersion.Platform != PlatformID.Unix &&
-					Environment.OSVersion.Platform != PlatformID.MacOSX)
-				{
-					arguments = "/c \"" + ("\"" + cmd + "\" " + arguments).Replace ("\"", "^\"") + "\"";
-					cmd = "cmd.exe";
-				}
-				proc.StartInfo = new ProcessStartInfo(cmd, arguments);
-				proc.StartInfo.CreateNoWindow = true;
-				proc.StartInfo.UseShellExecute = false;
-				proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-				proc.StartInfo.RedirectStandardOutput = true;
-				proc.StartInfo.WorkingDirectory = _token;
-				proc.Start();
-			} catch {
-				startedSuccessfully = false;
-			}
-			if (startedSuccessfully)
-			{
-				while (true)
-				{
-					var line = proc.StandardOutput.ReadLine();
-					if (line == null)
-						break;
-					yield return line;
-				}
-			}
+			proc
+				.Query(
+					cmd,
+					arguments,
+					false,
+					_token,
+					(error, line) => {
+							if (error && !line.StartsWith("error|"))
+								onLine("error|" + error);
+							else
+								onLine(line);
+						});
 		}
 	}
 }

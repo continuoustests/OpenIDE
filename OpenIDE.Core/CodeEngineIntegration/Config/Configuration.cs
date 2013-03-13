@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Profiles;
@@ -8,6 +9,23 @@ using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE.Core.Config
 {
+	public class ConfigurationSetting
+	{
+		public string Key { get; private set; }
+		public string Value { get; private set; }
+
+		public ConfigurationSetting(string key, string value) {
+			Key = key;
+			Value = value;
+		}
+
+		public string[] SplitBy(string delimiter) {
+			if (Value == null)
+				return new string[] {};
+			return Value.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+		}
+	}
+
 	public class Configuration
 	{
 		private const string DEFAULT_LANGUAGE_SETTING = "default.language";
@@ -51,6 +69,41 @@ namespace OpenIDE.Core.Config
 		public static bool IsConfigured(string path)
 		{
 			return getConfigPoint(path) != null;
+		}
+		
+		public ConfigurationSetting[] GetSettingsStartingWith(string setting)
+		{
+			if (ConfigurationFile == null)
+				ConfigurationFile = GetConfigFile(_path);
+			if (ConfigurationFile == null)
+				return new ConfigurationSetting[] {};
+			var settings = new List<ConfigurationSetting>();
+			foreach (var rawLine in File.ReadAllLines(ConfigurationFile)) {
+				var line = rawLine.Trim(new[] { ' ', '\t' });
+				var key = getTag(line);
+				if (key.StartsWith(setting)) {
+					var value = getValue(line);
+					settings.Add(new ConfigurationSetting(key, value));
+				}
+			}
+			return settings.ToArray();
+		}
+
+		public ConfigurationSetting Get(string setting)
+		{
+			if (ConfigurationFile == null)
+				ConfigurationFile = GetConfigFile(_path);
+			if (ConfigurationFile == null)
+				return null;
+			ConfigurationSetting cfgSetting = null;
+			foreach (var rawLine in File.ReadAllLines(ConfigurationFile)) {
+				var line = rawLine.Trim(new[] { ' ', '\t' });
+				if (getTag(line) == setting) {
+					var value = getValue(line);
+					cfgSetting = new ConfigurationSetting(setting, value);
+				}
+			}
+			return cfgSetting;
 		}
 
 		public void Write(string setting)

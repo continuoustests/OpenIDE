@@ -10,6 +10,7 @@ using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Config;
+using CoreExtensions;
 namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
@@ -173,14 +174,12 @@ namespace OpenIDE.Arguments.Handlers
 			var defaultLanguage = getDefaultLanguage();
 			var enabledLanguages = getEnabledLanguages();
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(
-				initscript,
-				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = folder;
-			proc.Start();
+			proc
+				.Spawn(
+					initscript,
+					"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages,
+					false,
+					folder);
 		}
 
 		private string getDefaultLanguage()

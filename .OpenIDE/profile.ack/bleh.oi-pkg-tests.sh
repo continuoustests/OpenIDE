@@ -2,7 +2,7 @@
 
 # Parameter 1: Current directory for test oi session
 
-echo "initialized|editor"
+echo "initialized"
 #echo "initialized|"
 while IFS='|' read -ra COMMAND; do
 	if [ "${COMMAND[0]}" == "shutdown" ] ; then
@@ -21,7 +21,6 @@ while IFS='|' read -ra COMMAND; do
 				IFS='|' read -ra VALUE
 				if [ "${VALUE}" != "true" ] ; then
 					echo "failed|"
-					
 				else
 					echo "passed|"
 				fi

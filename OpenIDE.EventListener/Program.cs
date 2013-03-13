@@ -15,10 +15,16 @@ namespace OpenIDE.EventListener
 		{
 			Console.WriteLine("Connecting to: " + Environment.CurrentDirectory);
 			var client = new EventClient((m) => Console.WriteLine(m));
-			client.Connect(Environment.CurrentDirectory);
-			Thread.Sleep(20000);
-			while (client.IsConnected)
-				Thread.Sleep(50);
+			while (true) {
+				client.Connect(Environment.CurrentDirectory);
+				if (!client.IsConnected) {
+					Thread.Sleep(50);
+					continue;
+				}
+				while (client.IsConnected)
+					Thread.Sleep(50);
+				break;
+			}
 		}
 	}
 

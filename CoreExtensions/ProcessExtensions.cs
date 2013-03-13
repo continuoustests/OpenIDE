@@ -10,6 +10,8 @@ namespace CoreExtensions
 {
     public static class ProcessExtensions
     {
+        public static Func<string,string> GetInterpreter = (file) => null;
+
         public static void Write(this Process proc, string msg)
         {
             proc.StandardInput.WriteLine(msg);
@@ -22,9 +24,22 @@ namespace CoreExtensions
             bool visible,
             string workingDir)
         {
+            prepareInterpreter(ref command, ref arguments);
             prepareProcess(proc, command, arguments, visible, workingDir);
             proc.Start();
 			proc.WaitForExit();
+        }
+
+        public static void Spawn(
+            this Process proc,
+            string command,
+            string arguments,
+            bool visible,
+            string workingDir)
+        {
+            prepareInterpreter(ref command, ref arguments);
+            prepareProcess(proc, command, arguments, visible, workingDir);
+            proc.Start();
         }
 
         public static void Query(
@@ -58,25 +73,15 @@ namespace CoreExtensions
 			Action<bool, string> onRecievedLine)
         {
             string tempFile = null;
-            if (Environment.OSVersion.Platform != PlatformID.Unix &&
-                Environment.OSVersion.Platform != PlatformID.MacOSX)
-            {
-                var illagalChars = new[] {"&", "<", ">", "(", ")", "@", "^", "|"};
-                if (command.Contains(" ") ||
-                    illagalChars.Any(x => arguments.Contains(x))) {
-                    // Windows freaks when getting the | character
-                    // Have it run a temporary bat file with command as contents
-                    tempFile = Path.GetTempFileName() + ".bat";
-                    if (File.Exists(tempFile))
-                        File.Delete(tempFile);
-                    File.WriteAllText(tempFile, "\"" + command + "\" " + arguments);
-                    arguments = "/c " + tempFile;
-                } else {
-                    arguments = "/c " + 
-                        "^\"" + batchEscape(command) + "^\" " +
-                        batchEscape(arguments);
+            if (!prepareInterpreter(ref command, ref arguments)) {
+                if (Environment.OSVersion.Platform != PlatformID.Unix &&
+                    Environment.OSVersion.Platform != PlatformID.MacOSX)
+                {
+                    if (Path.GetExtension(command).ToLower() != ".exe") {
+                        arguments = getBatchArguments(command, arguments, ref tempFile);
+                        command = "cmd.exe";
+                    }
                 }
-                command = "cmd.exe";
             }
 			
 			var exit = false;
@@ -106,15 +111,43 @@ namespace CoreExtensions
             if (proc.Start())
             {
 				proc.BeginOutputReadLine();
-				while (!exit)
-					System.Threading.Thread.Sleep(10);
+                proc.BeginErrorReadLine();
+                proc.WaitForExit();
             }
             proc.OutputDataReceived -= onOutputLine;
             proc.ErrorDataReceived -= onErrorLine;
-            proc.WaitForExit();
             if (tempFile != null && File.Exists(tempFile))
                 File.Delete(tempFile);
             return proc.ExitCode;
+        }
+
+        private static bool prepareInterpreter(ref string command, ref string arguments) {
+            var interpreter = GetInterpreter(command);
+            if (interpreter != null) {
+                command = interpreter;
+                arguments = "\"" + command + "\" " + arguments;
+                return true;
+            }
+            return false;
+        }
+
+        private static string getBatchArguments(string command, string arguments, ref string tempFile) {
+            var illagalChars = new[] {"&", "<", ">", "(", ")", "@", "^", "|"};
+            if (command.Contains(" ") ||
+                illagalChars.Any(x => arguments.Contains(x))) {
+                // Windows freaks when getting the | character
+                // Have it run a temporary bat file with command as contents
+                tempFile = Path.GetTempFileName() + ".bat";
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+                File.WriteAllText(tempFile, "\"" + command + "\" " + arguments);
+                arguments = "/c " + tempFile;
+            } else {
+                arguments = "/c " + 
+                    "^\"" + batchEscape(command) + "^\" " +
+                    batchEscape(arguments);
+            }
+            return arguments;
         }
 
         private static string batchEscape(string text) {
@@ -136,6 +169,6 @@ namespace CoreExtensions
                 info.WindowStyle = ProcessWindowStyle.Hidden;
             info.WorkingDirectory = workingDir;
             proc.StartInfo = info;
-        }
+        }                
     }
 }

@@ -51,9 +51,13 @@ namespace OpenIDE.Arguments.Handlers
 			var profiles = new ProfileLocator(_token);
 
 			var testFiles = new List<string>();
-			testFiles
-				.AddRange(
-					getTests(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile())));
+			if (arguments.Length > 0 && File.Exists(arguments[0])) {
+				testFiles.Add(arguments[0]);
+			} else {
+				testFiles
+					.AddRange(
+						getTests(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile())));
+			}
 
 			foreach (var testFile in testFiles) {
 				
@@ -144,14 +148,15 @@ namespace OpenIDE.Arguments.Handlers
 				}
 
 				if (useEditor) {
+					Thread.Sleep(4000);
 					new Process().Run("oi", "editor command kill", false, _testRunLocation);
 					Thread.Sleep(3000);
 				}
-				eventListener.Abort();
 
 				ask(proc, "shutdown");
 				while (!runCompleted)
 					Thread.Sleep(10);
+				eventListener.Abort();
 
 				if (Directory.Exists(_testRunLocation))
 					Directory.Delete(_testRunLocation, true);
@@ -208,9 +213,15 @@ namespace OpenIDE.Arguments.Handlers
 				runCommand(line.Substring(8, line.Length - 8));
 			} else if (line.StartsWith("hasoutput|")) {
 				var pattern = line.Substring(10, line.Length - 10);
-				var result = _outputs.Contains(pattern);
+				var result = _outputs.Any(x => x.Trim() == pattern.Trim());
 				if (!result)
 					_asserts.Add("Expected (output): " + pattern);
+				ask(proc, result.ToString().ToLower());
+			} else if (line.StartsWith("hasevent|")) {
+				var pattern = line.Substring(9, line.Length - 9);
+				var result = _events.Any(x => x.Trim() == pattern.Trim());
+				if (!result)
+					_asserts.Add("Expected (event): " + pattern);
 				ask(proc, result.ToString().ToLower());
 			} else {
 				_summary.AppendLine("\t" + line);

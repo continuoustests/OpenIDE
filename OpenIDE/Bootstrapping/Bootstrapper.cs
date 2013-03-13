@@ -7,13 +7,16 @@ using System.Linq;
 using OpenIDE.Arguments;
 using OpenIDE.Arguments.Handlers;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Configs;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.CommandBuilding;
+using CoreExtensions;
 namespace OpenIDE.Bootstrapping
 {
 	public static class Bootstrapper
 	{
 		private static DIContainer _container;
+		private static Interpreters _interpreters;
 
 		public static AppSettings Settings = null; 
 		
@@ -24,6 +27,12 @@ namespace OpenIDE.Bootstrapping
 					Assembly.GetExecutingAssembly().Location),
 					getDefaultHandlers,
 					getLanguageHandlers);
+			_interpreters = new Interpreters(Environment.CurrentDirectory);
+			ProcessExtensions.GetInterpreter = 
+				(file) => {
+						return _interpreters
+							.GetInterpreterFor(Path.GetExtension(file));
+					};
 			_container = new DIContainer(Settings);
 		}
 		
@@ -50,6 +59,7 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
+		private const string INTERPRETERPREFIX = "interpreter.";
 		private const string DEFAULT_LANGUAGE = "--default.language=";
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
@@ -143,6 +153,6 @@ namespace OpenIDE.Bootstrapping
 				}
 			}
 			return newArgs.ToArray();
-		}
+		}		
 	}
 }
