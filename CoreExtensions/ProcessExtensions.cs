@@ -110,7 +110,7 @@ namespace CoreExtensions
             proc.ErrorDataReceived += onErrorLine;
             if (proc.Start())
             {
-				proc.BeginOutputReadLine();
+                proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
                 proc.WaitForExit();
             }

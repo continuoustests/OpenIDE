@@ -21,7 +21,7 @@ namespace OpenIDE.EventListener
 					Thread.Sleep(50);
 					continue;
 				}
-				Console.WriteLine("Client is connected");
+				Console.WriteLine("Connected");
 				while (client.IsConnected)
 					Thread.Sleep(50);
 				break;
