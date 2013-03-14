@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace OpenIDE.Arguments.Handlers
 		private bool _verbose;
 		private bool _showoutputs;
 		private bool _showevents;
+		private bool _printOnlyErrorsAndInconclusives;
 		private StringBuilder _summary = new StringBuilder();
 		private List<string> _events;
 		private List<string> _outputs;
@@ -34,6 +36,7 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("-v", "Verbose mode prints running tests");
 				usage.Add("-o", "Prints outputs for failing tests");
 				usage.Add("-e", "Prints events for failing tests");
+				usage.Add("--only-errors", "Prints only failuers and inconclusives");
 				return usage;
 			}
 		}
@@ -48,6 +51,7 @@ namespace OpenIDE.Arguments.Handlers
 			_verbose = arguments.Contains("-v");
 			_showoutputs = arguments.Contains("-o");
 			_showevents = arguments.Contains("-e");
+			_printOnlyErrorsAndInconclusives = arguments.Contains("--only-errors");
 			var profiles = new ProfileLocator(_token);
 
 			var testFiles = new List<string>();
@@ -56,11 +60,21 @@ namespace OpenIDE.Arguments.Handlers
 			} else {
 				testFiles
 					.AddRange(
-						getTests(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile())));
+						getTests(profiles.GetLocalProfilePath("default")));
+				testFiles
+					.AddRange(
+						getTests(profiles.GetGlobalProfilePath("default")));
+				testFiles
+					.AddRange(
+						getTests(
+							Path.GetDirectoryName(
+								Assembly.GetExecutingAssembly().Location)));
 			}
 
 			foreach (var testFile in testFiles) {
 				
+				var systemStarted = false;
+				var runCompleted = false;
 				var eventListener = new Thread(() => {
 							new Process()
 								.Query(
@@ -69,10 +83,13 @@ namespace OpenIDE.Arguments.Handlers
 									false,
 									_testRunLocation,
 									(error, line) => {
+											if (line == "codeengine started")
+												systemStarted = true;
+											if (line == "codeengine stopped")
+												runCompleted = true;
 											_events.Add(line);
 										});
 						});
-				var runCompleted = false;
 				var isQuerying = false;
 				var useEditor = false;
 				var tests = new List<string>();
@@ -100,8 +117,9 @@ namespace OpenIDE.Arguments.Handlers
 												var chunks = line.Split(new[] {'|'});
 												if (chunks.Length > 1 && chunks[1] == "editor") {
 													new Process().Run("oi", "editor test", false, _testRunLocation);
+													while (!systemStarted)
+														Thread.Sleep(10);
 													useEditor = true;
-													Thread.Sleep(2000);
 												}
 			        							proc = testProc;
 			        							return;
@@ -148,9 +166,7 @@ namespace OpenIDE.Arguments.Handlers
 				}
 
 				if (useEditor) {
-					Thread.Sleep(4000);
 					new Process().Run("oi", "editor command kill", false, _testRunLocation);
-					Thread.Sleep(3000);
 				}
 
 				ask(proc, "shutdown");
@@ -178,7 +194,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void handleFeedback(Process proc, bool error, string line) {
 			if (line == "passed" || line.StartsWith("passed|")) {
-				handleTestDone("PASSED ", ConsoleColor.Green);
+				handleTestDone("PASSED ", ConsoleColor.Green, !_printOnlyErrorsAndInconclusives);
 			} else if (error || line == "failed" || line.StartsWith("failed|")) {
 				if (error)
 					_summary.AppendLine(line);
@@ -251,12 +267,18 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void handleTestDone(string state, ConsoleColor color) {
-			Console.SetCursorPosition(0, Console.CursorTop);
-			Console.ForegroundColor = color;
-			Console.Write(state);
-			Console.ResetColor();
-			Console.WriteLine(_currentTest + "        ");
-			writeSummary();
+			handleTestDone(state, color, true);
+		}
+
+		private void handleTestDone(string state, ConsoleColor color, bool print) {
+			if (print) {
+				Console.SetCursorPosition(0, Console.CursorTop);
+				Console.ForegroundColor = color;
+				Console.Write(state);
+				Console.ResetColor();
+				Console.WriteLine(_currentTest + "        ");
+				writeSummary();
+			}
 			_currentTest = null;
 		}
 

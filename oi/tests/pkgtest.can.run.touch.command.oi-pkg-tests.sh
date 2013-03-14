@@ -34,18 +34,22 @@ while IFS='|' read -ra COMMAND; do
 
 	# Write one line pr test
 	if [ "${COMMAND[0]}" == "get-tests" ] ; then
-		echo "When test produces events we should be able to assert on them"
+		echo "When running the touch command a file should be created and a goto event should be emitted"
 	fi
 
 	# Handling test runs
 	if [ "${COMMAND[0]}" == "test" ] ; then
 		case "${COMMAND[1]}" in
-			"When test produces events we should be able to assert on them")
+			"When running the touch command a file should be created and a goto event should be emitted")
 				echo "command|touch bleh.txt"
-				echo "hasevent|codemodel raw-filesystem-change-filecreated \"$1/bleh.txt\""
+				echo "hasevent|goto \"$1/bleh.txt|0|0\""
 				IFS='|' read -ra VALUE
 				if [ "${VALUE}" == "true" ] ; then
-					echo "passed"
+					if [ -f "$1/bleh.txt" ] ; then
+						echo "passed"
+					else
+						echo "failed"
+					fi
 				else
 					echo "failed"
 				fi

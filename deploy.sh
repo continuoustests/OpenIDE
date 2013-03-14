@@ -22,6 +22,7 @@ rm -r $DEPLOYDIR/*
 mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
 mkdir $DEPLOYDIR/EventListener
+mkdir $DEPLOYDIR/tests
 
 
 
@@ -74,6 +75,7 @@ cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/CodeEngine/
 cp $ROOT/lib/FSWatcher/FSWatcher.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
+cp -r $ROOT/oi/tests/* $DEPLOYDIR/tests
 
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates

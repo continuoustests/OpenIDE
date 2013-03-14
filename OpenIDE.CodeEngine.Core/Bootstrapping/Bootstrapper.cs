@@ -103,13 +103,16 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 
         private static void shutdownPlugins(PluginLocator locator, CrawlHandler handler)
 		{
-			var plugins = locator.Locate();
-			foreach (var plugin in plugins) {
-				try {
-                    plugin.Shutdown();
-				} catch (Exception ex) {
-					Logger.Write(ex.ToString());
+			try {
+				var plugins = locator.Locate();
+				foreach (var plugin in plugins) {
+					try {
+	                    plugin.Shutdown();
+					} catch (Exception ex) {
+						Logger.Write(ex.ToString());
+					}
 				}
+			} catch {
 			}
 		}
 		

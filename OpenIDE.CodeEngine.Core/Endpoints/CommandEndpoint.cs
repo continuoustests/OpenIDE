@@ -85,10 +85,12 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		{
 			_server.Start();
 			writeInstanceInfo(_keyPath);
+			_eventEndpoint.Send("codeengine started");
 		}
 		
 		public void Stop()
 		{
+			_eventEndpoint.Send("codeengine stopped");
 			if (File.Exists(_instanceFile))
 				File.Delete(_instanceFile);
 		}
