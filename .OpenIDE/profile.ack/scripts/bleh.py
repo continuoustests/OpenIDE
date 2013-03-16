@@ -16,20 +16,7 @@ import sys
 # To post an error print to std output prefixed by error|
 
 def main(argv):
-	if len(argv) > 1:
-		if argv[2] == 'get-command-definitions':
-			# Definition format usually represented as a single line:
-
-			# Script description|
-			# command1|"Command1 description"
-			# 	param|"Param description" end
-			# end
-			# command2|"Command2 description"
-			# 	param|"Param description" end
-			# end
-
-			print "Script description"
-			return
+	print "initialized"
 
 if __name__ == "__main__":
 	main(sys.argv)
