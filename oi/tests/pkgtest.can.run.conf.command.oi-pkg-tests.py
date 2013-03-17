@@ -9,7 +9,11 @@ def getTests():
 		"When adding a simple setting we can read it out":
 			canReadout,
 		"When finding a oicfgoptions file it is listed by the list command":
-			canFindCfgOption
+			canFindCfgOption,
+		"Can read config file location":
+			canFindLocalCfgFile,
+		"Can read config point":
+			canReadCfgPoint
 	}
 
 def writeToFile(file, content):
@@ -31,6 +35,16 @@ def canFindCfgOption():
 	tests.out("command|conf list")
 	expected = "custom.setting                          // This is a custom setting"
 	tests.assertOn(tests.hasOutput(expected))
+
+def canFindLocalCfgFile():
+	cfgfile = os.path.join(os.path.join(sys.argv[1], ".OpenIDE"), "oi.config")
+	tests.out("command|conf read cfgfile")
+	tests.assertOn(tests.hasOutput(cfgfile))
+
+def canReadCfgPoint():
+	cfgfile = os.path.join(sys.argv[1], ".OpenIDE")
+	tests.out("command|conf read cfgpoint")
+	tests.assertOn(tests.hasOutput(cfgfile))
 
 if __name__ == "__main__":
 	tests.main("initialized", getTests)
