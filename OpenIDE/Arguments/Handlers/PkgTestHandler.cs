@@ -84,7 +84,7 @@ namespace OpenIDE.Arguments.Handlers
 			foreach (var testFile in testFiles) {
 				
 				_testRunLocation = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
-				log("Running {0} in {1}", testFile, _testRunLocation);
+				Console.WriteLine("Testing: {0}", testFile);
 				var eventListenerStarted = false;
 				var systemStarted = false;
 				var runCompleted = false;
@@ -223,6 +223,7 @@ namespace OpenIDE.Arguments.Handlers
 					writeInconclusive();
 				_currentTest = null;
 				log("Test run finished");
+				Console.WriteLine();
 			}
 		}
 
