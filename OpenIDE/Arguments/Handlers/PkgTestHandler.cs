@@ -23,6 +23,7 @@ namespace OpenIDE.Arguments.Handlers
 		private bool _showoutputs;
 		private bool _showevents;
 		private bool _printOnlyErrorsAndInconclusives;
+		private bool _logging;
 		private StringBuilder _summary = new StringBuilder();
 		private List<string> _events;
 		private List<string> _outputs;
@@ -39,6 +40,7 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("-o", "Prints outputs for failing tests");
 				usage.Add("-e", "Prints events for failing tests");
 				usage.Add("--only-errors", "Prints only failuers and inconclusives");
+				usage.Add("-l", "Logging");
 				return usage;
 			}
 		}
@@ -49,11 +51,17 @@ namespace OpenIDE.Arguments.Handlers
 			_token = token;
 		}
 
+		private void log(string message, params object[] args) {
+			if (_logging)
+				Console.WriteLine(message, args);
+		}
+
 		public void Execute(string[] arguments) {
 			_verbose = arguments.Contains("-v");
 			_showoutputs = arguments.Contains("-o");
 			_showevents = arguments.Contains("-e");
 			_printOnlyErrorsAndInconclusives = arguments.Contains("--only-errors");
+			_logging = arguments.Contains("-l");
 			var profiles = new ProfileLocator(_token);
 
 			var testFiles = new List<string>();
@@ -76,29 +84,38 @@ namespace OpenIDE.Arguments.Handlers
 			foreach (var testFile in testFiles) {
 				
 				_testRunLocation = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
+				log("Running {0} in {1}", testFile, _testRunLocation);
 				var eventListenerStarted = false;
 				var systemStarted = false;
 				var runCompleted = false;
 				var eventListener = new Thread(() => {
 							var eventSocketClient = new EventStuff.EventClient(
 								(line) => {
-											if (line == "codeengine started")
+											if (line == "codeengine started") {
+												log("Code engine started");
 												systemStarted = true;
-											if (line == "codeengine stopped")
+											} if (line == "codeengine stopped") {
+												log("Code engine stopped");
 												runCompleted = true;
+											}
 											_events.Add(line);
 										});
 							while (true) {
 								eventSocketClient.Connect(_testRunLocation);
+								log("Event listener connecting");
 								eventListenerStarted = true;
 								if (!eventSocketClient.IsConnected) {
 									Thread.Sleep(10);
+									if (runCompleted || systemStarted)
+										break;
 									continue;
 								}
+								log("Event listener connected");
 								while (eventSocketClient.IsConnected)
 									Thread.Sleep(10);
 								break;
 							}
+							eventListenerStarted = false;
 						});
 				var isQuerying = false;
 				var useEditor = false;
@@ -110,10 +127,12 @@ namespace OpenIDE.Arguments.Handlers
 					_outputs = new List<string>();
 					_asserts = new List<string>();
 
+					log("Initializing test location");
 					runCommand("init");
 					eventListener.Start();
 
 					new Thread(() => {
+							log("Starting test process");
 							var testProc = new Process();
 							testProc
 								.Query(
@@ -123,14 +142,18 @@ namespace OpenIDE.Arguments.Handlers
 									Environment.CurrentDirectory,
 									(error, line) => {
 											if (line == "initialized" || line.StartsWith("initialized|")) {
+												log("Test file initialized");
 			        							proc = testProc;
 												var chunks = line.Split(new[] {'|'});
 												if (chunks.Length > 1 && chunks[1] == "editor") {
 													while (!eventListenerStarted)
 														Thread.Sleep(10);
+													log("Starting editor");
 													new Process().Run("oi", "editor test", false, _testRunLocation);
+													log("Editor launched");
 													useEditor = true;
 												} else {
+													log("System started");
 													systemStarted = true;
 												}
 			        							return;
@@ -148,9 +171,11 @@ namespace OpenIDE.Arguments.Handlers
 					Console.WriteLine(ex.ToString());
 				}
 
+				log("Waiting for system to complete loading");
 				while (!systemStarted)
 					Thread.Sleep(10);
 
+				log("Getting tests");
 				isQuerying = ask(proc, "get-tests");
 				while (isQuerying)
 					Thread.Sleep(10);
@@ -164,6 +189,7 @@ namespace OpenIDE.Arguments.Handlers
 				foreach (var test in tests) {
 					if (_currentTest != null)
 						writeInconclusive();
+					log("Running test: " + test);
 					_outputs.Clear();
 					_events.Clear();
 					_asserts.Clear();
@@ -177,13 +203,18 @@ namespace OpenIDE.Arguments.Handlers
 				}
 
 				if (useEditor) {
+					log("Shuting down editor");
 					new Process().Run("oi", "editor command kill", false, _testRunLocation);
 				}
 
+				log("Shuting down system");
 				ask(proc, "shutdown");
 				while (!runCompleted)
 					Thread.Sleep(10);
-				eventListener.Abort();
+
+				log("Waiting for event listener to stop");
+				while (eventListenerStarted)
+					Thread.Sleep(10);
 
 				if (Directory.Exists(_testRunLocation))
 					Directory.Delete(_testRunLocation, true);
@@ -191,6 +222,7 @@ namespace OpenIDE.Arguments.Handlers
 				if (_currentTest != null)
 					writeInconclusive();
 				_currentTest = null;
+				log("Test run finished");
 			}
 		}
 
@@ -285,7 +317,10 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void handleTestDone(string state, ConsoleColor color, bool print) {
 			if (print) {
-				Console.SetCursorPosition(0, Console.CursorTop);
+				try {
+					Console.SetCursorPosition(0, Console.CursorTop);
+				} catch {
+				}
 				Console.ForegroundColor = color;
 				Console.Write(state);
 				Console.ResetColor();
@@ -473,7 +508,6 @@ namespace EventStuff
 			} 
 			catch 
 			{
-				Console.WriteLine("Reconnecting");
                 Reconnect(retryCount);
 			}
         }
