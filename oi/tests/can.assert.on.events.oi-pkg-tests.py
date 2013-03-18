@@ -11,9 +11,10 @@ def getTests():
 	}
 
 def canAssertOnEvents():
+	file = os.path.join(sys.argv[1], "bleh.txt")
 	tests.out("command|touch bleh.txt")
 	tests.out("command|conf read test.setting")
-	event = "codemodel raw-filesystem-change-filecreated \"" + sys.argv[1] + "/bleh.txt\""
+	event = "codemodel raw-filesystem-change-filecreated \"" + file + "\""
 	tests.assertOn(tests.hasEvent(event))
 
 if __name__ == "__main__":

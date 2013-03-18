@@ -13,7 +13,7 @@ def getTests():
 def canRunTouch():
 	tests.out("command|touch bleh.txt")
 	result = False
-	file = sys.argv[1] + "/bleh.txt"
+	file = os.path.join(sys.argv[1], "bleh.txt")
 	event = "goto \"" + file + "|0|0\""
 	result = tests.hasEvent(event)
 	if result:
