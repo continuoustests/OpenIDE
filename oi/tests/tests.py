@@ -22,6 +22,10 @@ def hasEvent(value):
 	line = sys.stdin.readline().rstrip()
 	return line == "true"
 
+def get(value):
+	out("get|" + value)
+	return sys.stdin.readline().rstrip()
+
 def main(init, getTests):
 	out(init)
 	while True:

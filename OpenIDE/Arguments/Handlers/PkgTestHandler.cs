@@ -250,6 +250,8 @@ namespace OpenIDE.Arguments.Handlers
 				if (!result)
 					_asserts.Add("Expected (event): " + pattern);
 				ask(proc, result.ToString().ToLower());
+			} else if (line == "get|applocation") {
+				ask(proc, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 			} else {
 				_summary.AppendLine("\t" + line);
 			}

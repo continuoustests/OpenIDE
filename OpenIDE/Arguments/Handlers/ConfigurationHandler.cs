@@ -26,7 +26,7 @@ namespace OpenIDE.Arguments.Handlers
 				read.Add("cfgfile", "Location of nearest configuration file");
 				read.Add("cfgpoint", "Location of nearest configuration point");
 				read.Add("rootpoint", "Location of current root location");
-				read.Add("SETTING_NAME", "The name of the setting to print the value of. Supports wildcard match (global fallback)");
+				read.Add("SETTING_NAME", "Setting to print the value of. Supports wildcard (global fallback)");
 				read.Add("[--global]", "Forces configuration command to be directed towards global config");
 				read.Add("[-g]", "Short version of --global");
 				var setting = usage.Add("SETTING", "The statement to write to the config");

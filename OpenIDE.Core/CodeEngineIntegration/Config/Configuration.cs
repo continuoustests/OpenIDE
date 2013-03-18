@@ -235,13 +235,9 @@ namespace OpenIDE.Core.Config
 				lines.ToList()
 					.ForEach(x => 
 						{
-							if (getTag(x).Equals(setting))
-								written = true;
-							else
+							if (!getTag(x).Equals(setting))
 								writer.WriteLine(x);
 						});
-				if (!written)
-					writer.WriteLine(setting);
 			}
 		}
 
