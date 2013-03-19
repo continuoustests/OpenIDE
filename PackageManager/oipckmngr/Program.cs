@@ -24,7 +24,7 @@ namespace oipckmngr
 					"\t\t[" + NL +
 					"\t\t\t{" + NL +
 					"\t\t\t\t\"#pre-install-actions\": []," + NL +
-					"\t\t\t\t\"target\": \"Valid options: language, \"," + NL +
+					"\t\t\t\t\"target\": \"Valid options: script, rscript, language\"," + NL +
 					"\t\t\t\t\"file-root\": \"Directory name of directory containing files\"," + NL +
 					"\t\t\t\t\"#post-install-actions\": []" + NL +
 					"\t\t\t}" + NL +
@@ -32,7 +32,8 @@ namespace oipckmngr
 					"\t\"#dependencies\": []," + NL +
 					"\t\"#post-install-actions\": []" + NL +
 					"}";
-				File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "package.json"), package);
+				var file = Path.Combine(Environment.CurrentDirectory, "package.json");
+				File.WriteAllText(file, package);
 			} else if (args[0] == "package" && args.Length == 3) {
 				var name = args[1];
 				var path = args[2];
@@ -70,7 +71,6 @@ namespace oipckmngr
 
 				Compression.Compress(Environment.CurrentDirectory, name);
 			} else {
-				Console.WriteLine("arg count: " + args.Length.ToString());
 				Console.WriteLine("Valid parameters are init, package or install");
 			}
 			//Compression.Compress(Environment.CurrentDirectory, "test");

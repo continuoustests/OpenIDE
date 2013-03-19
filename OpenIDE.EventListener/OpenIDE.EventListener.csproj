@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</ProjectGuid>
+    <ProjectGuid>{D0F8B79B-DB3D-4F35-AA61-372C9E3C14B7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>OpenIDE.EventListener</RootNamespace>
     <AssemblyName>OpenIDE.EventListener</AssemblyName>

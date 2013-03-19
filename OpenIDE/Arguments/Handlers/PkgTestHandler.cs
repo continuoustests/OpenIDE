@@ -39,8 +39,8 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("-v", "Verbose mode prints running tests");
 				usage.Add("-o", "Prints outputs for failing tests");
 				usage.Add("-e", "Prints events for failing tests");
-				usage.Add("--only-errors", "Prints only failuers and inconclusives");
 				usage.Add("-l", "Logging");
+				usage.Add("--only-errors", "Prints only failuers and inconclusives");
 				return usage;
 			}
 		}
