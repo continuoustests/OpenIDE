@@ -84,9 +84,9 @@ namespace OpenIDE.Core.RScripts
 						Path.Combine(
 							_oiRootPath,
 							Path.Combine(
-								"Languages",
+								"languages",
 								Path.Combine(
-									plugin.GetLanguage() + "-plugin",
+									plugin.GetLanguage() + "-files",
 									"rscripts")))));
 			addToList(paths, getGlobal());
 			addToList(paths, _globalScriptsPathDefault);

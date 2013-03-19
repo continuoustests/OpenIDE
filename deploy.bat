@@ -25,17 +25,17 @@ mkdir %DEPLOYDIR%\tests
 mkdir %DEPLOYDIR%\.OpenIDE
 "" > %DEPLOYDIR%\.OpenIDE\oi.config
 
-mkdir %DEPLOYDIR%\.OpenIDE\Languages
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\bin
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\bin\AutoTest.Net
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\bin\ContinuousTests
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\python-plugin
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\python-plugin\rscripts
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\python-plugin\graphics
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\js-plugin
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\js-plugin\lib
-mkdir %DEPLOYDIR%\.OpenIDE\Languages\php-plugin
+mkdir %DEPLOYDIR%\.OpenIDE\languages
+mkdir %DEPLOYDIR%\.OpenIDE\languages\C#-files
+mkdir %DEPLOYDIR%\.OpenIDE\languages\C#-files\bin
+mkdir %DEPLOYDIR%\.OpenIDE\languages\C#-files\bin\AutoTest.Net
+mkdir %DEPLOYDIR%\.OpenIDE\languages\C#-files\bin\ContinuousTests
+mkdir %DEPLOYDIR%\.OpenIDE\languages\python-files
+mkdir %DEPLOYDIR%\.OpenIDE\languages\python-files\rscripts
+mkdir %DEPLOYDIR%\.OpenIDE\languages\python-files\graphics
+mkdir %DEPLOYDIR%\.OpenIDE\languages\js-files
+mkdir %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
+mkdir %DEPLOYDIR%\.OpenIDE\languages\php-files
 mkdir %DEPLOYDIR%\.OpenIDE\scripts
 mkdir %DEPLOYDIR%\.OpenIDE\scripts\templates
 mkdir %DEPLOYDIR%\.OpenIDE\rscripts
@@ -45,7 +45,7 @@ mkdir %DEPLOYDIR%\.OpenIDE\test\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
-REM %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%.OpenIDE\Languages\CSharp\CSharp.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
+REM %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%.OpenIDE\languages\CSharp\CSharp.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 
 copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CoreExtensions.dll
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
@@ -65,26 +65,26 @@ xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates
 xcopy /S /I /E %ROOT%\oi\test-templates %DEPLOYDIR%\.OpenIDE\test\templates
 
-copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\.OpenIDE\Languages\C#.bat
-copy %ROOT%\Languages\CSharp\language.oicfgoptions %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\language.oicfgoptions
-copy %BINARYDIR%\C#.exe %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\C#.exe
-copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\CoreExtensions.dll
-copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\OpenIDE.Core.dll
-copy %BINARYDIR%\ICSharpCode.NRefactory.CSharp.dll %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\ICSharpCode.NRefactory.CSharp.dll
-copy %BINARYDIR%\ICSharpCode.NRefactory.dll %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\ICSharpCode.NRefactory.dll
-copy %BINARYDIR%\Mono.Cecil.dll %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\Mono.Cecil.dll
-xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin
-copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin
-xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\bin\AutoTest.Net
-xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\.OpenIDE\Languages\C#-plugin\bin\ContinuousTests
+copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\.OpenIDE\languages\C#.bat
+copy %ROOT%\Languages\CSharp\language.oicfgoptions %DEPLOYDIR%\.OpenIDE\languages\C#-files\language.oicfgoptions
+copy %BINARYDIR%\C#.exe %DEPLOYDIR%\.OpenIDE\languages\C#-files\C#.exe
+copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\CoreExtensions.dll
+copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\OpenIDE.Core.dll
+copy %BINARYDIR%\ICSharpCode.NRefactory.CSharp.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\ICSharpCode.NRefactory.CSharp.dll
+copy %BINARYDIR%\ICSharpCode.NRefactory.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\ICSharpCode.NRefactory.dll
+copy %BINARYDIR%\Mono.Cecil.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\Mono.Cecil.dll
+xcopy /S /I /E %ROOT%\Languages\CSharp\templates %DEPLOYDIR%\.OpenIDE\languages\C#-files
+copy %ROOT%\Languages\CSharp\initialize.bat %DEPLOYDIR%\.OpenIDE\languages\C#-files
+xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %DEPLOYDIR%\.OpenIDE\languages\C#-files\bin\AutoTest.Net
+xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %DEPLOYDIR%\.OpenIDE\languages\C#-files\bin\ContinuousTests
 
 rem To deploy the following .OpenIDE\languages uncomment these lines
-rem xcopy %ROOT%\LANGUAGES\python\python.py %DEPLOYDIR%\.OpenIDE\Languages
+rem xcopy %ROOT%\lANGUAGES\python\python.py %DEPLOYDIR%\.OpenIDE\languages
 
-rem xcopy %LANGUAGES%\js\js.js %DEPLOYDIR%\.OpenIDE\Languages
-rem xcopy %LANGUAGES%\js\js-plugin\lib\parse-js.js %DEPLOYDIR%\.OpenIDE\Languages\js-plugin\lib
-rem xcopy %LANGUAGES%\js\js-plugin\lib\parse-js.License %DEPLOYDIR%\.OpenIDE\Languages\js-plugin\lib
-rem xcopy %LANGUAGES%\js\js-plugin\lib\carrier.js %DEPLOYDIR%\.OpenIDE\Languages\js-plugin\lib
-rem xcopy %LANGUAGES%\js\js-plugin\lib\carrier.License %DEPLOYDIR%\.OpenIDE\Languages\js-plugin\lib
+rem xcopy %LANGUAGES%\js\js.js %DEPLOYDIR%\.OpenIDE\languages
+rem xcopy %LANGUAGES%\js\js-files\lib\parse-js.js %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
+rem xcopy %LANGUAGES%\js\js-files\lib\parse-js.License %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
+rem xcopy %LANGUAGES%\js\js-files\lib\carrier.js %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
+rem xcopy %LANGUAGES%\js\js-files\lib\carrier.License %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
 
-rem xcopy %LANGUAGES%\php\php.php %DEPLOYDIR%\.OpenIDE\Languages
+rem xcopy %LANGUAGES%\php\php.php %DEPLOYDIR%\.OpenIDE\languages

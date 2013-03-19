@@ -33,7 +33,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			var file = Path.Combine(
 				getPath(arguments),
 				Path.Combine(
-					"Languages",
+					"languages",
 					Path.Combine(
 						language,
 						Path.Combine("snippets", arguments[1] + ".snippet"))));

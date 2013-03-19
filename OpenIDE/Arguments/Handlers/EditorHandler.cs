@@ -125,7 +125,7 @@ namespace OpenIDE.Arguments.Handlers
 			_pluginLocator().Locate().ToList()
 				.ForEach(plugin => {
 					var language = plugin.GetLanguage();
-					runInitScript(Path.Combine(Path.GetDirectoryName(plugin.FullPath), language + "-plugin"));
+					runInitScript(Path.Combine(Path.GetDirectoryName(plugin.FullPath), language + "-files"));
 				});
 			var locator = new ProfileLocator(Environment.CurrentDirectory);
 			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());

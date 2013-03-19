@@ -115,9 +115,9 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			return Path.Combine(
 				path,
 				Path.Combine(
-					"Languages",
+					"languages",
 					Path.Combine(
-						getLanguage(arguments[0]) + "-plugin",
+						getLanguage(arguments[0]) + "-files",
 						Path.Combine("snippets", arguments[1] + ".snippet"))));
 		}
 

@@ -2,8 +2,8 @@
 
 var fs = require('fs');
 var path = require('path');
-var jsp = require("./js-plugin/lib/parse-js");
-var carrier = require('./js-plugin/lib/carrier.js');
+var jsp = require("./js-files/lib/parse-js");
+var carrier = require('./js-files/lib/carrier.js');
 
 if (process.argv.length > 2) {
 	var firstArg = process.argv[2];

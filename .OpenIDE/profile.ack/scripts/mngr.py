@@ -19,7 +19,7 @@ import subprocess
 # To post an error print to std output prefixed by error|
 
 def runProcess(exe,workingDir):    
-	p = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=workingDir)
+	p = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=workingDir, shell=True)
 	while(True):
 		retcode = p.poll() #returns None while subprocess is running
 		line = p.stdout.readline().decode(encoding='windows-1252').strip('\n')
@@ -30,7 +30,7 @@ def runProcess(exe,workingDir):
 	return None
 
 def printProcess(exe,workingDir):    
-	p = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=workingDir)
+	p = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=workingDir, shell=True)
 	while(True):
 		retcode = p.poll() #returns None while subprocess is running
 		line = p.stdout.readline().decode(encoding='windows-1252').strip('\n')

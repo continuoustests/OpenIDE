@@ -63,7 +63,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			return Path.Combine(
 				path,
 				Path.Combine(
-					"Languages",
+					"languages",
 					Path.Combine(
 						new PluginFinder(_cache).FindLanguage(arguments[0]),
 						Path.Combine("snippets", arguments[1] + ".snippet"))));

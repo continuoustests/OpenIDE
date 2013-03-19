@@ -58,16 +58,16 @@ namespace OpenIDE.Core.Language
 				new[] {
 					Path.Combine(
 						_profiles.GetLocalProfilePath(
-							_profiles.GetActiveLocalProfile()), "Languages"),
+							_profiles.GetActiveLocalProfile()), "languages"),
 					Path.Combine(
 						_profiles.GetLocalProfilePath(
-							"default"), "Languages"),
+							"default"), "languages"),
 					Path.Combine(
 						_profiles.GetGlobalProfilePath(
-							_profiles.GetActiveGlobalProfile()), "Languages"),
+							_profiles.GetActiveGlobalProfile()), "languages"),
 					Path.Combine(
 						_profiles.GetGlobalProfilePath(
-							"default"), "Languages")
+							"default"), "languages")
 				};
 			foreach (var dir in dirs) {
 				var list = getPlugins(dir);

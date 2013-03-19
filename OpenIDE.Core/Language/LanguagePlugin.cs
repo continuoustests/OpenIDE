@@ -34,7 +34,7 @@ namespace OpenIDE.Core.Language
 		{
 			return 
 				Path.Combine(Path.GetDirectoryName(_path),
-				Path.GetFileNameWithoutExtension(_path) + "-plugin");
+				Path.GetFileNameWithoutExtension(_path) + "-files");
 		}
 
 		public string GetLanguage()

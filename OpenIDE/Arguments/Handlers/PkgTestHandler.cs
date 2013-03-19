@@ -45,7 +45,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 
-		public string Command { get { return "pkgtest"; } }
+		public string Command { get { return "packagetest"; } }
 
 		public PkgTestHandler(string token) {
 			_token = token;

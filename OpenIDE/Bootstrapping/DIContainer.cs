@@ -76,6 +76,7 @@ namespace OpenIDE.Bootstrapping
 
 					new EventListener(_settings.RootPath),
 
+					new PackageHandler(dispatchMessage),
 					new PkgTestHandler(_settings.RootPath),
 
 					new GetCommandsHandler(),
