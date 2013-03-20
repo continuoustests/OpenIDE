@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>oipckmngr.Tests</RootNamespace>
     <AssemblyName>oipckmngr.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

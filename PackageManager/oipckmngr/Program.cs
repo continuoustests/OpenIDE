@@ -60,15 +60,7 @@ namespace oipckmngr
 						.Where(x => 
 							Directory.GetDirectories(Path.Combine(path, x)).Length > 0 ||
 							Directory.GetFiles(Path.Combine(path, x)).Length > 0);
-				var nonExistentDirs = 
-					dirs
-						.Where(x => !package.Contents.Any(y => y.FileRoot.Equals(x)));
-				if (nonExistentDirs.Count() > 0) {
-					Console.WriteLine("The following content blocks does not have a matching directory containing items");
-					nonExistentDirs.ToList()
-						.ForEach(x => Console.WriteLine("\t" + x));
-				}
-
+				
 				Compression.Compress(Environment.CurrentDirectory, name);
 			} else {
 				Console.WriteLine("Valid parameters are init, package or install");
