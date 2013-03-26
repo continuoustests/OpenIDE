@@ -53,6 +53,7 @@ copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CoreExtensions.dll
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
 copy %BINARYDIR%\OpenIDE.dll %DEPLOYDIR%\OpenIDE.dll
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\OpenIDE.Core.dll
+copy %BINARYDIR%\Newtonsoft.Json.dll %DEPLOYDIR%\Newtonsoft.Json.dll
 xcopy /S /I /E %LIB%\EditorEngine %DEPLOYDIR%\EditorEngine
 copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDE.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDE.CodeEngine.exe
@@ -64,6 +65,7 @@ copy %BINARYDIR%\OpenIDE.EventListener.exe %DEPLOYDIR%\EventListener\OpenIDE.Eve
 xcopy /S /I /E %ROOT%\oi\tests %DEPLOYDIR%\tests
 
 copy %BINARYDIR%\oipckmngr.exe %DEPLOYDIR%\Packaging
+copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\Packaging
 copy %BINARYDIR%\Newtonsoft.Json.dll %DEPLOYDIR%\Packaging
 copy %BINARYDIR%\Ionic.Zip.dll %DEPLOYDIR%\Packaging
 

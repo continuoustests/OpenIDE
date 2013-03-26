@@ -1,16 +1,20 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.Packaging;
+using OpenIDE.Core.Profiles;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
 {
 	class PackageHandler : ICommandHandler
 	{
+		private string _token;
 		private Action<string> _dispatch;
 
 		public CommandHandlerParameter Usage {
@@ -22,6 +26,9 @@ namespace OpenIDE.Arguments.Handlers
 					"Package management");
 				usage.Add("init", "Initialize package for script, rscript or language")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
+				usage.Add("read", "reads package contents")
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or package.json");
+				usage.Add("list", "Lists installed packages");
 				usage.Add("build", "Build package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript")
 						.Add("DESTINATION", "Directory to write package to");
@@ -31,15 +38,20 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "package"; } }
 
-		public PackageHandler(Action<string> dispatch) {
+		public PackageHandler(string token, Action<string> dispatch) {
+			_token = token;
 			_dispatch = dispatch;
 		}
 
 		public void Execute(string[] arguments) {
 			if (arguments.Length == 2 && arguments[0] == "init")
 				init(arguments[1]);
+			if (arguments.Length == 2 && arguments[0] == "read")
+				read(arguments[1]);
 			if (arguments.Length == 3 && arguments[0] == "build")
 				build(arguments[1], arguments[2]);
+			if (arguments.Length == 1 && arguments[0] == "list")
+				list();
 		}
 
 		private void init(string source) {
@@ -55,6 +67,47 @@ namespace OpenIDE.Arguments.Handlers
 			if (!File.Exists(packageFile))
 				File.WriteAllText(packageFile, getPackageDescription(dir, name));
 			_dispatch("editor goto \"" + packageFile + "|0|0\"");
+		}
+
+		private void read(string source) {
+			if (!File.Exists(source)) {
+				var dir = 
+					Path.Combine(
+						Path.GetDirectoryName(source),
+						Path.GetFileNameWithoutExtension(source) + "-files");
+				source = Path.Combine(dir, "package.json");
+			}
+
+			if (!File.Exists(source))
+				return;
+
+			var package = Package.Read(File.ReadAllText(source));
+			if (package != null)
+				Console.WriteLine(package.ToVerboseString());
+		}
+
+		private void list() {
+			var profiles = new ProfileLocator(_token);
+			printPackages(profiles.GetLocalProfilePath("default"));
+			printPackages(profiles.GetGlobalProfilePath("default"));
+		}
+
+		private void printPackages(string dir) {
+			getPackages(dir)
+				.ForEach(x => {
+						try {
+							var package = Package.Read(File.ReadAllText(x));
+							if (package != null)
+								Console.WriteLine(package.ToString() + " - " + x);
+						} catch {
+						}
+					});
+		}
+
+		private List<string> getPackages(string directory) {
+			return Directory
+				.GetFiles(directory, "package.json", SearchOption.AllDirectories)
+				.ToList();
 		}
 
 		private string getPackageDescription(string dir, string name) {

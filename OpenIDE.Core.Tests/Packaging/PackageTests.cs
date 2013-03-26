@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
 
-namespace oipckmngr.Tests
+namespace OpenIDE.Core.Packaging.Tests
 {
 	[TestFixture]
 	public class PackageTests
@@ -64,7 +64,7 @@ namespace oipckmngr.Tests
 
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "MyDescription")
+					new Package("not-valid", "MyPackage", "MyDescription")
 						.Write()),
 				Is.Null);
 		}

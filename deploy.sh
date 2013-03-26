@@ -67,6 +67,7 @@ cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
+cp $BINARYDIR/Newtonsoft.Json.dll $DEPLOYDIR/
 cp -r $LIB/EditorEngine/* $DEPLOYDIR/EditorEngine
 cp $ROOT/oi/oi $DEPLOYDIR/oi
 cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe
@@ -78,6 +79,7 @@ cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
 cp -r $ROOT/oi/tests/* $DEPLOYDIR/tests
 
 cp $BINARYDIR/oipckmngr.exe $DEPLOYDIR/Packaging
+cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/Packaging
 cp $BINARYDIR/Newtonsoft.Json.dll $DEPLOYDIR/Packaging
 cp $BINARYDIR/Ionic.Zip.dll $DEPLOYDIR/Packaging
 

@@ -51,6 +51,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="..\lib\JSON.NET\Net35\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Profiles\ProfileLocator.cs" />
     <Compile Include="Commands\UsagePrinter.cs" />
     <Compile Include="Configs\Interpreters.cs" />
+    <Compile Include="Packaging\Package.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

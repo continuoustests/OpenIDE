@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace oipckmngr
+namespace OpenIDE.Core.Packaging 
 {
 	public class Package
 	{
@@ -26,8 +26,8 @@ namespace oipckmngr
 				}
 				if (package.IsValid())
 					return package;
-			} catch (Exception ex) {
-				Console.WriteLine(ex.ToString());
+			} catch {
+				Console.WriteLine("Invalid package: " + json);
 			}
 			return null;
 		}
@@ -93,6 +93,24 @@ namespace oipckmngr
 					2));
 			sb.Append("}");
 			return sb.ToString();
+		}
+
+		public string ToVerboseString() {
+			var sb = new StringBuilder();
+			sb.AppendLine("Target:\t" + Target);
+			sb.AppendLine("ID:\t" + ID);
+			sb.AppendLine();
+			sb.AppendLine("Description:" + Environment.NewLine + Description);
+			if (Dependencies.Count > 0) {
+				sb.AppendLine();
+				sb.AppendLine("Dependencies");
+				Dependencies.ToList().ForEach(x => sb.AppendLine("\t" + x));
+			}
+			return sb.ToString();
+		}
+
+		public override string ToString() {
+			return Target + " - " + ID;
 		}
 
 		private string getArrayOf(IEnumerable<object> list, Func<object,int,string> toJSONValue, int tabs) {
