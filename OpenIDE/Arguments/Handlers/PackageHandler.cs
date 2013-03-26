@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Reflection;
+using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
+using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -18,7 +21,10 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Package management");
 				usage.Add("init", "Initialize package for script, rscript or language")
-					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript.");
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
+				usage.Add("build", "Build package")
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript")
+						.Add("DESTINATION", "Directory to write package to");
 				return usage;
 			}
 		}
@@ -32,6 +38,8 @@ namespace OpenIDE.Arguments.Handlers
 		public void Execute(string[] arguments) {
 			if (arguments.Length == 2 && arguments[0] == "init")
 				init(arguments[1]);
+			if (arguments.Length == 3 && arguments[0] == "build")
+				build(arguments[1], arguments[2]);
 		}
 
 		private void init(string source) {
@@ -57,7 +65,7 @@ namespace OpenIDE.Arguments.Handlers
 					"{" + NL +
 					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
 					"\t\"target\": \"{1}\"," + NL +
-					"\t\"id\": \"{0} v1.0\"," + NL +
+					"\t\"id\": \"{0}-v1.0\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
 					"\t\"#pre-install-actions\": []," + NL +
@@ -65,6 +73,21 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\"#dependencies\": []" + NL +
 					"}";
 			return package.Replace("{0}", name).Replace("{1}", type);
+		}
+
+		private void build(string source, string destination) {
+			source = Path.GetFullPath(source);
+			destination = Path.GetFullPath(destination);
+			var name = Path.GetFileNameWithoutExtension(source);
+			var dir = Path.GetDirectoryName(source);
+			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			new Process()
+				.Query(
+					Path.Combine(Path.Combine(appDir, "Packaging"), "oipckmngr.exe"),
+					string.Format("build \"{0}\" \"{1}\" \"{2}\"", name, dir, destination),
+					false,
+					Environment.CurrentDirectory,
+					(err, line) => { Console.WriteLine(line); });
 		}
 	}
 }

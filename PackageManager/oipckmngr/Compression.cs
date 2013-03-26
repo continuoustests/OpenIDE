@@ -1,35 +1,32 @@
 using System;
 using System.IO;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
+using System.Linq;
+using Ionic.Zip;
 
 namespace oipckmngr
 {
 	class Compression
 	{
 		public static void Decompress(string directory, string archiveFile) {
-			using (var s = new GZipInputStream(File.OpenRead(archiveFile))) {
-				using (var archive = TarArchive.CreateInputTarArchive(s, TarBuffer.DefaultBlockFactor)) {
-					archive.ExtractContents(directory);
-					archive.Close();
-				}
-				s.Close();
+			using (var zip = ZipFile.Read(archiveFile)) {
+				zip.ExtractAll(directory);
 			}
 		}
 
-		public static void Compress(string directory, string filename) {
+		public static void Compress(string directory, string name, string destination) {
 			try
 			{
-				var file = Path.GetTempFileName() + ".tar.gz";
-				using (GZipOutputStream s = new GZipOutputStream(File.Create(file))) {
-					using (var archive = TarArchive.CreateOutputTarArchive(s, TarBuffer.DefaultBlockFactor)) {
-						addDirectory(archive, directory);
-						archive.Close();
-					}
-					s.Finish();
-					s.Close();
+				var filesDirectory = Path.Combine(directory, name + "-files");
+				var file = destination + ".oipkg";
+				using (var zip = new ZipFile(file)) {
+					Console.WriteLine("Writing to " + file);
+					Directory
+						.GetFiles(directory, name + ".*")
+						.ToList()
+						.ForEach(x => addFile(zip, x, directory));
+					addDirectory(zip, filesDirectory, directory);
+					zip.Save();
 				}
-				File.Move(file, filename + ".tar.gz");
 			}
 			catch(Exception ex)
 			{
@@ -38,29 +35,24 @@ namespace oipckmngr
 			}
 		}
 
-		private static void addDirectory(TarArchive archive, string directory) {
-			addDirectory(archive, directory, null);
+		private static void addDirectory(ZipFile archive, string directory, string rootPath) {
+			addDirectory(archive, directory, rootPath, "");
 		}
 
-		private static void addDirectory(TarArchive archive, string directory, string name) {
-			if (name != null) {
-				var dir = TarEntry.CreateTarEntry(name);
-				archive.WriteEntry(dir, true);
-			} else {
-				name = "";
-			}
-
+		private static void addDirectory(ZipFile archive, string directory, string rootPath, string name) {
 			foreach (var dir in Directory.GetDirectories(directory))
-				addDirectory(archive, Path.Combine(directory, dir), name + Path.GetFileName(dir) + "/");
+				addDirectory(archive, Path.Combine(directory, dir), rootPath, name + Path.GetFileName(dir) + "/");
 
 			var files = Directory.GetFiles(directory);
 			foreach (var file in files)
-				addFile(archive, file);
+				addFile(archive, file, rootPath);
 		}
 
-		private static void addFile(TarArchive archive, string file) {
-			var entry = TarEntry.CreateEntryFromFile(file);
-			archive.WriteEntry(entry, true);
+		private static void addFile(ZipFile archive, string file, string rootPath) {
+			Console.WriteLine("Adding file " + file);
+			var dir = Path.GetDirectoryName(file);
+			var pathInArchive = dir.Substring(rootPath.Length, dir.Length - rootPath.Length);
+			archive.AddFile(file, pathInArchive);
 		}
 	}
 }

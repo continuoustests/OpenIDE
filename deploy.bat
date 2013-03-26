@@ -21,6 +21,7 @@ mkdir %DEPLOYDIR%\CodeEngine
 mkdir %DEPLOYDIR%\EditorEngine
 mkdir %DEPLOYDIR%\EventListener
 mkdir %DEPLOYDIR%\tests
+mkdir %DEPLOYDIR%\Packaging
 
 mkdir %DEPLOYDIR%\.OpenIDE
 "" > %DEPLOYDIR%\.OpenIDE\oi.config
@@ -45,6 +46,7 @@ mkdir %DEPLOYDIR%\.OpenIDE\test\templates
 
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.sln  /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%OpenIDE.CodeEngine.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
+%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%PackageManager\oipckmngr\oipckmngr.csproj /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 REM %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%.OpenIDE\languages\CSharp\CSharp.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 
 copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CoreExtensions.dll
@@ -60,6 +62,10 @@ copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CodeEngine\CoreExtensions.dll
 copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
 copy %BINARYDIR%\OpenIDE.EventListener.exe %DEPLOYDIR%\EventListener\OpenIDE.EventListener.exe
 xcopy /S /I /E %ROOT%\oi\tests %DEPLOYDIR%\tests
+
+copy %BINARYDIR%\oipckmngr.exe %DEPLOYDIR%\Packaging
+copy %BINARYDIR%\Newtonsoft.Json.dll %DEPLOYDIR%\Packaging
+copy %BINARYDIR%\Ionic.Zip.dll %DEPLOYDIR%\Packaging
 
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates

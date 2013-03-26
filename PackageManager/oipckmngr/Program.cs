@@ -8,38 +8,24 @@ namespace oipckmngr
 	{
 		public static void Main(string[] args) {
 			if (args.Length == 0) {
-				Console.WriteLine("Valid parameters are init, package or install");
+				Console.WriteLine("Valid parameters are build or install");
 				return;
 			}
 
-			if (args[0] == "init") {
-				var NL = Environment.NewLine;
-				var package = 
-					"{" + NL +
-					"\t\"PS\": \"# is used to comment out optional fields\"," + NL +
-					"\t\"id\": \"\"," + NL +
-					"\t\"description\": \"\"," + NL +
-					"\t\"#pre-install-actions\": []," + NL +
-					"\t\"contents\":" + NL +
-					"\t\t[" + NL +
-					"\t\t\t{" + NL +
-					"\t\t\t\t\"#pre-install-actions\": []," + NL +
-					"\t\t\t\t\"target\": \"Valid options: script, rscript, language\"," + NL +
-					"\t\t\t\t\"file-root\": \"Directory name of directory containing files\"," + NL +
-					"\t\t\t\t\"#post-install-actions\": []" + NL +
-					"\t\t\t}" + NL +
-					"\t\t]," + NL +
-					"\t\"#dependencies\": []," + NL +
-					"\t\"#post-install-actions\": []" + NL +
-					"}";
-				var file = Path.Combine(Environment.CurrentDirectory, "package.json");
-				File.WriteAllText(file, package);
-			} else if (args[0] == "package" && args.Length == 3) {
+			if (args[0] == "build" && args.Length == 4) {
 				var name = args[1];
 				var path = args[2];
-				var json = Path.Combine(path, "package.json");
+				var destination = args[3];
+				path = Path.GetFullPath(path);
+				destination = Path.GetFullPath(destination);
+				var filesPath = Path.Combine(path, name + "-files");
+				var json = Path.Combine(filesPath, "package.json");
 				if (!Directory.Exists(path)) {
 					Console.WriteLine("Invalid Package: Package directory does not exist: " + path);
+					return;
+				}
+				if (!Directory.Exists(filesPath)) {
+					Console.WriteLine("Invalid Package: Package files directory does not exist: " + filesPath);
 					return;
 				}
 				if (!File.Exists(json)) {
@@ -55,18 +41,15 @@ namespace oipckmngr
 					Console.WriteLine("Invalid Package: Package description file does not contain all required information");
 					return;
 				}
-				var dirs = 
-					Directory.GetDirectories(path)
-						.Where(x => 
-							Directory.GetDirectories(Path.Combine(path, x)).Length > 0 ||
-							Directory.GetFiles(Path.Combine(path, x)).Length > 0);
-				
-				Compression.Compress(Environment.CurrentDirectory, name);
+				if (!Directory.Exists(destination)) {
+					Console.WriteLine("Invalid Destination: Directory {0} does not exist", destination);
+					return;
+				}
+				destination = Path.Combine(destination, package.ID);
+				Compression.Compress(path, name, destination);
 			} else {
-				Console.WriteLine("Valid parameters are init, package or install");
+				Console.WriteLine("Valid parameters are build or install");
 			}
-			//Compression.Compress(Environment.CurrentDirectory, "test");
-			//Compression.Decompress("/home/ack/tmp/testdir", "/home/ack/src/OpenIDE/PackageManager/oipckmngr/test.tar.gz");
 		}
 	}
 }

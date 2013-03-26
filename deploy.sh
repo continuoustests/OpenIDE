@@ -23,8 +23,7 @@ mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
 mkdir $DEPLOYDIR/EventListener
 mkdir $DEPLOYDIR/tests
-
-
+mkdir $DEPLOYDIR/Packaging
 
 mkdir $DEPLOYDIR/.OpenIDE
 
@@ -61,6 +60,7 @@ echo $BINARYDIR
 
 xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
+xbuild PackageManager/oipckmngr/oipckmngr.csproj /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 #xbuild .OpenIDE/languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 
 cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/
@@ -76,6 +76,10 @@ cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/CodeEngine/
 cp $ROOT/lib/FSWatcher/FSWatcher.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
 cp -r $ROOT/oi/tests/* $DEPLOYDIR/tests
+
+cp $BINARYDIR/oipckmngr.exe $DEPLOYDIR/Packaging
+cp $BINARYDIR/Newtonsoft.Json.dll $DEPLOYDIR/Packaging
+cp $BINARYDIR/Ionic.Zip.dll $DEPLOYDIR/Packaging
 
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates
