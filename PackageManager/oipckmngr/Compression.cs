@@ -9,8 +9,23 @@ namespace oipckmngr
 	{
 		public static void Decompress(string directory, string archiveFile) {
 			using (var zip = ZipFile.Read(archiveFile)) {
-				zip.ExtractAll(directory);
+				foreach (ZipEntry e in zip) {
+					var file = Path.Combine(directory, e.FileName);
+					createDirectories(Path.GetDirectoryName(file));
+					using (FileStream fs = new FileStream(file, FileMode.Create)) {
+						e.Extract(fs);
+					}
+				}
 			}
+		}
+
+		private static void createDirectories(string path) {
+			if (Directory.Exists(path))
+				return;
+			var subPath = Path.GetDirectoryName(path);
+			if (subPath != null)
+				createDirectories(subPath);
+			Directory.CreateDirectory(path);
 		}
 
 		public static void Compress(string directory, string name, string destination) {

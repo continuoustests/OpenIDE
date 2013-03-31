@@ -54,7 +54,7 @@ namespace OpenIDE.Core.Packaging.Tests
 						.AddPreInstallAction("action1")
 						.Write()),
 				Is.Null);
-
+			
 			Assert.That(
 				Package.Read(
 					new Package("language", "MyPackage", "")

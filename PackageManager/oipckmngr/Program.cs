@@ -9,7 +9,7 @@ namespace oipckmngr
 	{
 		public static void Main(string[] args) {
 			if (args.Length == 0) {
-				Console.WriteLine("Valid parameters are build or install");
+				Console.WriteLine("Valid parameters are build or extract");
 				return;
 			}
 
@@ -48,6 +48,10 @@ namespace oipckmngr
 				}
 				destination = Path.Combine(destination, package.ID);
 				Compression.Compress(path, name, destination);
+			} else if (args[0] == "extract" && args.Length == 3) {
+				var file = Path.GetFullPath(args[1]);
+				var path = Path.GetFullPath(args[2]);
+				Compression.Decompress(path, file);
 			} else {
 				Console.WriteLine("Valid parameters are build or install");
 			}

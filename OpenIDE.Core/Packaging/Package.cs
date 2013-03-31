@@ -27,7 +27,6 @@ namespace OpenIDE.Core.Packaging
 				if (package.IsValid())
 					return package;
 			} catch {
-				Console.WriteLine("Invalid package: " + json);
 			}
 			return null;
 		}
