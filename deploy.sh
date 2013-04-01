@@ -81,7 +81,7 @@ cp -r $ROOT/oi/tests/* $DEPLOYDIR/tests
 cp $BINARYDIR/oipckmngr.exe $DEPLOYDIR/Packaging
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/Packaging
 cp $BINARYDIR/Newtonsoft.Json.dll $DEPLOYDIR/Packaging
-cp $BINARYDIR/Ionic.Zip.dll $DEPLOYDIR/Packaging
+cp $BINARYDIR/SharpCompress.3.5.dll $DEPLOYDIR/Packaging
 
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates

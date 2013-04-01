@@ -32,9 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\lib\DotNetZip\zip-v1.9\Ionic.Zip.dll</HintPath>
-    </Reference>
+    <Reference Include="..\lib\SharpCompress\SharpCompress.3.5.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />

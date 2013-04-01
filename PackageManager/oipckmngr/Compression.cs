@@ -1,22 +1,56 @@
 using System;
 using System.IO;
 using System.Linq;
-using Ionic.Zip;
+using System.Diagnostics;
+using SharpCompress.Common;
+using SharpCompress.Archive;
+using SharpCompress.Writer;
+using SharpCompress.Writer.GZip;
 
 namespace oipckmngr
 {
 	class Compression
 	{
 		public static void Decompress(string directory, string archiveFile) {
-			using (var zip = ZipFile.Read(archiveFile)) {
-				foreach (ZipEntry e in zip) {
-					var file = Path.Combine(directory, e.FileName);
-					createDirectories(Path.GetDirectoryName(file));
-					using (FileStream fs = new FileStream(file, FileMode.Create)) {
-						e.Extract(fs);
-					}
-				}
+			if (Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix) {
+				var tarfile = 
+					Path.Combine(
+						Path.GetTempPath(),
+						Path.GetFileName(archiveFile) + ".tar.gz");
+				File.Copy(archiveFile, tarfile);
+				run(directory, "gunzip", string.Format("-q \"{0}\"", tarfile));
+				tarfile = 
+					Path.Combine(
+						Path.GetDirectoryName(tarfile),
+						Path.GetFileNameWithoutExtension(tarfile));
+				run(directory, "tar", string.Format("-xvf \"{0}\"", tarfile));
+				File.Delete(tarfile);
+	            return;
 			}
+			using (Stream gz = File.Open(archiveFile, FileMode.Open)) {
+	            using (var gzArchive = ArchiveFactory.Open(gz)) {
+	                var tarEntry = gzArchive.Entries.First();
+	                using (var tar = new MemoryStream()) {
+	                	tarEntry.WriteTo(tar);
+	                	using (var tarArchive = ArchiveFactory.Open(tar)) {
+	                		foreach (var entry in tarArchive.Entries.Where(entry => !entry.IsDirectory)) {
+		                        entry.WriteToDirectory(
+		                        	directory,
+		                            ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+		                    }
+	                	}
+	                }
+	            }
+	        }
+		}
+
+		private static void run(string directory, string command, string arguments) {
+			var proc = new Process();
+            proc.StartInfo.FileName   = command;
+            proc.StartInfo.Arguments = arguments;
+            proc.StartInfo.WorkingDirectory = directory;
+            proc.Start();
+            proc.WaitForExit();
 		}
 
 		private static void createDirectories(string path) {
@@ -33,14 +67,21 @@ namespace oipckmngr
 			{
 				var filesDirectory = Path.Combine(directory, name + "-files");
 				var file = destination + ".oipkg";
-				using (var zip = new ZipFile(file)) {
-					Console.WriteLine("Writing to " + file);
-					Directory
-						.GetFiles(directory, name + ".*")
-						.ToList()
-						.ForEach(x => addFile(zip, x, directory));
-					addDirectory(zip, filesDirectory, directory);
-					zip.Save();
+				using (Stream tar = new MemoryStream()) {
+					using (IWriter zip = WriterFactory.Open(tar, ArchiveType.Tar, CompressionType.None)) {
+						Directory
+							.GetFiles(directory, name + ".*")
+							.ToList()
+							.ForEach(x => addFile(zip, x, directory));
+						addDirectory(zip, filesDirectory, directory);
+
+						tar.Position = 0;
+						using (var gz = File.OpenWrite(file)) {
+							using (var gzWriter = WriterFactory.Open(gz, ArchiveType.GZip, CompressionType.GZip)) {
+								gzWriter.Write("Tar.tar", tar, null);
+							}
+						}
+					}
 				}
 			}
 			catch(Exception ex)
@@ -50,11 +91,11 @@ namespace oipckmngr
 			}
 		}
 
-		private static void addDirectory(ZipFile archive, string directory, string rootPath) {
+		private static void addDirectory(IWriter archive, string directory, string rootPath) {
 			addDirectory(archive, directory, rootPath, "");
 		}
 
-		private static void addDirectory(ZipFile archive, string directory, string rootPath, string name) {
+		private static void addDirectory(IWriter archive, string directory, string rootPath, string name) {
 			foreach (var dir in Directory.GetDirectories(directory))
 				addDirectory(archive, Path.Combine(directory, dir), rootPath, name + Path.GetFileName(dir) + "/");
 
@@ -63,11 +104,10 @@ namespace oipckmngr
 				addFile(archive, file, rootPath);
 		}
 
-		private static void addFile(ZipFile archive, string file, string rootPath) {
-			Console.WriteLine("Adding file " + file);
+		private static void addFile(IWriter archive, string file, string rootPath) {
 			var dir = Path.GetDirectoryName(file);
 			var pathInArchive = dir.Substring(rootPath.Length, dir.Length - rootPath.Length);
-			archive.AddFile(file, pathInArchive);
+			archive.Write(Path.Combine(pathInArchive, Path.GetFileName(file)), file);
 		}
 	}
 }

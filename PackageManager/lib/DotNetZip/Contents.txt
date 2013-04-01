@@ -1,1 +1,0 @@
-This is the redistributable package for DotNetZip v1.9.  Packed Sat-08-06-2011-215945.06. In this zip you will find a separate folder for each separate version of the DLL. In each folder there is a RELEASE build DLL, suitable for redistribution with your app. If you have any questions, please check the forums on http://www.codeplex.com/DotNetZip 

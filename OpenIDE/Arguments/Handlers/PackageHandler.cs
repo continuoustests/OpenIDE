@@ -33,6 +33,8 @@ namespace OpenIDE.Arguments.Handlers
 						.Add("DESTINATION", "Directory to write package to");
 				usage.Add("install", "Installs package")
 					.Add("SOURCE", "Path to local file or URL");
+				usage.Add("update", "Updates package")
+					.Add("SOURCE", "Path to local file or URL");
 				return usage;
 			}
 		}
@@ -55,6 +57,8 @@ namespace OpenIDE.Arguments.Handlers
 				build(arguments[1], arguments[2]);
 			if (arguments.Length > 1 && arguments[0] == "install")
 				install(arguments);
+			if (arguments.Length > 1 && arguments[0] == "update")
+				update(arguments);
 		}
 
 		private void init(string source) {
@@ -101,6 +105,17 @@ namespace OpenIDE.Arguments.Handlers
 				Directory.Delete(tempPath, true);
 			}
 		}
+		
+		private Package getInstallPackage(string source, string tempPath) {
+			extractPackage(source, tempPath);
+			var pkgFile =
+				Path.Combine(
+					Path.Combine(
+						tempPath,
+						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
+					"package.json");
+			return Package.Read(File.ReadAllText(pkgFile));
+		}
 
 		private void list() {
 			var profiles = new ProfileLocator(_token);
@@ -133,6 +148,7 @@ namespace OpenIDE.Arguments.Handlers
 			var package = 
 					"{" + NL +
 					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
+					"\t\"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
 					"\t\"target\": \"{1}\"," + NL +
 					"\t\"id\": \"{0}-v1.0\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
@@ -163,93 +179,19 @@ namespace OpenIDE.Arguments.Handlers
 			var source = Path.GetFullPath(args[1]);
 			if (!File.Exists(source))
 				return;
-			var profiles = new ProfileLocator(_token);
-			var activeProfile = profiles.GetActiveLocalProfile();
-			var installPath = profiles.GetLocalProfilePath(activeProfile);
-			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
-			Directory.CreateDirectory(tempPath);
-			try {
-				var package = getInstallPackage(source, tempPath);
-				if (package != null) {
-					var name = 
-						Path.GetFileNameWithoutExtension(
-							Directory.GetFiles(tempPath)[0]);
-					installPath = Path.Combine(installPath, package.Target + "s");
-					var matches = 
-						Directory.GetFiles(installPath)
-							.Where(x => matchPackage(x, name));
-					if (matches.Count() > 0)
-						printConflictingPackage(name, package, matches);
-					else
-						installPackage(source, package, installPath, activeProfile);
-				}
-			} catch (Exception ex) {
-				Console.WriteLine(ex.ToString());
-			} finally {
-				Directory.Delete(tempPath, true);
-			}
+			var installer = new Installer(_token, _dispatch, extractPackage);
+			installer.Install(source);
 		}
-
-		private void installPackage(string source, Package package, string installPath, string activeProfile) {
-			extractPackage(source, installPath);
-			Console.WriteLine("Installed {1} package {0} in profile {2}",
-				package.ID,
-				package.Target,
-				activeProfile);
+		
+		private void update(string[] args) {
+			var source = Path.GetFullPath(args[1]);
+			if (!File.Exists(source))
+				return;
+			var installer = new Installer(_token, _dispatch, extractPackage);
+			installer.Update(source);
 		}
-
-		private Package getPackage(string file) {
-			var path = Path.GetDirectoryName(file);
-			var name = Path.GetFileNameWithoutExtension(file);
-			var pkgFile =
-				Path.Combine(
-					Path.Combine(path, name + "-files"),
-					"package.json");
-			if (File.Exists(pkgFile))
-				return Package.Read(File.ReadAllText(pkgFile));
-			return null;
-		}
-
-		private void printConflictingPackage(string name, Package package, IEnumerable<string> matches) {
-			var pkgInfo = "";
-			var existingPackage = getPackage(matches.First());
-			if (existingPackage != null)
-				pkgInfo = string.Format(" ({0})", existingPackage.ID);
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(
-				"There is already an installed {2} package called {0}{1}",
-				name,
-				pkgInfo,
-				package.Target);
-			Console.ResetColor();
-			if (existingPackage != null) {
-				Console.WriteLine();
-				Console.WriteLine(existingPackage.ToVerboseString());
-			}
-			Console.WriteLine();
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine("To replace/update the installed package use the update command");
-			Console.ResetColor();
-		}
-
-		private bool matchPackage(string path, string name) {
-			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-				return Path.GetFileNameWithoutExtension(path) == name;
-			else
-				return Path.GetFileNameWithoutExtension(path).ToLower() == name.ToLower();
-		}
-
-		private Package getInstallPackage(string source, string tempPath) {
-			extractPackage(source, tempPath);
-			var pkgFile =
-				Path.Combine(
-					Path.Combine(
-						tempPath,
-						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
-					"package.json");
-			return Package.Read(File.ReadAllText(pkgFile));
-		}
-
+			
+				
 		private void extractPackage(string source, string path) {
 			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			new Process()
