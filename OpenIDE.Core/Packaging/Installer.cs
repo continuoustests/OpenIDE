@@ -52,6 +52,18 @@ namespace OpenIDE.Core.Packaging
 							update(source, args);
 					});
 		}
+
+		public void Remove(string source) {
+			var name = Path.GetFileNameWithoutExtension(source);
+			var dir = Path.GetDirectoryName(source);
+			var package = getPackage(source);
+			if (package == null) {
+				print("There is no package {0} to remove", ConsoleColor.Red, name);
+				return;
+			}
+			removePackage(name, dir);
+			print("Removed package {0}", package.ID);
+		}
 		
 		private void prepareForAction(string source, Action<ActionParameters> actionHandler) {
 			var profiles = new ProfileLocator(_token);
@@ -97,13 +109,7 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 
-			Directory.Delete(
-				Path.Combine(args.InstallPath, args.Name + "-files"), true);
-			Directory
-				.GetFiles(args.InstallPath)
-				.Where(x => Path.GetFileNameWithoutExtension(x) == args.Name)
-				.ToList()
-				.ForEach(x => File.Delete(x));
+			removePackage(args.Name, args.InstallPath);
 			_unpack(source, args.InstallPath);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {
@@ -115,6 +121,16 @@ namespace OpenIDE.Core.Packaging
 				"Package updated from {0} to {1}",
 				existingPackage.ID,
 				args.Package.ID);
+		}
+
+		private void removePackage(string name, string path) {
+			Directory.Delete(
+				Path.Combine(path, name + "-files"), true);
+			Directory
+				.GetFiles(path)
+				.Where(x => Path.GetFileNameWithoutExtension(x) == name)
+				.ToList()
+				.ForEach(x => File.Delete(x));
 		}
 
 		private void printUpdateFailed(string id) {

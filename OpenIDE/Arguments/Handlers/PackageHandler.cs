@@ -35,6 +35,8 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SOURCE", "Path to local file or URL");
 				usage.Add("update", "Updates package")
 					.Add("SOURCE", "Path to local file or URL");
+				usage.Add("remove", "Removes package")
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
 				return usage;
 			}
 		}
@@ -59,6 +61,8 @@ namespace OpenIDE.Arguments.Handlers
 				install(arguments);
 			if (arguments.Length > 1 && arguments[0] == "update")
 				update(arguments);
+			if (arguments.Length > 1 && arguments[0] == "remove")
+				remove(arguments);
 		}
 
 		private void init(string source) {
@@ -190,7 +194,12 @@ namespace OpenIDE.Arguments.Handlers
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.Update(source);
 		}
-			
+		
+		private void remove(string[] args) {
+			var source = Path.GetFullPath(args[1]);
+			var installer = new Installer(_token, _dispatch, extractPackage);
+			installer.Remove(source);
+		}
 				
 		private void extractPackage(string source, string path) {
 			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
