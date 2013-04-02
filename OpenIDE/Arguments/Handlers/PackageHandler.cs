@@ -32,9 +32,11 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript")
 						.Add("DESTINATION", "Directory to write package to");
 				usage.Add("install", "Installs package")
-					.Add("SOURCE", "Path to local file or URL");
+					.Add("SOURCE", "Path to local file or URL")
+						.Add("[-g]", "Installs to global profiles");
 				usage.Add("update", "Updates package")
-					.Add("SOURCE", "Path to local file or URL");
+					.Add("SOURCE", "Path to local file or URL")
+						.Add("[-g]", "Updates package in global profiles");
 				usage.Add("remove", "Removes package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
 				return usage;
@@ -180,19 +182,37 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void install(string[] args) {
+			var useGlobal = globalSpecified(ref args);
 			var source = Path.GetFullPath(args[1]);
 			if (!File.Exists(source))
 				return;
 			var installer = new Installer(_token, _dispatch, extractPackage);
+			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(source);
 		}
 		
 		private void update(string[] args) {
+			var useGlobal = globalSpecified(ref args);
 			var source = Path.GetFullPath(args[1]);
 			if (!File.Exists(source))
 				return;
 			var installer = new Installer(_token, _dispatch, extractPackage);
+			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(source);
+		}
+
+		private bool globalSpecified(ref string[] args) {
+			var useGlobal = false;
+			var newArgs = new List<string>();
+			foreach (var arg in args) {
+				if (arg == "-g") {
+					useGlobal = true;
+					continue;
+				}
+				newArgs.Add(arg);
+			}
+			args = newArgs.ToArray();
+			return useGlobal;
 		}
 		
 		private void remove(string[] args) {

@@ -24,11 +24,16 @@ namespace OpenIDE.Core.Packaging
 		private string _token;
 		private Action<string> _dispatch;
 		private Action<string,string> _unpack;
+		private bool _useGlobal = false;
 
 		public Installer(string token, Action<string> dispatch, Action<string,string> unpack) {
 			_token = token;
 			_dispatch = dispatch;
 			_unpack = unpack;
+		}
+
+		public void UseGlobalProfiles(bool useGlobal) {
+			_useGlobal = useGlobal;
 		}
 
 		public void Install(string source) {
@@ -67,8 +72,17 @@ namespace OpenIDE.Core.Packaging
 		
 		private void prepareForAction(string source, Action<ActionParameters> actionHandler) {
 			var profiles = new ProfileLocator(_token);
-			var activeProfile = profiles.GetActiveLocalProfile();
-			var installPath = profiles.GetLocalProfilePath(activeProfile);
+			string activeProfile;
+			if (_useGlobal)
+				activeProfile = profiles.GetActiveGlobalProfile();
+			else
+				activeProfile = profiles.GetActiveLocalProfile();
+
+			string installPath;
+			if (_useGlobal)
+				installPath = profiles.GetGlobalProfilePath(activeProfile);
+			else
+				installPath = profiles.GetLocalProfilePath(activeProfile);
 			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
 			Directory.CreateDirectory(tempPath);
 			try {
