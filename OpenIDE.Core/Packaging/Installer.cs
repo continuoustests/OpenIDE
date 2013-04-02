@@ -92,6 +92,8 @@ namespace OpenIDE.Core.Packaging
 						Path.GetFileNameWithoutExtension(
 							Directory.GetFiles(tempPath)[0]);
 					installPath = Path.Combine(installPath, package.Target + "s");
+					if (!Directory.Exists(installPath))
+						Directory.CreateDirectory(installPath);
 					var matches = 
 						Directory.GetFiles(installPath)
 							.Where(x => matchPackage(x, name));
