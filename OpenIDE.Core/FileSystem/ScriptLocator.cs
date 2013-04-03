@@ -45,10 +45,10 @@ namespace OpenIDE.Core.FileSystem
 		{
 			var dir =
 				Path.Combine(
-					GetGlobalPath(),
+					GetGlobalPath("default"),
 					"templates");
 			if (!Directory.Exists(dir))
-				return null;
+				return new string[] {};
 			return new ScriptFilter().GetScripts(dir);
 		}
 
@@ -63,16 +63,14 @@ namespace OpenIDE.Core.FileSystem
 
 		public Script[] GetGlobalScripts()
 		{
-			var locator = new ProfileLocator(_currentPath);
-			var defaultPath = getPath(locator.GetGlobalProfilePath("default"));
+			var defaultPath = getPath(GetGlobalPath("default"));
 			var profilePath = GetGlobalPath();
 			return getMergedScripts(defaultPath, profilePath);
 		}
 
 		public Script[] GetLocalScripts()
 		{
-			var locator = new ProfileLocator(_currentPath);
-			var defaultPath = locator.GetLocalProfilePath("default");
+			var defaultPath = GetLocalPath("default");
 			if (defaultPath != null)
 				defaultPath = getPath(defaultPath);
 			var profilePath = GetLocalPath();
@@ -82,13 +80,25 @@ namespace OpenIDE.Core.FileSystem
 		public string GetGlobalPath()
 		{
 			var locator = new ProfileLocator(_currentPath);
-			return getPath(locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile()));
+			return GetGlobalPath(locator.GetActiveGlobalProfile());
+		}
+
+		public string GetGlobalPath(string profile)
+		{
+			var locator = new ProfileLocator(_currentPath);
+			return getPath(locator.GetGlobalProfilePath(profile));
 		}
 
 		public string GetLocalPath()
 		{
 			var locator = new ProfileLocator(_currentPath);
-			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+			return GetLocalPath(locator.GetActiveLocalProfile());
+		}
+
+		public string GetLocalPath(string profile)
+		{
+			var locator = new ProfileLocator(_currentPath);
+			var profilePath = locator.GetLocalProfilePath(profile);
 			if (profilePath == null)
 				return null;
 			return getPath(profilePath);
