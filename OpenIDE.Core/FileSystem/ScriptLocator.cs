@@ -108,7 +108,7 @@ namespace OpenIDE.Core.FileSystem
 		{
 			return getPath(
 				Path.Combine(
-					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
+					GetGlobalPath("default"), 
 					Path.Combine("languages", language + "-files")));
 		}
 
