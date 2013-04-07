@@ -1,4 +1,0 @@
-@ECHO OFF
-SET SCRIPTDIR=%~dp0
-
-%SCRIPTDIR%\C#-files\C#.exe %*

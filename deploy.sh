@@ -63,7 +63,6 @@ xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Co
 xbuild PackageManager/oipckmngr/oipckmngr.csproj /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 #xbuild .OpenIDE/languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 
-cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
@@ -73,7 +72,7 @@ cp $ROOT/oi/oi $DEPLOYDIR/oi
 cp $BINARYDIR/OpenIDE.CodeEngine.exe $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.exe
 cp $BINARYDIR/OpenIDE.CodeEngine.Core.dll $DEPLOYDIR/CodeEngine/OpenIDE.CodeEngine.Core.dll
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/CodeEngine/
-cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/CodeEngine/
+cp $BINARYDIR/Newtonsoft.Json.dll $DEPLOYDIR/CodeEngine/
 cp $ROOT/lib/FSWatcher/FSWatcher.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
 cp -r $ROOT/oi/tests/* $DEPLOYDIR/tests
@@ -89,11 +88,11 @@ cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
 
 cp -r $ROOT/oi/rscripts/* $DEPLOYDIR/.OpenIDE/rscripts
 
-cp $ROOT/Languages/CSharp/C# $DEPLOYDIR/.OpenIDE/languages/C#
+cp $ROOT/Languages/CSharp/C#.oilnk $DEPLOYDIR/.OpenIDE/languages/C#.oilnk
 cp $ROOT/Languages/CSharp/language.oicfgoptions $DEPLOYDIR/.OpenIDE/languages/C#-files/language.oicfgoptions
 cp $BINARYDIR/C#.exe $DEPLOYDIR/.OpenIDE/languages/C#-files/C#.exe
-cp $BINARYDIR/CoreExtensions.dll $DEPLOYDIR/.OpenIDE/languages/C#-files/CoreExtensions.dll
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/.OpenIDE/languages/C#-files/OpenIDE.Core.dll
+cp $BINARYDIR/Newtonsoft.Json.dll $DEPLOYDIR/.OpenIDE/languages/C#-files/
 cp $ROOT/lib/FSWatcher/FSWatcher.dll $DEPLOYDIR/CodeEngine/
 cp $BINARYDIR/ICSharpCode.NRefactory.CSharp.dll $DEPLOYDIR/.OpenIDE/languages/C#-files/ICSharpCode.NRefactory.CSharp.dll
 cp $BINARYDIR/ICSharpCode.NRefactory.dll $DEPLOYDIR/.OpenIDE/languages/C#-files/ICSharpCode.NRefactory.dll

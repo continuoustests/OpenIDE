@@ -39,6 +39,7 @@
     <Compile Include="Config\ConfigurationTests.cs" />
     <Compile Include="CommandBuilding\CommandStringParserTests.cs" />
     <Compile Include="Packaging\PackageTests.cs" />
+    <Compile Include="FileSystem\OiLnkReaderTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

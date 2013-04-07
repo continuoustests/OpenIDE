@@ -38,8 +38,14 @@ namespace OpenIDE.Core.FileSystem
 
 		public void Run(string arguments, Action<string> onLine)
 		{
-			arguments = " \"" + _globalProfileName + "\" \"" + _localProfileName + "\" " + arguments;
-			run(arguments, onLine);
+			arguments = "{global-profile} {local-profile} " + arguments;
+			run(
+				arguments,
+				onLine,
+				new[] {
+						new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
+						new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
+					});
 		}
 
 		private IEnumerable<BaseCommandHandlerParameter> getUsages()
@@ -86,14 +92,18 @@ namespace OpenIDE.Core.FileSystem
 		private string ToSingleLine(string arguments)
 		{
 			var sb = new StringBuilder();
-			run(arguments, (line) => sb.Append(line));
+			run(arguments, (line) => sb.Append(line), new KeyValuePair<string,string>[] {});
 			return sb.ToString();
 		}
 
-		private void run(string arguments, Action<string> onLine)
+		private void run(string arguments, Action<string> onLine,
+						 IEnumerable<KeyValuePair<string,string>> replacements)
 		{
 			var cmd = _file;
-            arguments = "\"" + _workingDirectory + "\" " + arguments;
+			var finalReplacements = new List<KeyValuePair<string,string>>();
+			finalReplacements.Add(new KeyValuePair<string,string>("{run-location}", "\"" + _workingDirectory + "\""));
+			finalReplacements.AddRange(replacements);
+            arguments = "{run-location} " + arguments;
 			var proc = new Process();
 			proc
 				.Query(
@@ -106,7 +116,8 @@ namespace OpenIDE.Core.FileSystem
 								onLine("error|" + error);
 							else
 								onLine(line);
-						});
+						},
+					finalReplacements);
 		}
 	}
 }

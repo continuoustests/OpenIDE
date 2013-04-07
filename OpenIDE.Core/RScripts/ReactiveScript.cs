@@ -64,7 +64,7 @@ namespace OpenIDE.Core.RScripts
 							.Replace("<", "^<")
 							.Replace(">", "^>");
 			}
-            message = "\"" + message + "\" \"" + _globalProfileName + "\" \"" + _localProfileName + "\"";
+            message = "{event} {global-profile} {local-profile}";
 			var process = new Process();
             Logger.Write("Running: " + _file + " " + message);
             ThreadPool.QueueUserWorkItem((task) => {
@@ -89,7 +89,12 @@ namespace OpenIDE.Core.RScripts
 	            				else
 	            					_dispatch("rscript-" + Name + " " + m);
 	            			}
-	            		});
+	            		},
+	            		new[] {
+							new KeyValuePair<string,string>("{event}", "\"" + message + "\""),
+							new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
+							new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
+						});
 	            }
 				catch (Exception ex)
 				{

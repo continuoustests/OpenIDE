@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oi", "oi\oi.csproj", "{E13A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.Core", "OpenIDE.Core\OpenIDE.Core.csproj", "{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreExtensions", "CoreExtensions\CoreExtensions.csproj", "{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.EventListener", "OpenIDE.EventListener\OpenIDE.EventListener.csproj", "{D0F8B79B-DB3D-4F35-AA61-372C9E3C14B7}"
 EndProject
 Global
@@ -69,16 +67,6 @@ Global
 		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|x86.ActiveCfg = Release|Any CPU
 		{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}.Release|x86.Build.0 = Release|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}.Release|x86.ActiveCfg = Release|Any CPU
 		{D0F8B79B-DB3D-4F35-AA61-372C9E3C14B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0F8B79B-DB3D-4F35-AA61-372C9E3C14B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0F8B79B-DB3D-4F35-AA61-372C9E3C14B7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

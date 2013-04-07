@@ -49,7 +49,6 @@ mkdir %DEPLOYDIR%\.OpenIDE\test\templates
 %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%PackageManager\oipckmngr\oipckmngr.csproj /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 REM %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%.OpenIDE\languages\CSharp\CSharp.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 
-copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CoreExtensions.dll
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
 copy %BINARYDIR%\OpenIDE.dll %DEPLOYDIR%\OpenIDE.dll
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\OpenIDE.Core.dll
@@ -59,7 +58,7 @@ copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\OpenIDE.CodeEngine.exe %DEPLOYDIR%\CodeEngine\OpenIDE.CodeEngine.exe
 copy %BINARYDIR%\OpenIDE.CodeEngine.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.CodeEngine.Core.dll
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\CodeEngine\OpenIDE.Core.dll
-copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\CodeEngine\CoreExtensions.dll
+copy %BINARYDIR%\Newtonsoft.Json.dll %DEPLOYDIR%\CodeEngine\Newtonsoft.Json.dll
 copy %ROOT%\lib\FSWatcher\FSWatcher.dll %DEPLOYDIR%\CodeEngine\FSWatcher.dll
 copy %BINARYDIR%\OpenIDE.EventListener.exe %DEPLOYDIR%\EventListener\OpenIDE.EventListener.exe
 xcopy /S /I /E %ROOT%\oi\tests %DEPLOYDIR%\tests
@@ -73,11 +72,11 @@ xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates
 xcopy /S /I /E %ROOT%\oi\test-templates %DEPLOYDIR%\.OpenIDE\test\templates
 
-copy %ROOT%\Languages\CSharp\C#.bat %DEPLOYDIR%\.OpenIDE\languages\C#.bat
+copy %ROOT%\Languages\CSharp\C#.oilnk %DEPLOYDIR%\.OpenIDE\languages\C#.oilnk
 copy %ROOT%\Languages\CSharp\language.oicfgoptions %DEPLOYDIR%\.OpenIDE\languages\C#-files\language.oicfgoptions
 copy %BINARYDIR%\C#.exe %DEPLOYDIR%\.OpenIDE\languages\C#-files\C#.exe
-copy %BINARYDIR%\CoreExtensions.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\CoreExtensions.dll
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\OpenIDE.Core.dll
+copy %BINARYDIR%\Newtonsoft.Json.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\Newtonsoft.Json.dll
 copy %BINARYDIR%\ICSharpCode.NRefactory.CSharp.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\ICSharpCode.NRefactory.CSharp.dll
 copy %BINARYDIR%\ICSharpCode.NRefactory.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\ICSharpCode.NRefactory.dll
 copy %BINARYDIR%\Mono.Cecil.dll %DEPLOYDIR%\.OpenIDE\languages\C#-files\Mono.Cecil.dll
