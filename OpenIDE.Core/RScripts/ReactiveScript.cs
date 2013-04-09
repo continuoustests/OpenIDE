@@ -64,6 +64,7 @@ namespace OpenIDE.Core.RScripts
 							.Replace("<", "^<")
 							.Replace(">", "^>");
 			}
+			var originalMessage = message;
             message = "{event} {global-profile} {local-profile}";
 			var process = new Process();
             Logger.Write("Running: " + _file + " " + message);
@@ -91,7 +92,7 @@ namespace OpenIDE.Core.RScripts
 	            			}
 	            		},
 	            		new[] {
-							new KeyValuePair<string,string>("{event}", "\"" + message + "\""),
+							new KeyValuePair<string,string>("{event}", "\"" + originalMessage + "\""),
 							new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
 							new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
 						});

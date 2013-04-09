@@ -46,7 +46,14 @@ namespace oipckmngr
 					Console.WriteLine("Invalid Destination: Directory {0} does not exist", destination);
 					return;
 				}
-				destination = Path.Combine(destination, package.ID);
+				if (Directory
+						.GetFiles(path)
+						.Any(x => Path.GetFileNameWithoutExtension(x) != package.ID))
+				{
+					Console.WriteLine("Package cannot contain root level file not named {0}", package.ID);
+					return;
+				}
+				destination = Path.Combine(destination, package.ID + "-" + package.Version);
 				Compression.Compress(path, name, destination);
 				Console.WriteLine("Package created: " + destination + ".oipkg");
 			} else if (args[0] == "extract" && args.Length == 3) {

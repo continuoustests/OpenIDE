@@ -11,14 +11,17 @@ namespace OpenIDE.Core.Packaging
 		public static Package Read(string json) {
 			try {
 				var data = JObject.Parse(json);
-				var package = new Package(data["target"].ToString(), data["id"].ToString(), data["description"].ToString());
+				var package = new Package(data["target"].ToString(), data["id"].ToString(), data["version"].ToString(), data["description"].ToString());
 				if (data["pre-install-actions"] != null) {
 					data["pre-install-actions"].Children().ToList()
 						.ForEach(x => package.AddPreInstallAction(x.ToString()));
 				}
 				if (data["dependencies"] != null) {
 					data["dependencies"].Children().ToList()
-						.ForEach(x => package.AddDependency(x.ToString()));
+						.ForEach(x => 
+							package.AddDependency(
+								x["id"].ToString(),
+								x["version"].ToString()));
 				}
 				if (data["post-install-actions"] != null) {
 					data["post-install-actions"].Children().ToList()
@@ -31,16 +34,24 @@ namespace OpenIDE.Core.Packaging
 			return null;
 		}
 
+		public class Dependency
+		{
+			public string ID { get; set; }
+			public string Version { get; set; }
+		}
+
 		public string Target { get; set; }
 		public string ID { get; set; }
+		public string Version { get; set; }
 		public string Description { get; set; }
 		public List<string> PreInstallActions = new List<string>();
-		public List<string> Dependencies = new List<string>();
+		public List<Dependency> Dependencies = new List<Dependency>();
 		public List<string> PostInstallActions = new List<string>();
 
-		public Package(string target, string id, string description) {
+		public Package(string target, string id, string version, string description) {
 			Target = target;
 			ID = id;
+			Version = version;
 			Description = description;
 		}
 
@@ -49,8 +60,8 @@ namespace OpenIDE.Core.Packaging
 			return this;
 		}
 
-		public Package AddDependency(string item) {
-			Dependencies.Add(item);
+		public Package AddDependency(string name, string version) {
+			Dependencies.Add(new Dependency() { ID = name, Version = version });
 			return this;
 		}
 
@@ -63,6 +74,7 @@ namespace OpenIDE.Core.Packaging
 			return 
 				new[] { "language", "script", "rscript" }.Contains(Target) &&
 				ID.Length > 0 &&
+				Version.Length > 0 &&
 				Description.Length > 0;
 		}
 
@@ -71,12 +83,16 @@ namespace OpenIDE.Core.Packaging
 			sb.AppendLine("{");
 			sb.AppendLine(string.Format("\t\"target\": \"{0}\",", Target));
 			sb.AppendLine(string.Format("\t\"id\": \"{0}\",", ID));
+			sb.AppendLine(string.Format("\t\"version\": \"{0}\",", Version));
 			sb.AppendLine(string.Format("\t\"description\": \"{0}\",", Description));
 			sb.AppendLine("\t\"dependencies\":");
 			sb.AppendLine(
 				getArrayOf(
 					Dependencies.OfType<object>(),
-					(itm,tabs) => string.Format("\"{0}\"", itm.ToString()),
+					(itm,tabs) => 
+							"{ \"id\": \"{0}\", \"version\": \"{1}\" }"
+								.Replace("{0}", ((Dependency)itm).ID)
+								.Replace("{1}", ((Dependency)itm).Version),
 					2) + ",");
 			sb.AppendLine("\t\"pre-install-actions\":");
 			sb.AppendLine(
@@ -98,6 +114,7 @@ namespace OpenIDE.Core.Packaging
 			var sb = new StringBuilder();
 			sb.AppendLine("Target:\t" + Target);
 			sb.AppendLine("ID:\t" + ID);
+			sb.AppendLine("Version:\t" + Version);
 			sb.AppendLine();
 			sb.AppendLine("Description:" + Environment.NewLine + Description);
 			if (Dependencies.Count > 0) {
@@ -109,7 +126,7 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public override string ToString() {
-			return Target + " - " + ID;
+			return Target + " - " + ID + "-" + Version;
 		}
 
 		private string getArrayOf(IEnumerable<object> list, Func<object,int,string> toJSONValue, int tabs) {

@@ -16,21 +16,21 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void When_parsing_minimum_valid_options_parsing_validates() {
 			var package = Package.Read(
-				new Package("language", "Name", "MyDescription")
+				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write());
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language", "Name", "MyDescription")
+				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPostInstallAction("action")
 					.Write());
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language", "Name", "MyDescription")
+				new Package("language", "Name", "v1.1", "MyDescription")
 					.Write());
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
@@ -39,9 +39,9 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_parse_dependencies() {
 			var package = Package.Read(
-				new Package("language", "Name", "MyDescription")
+				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPreInstallAction("action")
-					.AddDependency("dependency")
+					.AddDependency("dependency", "v1.0")
 					.Write());
 			Assert.That(package.Dependencies.Count, Is.EqualTo(1));
 		}
@@ -50,21 +50,28 @@ namespace OpenIDE.Core.Packaging.Tests
 		public void When_parsing_package_without_minimum_nessesary_options_parsing_fails() {
 			Assert.That(
 				Package.Read(
-					new Package("language", "", "MyDescription")
+					new Package("language", "", "v1.1", "MyDescription")
 						.AddPreInstallAction("action1")
 						.Write()),
 				Is.Null);
 			
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "")
+					new Package("language", "MyPackage", "v1.1", "")
 						.AddPreInstallAction("action1")
 						.Write()),
 				Is.Null);
 
 			Assert.That(
 				Package.Read(
-					new Package("not-valid", "MyPackage", "MyDescription")
+					new Package("language", "MyPackage", "", "MyDescription")
+						.AddPreInstallAction("action1")
+						.Write()),
+				Is.Null);
+
+			Assert.That(
+				Package.Read(
+					new Package("not-valid", "MyPackage", "v1.1", "MyDescription")
 						.Write()),
 				Is.Null);
 		}
@@ -72,11 +79,11 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_write_package() {
 			var package = 
-				new Package("language", "MyPackage", "My Description")
+				new Package("language", "MyPackage", "v1.1", "My Description")
 					.AddPreInstallAction("action1")
 					.AddPreInstallAction("action2")
-					.AddDependency("Dep1v1")
-					.AddDependency("Dep2v1")
+					.AddDependency("Dep1", "v1")
+					.AddDependency("Dep2", "v1")
 					.AddPostInstallAction("action3")
 					.AddPostInstallAction("action4");
 
@@ -86,11 +93,12 @@ namespace OpenIDE.Core.Packaging.Tests
 					"{" + NL +
 					"\t\"target\": \"language\"," + NL +
 					"\t\"id\": \"MyPackage\"," + NL +
+					"\t\"version\": \"v1.1\"," + NL +
 					"\t\"description\": \"My Description\"," + NL +
 					"\t\"dependencies\":" + NL +
 					"\t\t[" + NL +
-					"\t\t\t\"Dep1v1\"," + NL +
-					"\t\t\t\"Dep2v1\"" + NL +
+					"\t\t\t{ \"id\": \"Dep1\", \"version\": \"v1\" }," + NL +
+					"\t\t\t{ \"id\": \"Dep2\", \"version\": \"v1\" }" + NL +
 					"\t\t]," + NL +
 					"\t\"pre-install-actions\":" + NL +
 					"\t\t[" + NL +

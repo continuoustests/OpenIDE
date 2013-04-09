@@ -161,7 +161,9 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
 					"\t\"#pre-install-actions\": []," + NL +
 					"\t\"#post-install-actions\": []," + NL +
-					"\t\"#dependencies\": []" + NL +
+					"\t\"#dependencies\": [" + NL +
+					"\t\t\t{\"id\": \"name\", \"version\": \"v1.0\"}" + NL +
+					"\t\t]" + NL +
 					"}";
 			return package.Replace("{0}", name).Replace("{1}", type);
 		}
