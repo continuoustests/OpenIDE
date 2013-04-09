@@ -67,7 +67,7 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 			removePackage(name, dir);
-			print("Removed package {0}", package.ID);
+			print("Removed package {0}", package.Signature);
 		}
 		
 		private void prepareForAction(string source, Action<ActionParameters> actionHandler) {
@@ -88,9 +88,7 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
-					var name = 
-						Path.GetFileNameWithoutExtension(
-							Directory.GetFiles(tempPath)[0]);
+					var name = package.ID;
 					installPath = Path.Combine(installPath, package.Target + "s");
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
@@ -117,11 +115,11 @@ namespace OpenIDE.Core.Packaging
 		private void update(string source, ActionParameters args) {
 			var existingPackage = getPackage(args.Matches.First());
 			if (!runInstallVerify(args.TempPath, args.InstallPath)) {
-				printUpdateFailed(args.Package.ID);
+				printUpdateFailed(args.Package.Signature);
 				return;
 			}
 			if (!runUpgrade(args.TempPath, args.InstallPath, "before-update")) {
-				printUpdateFailed(args.Package.ID);
+				printUpdateFailed(args.Package.Signature);
 				return;
 			}
 
@@ -129,14 +127,14 @@ namespace OpenIDE.Core.Packaging
 			_unpack(source, args.InstallPath);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {
-				printUpdateFailed(args.Package.ID);
+				printUpdateFailed(args.Package.Signature);
 				return;
 			}
 			
 			print(
 				"Package updated from {0} to {1}",
-				existingPackage.ID,
-				args.Package.ID);
+				existingPackage.Signature,
+				args.Package.Signature);
 		}
 
 		private void removePackage(string name, string path) {
@@ -161,7 +159,7 @@ namespace OpenIDE.Core.Packaging
 		private void installPackage(string source, Package package, string tempPath, string installPath, string activeProfile) {
 			if (!runInstallVerify(tempPath, installPath)) {
 				print();
-				Console.WriteLine("Failed to install package {0}", ConsoleColor.Red, package.ID);
+				Console.WriteLine("Failed to install package {0}", ConsoleColor.Red, package.Signature);
 				return;
 			}
 
@@ -174,7 +172,7 @@ namespace OpenIDE.Core.Packaging
 				_dispatch(action);
 
 			print("Installed {1} package {0} in profile {2}",
-				package.ID,
+				package.Signature,
 				package.Target,
 				activeProfile);
 		}
@@ -278,7 +276,7 @@ namespace OpenIDE.Core.Packaging
 			var pkgInfo = "";
 			var existingPackage = getPackage(matches.First());
 			if (existingPackage != null)
-				pkgInfo = string.Format(" ({0})", existingPackage.ID);
+				pkgInfo = string.Format(" ({0})", existingPackage.Signature);
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(
 				"There is already an installed {2} package called {0}{1}",

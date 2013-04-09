@@ -14,6 +14,15 @@ namespace OpenIDE.Core.Packaging.Tests
 		}
 
 		[Test]
+		public void Can_read_package_signature() {
+			var package = Package.Read(
+				new Package("language", "Name", "v1.1", "MyDescription")
+					.AddPreInstallAction("action")
+					.Write());
+			Assert.That(package.Signature, Is.EqualTo("Name-v1.1"));
+		}
+
+		[Test]
 		public void When_parsing_minimum_valid_options_parsing_validates() {
 			var package = Package.Read(
 				new Package("language", "Name", "v1.1", "MyDescription")

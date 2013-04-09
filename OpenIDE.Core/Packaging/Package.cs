@@ -41,6 +41,7 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public string Target { get; set; }
+		public string Signature { get{ return ID + "-" + Version; } }
 		public string ID { get; set; }
 		public string Version { get; set; }
 		public string Description { get; set; }
@@ -112,8 +113,8 @@ namespace OpenIDE.Core.Packaging
 
 		public string ToVerboseString() {
 			var sb = new StringBuilder();
-			sb.AppendLine("Target:\t" + Target);
-			sb.AppendLine("ID:\t" + ID);
+			sb.AppendLine("Target:\t\t" + Target);
+			sb.AppendLine("ID:\t\t" + ID);
 			sb.AppendLine("Version:\t" + Version);
 			sb.AppendLine();
 			sb.AppendLine("Description:" + Environment.NewLine + Description);
@@ -126,7 +127,7 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public override string ToString() {
-			return Target + " - " + ID + "-" + Version;
+			return Target + " - " + Signature;
 		}
 
 		private string getArrayOf(IEnumerable<object> list, Func<object,int,string> toJSONValue, int tabs) {
