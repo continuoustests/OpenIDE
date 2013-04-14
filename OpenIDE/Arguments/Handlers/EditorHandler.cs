@@ -1,18 +1,21 @@
 using System;
 using System.Linq;
-using OpenIDE.EditorEngineIntegration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Config;
+using CoreExtensions;
 namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
 	{
-		private ILocateEditorEngine _editorFactory;
+		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorFactory;
 		private Func<PluginLocator> _pluginLocator;
 		
 		public CommandHandlerParameter Usage {
@@ -21,10 +24,7 @@ namespace OpenIDE.Arguments.Handlers
 					"All",
 					CommandType.Run,
 					Command,
-					"Starts the editor of your choice depending on the plugins available in ||newline||" +
-					"addition to launching the code engine backend providing features like ||newline||" +
-					"type search and file explorer. It also initializes the system by running ||newline||" +
-					"whatever is specified in the initialize(.rb) script.");
+					"Initializes the environment by staring the editor, code model and editor engine");
 				usage.Add("PLUGIN_NAME", "The name of the plugin to launch");
 				usage.Add("goto", "Open file on spesific line and column")
 					.Add("FILE|LINE|COLUMN", "| separated filepath, line and column");
@@ -43,13 +43,14 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("CONTENT_FILE", "A file containing insert, remove and replace commands. One command pr line");
 				usage.Add("get-dirty-files", "Queries the editor for all modified files and their content")
 					.Add("[FILE]", "If passed it will only respond with the file specified");
+				usage.Add("command", "Custom editor commands");
 				return usage;
 			}
 		}
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
+		public EditorHandler(OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
 		{
 			_editorFactory = editorFactory;
 			_pluginLocator = locator;
@@ -59,12 +60,19 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var instance = _editorFactory.GetInstance(Environment.CurrentDirectory);
 			// TODO remove that unbeleavable nasty setfocus solution. Only init if launching editor
-			if (instance == null && arguments.Length == 1 && arguments[0] != "setfocus")
+			if (instance == null && arguments.Length > 0 && arguments[0] != "setfocus")
 			{
 				instance = startInstance();
 				if (instance == null)
 					return;
-				var editor = instance.Start(arguments[0].Trim());
+				var args = new List<string>();
+				args.AddRange(arguments);
+				args.AddRange( 
+					new Configuration(Environment.CurrentDirectory, true)
+						.EditorSettings
+						.Where(x => x.StartsWith("editor." + arguments[0]))
+						.Select(x => "--" + x));
+				var editor = instance.Start(args.ToArray());
 				if (editor != null && editor != "")
 					runInitScripts();
 				else
@@ -87,7 +95,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 		
-		private Instance startInstance()
+		private OpenIDE.Core.EditorEngineIntegration.Instance startInstance()
 		{
 			var assembly = 
 				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
@@ -126,15 +134,21 @@ namespace OpenIDE.Arguments.Handlers
 			_pluginLocator().Locate().ToList()
 				.ForEach(plugin => {
 					var language = plugin.GetLanguage();
-					runInitScript(Path.Combine(appdir, Path.Combine("Languages", language + "-plugin")));
+					runInitScript(Path.Combine(Path.GetDirectoryName(plugin.FullPath), language + "-files"));
 				});
-			runInitScript(Path.Combine(Environment.CurrentDirectory, ".OpenIDE"));
+			var locator = new ProfileLocator(Environment.CurrentDirectory);
+			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+			runInitScript(profilePath);
 		}
 
 		private void initCodeEngine(string folder)
 		{
 			var defaultLanguage = getDefaultLanguage();
+			if (defaultLanguage == null)
+				defaultLanguage = "none-default-language";
 			var enabledLanguages = getEnabledLanguages();
+			if (enabledLanguages == null)
+				enabledLanguages = "none-enabled-language";
 
 			var cmd = "mono";
 			var arg = "./CodeEngine/OpenIDE.CodeEngine.exe ";
@@ -169,14 +183,12 @@ namespace OpenIDE.Arguments.Handlers
 			var defaultLanguage = getDefaultLanguage();
 			var enabledLanguages = getEnabledLanguages();
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(
-				initscript,
-				"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = folder;
-			proc.Start();
+			proc
+				.Spawn(
+					initscript,
+					"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages,
+					false,
+					folder);
 		}
 
 		private string getDefaultLanguage()
@@ -190,7 +202,7 @@ namespace OpenIDE.Arguments.Handlers
 		private string getEnabledLanguages()
 		{
 			var enabledLanguages = "";
-			if (Bootstrapper.Settings.EnabledLanguages != null)
+			if (Bootstrapper.Settings.EnabledLanguages != null && Bootstrapper.Settings.EnabledLanguages.Length > 0)
 			{
 				enabledLanguages = " \"";
 				Bootstrapper.Settings.EnabledLanguages.ToList()

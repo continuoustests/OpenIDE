@@ -67,7 +67,7 @@
                 $name = substr($line, $namePos, $paramPos - $namePos);
                 $signature = $name;
                 $column = $namePos + 2;
-                write("signature|" .
+                write("signature||" .
 					  $signature . "|" . 
 					  $name . 
 					  "|function||" . 

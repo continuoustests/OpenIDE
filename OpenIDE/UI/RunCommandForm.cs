@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenIDE.Arguments;
 using OpenIDE.CommandBuilding;
+using OpenIDE.Core.Logging;
 using System.IO;
 using System.Diagnostics;
 using CoreExtensions;
@@ -257,8 +258,19 @@ namespace OpenIDE.UI
         private void run(string arguments)
         {
             var proc = new Process();
-			foreach (var line in proc.Query("oi", arguments, false, _directory))
-				Console.WriteLine(line);
+			proc.Query(
+                "oi",
+                arguments,
+                false,
+                _directory,
+                (error, line) => {
+                        if (error) {
+                            Logger.Write("Failed to run oi with " + arguments + " in " + _directory);
+                            Logger.Write(line);
+                            return;
+                        }
+                        Console.WriteLine(line);
+                    });
 
             /*if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
                 proc.StartInfo = new ProcessStartInfo("oi", arguments);

@@ -34,7 +34,7 @@ namespace OpenIDE.Core.CommandBuilding
 			for (int i = 0; i < arguments.Length; i++)
 			{
 				if (i == 0)
-					sb.Append(arguments[i]);
+					sb.Append("\"" + arguments[i] + "\"");
 				else
 					sb.Append(" \"" + arguments[i] + "\"");
 			}

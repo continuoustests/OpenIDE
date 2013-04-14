@@ -9,7 +9,6 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>CSharp</RootNamespace>
     <AssemblyName>C#</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +45,8 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -59,16 +60,38 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <DebugType>none</DebugType>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
-    <Reference Include="..\lib\NRefactory\ICSharpCode.NRefactory.dll" />
-    <Reference Include="..\lib\NRefactory\ICSharpCode.NRefactory.CSharp.dll" />
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\lib\NRefactory\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory.CSharp">
+      <HintPath>..\lib\NRefactory\ICSharpCode.NRefactory.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>..\lib\NRefactory\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Processes\ProcessExtensions.cs" />
+    <Compile Include="Commands\SendHandler.cs" />
+    <Compile Include="Crawlers\AssemblyParser.cs" />
+    <Compile Include="Crawlers\IReferenceCache.cs" />
+    <Compile Include="Crawlers\JSONWriter.cs" />
+    <Compile Include="Crawlers\TypeBase.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeEngine\CodeEngineResultParser.cs" />
+    <Compile Include="Crawlers\TypeResolvers\CodeEngine\CodeEngineTypeResolver.cs" />
+    <Compile Include="Crawlers\TypeResolvers\EnclosingSignatureFromPosition.cs" />
+    <Compile Include="Crawlers\TypeResolvers\ExpressionResolver.cs" />
+    <Compile Include="Crawlers\TypeResolvers\ICacheReader.cs" />
+    <Compile Include="Crawlers\TypeResolvers\OutputWriterCacheReader.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeResolver.cs" />
+    <Compile Include="Crawlers\Using.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Commands\AddFileHandler.cs" />
@@ -107,6 +130,11 @@
     <Compile Include="Projects\ProjectCrawler.cs" />
     <Compile Include="Projects\ProjectHandler.cs" />
     <Compile Include="Projects\ProjectXML.cs" />
+    <Compile Include="Responses\IResponseWriter.cs" />
+    <Compile Include="Tcp\ITcpServer.cs" />
+    <Compile Include="Tcp\SocketClient.cs" />
+    <Compile Include="Tcp\TcpServer.cs" />
+    <Compile Include="Tcp\TokenHandler.cs" />
     <Compile Include="Versioning\IAmProjectVersion.cs" />
     <Compile Include="Versioning\IProvideVersionedTypes.cs" />
     <Compile Include="Versioning\IResolveProjectVersion.cs" />
@@ -136,6 +164,18 @@
     <Compile Include="Commands\SignatureFromPositionHandler.cs" />
     <Compile Include="Commands\MembersFromUnknownSignatureHandler.cs" />
     <Compile Include="Crawlers\NRefactoryParser.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeUnderPositionResolver.cs" />
+    <Compile Include="Crawlers\TypeResolvers\TypeFromPositionResolver.cs" />
+    <Compile Include="Commands\GoToDefinitionHandler.cs" />
+    <Compile Include="Crawlers\TypeResolvers\DirtyFileParser.cs" />
+    <Compile Include="Crawlers\TypeResolvers\FileContextAnalyzer.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\OpenIDE.Core\OpenIDE.Core.csproj">
+      <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
+      <Name>OpenIDE.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

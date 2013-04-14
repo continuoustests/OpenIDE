@@ -23,7 +23,7 @@ namespace OpenIDE.Arguments
 			_eventDispatcher = eventDispatcher;
 		}
 		
-		public void For(string name, string[] arguments)
+		public void For(string name, string[] arguments, Action<string> onNoCommandHandled)
 		{
 			_eventDispatcher.Forward(name, arguments);
 			var command = _handlers.FirstOrDefault(x => x.Command.Equals(name));
@@ -32,8 +32,23 @@ namespace OpenIDE.Arguments
 				if (_pluginHandlers == null)
 					_pluginHandlers = _pluginHandlerFactory().ToArray();
 				command = _pluginHandlers.FirstOrDefault(x => x.Command.Equals(name));
-				if (command == null)
+				if (command == null) {
+					var x = _handlers.First(y => y.Command == "x");
+					if (x != null && x.Usage != null) {
+						if (x.Usage.Parameters.Any(y => y.Name.Equals(name))) {
+							command = x;
+							var modifiedArguments = new List<string>();
+							modifiedArguments.Add(name);
+							modifiedArguments.AddRange(arguments);
+							arguments = modifiedArguments.ToArray();
+						}
+					}
+				}
+				if (command == null) {
+					Console.WriteLine(name + " is not a valid OpenIDE command.");
+					onNoCommandHandled(name);
 					return;
+				}
 			}
 			command.Execute(arguments);
 		}

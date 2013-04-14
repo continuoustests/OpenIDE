@@ -51,8 +51,29 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\lib\JSON.NET\Net35\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
+    <Compile Include="CodeEngineIntegration\Instance.cs" />
+    <Compile Include="Commands\CacheFormatter.cs" />
+    <Compile Include="Commands\CommandMessage.cs" />
+    <Compile Include="Commands\QueryArgumentParser.cs" />
+    <Compile Include="EditorEngineIntegration\Client.cs" />
+    <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
+    <Compile Include="EditorEngineIntegration\IClient.cs" />
+    <Compile Include="EditorEngineIntegration\IEngineLocator.cs" />
+    <Compile Include="EditorEngineIntegration\Instance.cs" />
+    <Compile Include="FileSystem\FS.cs" />
+    <Compile Include="FileSystem\IFS.cs" />
+    <Compile Include="FileSystem\PathExtensions.cs" />
+    <Compile Include="FileSystem\Script.cs" />
+    <Compile Include="FileSystem\ScriptLocator.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="UI\SnippetForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,7 +84,7 @@
     <Compile Include="Language\LanguagePlugin.cs" />
     <Compile Include="Language\PluginLocator.cs" />
     <Compile Include="Language\UsageParser.cs" />
-    <Compile Include="Config\Configuration.cs" />
+    <Compile Include="CodeEngineIntegration\Config\Configuration.cs" />
     <Compile Include="Windowing\BringToForeGround.cs" />
     <Compile Include="CommandBuilding\CommandStringParser.cs" />
     <Compile Include="CommandBuilding\FilePosition.cs" />
@@ -76,6 +97,14 @@
     <Compile Include="Scripts\ScriptFilter.cs" />
     <Compile Include="RScripts\ReactiveScriptReader.cs" />
     <Compile Include="RScripts\ReactiveScript.cs" />
+    <Compile Include="CodeEngineIntegration\Config\ConfigOptions.cs" />
+    <Compile Include="Profiles\ProfileLocator.cs" />
+    <Compile Include="Commands\UsagePrinter.cs" />
+    <Compile Include="Configs\Interpreters.cs" />
+    <Compile Include="Packaging\Package.cs" />
+    <Compile Include="Packaging\Installer.cs" />
+    <Compile Include="CoreExtensions\ProcessExtensions.cs" />
+    <Compile Include="FileSystem\OiLnkReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
@@ -100,10 +129,5 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CoreExtensions\CoreExtensions.csproj">
-      <Project>{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}</Project>
-      <Name>CoreExtensions</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
 </Project>

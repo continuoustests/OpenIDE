@@ -1,6 +1,6 @@
 using System;
 using OpenIDE.Core.Language;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -17,12 +17,12 @@ namespace OpenIDE.Arguments.Handlers
 						"Deletes a snippet");
 					usage.Add("LANGUAGE", "Language snippet belongs to (name or file extension)")
 						.Add("SNIPPET_NAME",
-							"Name coresponding to the snippet name in Languages/[LANGUAGE]/snippets");
+							"Name coresponding to the snippet name in languages/[LANGUAGE]/snippets");
 					return usage;
 			}
 		}
 	
-		public string Command { get { return "snippet-delete"; } }
+		public string Command { get { return "rm"; } }
 		
 		public SnippetDeleteHandler(ICodeEngineLocator codeEngineFactory)
 		{

@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>OpenIDE.CodeEngine.Core.Tests</RootNamespace>
     <AssemblyName>OpenIDE.CodeEngine.Core.Tests</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -52,12 +51,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\NUnit\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\NUnit\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -66,6 +64,7 @@
     <Compile Include="FileSystem\PathParserTests.cs" />
     <Compile Include="ChangeTrackersCrawlHandlerTests.cs" />
     <Compile Include="Commands\QueryArgumentParserTests.cs" />
+    <Compile Include="ReactiveScripts\ScriptTouchHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -73,7 +72,7 @@
       <Project>{412B1F88-3F13-4473-8D71-AD719634F152}</Project>
       <Name>OpenIDE.CodeEngine.Core</Name>
     </ProjectReference>
-	<ProjectReference Include="..\OpenIDE.Core\OpenIDE.Core.csproj">
+    <ProjectReference Include="..\OpenIDE.Core\OpenIDE.Core.csproj">
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>OpenIDE.Core</Name>
     </ProjectReference>

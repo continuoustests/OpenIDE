@@ -3,11 +3,14 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using System.Linq;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Caching;
+using System.Reflection;
+using OpenIDE.Core.Profiles;
+
 namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 {
 	public class PluginFileTracker : IDisposable
@@ -15,6 +18,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		private EventEndpoint _eventDispatcher;
 		private List<PluginPattern> _plugins = new List<PluginPattern>();
 		private FileChangeTracker _tracker;
+		private FileChangeTracker _localTracker;
+		private FileChangeTracker _globalTracker;
 		private ICacheBuilder _cache;
 		private ICrawlResult _crawlReader;
 		
@@ -34,6 +39,18 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			_localTracker = new FileChangeTracker((x) => {
+					_eventDispatcher.Send(
+						"codemodel raw-filesystem-change-" +
+						x.Type.ToString().ToLower() +
+						" \"" + x.Path + "\"");
+				});
+			_globalTracker = new FileChangeTracker((x) => {
+					_eventDispatcher.Send(
+						"codemodel raw-filesystem-change-" +
+						x.Type.ToString().ToLower() +
+						" \"" + x.Path + "\"");
+				});
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
 					{
@@ -43,6 +60,15 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
 					});
 			_tracker.Start(path, getFilter(), handleChanges);
+			var locator = new ProfileLocator(path);
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
+				var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+				if (Directory.Exists(profilePath))
+					_localTracker.Start(profilePath, getFilter(), handleChanges);
+			}
+			var globalPath = locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile());
+			if (Directory.Exists(globalPath))
+				_globalTracker.Start(globalPath, getFilter(), handleChanges);
 		}
 
 		private string getFilter()
@@ -112,6 +138,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		public void Dispose()
 		{
 			_tracker.Dispose();
+			_localTracker.Dispose();
+			_globalTracker.Dispose();
 		}
 	}
 
@@ -142,8 +170,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			if (FilesToHandle.Count == 0)
 				return;
 			cacheHandler.SetLanguage(Plugin.GetLanguage());
-			foreach (var line in Plugin.Crawl(FilesToHandle))
-				cacheHandler.Handle(line);
+			Plugin.Crawl(FilesToHandle, (line) => cacheHandler.Handle(line));
 			FilesToHandle.Clear();
 		}
 	}

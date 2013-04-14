@@ -57,7 +57,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="..\lib\FSWatcher\FSWatcher.dll" />
+    <Reference Include="FSWatcher">
+      <HintPath>..\lib\FSWatcher\FSWatcher.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="EditorEngine\EditorEngineLocator.cs" />
     <Compile Include="Endpoints\Tcp\SocketClient.cs" />
     <Compile Include="EditorEngine\Instance.cs" />
+    <Compile Include="Handlers\LanguageCommandHandler.cs" />
     <Compile Include="UI\FileExplorer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,17 +95,11 @@
     <Compile Include="Caching\ITypeCache.cs" />
     <Compile Include="ChangeTrackers\FileChangeTracker.cs" />
     <Compile Include="ChangeTrackers\CSharpFileTracker.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="UI\FileExplorerHelpers\CacheSearchHandler.cs" />
     <Compile Include="UI\FileExplorerHelpers\ISearchHandler.cs" />
     <Compile Include="Bootstrapping\Bootstrapper.cs" />
     <Compile Include="Handlers\GetCodeRefsHandler.cs" />
     <Compile Include="Handlers\IHandler.cs" />
-    <Compile Include="Commands\CommandMessage.cs" />
-    <Compile Include="Commands\CacheFormatter.cs" />
-    <Compile Include="Commands\QueryArgumentParser.cs" />
     <Compile Include="Handlers\GetSignatureRefsHandler.cs" />
     <Compile Include="Handlers\GetFilesHandler.cs" />
     <Compile Include="Handlers\GetProjectsHandler.cs" />
@@ -117,6 +114,7 @@
     <Compile Include="Endpoints\EventEndpoint.cs" />
     <Compile Include="ReactiveScripts\ReactiveScriptEngine.cs" />
     <Compile Include="ChangeTrackers\Change.cs" />
+    <Compile Include="ReactiveScripts\ScriptTouchHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -137,7 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\TypeSearchForm.resx" />
-    <None Include="Endpoints\EventEndpoint" />
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\MemberLookupForm.resx" />
@@ -155,10 +152,6 @@
     <ProjectReference Include="..\OpenIDE.Core\OpenIDE.Core.csproj">
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>OpenIDE.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CoreExtensions\CoreExtensions.csproj">
-      <Project>{fb9bd7ea-f2f8-4f9c-8b82-17e703c0c766}</Project>
-      <Name>CoreExtensions</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

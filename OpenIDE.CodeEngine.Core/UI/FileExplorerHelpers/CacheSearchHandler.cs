@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching.Search;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Logging;
 using System.Diagnostics;
 using CoreExtensions;
 
@@ -99,7 +99,7 @@ namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
                 directory = result.File;
 			var additionalParameters = "";
 			if (_defaultLanguage != null)
-				additionalParameters = " --default-language=" + _defaultLanguage;
+				additionalParameters = " --default.language=" + _defaultLanguage;
 
             var proc = new Process();
             proc.Run("oi", additionalParameters, false, directory);

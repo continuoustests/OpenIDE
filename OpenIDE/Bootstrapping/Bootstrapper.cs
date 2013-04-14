@@ -7,12 +7,16 @@ using System.Linq;
 using OpenIDE.Arguments;
 using OpenIDE.Arguments.Handlers;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Configs;
+using OpenIDE.Core.Profiles;
 using OpenIDE.Core.CommandBuilding;
+using CoreExtensions;
 namespace OpenIDE.Bootstrapping
 {
 	public static class Bootstrapper
 	{
 		private static DIContainer _container;
+		private static Interpreters _interpreters;
 
 		public static AppSettings Settings = null; 
 		
@@ -23,6 +27,12 @@ namespace OpenIDE.Bootstrapping
 					Assembly.GetExecutingAssembly().Location),
 					getDefaultHandlers,
 					getLanguageHandlers);
+			_interpreters = new Interpreters(Environment.CurrentDirectory);
+			ProcessExtensions.GetInterpreter = 
+				(file) => {
+						return _interpreters
+							.GetInterpreterFor(Path.GetExtension(file));
+					};
 			_container = new DIContainer(Settings);
 		}
 		
@@ -49,8 +59,9 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
-		private const string DEFAULT_LANGUAGE = "--default-language=";
-		private const string ENABLED_LANGUAGES = "--supported-languages";
+		private const string INTERPRETERPREFIX = "interpreter.";
+		private const string DEFAULT_LANGUAGE = "--default.language=";
+		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
 		private string _path;
 		private ICommandHandler[] _handlers;
@@ -58,13 +69,22 @@ namespace OpenIDE.Bootstrapping
 		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
 		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
+		public string TokenPath { get; private set; }
+		public string RootPath { get; private set; }
 		public string Path { get { return _path; } }
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
+		public string Plugin = "";
 
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
 			_path = path;
+			var locator = new ProfileLocator(Environment.CurrentDirectory);
+			RootPath = locator.GetLocalProfilePath("default");
+			if (RootPath == null)
+				RootPath = Directory.GetCurrentDirectory();
+			else
+				RootPath = System.IO.Path.GetDirectoryName(RootPath);
 			var local = new Configuration(Directory.GetCurrentDirectory(), false);
 			var global = new Configuration(_path, false);
 
@@ -93,7 +113,7 @@ namespace OpenIDE.Bootstrapping
 						.Substring(DEFAULT_LANGUAGE.Length, arg.Length - DEFAULT_LANGUAGE.Length);
 					continue;
 				}
-				if (arg.StartsWith(ENABLED_LANGUAGES))
+				else if (arg.StartsWith(ENABLED_LANGUAGES))
 				{
 					EnabledLanguages = 
 						new CommandStringParser(',')
@@ -133,6 +153,6 @@ namespace OpenIDE.Bootstrapping
 				}
 			}
 			return newArgs.ToArray();
-		}
+		}		
 	}
 }

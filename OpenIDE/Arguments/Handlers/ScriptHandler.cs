@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
 
 namespace OpenIDE.Arguments.Handlers
@@ -10,6 +10,7 @@ namespace OpenIDE.Arguments.Handlers
 	class ScriptHandler : ICommandHandler
 	{
 		private List<Script> _scripts = new List<Script>();
+		private string _token;
 		private Action<string> _dispatch;
 
 		public CommandHandlerParameter Usage {
@@ -33,11 +34,12 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "x"; } }
 
-		public ScriptHandler(Action<string> dispatch)
+		public ScriptHandler(string token, Action<string> dispatch)
 		{
+			_token = token;
 			_dispatch = dispatch;
-			_scripts.AddRange(new ScriptLocator().GetLocalScripts());
-			new ScriptLocator()
+			_scripts.AddRange(new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts());
+			new ScriptLocator(_token, Environment.CurrentDirectory)
 				.GetGlobalScripts()
 				.Where(x => _scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
 				.ForEach(x => _scripts.Add(x));
@@ -59,15 +61,14 @@ namespace OpenIDE.Arguments.Handlers
 			for (int i = 1; i < arguments.Length; i++)
 				sb.Append(" \"" + arguments[i] + "\"");
 
-			foreach (var line in script.Run(sb.ToString()))
-			{
-				if (line.StartsWith("command|"))
-					_dispatch(line.Substring("command|".Length, line.Length - "command|".Length));
-				else if (line.StartsWith("error|"))
-					_dispatch(line);
-				else
-					_dispatch("comment|" + line);
-			}
+			script.Run(sb.ToString(), (line) => {
+					if (line.StartsWith("command|"))
+						_dispatch(line.Substring("command|".Length, line.Length - "command|".Length));
+					else if (line.StartsWith("error|"))
+						_dispatch(line);
+					else
+						_dispatch("comment|" + line);
+				});
 		}
 
 		private void printAvailableCommands()

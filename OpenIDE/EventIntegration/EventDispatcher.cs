@@ -49,7 +49,7 @@ namespace OpenIDE.EventIntegration
 		
 		private bool trySend(Instance info, string message)
 		{
-			var client = new OpenIDE.EditorEngineIntegration.Client();
+			var client = new OpenIDE.Core.EditorEngineIntegration.Client();
 			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
 			if (connected)

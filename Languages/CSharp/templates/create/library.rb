@@ -27,7 +27,7 @@ def getProjectConent(name)
 		<OutputType>Library</OutputType>
 		<RootNamespace>#{name}</RootNamespace>
 		<AssemblyName>#{name}</AssemblyName>
-		<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' \">
 		<DebugSymbols>true</DebugSymbols>

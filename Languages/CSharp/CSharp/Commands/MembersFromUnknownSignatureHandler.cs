@@ -1,4 +1,5 @@
 using System;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -8,7 +9,7 @@ namespace CSharp.Commands
 
 		public string Command { get { return "members-from-signature"; } }
 		
-		public void Execute(string[] args)
+		public void Execute(IResponseWriter writer, string[] args)
 		{
 			// TODO when the code parsing is done implement this
 		}

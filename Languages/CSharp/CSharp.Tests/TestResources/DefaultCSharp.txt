@@ -1,4 +1,4 @@
-using System;
+using System.Core;
 
 namespace MyNamespace1
 {
@@ -54,17 +54,41 @@ namespace MyNamespace5
 	public interface MyInterface1
 	{
 	}
+
+	static class AStaticClass
+	{
+	}
+
+	sealed partial class ASealedClass
+	{
+	}
+
+	private abstract class AnAbstractClass
+	{
+	}
 	
 	public abstract class GenericClass<TSomething, TCommand>
 	{
 	}
 
+	[TestFixture]
 	class Program
     {
-        public void get()
+		private static int MYThing { get; set; }
+
+		public const string _field = "lkj";
+
+		[Category("hello", 15)]
+        public static void get(int number, ASealedClass cls)
         {
+			int myInt = 2;
+        	var bleh = cls.ToString();
         	string.Format("Test (Thread: {0}}", bleh);
         }
+
+		protected virtual string doIt() {
+			return "";
+		}
 
 		public void ifdef
 		{

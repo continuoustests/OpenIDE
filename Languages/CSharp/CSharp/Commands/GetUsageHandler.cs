@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -15,13 +16,13 @@ namespace CSharp.Commands
 			_dispatcher = dispatcher;
 		}
 
-		public void Execute(string[] args)
+		public void Execute(IResponseWriter writer, string[] args)
 		{
 			var output = "";
 			_dispatcher.GetHandlers()
 				.Where(x => x.Usage != null).ToList()
 				.ForEach(x => output += x.Usage + " ");
-			Console.WriteLine(output);
+			writer.Write(output);
 		}
 	}
 }

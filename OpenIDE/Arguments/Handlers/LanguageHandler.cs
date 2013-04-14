@@ -6,9 +6,25 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class LanguageHandler : ICommandHandler
 	{
+		private CommandHandlerParameter _usages;
+
 		private LanguagePlugin _plugin;
 
-		public CommandHandlerParameter Usage { get; private set; }
+		public CommandHandlerParameter Usage { 
+			get {
+				if (_usages == null) {
+					var usages = new CommandHandlerParameter(
+						Command,
+						CommandType.LanguageCommand,
+						Command,
+						"Commands for the " + Command + " plugin");
+					_plugin.GetUsages().ToList()
+						.ForEach(x => usages.Add(x));
+					_usages = usages;
+				}
+				return _usages;
+			}
+		}
 
 		public string Command { get; private set; }
 
@@ -16,13 +32,6 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			_plugin = plugin;
 			Command = _plugin.GetLanguage();
-			Usage = new CommandHandlerParameter(
-				Command,
-				CommandType.LanguageCommand,
-				Command,
-				"Commands for the " + Command + " plugin");
-			_plugin.GetUsages().ToList()
-				.ForEach(x => Usage.Add(x));
 		}
 
 		public void Execute(string[] arguments)

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
-using OpenIDE.CodeEngine.Core.Commands;
+using OpenIDE.Core.Commands;
 
 namespace OpenIDE.CodeEngine.Core.Tests.Commands
 {

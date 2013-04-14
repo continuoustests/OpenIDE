@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.Caching;
 using OpenIDE.Core.Language;
 namespace OpenIDE.Arguments.Handlers
@@ -9,7 +9,7 @@ namespace OpenIDE.Arguments.Handlers
 	class CodeEngineGoToHandler : ICommandHandler
 	{
 		private ICodeEngineLocator _codeEngineFactory;
-		private EditorEngineIntegration.ILocateEditorEngine _editorEngineFactory;
+		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorEngineFactory;
 		
 		public CommandHandlerParameter Usage {
 			get {
@@ -25,7 +25,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "gototype"; } }
 		
-		public CodeEngineGoToHandler(ICodeEngineLocator codeEngineFactory, EditorEngineIntegration.ILocateEditorEngine editorFactory)
+		public CodeEngineGoToHandler(ICodeEngineLocator codeEngineFactory, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory)
 		{
 			_codeEngineFactory = codeEngineFactory;
 			_editorEngineFactory = editorFactory;

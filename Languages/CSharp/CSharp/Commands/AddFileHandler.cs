@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -27,9 +28,9 @@ namespace CSharp.Commands
 			_getTypesProviderByLocation = provider;
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
-			var args = parseArguments(arguments);
+			var args = parseArguments(writer, arguments);
 			if (args == null)
 				return;
 
@@ -88,12 +89,12 @@ namespace CSharp.Commands
 			return rgx.IsMatch(Path.GetFileName(path));
 		}
 
-		private CommandArguments parseArguments(string[] arguments)
+		private CommandArguments parseArguments(IResponseWriter writer, string[] arguments)
 		{
 			var file = arguments.FirstOrDefault(x => !x.StartsWith("-"));
 			if (file == null)
 			{
-				Console.WriteLine("error|No file argument provided");
+				writer.Write("error|No file argument provided");
 				return null;
 			}
 			return new CommandArguments()

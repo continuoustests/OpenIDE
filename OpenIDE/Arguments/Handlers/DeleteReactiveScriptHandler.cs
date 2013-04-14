@@ -9,6 +9,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class DeleteReactiveScriptHandler : ICommandHandler
 	{
+		private string _keyPath;
 		private PluginLocator _pluginLocator;
 
 		public CommandHandlerParameter Usage {
@@ -23,10 +24,11 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "rscript-delete"; } }
+		public string Command { get { return "rm"; } }
 
-		public DeleteReactiveScriptHandler(PluginLocator locator)
+		public DeleteReactiveScriptHandler(PluginLocator locator, string keyPath)
 		{
+			_keyPath = keyPath;
 			_pluginLocator = locator;
 		}
 	
@@ -34,8 +36,10 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var scripts = new ReactiveScriptReader(
 				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-				() => { return _pluginLocator; })
-				.Read(Environment.CurrentDirectory);
+				_keyPath,
+				() => { return _pluginLocator; },
+				(m) => {})
+				.Read();
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;

@@ -7,13 +7,15 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using CSharp.Projects;
-using CSharp.Processes;
+using CSharp.Responses;
+using CoreExtensions;
 
 namespace CSharp.Commands
 {
 	class CreateHandler : ICommandHandler
 	{
 		private CSharp.Files.IResolveFileTypes _fileTypeResolver;
+		private string _keyPath;
 		
 		public string Usage {
 			get {
@@ -46,7 +48,7 @@ namespace CSharp.Commands
 		private BaseCommandHandlerParameter getUsage(string template)
 		{
 			var name = Path.GetFileNameWithoutExtension(template);
-			var definition = new CreateTemplate(template, null).GetUsageDefinition();
+			var definition = new CreateTemplate(template, null, _keyPath).GetUsageDefinition();
 			var parser = new TemplateDefinitionParser();
 			var usage = parser.Parse(name, definition);
 			if (usage == null)
@@ -62,16 +64,18 @@ namespace CSharp.Commands
 		public string Command { get { return "create"; } }
 
 		public CreateHandler(
-			CSharp.Files.IResolveFileTypes fileTypeResolver)
+			CSharp.Files.IResolveFileTypes fileTypeResolver,
+			string keyPath)
 		{
 			_fileTypeResolver = fileTypeResolver;
+			_keyPath = keyPath;
 		}
 		
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("comment|Invalid number of arguments. " +
+				writer.Write("comment|Invalid number of arguments. " +
 					"Usage: create {template name} {item name} {template arguments}");
 				return;
 			}
@@ -83,11 +87,11 @@ namespace CSharp.Commands
 			
 			template.Run(project, getArguments(arguments));
 
-			Console.WriteLine("comment|Created {0}", project);
+			writer.Write("comment|Created {0}", project);
 
 			if (template.File == null)
 				return;
-			gotoFile(template.File.Fullpath, template.Line, template.Column, Path.GetDirectoryName(project));
+			gotoFile(writer, template.File.Fullpath, template.Line, template.Column, Path.GetDirectoryName(project));
 		}
 		
 		private ICreateTemplate pickTemplate(string templateName)
@@ -96,16 +100,15 @@ namespace CSharp.Commands
 				.FirstOrDefault(x => x.Contains(Path.DirectorySeparatorChar + templateName + "."));
 			if (template == null)
 				return null;
-			return new CreateTemplate(template, _fileTypeResolver);
+			return new CreateTemplate(template, _fileTypeResolver, _keyPath);
 		}
 
 		private IEnumerable<string> getTemplates()
 		{
 			var templateDir = 
 				System.IO.Path.Combine(
-					System.IO.Path.Combine(
-						System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"C#-plugin"), "create");
+					System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+					"create");
 			return System.IO.Directory.GetFiles(templateDir)
 				.Where(x => !x.EndsWith(".swp") && !x.EndsWith("~"));
 		}
@@ -115,10 +118,10 @@ namespace CSharp.Commands
 			var filename = Path.GetFileName(argument);
 			var dir = Path.GetDirectoryName(argument).Trim();
 			if (dir.Length == 0)
-				return Path.Combine(Environment.CurrentDirectory, filename);
-			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
+				return Path.Combine(_keyPath, filename);
+			if (Directory.Exists(Path.Combine(_keyPath, dir)))
 				return Path.Combine(
-					Path.Combine(Environment.CurrentDirectory, dir),
+					Path.Combine(_keyPath, dir),
 					filename);
 			if (!Directory.Exists(dir))
 				Directory.CreateDirectory(dir);
@@ -135,12 +138,12 @@ namespace CSharp.Commands
 			return newArgs;
 		}
 
-		private void gotoFile(string file, int line, int column, string location)
+		private void gotoFile(IResponseWriter writer, string file, int line, int column, string location)
 		{
-			Console.WriteLine(
+			writer.Write(
 				string.Format("editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			Console.WriteLine("editor setfocus");
+			writer.Write("editor setfocus");
 		}
 	}
 
@@ -155,6 +158,7 @@ namespace CSharp.Commands
 	
 	class CreateTemplate : ICreateTemplate
 	{
+		private string _keyPath;
 		private string _file;
 		private CSharp.Files.IResolveFileTypes _typeResolver;
 		
@@ -162,11 +166,12 @@ namespace CSharp.Commands
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 		
-		public CreateTemplate(string file, CSharp.Files.IResolveFileTypes typeResolver)
+		public CreateTemplate(string file, CSharp.Files.IResolveFileTypes typeResolver, string keyPath)
 		{
 			File = null;
 			_file = file;
 			_typeResolver = typeResolver;
+			_keyPath = keyPath;
 		}
 		
 		public string GetUsageDefinition()
@@ -249,8 +254,18 @@ namespace CSharp.Commands
 		{
             var proc = new Process();
 			var sb = new StringBuilder();
-            foreach (var line in proc.Query(_file, arguments, false, Environment.CurrentDirectory))
-                sb.AppendLine(line);
+            proc.Query(
+            	_file,
+            	arguments,
+            	false,
+            	Environment.CurrentDirectory,
+            	(error, s) => {
+            			if (error) {
+            				sb.AppendLine("error|" + s);
+            				return;
+            			}
+            			sb.AppendLine(s);
+            		});
 			var output = sb.ToString();
 			if (output.Length > Environment.NewLine.Length)
 				return output.Substring(0, output.Length - Environment.NewLine.Length);

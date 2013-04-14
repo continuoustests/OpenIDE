@@ -6,62 +6,113 @@ using CSharp.Commands;
 using CSharp.Files;
 using CSharp.FileSystem;
 using CSharp.Projects;
+using CSharp.Responses;
+using CSharp.Tcp;
 using CSharp.Versioning;
 using CSharp.Projects.Readers;
 using CSharp.Projects.Writers;
 using CSharp.Projects.Appenders;
 using CSharp.Projects.Removers;
 using CSharp.Projects.Referencers;
+using OpenIDE.Core.CodeEngineIntegration;
+using OpenIDE.Core.Commands;
 
 namespace CSharp
 {
 	public class MainClass
 	{
+        private static Dispatcher _dispatcher;
+        private static string _keyPath;
+        private static IOutputWriter _cache = new NullOutputWriter();
+
 		public static void Main(string[] args)
 		{
 			if (args.Length == 0)
 				return;
-			var dispatcher = new Dispatcher();
-			configureHandlers(dispatcher);
-			var handler = dispatcher.GetHandler(args[0]);
-			if (handler == null)
-				return;
 
+            if (args[0] == "initialize") {
+				var writer = new ConsoleResponseWriter();
+            	_keyPath = args[1];
+            	_cache = new OutputWriter(new NullResponseWriter());
+            	_dispatcher = new Dispatcher();
+				configureHandlers(_dispatcher);
+
+            	writer.Write("initialized");
+            	while (args[0] == "initialize") {
+					var msg = CommandMessage.New(Console.ReadLine());
+					if (msg.Command == "shutdown") {
+						writer.Write("end-of-conversation");
+						break;
+					}
+		            handleMessage(msg, writer, false);
+		            writer.Write("end-of-conversation");
+	            }
+            } else {
+            	_keyPath = Environment.CurrentDirectory;
+            	_cache = new OutputWriter(new NullResponseWriter());
+            	_dispatcher = new Dispatcher();
+				configureHandlers(_dispatcher);
+
+            	var msg = new CommandMessage(args[0], null, getParameters(args));
+            	handleMessage(msg, new ConsoleResponseWriter(), false);
+            }
+        }
+
+        private static void handleMessage(CommandMessage msg, IResponseWriter writer, bool serverMode)
+        {
+            if (msg == null)
+                return;
+			var handler = _dispatcher.GetHandler(msg.Command);
+			if (handler == null) {
+				writer.Write("comment|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
+				return;
+			}
 			try {
-				handler.Execute(getParameters(args));
+				if (handler == null)
+					return;
+				handler.Execute(writer, msg.Arguments.ToArray());
 			} catch (Exception ex) {
-				var builder = new OutputWriter();
-				builder.Error(ex.Message.Replace(Environment.NewLine, ""));
-				if (ex.StackTrace != null) {
-					ex.StackTrace
-						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
-						.ForEach(line => builder.Error(line));
-				}
+				var builder = new OutputWriter(writer);
+                writeException(builder, ex);
 			}
 		}
 
 		static string[] getParameters(string[] args)
 		{
 			var remaining = new List<string>();
-			for (int i = 1; i < args.Length; i++)
+		   	for (int i = 1; i < args.Length; i++)
 				remaining.Add(args[i]);
 			return remaining.ToArray();
+		}
+
+
+		static void writeException(OutputWriter builder, Exception ex) {
+			if (ex == null)
+				return;
+			builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
+			if (ex.StackTrace != null) {
+				ex.StackTrace
+					.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+                    .ForEach(line => builder.WriteError(line));
+			}
+			writeException(builder, ex.InnerException);
 		}
 		
 		static void configureHandlers(Dispatcher dispatcher)
 		{
 			dispatcher.Register(new GetUsageHandler(dispatcher));
-			dispatcher.Register(new CrawlHandler());
+			dispatcher.Register(new CrawlHandler(_cache));
 			dispatcher.Register(new CrawlFileTypesHandler());
-			dispatcher.Register(new SignatureFromPositionHandler());
-			dispatcher.Register(new MembersFromUnknownSignatureHandler());
-			dispatcher.Register(new CreateHandler(getReferenceTypeResolver()));
+			dispatcher.Register(new CreateHandler(getReferenceTypeResolver(), _keyPath));
 			dispatcher.Register(new AddFileHandler(getTypesProvider));
 			dispatcher.Register(new DeleteFileHandler(getTypesProvider));
-			dispatcher.Register(new DereferenceHandler(getTypesProvider));
-			dispatcher.Register(new NewHandler(getFileTypeResolver(), getTypesProvider));
-			dispatcher.Register(new ReferenceHandler(getTypesProvider));
+			dispatcher.Register(new ReferenceHandler(getTypesProvider, _keyPath));
+			dispatcher.Register(new DereferenceHandler(getTypesProvider, _keyPath));
+			dispatcher.Register(new NewHandler(getFileTypeResolver(), getTypesProvider, _keyPath));
 			dispatcher.Register(new RemoveFileHandler(getTypesProvider));
+			dispatcher.Register(new SignatureFromPositionHandler(_cache));
+			dispatcher.Register(new MembersFromUnknownSignatureHandler());
+			dispatcher.Register(new GoToDefinitionHandler(_cache));
 		}
 		
 		static VSFileTypeResolver getFileTypeResolver()
@@ -124,7 +175,7 @@ namespace CSharp
 					});
 			var project = resolver.ResolveFor(projectFile);
 			if (project == null)
-				Console.WriteLine("Unsupported poject version for project {0}", projectFile);
+				Console.WriteLine("error|Unsupported poject version for project {0}", projectFile);
 			return new ProviderSettings(projectFile, project);
 		}
 	}

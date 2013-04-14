@@ -61,10 +61,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoreExtensions\CoreExtensions.csproj">
-      <Project>{FB9BD7EA-F2F8-4F9C-8B82-17E703C0C766}</Project>
-      <Name>CoreExtensions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenIDE.Core\OpenIDE.Core.csproj">
       <Project>{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}</Project>
       <Name>OpenIDE.Core</Name>
@@ -85,22 +81,12 @@
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\ThreadInfo.cs" />
     <Compile Include="Messaging\Messages\FailMessage.cs" />
-    <Compile Include="FileSystem\PathExtensions.cs" />
-    <Compile Include="FileSystem\IFS.cs" />
-    <Compile Include="FileSystem\FS.cs" />
     <Compile Include="Bootstrapping\DIContainer.cs" />
     <Compile Include="Bootstrapping\Bootstrapper.cs" />
     <Compile Include="Arguments\CommandDispatcher.cs" />
     <Compile Include="Arguments\ICommandHandler.cs" />
     <Compile Include="Exceptions\InvalidArgumentsException.cs" />
-    <Compile Include="EditorEngineIntegration\EngineLocator.cs" />
-    <Compile Include="EditorEngineIntegration\Client.cs" />
-    <Compile Include="EditorEngineIntegration\IClient.cs" />
-    <Compile Include="EditorEngineIntegration\IEngineLocator.cs" />
     <Compile Include="Arguments\Handlers\EditorHandler.cs" />
-    <Compile Include="EditorEngineIntegration\Instance.cs" />
-    <Compile Include="CodeEngineIntegration\CodeEngineLocator.cs" />
-    <Compile Include="CodeEngineIntegration\Instance.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineHandler.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineExploreHandler.cs" />
     <Compile Include="Arguments\Handlers\RunCommandHandler.cs" />
@@ -117,8 +103,6 @@
     <Compile Include="Arguments\Handlers\GoToDefinitionHandler.cs" />
     <Compile Include="Arguments\Handlers\TouchHandler.cs" />
     <Compile Include="Arguments\Handlers\CreateScriptHandler.cs" />
-    <Compile Include="FileSystem\ScriptLocator.cs" />
-    <Compile Include="FileSystem\Script.cs" />
     <Compile Include="Arguments\Handlers\ScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\SnippetEditHandler.cs" />
     <Compile Include="Arguments\Handlers\SnippetDeleteHandler.cs" />
@@ -129,6 +113,17 @@
     <Compile Include="Arguments\Handlers\CreateReactiveScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\EditReactiveScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\DeleteReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\InitHandler.cs" />
+    <Compile Include="Arguments\Handlers\ListReactiveScriptsHandler.cs" />
+    <Compile Include="Arguments\Handlers\EventListener.cs" />
+    <Compile Include="Arguments\Handlers\ProfileHandler.cs" />
+    <Compile Include="Arguments\Handlers\HelpHandler.cs" />
+    <Compile Include="Arguments\Handlers\HandleScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\HandleReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\HandleSnippetHandler.cs" />
+    <Compile Include="Arguments\Handlers\PkgTestHandler.cs" />
+    <Compile Include="Arguments\Handlers\GetCommandsHandler.cs" />
+    <Compile Include="Arguments\Handlers\PackageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

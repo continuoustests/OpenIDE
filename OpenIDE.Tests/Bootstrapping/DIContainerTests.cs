@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using OpenIDE.Bootstrapping;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Messaging;
 using OpenIDE.Arguments;
-using OpenIDE.EditorEngineIntegration;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.EditorEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Tests
 {
@@ -22,7 +22,7 @@ namespace OpenIDE.Tests
 					() => { return new ICommandHandler[] {}; },
 					() => { return new ICommandHandler[] {}; }));
 			
-			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(26));
+			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(29));
 			
 			Assert.That(container.IFS(), Is.InstanceOf<IFS>());
 			Assert.That(container.IMessageBus(), Is.InstanceOf<IMessageBus>());

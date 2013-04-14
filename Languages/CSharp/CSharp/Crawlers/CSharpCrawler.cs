@@ -3,33 +3,57 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
+using Mono.Cecil;
 
 namespace CSharp.Crawlers
 {
 	public class CSharpCrawler : ICrawler
 	{
+        private bool _typeMatching = true;
 		private IOutputWriter _builder;
+        private IOutputWriter _globalCache;
+        private List<string> _handledReferences = new List<string>();
 
-		public CSharpCrawler(IOutputWriter writer)
+        public CSharpCrawler(IOutputWriter writer, IOutputWriter globalCache)
 		{
 			_builder = writer;
+            _globalCache = globalCache;
 		}
+
+        public void SkipTypeMatching() 
+        {
+            _typeMatching = false;
+        }
 
 		public void Crawl(CrawlOptions options)
 		{
 			List<Project> projects;
 			if (!options.IsSolutionFile && options.File != null)
 			{
-				parseFile(options.File);
+				parseFile(new FileRef(options.File, null));
 				return;
 			}
 			else if (options.IsSolutionFile)
 				projects = new SolutionReader(options.File).ReadProjects();
 			else
 				projects = getProjects(options.Directory);
-			projects.ForEach(x => crawl(x));	
+            loadmscorlib();
+			projects.ForEach(x => crawl(x));
+
+            if (_typeMatching) {
+                _builder.BuildTypeIndex();
+                new TypeResolver(new OutputWriterCacheReader(_builder, _globalCache))
+                    .ResolveAllUnresolved(_builder);
+            }
 		}
+
+        private void loadmscorlib()
+        {
+            var asm = "mscorlib";
+            parseAssembly(asm);
+        }
 		
 		private List<Project> getProjects(string folder)
 		{
@@ -43,36 +67,76 @@ namespace CSharp.Crawlers
 		
 		private void crawl(Project project)
 		{
-			_builder.AddProject(project);
-			var files = new ProjectReader(project.File).ReadFiles();
-			files.ForEach(x => {
-					parseFile(x);
+            var reader = new ProjectReader(project.File);
+            // Get base assemblies first to better be equiped to locate variable types
+            reader
+                .ReadReferences()
+                .ForEach(x =>
+                {
+                    if (!_handledReferences.Any(y => y.Equals(x)))
+                    {
+                        parseAssembly(x);
+                        _handledReferences.Add(x);
+                    }
+                });
+
+            _builder.WriteProject(project);
+            reader
+                .ReadFiles()
+                .ForEach(x => {
+					parseFile(new FileRef(x, project));
 				});
 		}
 
-		private void parseFile(string x)
+        private void parseAssembly(string x)
+        {
+            try
+			{
+                _builder.SetTypeVisibility(false);
+                if (_handledReferences.Contains(x))
+                    return;
+                _handledReferences.Add(x);
+                new AssemblyParser(_builder)
+                    .Parse(x);
+            }
+			catch (Exception ex)
+			{
+                parseError(x, ex);
+			}
+            finally
+            {
+                _builder.SetTypeVisibility(true);
+            }
+        }
+
+		private void parseFile(FileRef x)
 		{
 			try
 			{
 				new NRefactoryParser()
 					.SetOutputWriter(_builder)
-					.ParseFile(x, () => { return File.ReadAllText(x); });
+					.ParseFile(x, () => { return File.ReadAllText(x.File); });
 			}
 			catch (Exception ex)
 			{
-				_builder.Error("Failed to parse " + x);
-				_builder.Error(ex.Message.Replace(Environment.NewLine, ""));
-				if (ex.StackTrace != null)
-				{
-					ex.StackTrace
-						.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
-						.ForEach(line => _builder.Error(line));
-				}
+                parseError(x.File, ex);
 			}
 		}
+
+        private void parseError(string x, Exception ex)
+        {
+            _builder.WriteError("Failed to parse " + x);
+            _builder.WriteError(ex.Message.Replace(Environment.NewLine, ""));
+            if (ex.StackTrace != null)
+            {
+                ex.StackTrace
+                    .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList()
+                    .ForEach(line => _builder.WriteError(line));
+            }
+        }
 	}
 					
-	class Point
+	public class Point
 	{
 		public int Line { get; set; }
 		public int Column { get; set; }

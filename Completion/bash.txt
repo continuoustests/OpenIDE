@@ -1,0 +1,16 @@
+_oi() 
+{
+    local cur prev opts word words
+    COMPREPLY=()
+	words="${COMP_WORDS[@]:1}"
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts=$(oi get-commands ${words})
+	
+	if [[ "${opts}" != "" ]] ; then
+		COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+		return 0
+	fi
+	COMPREPLY=( $(compgen -f "${cur}" ) )
+}
+complete -F _oi oi

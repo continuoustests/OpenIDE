@@ -16,6 +16,7 @@ _ReSharper.*
 *.swo
 *.bin
 *.userprefs
+*.pyc
 SolutionVersion.cs
 lib/MoMA/Reports/submit.xml
 build_output
@@ -27,3 +28,6 @@ openlocal.bat
 ~$*
 Debug/
 Release/
+*.sublime-project
+*.sublime-workspace
+.OpenIDE/active.profile

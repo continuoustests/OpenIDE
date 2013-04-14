@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"flag"
 	"os"
 	"io"
 	"path"
@@ -21,16 +20,15 @@ type CrawlCommand struct {
 func (cmd CrawlCommand) RegisterCommandDefinitions() {
 }
 
-func (cmd CrawlCommand) HandlesScenario() bool {
-	args := flag.Args()
+func (cmd CrawlCommand) HandlesScenario(args []string) bool {
 	if (len(args) != 2) {
 		return false
 	}
 	return args[0] == "crawl-source"
 }
 
-func (cmd CrawlCommand) Run() {
-	paramFile := flag.Args()[1]
+func (cmd CrawlCommand) Run(args []string) {
+	paramFile := args[1]
 	lines, err := readLines(paramFile)
 	if (err != nil) {
 		fmt.Println(err)
@@ -151,7 +149,8 @@ func crawlFile(name string) {
 				}
 		}
 		if (len(typename) > 0) {
-			fmt.Printf("signature|%s|%s|%s||%s|%s||typesearch",
+			fmt.Printf("signature|%s|%s|%s|%s||%s|%s||typesearch",
+				packageName + parent,
 				packageName + parent + "." + typename,
 				typename,
 				typedefinition,
@@ -164,7 +163,7 @@ func crawlFile(name string) {
 
 func getPackageName(fset *token.FileSet, f *ast.File) string {
 	name := f.Name.Name
-	fmt.Printf("signature|%s|%s|package||%s|%s|",
+	fmt.Printf("signature||%s|%s|package||%s|%s|",
 		name,
 		name,
 		strconv.Itoa(fset.Position(f.Name.NamePos).Line),

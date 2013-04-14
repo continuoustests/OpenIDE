@@ -1,17 +1,9 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Diagnostics;
-using System.Collections.Generic;
-using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Language;
-using OpenIDE.CodeEngine.Core.UI;
-using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Commands;
-using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
-using OpenIDE.CodeEngine.Core.Logging;
 using OpenIDE.CodeEngine.Core.ReactiveScripts;
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
@@ -21,6 +13,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private TcpServer _server;
 		private string _instanceFile;
 		private ReactiveScriptEngine _reactiveEngine;
+		private Action<string> _dispatch = (m) => {};
 		
 		public EventEndpoint(string keyPath, PluginLocator locator)
 		{
@@ -28,7 +21,15 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
-			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator);
+			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator, dispatch);
+		}
+
+		public void DispatchThrough(Action<string> dispatch) {
+			_dispatch = dispatch;
+		}
+
+		private void dispatch(string message) {
+			_dispatch(message);
 		}
  
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
@@ -38,6 +39,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
+            _reactiveEngine.Handle(command.Message);
 		}
 		
 		public void Send(string message)

@@ -6,13 +6,14 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
 {
 	class CreateReactiveScriptHandler : ICommandHandler
 	{
+		private string _token;
 		private Action<string> _dispatch;
 
 		public CommandHandlerParameter Usage {
@@ -31,10 +32,11 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 	
-		public string Command { get { return "rscript-create"; } }
+		public string Command { get { return "new"; } }
 		
-		public CreateReactiveScriptHandler(Action<string> dispatch)
+		public CreateReactiveScriptHandler(string token, Action<string> dispatch)
 		{
+			_token = _token;
 			_dispatch = dispatch;
 		}
 
@@ -55,13 +57,13 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			Console.WriteLine("Creating " + file);
 			PathExtensions.CreateDirectories(file);
-			var template = new ReactiveScriptLocator().GetTemplateFor(extension);
+			var template = new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetTemplateFor(extension);
 			var content = "";
 			if (template != null)
 				File.Copy(template, file);
 			else 
 			{
-				var templates = new ReactiveScriptLocator().GetTemplates().ToArray();
+				var templates = new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetTemplates().ToArray();
 				if (templates.Length == 0)
 				{
 					File.WriteAllText(file, content);
@@ -96,12 +98,12 @@ namespace OpenIDE.Arguments.Handlers
 		private string getPath(string[] arguments)
 		{
 			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ReactiveScriptLocator().GetGlobalPath();
+				return new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetGlobalPath();
 			else if (arguments.Count(x => x.StartsWith("--language=")) > 0 || 
 					 arguments.Count(x => x.StartsWith("-l=")) > 0)
-				return new ReactiveScriptLocator().GetLanguagePath(getLanguage(arguments));
+				return new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetLanguagePath(getLanguage(arguments));
 			else
-				return new ReactiveScriptLocator().GetLocalPath();
+				return new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetLocalPath();
 		}
 
 		private string getLanguage(string[] arguments)

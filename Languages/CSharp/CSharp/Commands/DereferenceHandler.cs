@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CSharp.FileSystem;
+using CSharp.Responses;
 using CSharp.Versioning;
 using CSharp.Projects.Readers;
 using CSharp.Files;
@@ -10,6 +11,7 @@ namespace CSharp.Commands
 {
 	class DereferenceHandler : ICommandHandler
 	{
+		private string _keyPath;
 		private Func<string, ProviderSettings> _getTypesProviderByLocation;
 		private IProjectHandler _project = new ProjectHandler();
 		
@@ -26,16 +28,17 @@ namespace CSharp.Commands
 
 		public string Command { get { return "dereference"; } }
 
-		public DereferenceHandler(Func<string, ProviderSettings> provider)
+		public DereferenceHandler(Func<string, ProviderSettings> provider, string keyPath)
 		{
 			_getTypesProviderByLocation = provider;
+			_keyPath = keyPath;
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("error|The handler needs the full path to the reference. " +
+				writer.Write("error|The handler needs the full path to the reference. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
@@ -46,10 +49,10 @@ namespace CSharp.Commands
 				file = new VSProjectFile().New(fullpath);
 			else
 				file = new AssemblyFile().New(fullpath);
-			var projectFile = arguments[1];
+			var projectFile = getFile(arguments[1]);
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("error|The project to remove this reference for does not exist. " +
+				writer.Write("error|The project to remove this reference for does not exist. " +
 								  "Usage: dereference {assembly/project} {project to remove reference from}");
 				return;
 			}
@@ -59,7 +62,7 @@ namespace CSharp.Commands
 			_project.Dereference(file);
 			_project.Write();
 
-			Console.WriteLine("comment|Rereferenced {0} from {1}", file, projectFile);
+			writer.Write("comment|Rereferenced {0} from {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)
@@ -67,14 +70,14 @@ namespace CSharp.Commands
 			var filename = Path.GetFileName(argument);
 			var dir = Path.GetDirectoryName(argument).Trim();
 			if (dir.Length == 0)
-				return Environment.CurrentDirectory;
-			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
+				return _keyPath;
+			if (Directory.Exists(Path.Combine(_keyPath, dir)))
 				return Path.Combine(
-					Path.Combine(Environment.CurrentDirectory, dir),
+					Path.Combine(_keyPath, dir),
 					filename);
 			if (Directory.Exists(dir))
 				return Path.Combine(dir, filename);
-			return Path.Combine(Environment.CurrentDirectory, filename);
+			return Path.Combine(_keyPath, filename);
 		}
 	}
 }

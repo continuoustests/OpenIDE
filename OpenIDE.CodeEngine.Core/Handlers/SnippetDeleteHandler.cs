@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Reflection;
+using OpenIDE.Core.Commands;
 using OpenIDE.Core.Config;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Commands;
 
 namespace OpenIDE.CodeEngine.Core.Handlers
 {
@@ -59,7 +59,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			return Path.Combine(
 				path,
 				Path.Combine(
-					"Languages",
+					"languages",
 					Path.Combine(
 						new PluginFinder(_cache).FindLanguage(arguments[0]),
 						Path.Combine("snippets", arguments[1] + ".snippet"))));

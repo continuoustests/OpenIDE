@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CSharp.Projects;
 
 namespace CSharp.Crawlers
 {
     public interface ICSharpParser
     {
         ICSharpParser SetOutputWriter(IOutputWriter writer);
-        void ParseFile(string file, Func<string> getContent);
+        ICSharpParser ParseLocalVariables();
+        void ParseFile(FileRef file, Func<string> getContent);
     }
 
 	enum Location
@@ -31,7 +33,7 @@ namespace CSharp.Crawlers
     public class CSharpFileParser : ICSharpParser
     {
         private object _padLock = new object();
-        private string _file;
+        private FileRef _file;
         private string _content;
         private Location _suggestedLocation = Location.Unknown;
         private Location _currentLocation;
@@ -41,7 +43,7 @@ namespace CSharp.Crawlers
 													new List<LocationHierarchyActivity>();
         private CSharpCodeNavigator _navigator;
 
-        private Namespace _currentNamespace = null;
+        private Namespce _currentNamespace = null;
 
         public ICSharpParser SetOutputWriter(IOutputWriter writer)
         {
@@ -49,11 +51,15 @@ namespace CSharp.Crawlers
             return this;
         }
 
-        public void ParseFile(string file, Func<string> getContent)
+        public ICSharpParser ParseLocalVariables() {
+            return this;
+        }
+
+        public void ParseFile(FileRef file, Func<string> getContent)
         {
             lock (_padLock)
             {
-                _builder.AddFile(file);
+                _builder.WriteFile(file);
                 _file = file;
                 _content = getContent();
                 _currentLocation = Location.Root;
@@ -137,12 +143,12 @@ namespace CSharp.Crawlers
         {
             suggestLocation(Location.Namespace);
             var signature = _navigator.CollectSignature();
-            var ns = new Namespace(
+            var ns = new Namespce(
                 _file,
                 signature.Text,
                 signature.Line,
                 signature.Column + 1);
-            _builder.AddNamespace(ns);
+            _builder.WriteNamespace(ns);
             _currentNamespace = ns;
         }
 
@@ -153,15 +159,14 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddClass(
+            _builder.WriteClass(
                 new Class(
                     _file,
                     ns,
                     getNameFromSignature(signature.Text),
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private void handleInterface(Word word)
@@ -171,15 +176,14 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddInterface(
+            _builder.WriteInterface(
                 new Interface(
                     _file,
                     ns,
                     getNameFromSignature(signature.Text),
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private void handleStruct(Word word)
@@ -189,15 +193,14 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddStruct(
+            _builder.WriteStruct(
                 new Struct(
                     _file,
                     ns,
                     signature.Text,
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private void handleEnum(Word word)
@@ -207,15 +210,14 @@ namespace CSharp.Crawlers
             var ns = "";
             if (_currentNamespace != null)
                 ns = _currentNamespace.Name;
-            _builder.AddEnum(
+            _builder.WriteEnum(
                 new EnumType(
                     _file,
                     ns,
                     signature.Text,
                     "",
                     signature.Line,
-                    signature.Column + 1,
-                    ""));
+                    signature.Column + 1));
         }
 
         private string getNameFromSignature(string signature)

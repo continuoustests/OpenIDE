@@ -1,4 +1,5 @@
 using System;
+using CSharp.Responses;
 
 namespace CSharp.Commands
 {
@@ -8,9 +9,9 @@ namespace CSharp.Commands
 
 		public string Command { get { return "crawl-file-types"; } }
 
-		public void Execute(string[] args)
+		public void Execute(IResponseWriter writer, string[] args)
 		{
-			Console.WriteLine(".csproj|.cs");
+			writer.Write(".csproj|.cs");
 		}
 	}
 }

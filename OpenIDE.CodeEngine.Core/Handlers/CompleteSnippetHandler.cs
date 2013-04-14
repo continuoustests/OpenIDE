@@ -6,8 +6,7 @@ using System.Reflection;
 using OpenIDE.Core.UI;
 using OpenIDE.Core.Config;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Logging;
-using OpenIDE.CodeEngine.Core.Commands;
+using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 
 namespace OpenIDE.CodeEngine.Core.Handlers
@@ -116,9 +115,9 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 			return Path.Combine(
 				path,
 				Path.Combine(
-					"Languages",
+					"languages",
 					Path.Combine(
-						getLanguage(arguments[0]) + "-plugin",
+						getLanguage(arguments[0]) + "-files",
 						Path.Combine("snippets", arguments[1] + ".snippet"))));
 		}
 

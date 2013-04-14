@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.Endpoints;
-using OpenIDE.CodeEngine.Core.Logging;
+using OpenIDE.Core.Commands;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine.Core.Handlers
 {

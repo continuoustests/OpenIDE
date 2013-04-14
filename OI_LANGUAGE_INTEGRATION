@@ -13,6 +13,22 @@ Comment with no line separators
 		comment|COMMENT
 
 ----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
+Initialize is sent to the plugin when the code engine starts. If the plugin choooses
+to respond with initialized the process will be kept open and all requests will be 
+sent through stdin, stdout for as long as the code engine lives.
+	PARAMETER:
+		initialize KEY_PATH
+
+	RESPONSE
+		(nothing)		
+
+		initialized
+		After responding with initialized all requests must be terminated with:
+			end-of-conversation
+
+Shutdown is sent to the plugin when the plugin is ment to exit.
+	PARAMETER:
+		shutdown
 
 Getting command definitions for this language extension
 	PARAMETER:
@@ -54,7 +70,7 @@ Crawl directories and/or files
 
 		[project|PROJECT-PATH|CUSTOM-JSON-INFO [|filesearch]]
 			file|FILE-PATH [|filesearch]
-				signature|SIGNATURE|NAME|TYPE|SCOPE|LINE|COLUMN|CUSTOM-JSON-INFO [|typesearch]
+				signature|PARENT|SIGNATURE|NAME|TYPE|SCOPE|LINE|COLUMN|CUSTOM-JSON-INFO [|typesearch]
 				reference|SIGNATURE|LINE|COLUMN|CUSTOM-JSON-INFO
 
 Retrieve signature from a location inside code
@@ -70,6 +86,13 @@ Retrieve signature from a location inside code
 		REFERENCED_SIGNATURE
 		REFERENCE_START_LINE|REFERENCE_START_COLUMN
 		REFERENCE_END_LINE|REFERENCE_END_COLUMN
+
+Go to definition
+	PARAMETER:
+		go-to-definition PATH_TO_FILE|LINE|COLUMN
+
+	RESPONSE FORMAT
+		Whatever specified in command definitions. Hopefully something like editor goto
 
 Retrieve members from signature
 	PARAMETER:

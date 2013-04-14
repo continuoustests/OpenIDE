@@ -1,6 +1,6 @@
 using System;
 using OpenIDE.Core.Language;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Arguments.Handlers
 {

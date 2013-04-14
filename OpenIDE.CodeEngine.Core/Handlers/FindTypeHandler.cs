@@ -3,8 +3,9 @@ using System.Linq;
 using System.Text;
 using OpenIDE.Core.Caching;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Commands;
 using OpenIDE.CodeEngine.Core.Endpoints;
+using OpenIDE.Core.Commands;
+
 namespace OpenIDE.CodeEngine.Core.Handlers
 {
 	public class FindTypeHandler : IHandler

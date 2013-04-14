@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using CSharp.Responses;
+
 namespace CSharp.Commands
 {
 	class DeleteFileHandler : ICommandHandler
@@ -21,7 +23,7 @@ namespace CSharp.Commands
 			_getTypesProviderByLocation = provider;
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			var provider = _getTypesProviderByLocation(arguments[0]);
 			if (provider == null)

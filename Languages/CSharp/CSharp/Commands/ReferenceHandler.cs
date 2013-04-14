@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CSharp.FileSystem;
+using CSharp.Responses;
 using CSharp.Versioning;
 using CSharp.Projects.Readers;
 using CSharp.Files;
@@ -10,6 +11,7 @@ namespace CSharp.Commands
 {
 	public class ReferenceHandler : ICommandHandler
 	{
+		private string _keyPath;
 		private Func<string, ProviderSettings> _provider;
 		private IProjectHandler _project = new ProjectHandler();
 		
@@ -26,16 +28,17 @@ namespace CSharp.Commands
 
 		public string Command { get { return "reference"; } }
 		
-		public ReferenceHandler(Func<string, ProviderSettings> provider)
+		public ReferenceHandler(Func<string, ProviderSettings> provider, string keyPath)
 		{
 			_provider = provider;
+			_keyPath = keyPath;
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length != 2)
 			{
-				Console.WriteLine("error|The handler needs the full path to the reference. " +
+				writer.Write("error|The handler needs the full path to the reference. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
@@ -47,10 +50,10 @@ namespace CSharp.Commands
 				file = new VSProjectFile().New(fullpath);
 			else
 				file = new AssemblyFile().New(fullpath);
-			var projectFile = arguments[1];
+			var projectFile = getFile(arguments[1]);
 			if (!File.Exists(projectFile))
 			{
-				Console.WriteLine("error|The project to add this reference to does not exist. " +
+				writer.Write("error|The project to add this reference to does not exist. " +
 								  "Usage: reference {assembly/project} {project to add reference to");
 				return;
 			}
@@ -60,7 +63,7 @@ namespace CSharp.Commands
 			_project.Reference(file);
 			_project.Write();
 
-			Console.WriteLine("comment|Added reference {0} to {1}", file, projectFile);
+			writer.Write("comment|Added reference {0} to {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)
@@ -68,14 +71,14 @@ namespace CSharp.Commands
 			var filename = Path.GetFileName(argument);
 			var dir = Path.GetDirectoryName(argument).Trim();
 			if (dir.Length == 0)
-				return Path.Combine(Environment.CurrentDirectory, filename);
-			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
+				return Path.Combine(_keyPath, filename);
+			if (Directory.Exists(Path.Combine(_keyPath, dir)))
 				return Path.Combine(
-					Path.Combine(Environment.CurrentDirectory, dir),
+					Path.Combine(_keyPath, dir),
 					filename);
 			if (Directory.Exists(dir))
 				return Path.Combine(dir, filename);
-			return Path.Combine(Environment.CurrentDirectory, filename);
+			return Path.Combine(_keyPath, filename);
 		}
 	}
 }

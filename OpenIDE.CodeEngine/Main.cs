@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using OpenIDE.CodeEngine.Core.Bootstrapping;
 using OpenIDE.CodeEngine.Core.Endpoints;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine
 {
@@ -11,6 +12,7 @@ namespace OpenIDE.CodeEngine
 	{
 		public static void Main (string[] args)
 		{
+            Logger.Assign(new FileLogger());
 			if (args.Length < 1)
 				return;
 			var path = args[0];

@@ -17,8 +17,8 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		public List<CachedPlugin> Plugins { get { return _plugins;  } }
 
 		public int ProjectCount { get { return _projects.Count; } }
-		public int FileCount { get { return _files.Count; } }
-		public int CodeReferences { get { return _codeReferences.Count; } }
+		public int FileCount { get { return _files.Count(x => x.FileSearch); } }
+		public int CodeReferences { get { return _codeReferences.Count(x => x.TypeSearch); } }
 		
 		public IEnumerable<Project> AllProjects()
 		{

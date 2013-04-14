@@ -8,12 +8,14 @@ using System.Text;
 using System.Diagnostics;
 using CSharp.Projects;
 using CSharp.Files;
-using CSharp.Processes;
+using CSharp.Responses;
+using CoreExtensions;
 
 namespace CSharp.Commands
 {
 	public class NewHandler : ICommandHandler
 	{
+		private string _keyPath;
 		private IProjectHandler _project;
 		private IResolveFileTypes _fileTypeResolver;
 		private Func<string, ProviderSettings> _getTypesProviderByLocation;
@@ -50,7 +52,7 @@ namespace CSharp.Commands
 		private BaseCommandHandlerParameter getUsage(string template)
 		{
 			var name = Path.GetFileNameWithoutExtension(template);
-			var definition = new NewTemplate(template, null).GetUsageDefinition();
+			var definition = new NewTemplate(template, null, _keyPath).GetUsageDefinition();
 			var parser = new TemplateDefinitionParser();
 			var usage = parser.Parse(name, definition);
 			if (usage == null)
@@ -65,8 +67,9 @@ namespace CSharp.Commands
 		
 		public string Command { get { return "new"; } }
 		
-		public NewHandler(IResolveFileTypes fileTypeResolver, Func<string, ProviderSettings> provider)
+		public NewHandler(IResolveFileTypes fileTypeResolver, Func<string, ProviderSettings> provider, string keyPath)
 		{
+			_keyPath = keyPath;
 			_getTypesProviderByLocation = provider;
 			_pickTemplate = pickTemplate;
 			_fileTypeResolver = fileTypeResolver;
@@ -85,11 +88,11 @@ namespace CSharp.Commands
 			_pickTemplate = picker;
 		}
 		
-		public void Execute(string[] arguments)
+		public void Execute(IResponseWriter writer, string[] arguments)
 		{
 			if (arguments.Length < 2)
 			{
-				Console.WriteLine("error|Invalid number of arguments. " +
+				writer.Write("error|Invalid number of arguments. " +
 					"Usage: new {template name} {item name} {template arguments}");
 				return;
 			}
@@ -102,7 +105,7 @@ namespace CSharp.Commands
 			var template = _pickTemplate(arguments[0], _project.Type);
 			if (template == null)
 			{
-				Console.WriteLine("error|No template with the name {0} exists.", arguments[0]);
+				writer.Write("error|No template with the name {0} exists.", arguments[0]);
 				return;
 			}
 			var ns = getNamespace(location, _project.Fullpath, _project.DefaultNamespace);
@@ -113,11 +116,10 @@ namespace CSharp.Commands
 			_project.AppendFile(template.File);
 			_project.Write();
 			
-			Console.WriteLine("comment|Created class {0}.{1}", ns, className);
-			Console.WriteLine("comment|Full path {0}", template.File.Fullpath);
-			Console.WriteLine("");
+			writer.Write("comment|Created class {0}.{1}", ns, className);
+			writer.Write("comment|Full path {0}", template.File.Fullpath);
 			
-			gotoFile(template.File.Fullpath, template.Line, template.Column, location);
+			gotoFile(writer, template.File.Fullpath, template.Line, template.Column, location);
 		}
 		
 		private INewTemplate pickTemplate(string templateName, string type)
@@ -126,15 +128,15 @@ namespace CSharp.Commands
 				.FirstOrDefault(x => x.Contains(Path.DirectorySeparatorChar + templateName + "."));
 			if (template == null)
 				return null;
-			return new NewTemplate(template, _fileTypeResolver);
+			return new NewTemplate(template, _fileTypeResolver, _keyPath);
 		}
 		
 		private string[] getTemplates(string type)
 		{
 			var templateDir = 
 				Path.Combine(
-					Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					"C#-plugin"), "new");
+					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+					"new");
 			return Directory.GetFiles(templateDir)
 				.Where(x => !x.EndsWith(".swp") && !x.EndsWith("~")).ToArray();
 		}
@@ -158,14 +160,14 @@ namespace CSharp.Commands
 		{
 			var dir = Path.GetDirectoryName(className).Trim();
 			if (dir.Length == 0)
-				return Environment.CurrentDirectory;
-			if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, dir)))
-				return Path.Combine(Environment.CurrentDirectory, dir);
+				return _keyPath;
+			if (Directory.Exists(Path.Combine(_keyPath, dir)))
+				return Path.Combine(_keyPath, dir);
 			if (Directory.Exists(dir))
 				return dir;
 			
 			if (!Path.IsPathRooted(dir))
-				dir = Path.Combine(Environment.CurrentDirectory, dir);
+				dir = Path.Combine(_keyPath, dir);
 			Directory.CreateDirectory(dir);
 
 			return dir;
@@ -182,12 +184,12 @@ namespace CSharp.Commands
 				relativePath.Replace(Path.DirectorySeparatorChar.ToString(), "."));
 		}
 		
-		private void gotoFile(string file, int line, int column, string location)
+		private void gotoFile(IResponseWriter writer, string file, int line, int column, string location)
 		{
-			Console.WriteLine(
+			writer.Write(
 				string.Format("editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			Console.WriteLine("editor setfocus");
+			writer.Write("editor setfocus");
 		}
 	}
 	
@@ -208,6 +210,7 @@ namespace CSharp.Commands
 
 	class NewTemplate : INewTemplate
 	{
+		private string _keyPath;
 		private IResolveFileTypes _fileTypeResolver;
 		private string _file;
 		
@@ -215,12 +218,13 @@ namespace CSharp.Commands
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 		
-		public NewTemplate(string file, IResolveFileTypes fileTypeResolver)
+		public NewTemplate(string file, IResolveFileTypes fileTypeResolver, string keyPath)
 		{
 			_fileTypeResolver = fileTypeResolver;
 			_file = file;
 			Line = 0;
 			Column = 0;
+			_keyPath = keyPath;
 		}
 
 		public string GetUsageDefinition()
@@ -309,8 +313,18 @@ namespace CSharp.Commands
 		{
             var proc = new Process();
             var sb = new StringBuilder();
-            foreach (var line in proc.Query(_file, arguments, false, Environment.CurrentDirectory))
-                sb.AppendLine(line);
+			proc.Query(
+	        	_file,
+	        	arguments,
+	        	false,
+	        	Environment.CurrentDirectory,
+	        	(error, s) => {
+	        			if (error) {
+	        				sb.AppendLine("error|" + s);
+	        				return;
+	        			}
+	        			sb.AppendLine(s);
+	        		});
 			var output = sb.ToString();
 			if (output.Length > Environment.NewLine.Length)
 				return output.Substring(0, output.Length - Environment.NewLine.Length);

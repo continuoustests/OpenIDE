@@ -3,13 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using OpenIDE.FileSystem;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Messaging;
 using OpenIDE.Arguments;
 using OpenIDE.Arguments.Handlers;
-using OpenIDE.EditorEngineIntegration;
-using OpenIDE.CodeEngineIntegration;
+using OpenIDE.Core.EditorEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Profiles;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 
@@ -47,34 +48,40 @@ namespace OpenIDE.Bootstrapping
 		private IEnumerable<ICommandHandler> getDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
+			var configHandler = new ConfigurationHandler(PluginLocator());
 			handlers.AddRange(
 				new ICommandHandler[]
 				{
+					new InitHandler(configHandler),
+					new ProfileHandler(configHandler),
+
+					configHandler,
+					
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
+					new TouchHandler(dispatchMessage),
+					new ScriptHandler(_settings.RootPath, dispatchMessage),
+					new HandleScriptHandler(_settings.RootPath, dispatchMessage),
+					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
+					new HandleSnippetHandler(ICodeEngineLocator()),
+
+					new CodeModelQueryHandler(ICodeEngineLocator()),
+
 					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 					new CodeEngineExploreHandler(ICodeEngineLocator()),
-					new CodeEngineGetProjectsHandler(ICodeEngineLocator()),
-					new CodeEngineGetFilesHandler(ICodeEngineLocator()),
-					new CodeEngineGetCodeRefsHandler(ICodeEngineLocator()),
-					new CodeEngineGetSignatureRefsHandler(ICodeEngineLocator()),
-					new CodeEngineFindSignatureHandler(ICodeEngineLocator()),
 					new MemberLookupHandler(ICodeEngineLocator()),
 					new GoToDefinitionHandler(ICodeEngineLocator()),
-					new ConfigurationHandler(),
+
+					new ProcessStartHandler(),
 					new BringToForegroundHandler(),
-					new TouchHandler(dispatchMessage),
-					new CreateSnippetHandler(ICodeEngineLocator()),
-					new PrewievSnippetHandler(ICodeEngineLocator()),
-					new SnippetEditHandler(ICodeEngineLocator()),
-					new SnippetDeleteHandler(ICodeEngineLocator()),
-					new CreateScriptHandler(dispatchMessage),
-					new ScriptHandler(dispatchMessage),
-					new EditScriptHandler(dispatchMessage),
-					new DeleteScriptHandler(),
-					new CreateReactiveScriptHandler(dispatchMessage),
-					new EditReactiveScriptHandler(dispatchMessage, PluginLocator()),
-					new DeleteReactiveScriptHandler(PluginLocator()),
-					new ProcessStartHandler()
+
+					new EventListener(_settings.RootPath),
+
+					new PackageHandler(_settings.RootPath, dispatchMessage),
+					new PkgTestHandler(_settings.RootPath),
+
+					new GetCommandsHandler(),
+
+					new HelpHandler()
 				});
 			return handlers;
 		}
@@ -114,7 +121,7 @@ namespace OpenIDE.Bootstrapping
 		{
 			return new PluginLocator(
 				_settings.EnabledLanguages,
-				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				new ProfileLocator(_settings.Path),
 				(command) => dispatchMessage(command));
 		}
 
@@ -136,7 +143,8 @@ namespace OpenIDE.Bootstrapping
 			}
 			_dispatcher.For(
 				parser.GetCommand(args),
-				parser.GetArguments(args));
+				parser.GetArguments(args),
+				(m) => {});
 		}
 
 		private bool isError(string command)

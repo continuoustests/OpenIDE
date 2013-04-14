@@ -2,11 +2,14 @@
 
 var fs = require('fs');
 var path = require('path');
-var jsp = require("./js-plugin/lib/parse-js");
-var carrier = require('./js-plugin/lib/carrier.js');
+var jsp = require("./js-files/lib/parse-js");
+var carrier = require('./js-files/lib/carrier.js');
 
 if (process.argv.length > 2) {
 	var firstArg = process.argv[2];
+	if (firstArg === "initialize") {
+		return;
+	}
 	if (firstArg === "get-command-definitions")
 		return;
 	if (firstArg === "crawl-file-types") {
@@ -78,7 +81,7 @@ function readDefinitions(tokenizer) {
 			var func = tokenizer();
 			var line = func.line + 1;
 			var col = func.col + 1;
-			console.log('signature|' + func.value + '|' + func.value + 
+			console.log('signature||' + func.value + '|' + func.value + 
 						'|function||' + line + '|' + col + '||typesearch');
 		} else if (token.type == "name" && token.nlb == true) {
 			name = token.value;
@@ -98,7 +101,7 @@ function readDefinitions(tokenizer) {
 				var line = token.line + 1;
 				var col = token.col - name.length;
 				if (name.substr(-10) === ".prototype") {
-					console.log('signature|' + name + '|' + name + 
+					console.log('signature||' + name + '|' + name + 
 								'|prototype||' + line + '|' + col + '||typesearch');
 				}
 			}
