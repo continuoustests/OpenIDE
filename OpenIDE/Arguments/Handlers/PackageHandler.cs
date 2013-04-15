@@ -39,7 +39,7 @@ namespace OpenIDE.Arguments.Handlers
 						.Add("[-g]", "Updates package in global profiles");
 				usage.Add("remove", "Removes package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
-				var sources = usage.Add("source", "Lists, adds and remove package sources");
+				var sources = usage.Add("source", "Lists, adds and removes package sources");
 				return usage;
 			}
 		}
