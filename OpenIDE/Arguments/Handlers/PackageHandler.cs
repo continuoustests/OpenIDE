@@ -39,6 +39,7 @@ namespace OpenIDE.Arguments.Handlers
 						.Add("[-g]", "Updates package in global profiles");
 				usage.Add("remove", "Removes package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
+				var sources = usage.Add("source", "Lists, adds and remove package sources");
 				return usage;
 			}
 		}
@@ -65,6 +66,8 @@ namespace OpenIDE.Arguments.Handlers
 				update(arguments);
 			if (arguments.Length > 1 && arguments[0] == "remove")
 				remove(arguments);
+			if (arguments[0] == "source")
+				sourceCommands(arguments);
 		}
 
 		private void init(string source) {
@@ -232,6 +235,17 @@ namespace OpenIDE.Arguments.Handlers
 					false,
 					Environment.CurrentDirectory,
 					(err, line) => { });
+		}
+
+		private void sourceCommands(string[] args) {
+			if (args.Length == 1) {
+				new SourceLocator(_token)
+					.GetSources().ToList()
+					.ForEach(x => 
+						Console.WriteLine(x.Name + " - " + x.Origin));
+
+				return;
+			}
 		}
 	}
 }

@@ -105,6 +105,8 @@
     <Compile Include="Packaging\Installer.cs" />
     <Compile Include="CoreExtensions\ProcessExtensions.cs" />
     <Compile Include="FileSystem\OiLnkReader.cs" />
+    <Compile Include="Packaging\Source.cs" />
+    <Compile Include="FileSystem\SourceLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
