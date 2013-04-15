@@ -26,6 +26,26 @@ namespace OpenIDE.Core.FileSystem
 			return sources.ToArray();
 		}
 
+		public Source[] GetLocalSources() {
+			var sources = new List<Source>();
+			addSources(sources, getLocalPath("default"));
+			addSources(sources, getLocalPath(_locator.GetActiveLocalProfile()));
+			return sources.ToArray();
+		}
+
+		public Source[] GetGlobalSources() {
+			var sources = new List<Source>();
+			addSources(sources, getGlobalPath("default"));
+			addSources(sources, getGlobalPath(_locator.GetActiveGlobalProfile()));
+			return sources.ToArray();
+		}
+
+		public Source[] GetSourcesFrom(string dir) {
+			var sources = new List<Source>();
+			addSources(sources, dir);
+			return sources.ToArray();
+		}
+
 		public string GetLocalDir() {
 			return getLocalPath(_locator.GetActiveLocalProfile());
 		}

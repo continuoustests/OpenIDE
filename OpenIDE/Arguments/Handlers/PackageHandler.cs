@@ -40,6 +40,10 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("remove", "Removes package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
 				var sources = usage.Add("source", "Lists, adds and removes package sources");
+				sources
+					.Add("add", "Add source")
+						.Add("NAME", "Name of new source")
+							.Add("LOCATION", "File reference/URL");
 				return usage;
 			}
 		}
@@ -238,14 +242,46 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void sourceCommands(string[] args) {
+			var locator = new SourceLocator(_token);
 			if (args.Length == 1) {
-				new SourceLocator(_token)
+				locator
 					.GetSources().ToList()
 					.ForEach(x => 
 						Console.WriteLine(x.Name + " - " + x.Origin));
-
 				return;
 			}
+			var useGlobal = globalSpecified(ref args);
+			var name = args[2];
+			var path = locator.GetLocalDir();
+			if (useGlobal)
+				path = locator.GetGlobalDir();
+			if (args.Length == 4 && args[1] == "add") {
+				var sources = locator.GetSourcesFrom(path);
+				if (sources.Any(x => x.Name == name)) {
+					printError("There is already a source named " + name);
+					return;
+				}
+				if (!Directory.Exists(path))
+					Directory.CreateDirectory(path);
+				var destination = Path.Combine(path, name + ".source");
+				download(args[3], destination);
+				if (!File.Exists(destination))
+					printError("Failed while downloading source file " + args[3]);
+				return;
+			}
+		}
+
+		private void download(string source, string destination) {
+			try {
+				File.Copy(source, destination);
+			} catch {
+			}
+		}
+
+		private void printError(string msg) {
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine(msg);
+			Console.ResetColor();
 		}
 	}
 }
