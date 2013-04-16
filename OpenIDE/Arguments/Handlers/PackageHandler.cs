@@ -64,8 +64,10 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		public void Execute(string[] arguments) {
-			if (arguments.Length == 0)
+			if (arguments.Length == 0) {
 				list();
+				return;
+			}
 			if (arguments.Length == 2 && arguments[0] == "init")
 				init(arguments[1]);
 			if (arguments.Length == 2 && arguments[0] == "read")
@@ -150,7 +152,7 @@ namespace OpenIDE.Arguments.Handlers
 						try {
 							var package = Package.Read(File.ReadAllText(x));
 							if (package != null)
-								Console.WriteLine(package.ToString() + " - " + x);
+								Console.WriteLine(package.ToString() + " (" + x + ")");
 						} catch {
 						}
 					});
