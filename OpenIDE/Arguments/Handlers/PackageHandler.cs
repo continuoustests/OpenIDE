@@ -44,10 +44,14 @@ namespace OpenIDE.Arguments.Handlers
 				sources
 					.Add("add", "Add source")
 						.Add("NAME", "Name of new source")
-							.Add("LOCATION", "File reference/URL");
+							.Add("LOCATION", "File reference/URL")
+								.Add("[-g]", "Adds source to global profile");
 				sources
 					.Add("remove", "Remove source")
 						.Add("NAME", "Name of source to remove");
+				sources
+					.Add("update", "Updates existing source list.")
+						.Add("[NAME]", "Source name. If not specified it updates all");
 				return usage;
 			}
 		}
@@ -255,11 +259,11 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			}
 			var useGlobal = globalSpecified(ref args);
-			var name = args[2];
 			var path = locator.GetLocalDir();
 			if (useGlobal)
 				path = locator.GetGlobalDir();
 			if (args.Length == 4 && args[1] == "add") {
+				var name = args[2];
 				var sources = locator.GetSourcesFrom(path);
 				if (sources.Any(x => x.Name == name)) {
 					printError("There is already a source named " + name);
@@ -274,6 +278,7 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			}
 			if (args.Length == 3 && args[1] == "remove") {
+				var name = args[2];
 				var source = 
 					locator
 						.GetSources()
@@ -285,12 +290,32 @@ namespace OpenIDE.Arguments.Handlers
 				File.Delete(source.Path);
 				return;
 			}
+			if (args.Length > 1 && args[1] == "update") {
+				string name = null;
+				if (args.Length > 2)
+					name = args[2];
+				var sources = 
+					locator
+						.GetSources()
+						.Where(x => name == null || x.Name == name);
+				if (sources.Count() == 0) {
+					printError("There are no package sources to update");
+					return;
+				}
+				foreach (var source in sources) {
+					if (!download(source.Origin, source.Path))
+						printError("Failed to download source file " + source.Origin);
+				}
+				return;
+			}
 		}
 
-		private void download(string source, string destination) {
+		private bool download(string source, string destination) {
 			try {
-				File.Copy(source, destination);
+				File.Copy(source, destination, true);
+				return true;
 			} catch {
+				return false;
 			}
 		}
 
