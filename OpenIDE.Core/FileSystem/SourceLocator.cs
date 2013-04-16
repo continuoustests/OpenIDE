@@ -80,7 +80,7 @@ namespace OpenIDE.Core.FileSystem
 			var sources = new List<Source>();
 			var files = Directory.GetFiles(dir);
 			foreach (var file in files) {
-				var source = Source.Read(getContent(file), Path.GetFileNameWithoutExtension(file));
+				var source = Source.Read(file);
 				if (source == null)
 					continue;
 				sources.Add(source);

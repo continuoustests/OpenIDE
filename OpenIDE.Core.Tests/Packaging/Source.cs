@@ -10,13 +10,16 @@ namespace OpenIDE.Core.Tests.Packaging
 	{
 		[Test]
 		public void When_reading_invalid_json_it_will_respond_with_null() {
-			var source = Source.Read("not valid json!", "source1");
+			Source.ReadFilesUsing((f) => "not valid json!!");
+			var source = Source.Read("/path/to/source1.source");
 			Assert.That(source, Is.Null);
 		}
 
 		[Test]
 		public void Can_read_source_file() {
-			var source = Source.Read(getSourceContents(), "source1");
+			Source.ReadFilesUsing((f) => getSourceContents());
+			var source = Source.Read("/path/to/source1.source");
+			Assert.That(source.Path , Is.EqualTo("/path/to/source1.source"));
 			Assert.That(source.Name, Is.EqualTo("source1"));
 			Assert.That(source.Origin, Is.EqualTo("/origin/list.source"));
 			Assert.That(source.Packages.Count, Is.EqualTo(2));

@@ -247,7 +247,7 @@ namespace OpenIDE.Arguments.Handlers
 				locator
 					.GetSources().ToList()
 					.ForEach(x => 
-						Console.WriteLine(x.Name + " - " + x.Origin));
+						Console.WriteLine(x.Name + " - " + x.Origin + " (" + x.Path + ")"));
 				return;
 			}
 			var useGlobal = globalSpecified(ref args);
@@ -267,6 +267,18 @@ namespace OpenIDE.Arguments.Handlers
 				download(args[3], destination);
 				if (!File.Exists(destination))
 					printError("Failed while downloading source file " + args[3]);
+				return;
+			}
+			if (args.Length == 3 && args[1] == "remove") {
+				var source = 
+					locator
+						.GetSources()
+						.FirstOrDefault(x => x.Name == args[2]);
+				if (source == null) {
+					printError("There is no package source named " + args[2]);
+					return;
+				}
+				File.Delete(source.Path);
 				return;
 			}
 		}
