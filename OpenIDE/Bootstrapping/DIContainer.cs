@@ -143,10 +143,11 @@ namespace OpenIDE.Bootstrapping
 			}
 			if (isCommand(command))
 			{
+				var prefix = "command|";
 				var parser = new CommandStringParser();
 				var args = 
 					parser.Parse(
-						command.Substring(0, command.Length - "command|".Length));
+						command.Substring(prefix.Length, command.Length - prefix.Length));
 				_dispatcher.For(
 					parser.GetCommand(args),
 					parser.GetArguments(args),
