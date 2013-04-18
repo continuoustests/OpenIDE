@@ -113,7 +113,7 @@ namespace OpenIDE.Core.FileSystem
 					_token,
 					(error, line) => {
 							if (error && !line.StartsWith("error|"))
-								onLine("error|" + error);
+								onLine("error|" + line);
 							else
 								onLine(line);
 						},

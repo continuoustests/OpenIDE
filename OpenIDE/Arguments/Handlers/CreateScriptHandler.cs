@@ -74,7 +74,7 @@ namespace OpenIDE.Arguments.Handlers
 					File.Copy(templates[0], file);
 				}
 			}
-			_dispatch("editor goto \"" + file + "|0|0\"");
+			_dispatch("command|editor goto \"" + file + "|0|0\"");
 		}
 
 		private string getFileName(string name)

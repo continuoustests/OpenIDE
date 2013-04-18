@@ -96,7 +96,7 @@ namespace OpenIDE.Arguments.Handlers
 			var packageFile = Path.Combine(files, "package.json");
 			if (!File.Exists(packageFile))
 				File.WriteAllText(packageFile, getPackageDescription(dir, name));
-			_dispatch("editor goto \"" + packageFile + "|0|0\"");
+			_dispatch("command|editor goto \"" + packageFile + "|0|0\"");
 		}
 
 		private void read(string source) {
@@ -322,9 +322,7 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void printError(string msg) {
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(msg);
-			Console.ResetColor();
+			_dispatch("error|" + msg);
 		}
 	}
 }

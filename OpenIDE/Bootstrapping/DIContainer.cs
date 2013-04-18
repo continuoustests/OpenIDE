@@ -127,24 +127,38 @@ namespace OpenIDE.Bootstrapping
 
 		private void dispatchMessage(string command)
 		{
-			if (command.Length == 0)
+			if (command.Length == 0) {
+				Console.WriteLine();
 				return;
-			var parser = new CommandStringParser();
-			var args = parser.Parse(command);
+			}
 			if (isError(command))
 			{
 				printError(command);
 				return;
 			}
-			if (isComment(command))
+			if (isWarning(command))
 			{
-				printComment(command);
+				printWarning(command);
 				return;
 			}
-			_dispatcher.For(
-				parser.GetCommand(args),
-				parser.GetArguments(args),
-				(m) => {});
+			if (isCommand(command))
+			{
+				var parser = new CommandStringParser();
+				var args = 
+					parser.Parse(
+						command.Substring(0, command.Length - "command|".Length));
+				_dispatcher.For(
+					parser.GetCommand(args),
+					parser.GetArguments(args),
+					(m) => {});
+				return;
+			}
+			Console.WriteLine(command);			
+		}
+
+		private bool isCommand(string command)
+		{
+			return command.StartsWith("command|");
 		}
 
 		private bool isError(string command)
@@ -156,19 +170,23 @@ namespace OpenIDE.Bootstrapping
 		{
 			var commentTag = "error|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(command.Substring(start, command.Length - start));
+			Console.ResetColor();
 		}
 		
-		private bool isComment(string command)
+		private bool isWarning(string command)
 		{
-			return command.Trim().StartsWith("comment|");
+			return command.Trim().StartsWith("warning|");
 		}
 
-		private void printComment(string command)
+		private void printWarning(string command)
 		{
-			var commentTag = "comment|";
+			var commentTag = "warning|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(command.Substring(start, command.Length - start));
+			Console.ResetColor();
 		}
 		
 		public ILocateEditorEngine ILocateEditorEngine()

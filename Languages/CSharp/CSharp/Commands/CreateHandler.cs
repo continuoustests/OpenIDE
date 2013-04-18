@@ -75,7 +75,7 @@ namespace CSharp.Commands
 		{
 			if (arguments.Length < 2)
 			{
-				writer.Write("comment|Invalid number of arguments. " +
+				writer.Write("error|Invalid number of arguments. " +
 					"Usage: create {template name} {item name} {template arguments}");
 				return;
 			}
@@ -87,7 +87,7 @@ namespace CSharp.Commands
 			
 			template.Run(project, getArguments(arguments));
 
-			writer.Write("comment|Created {0}", project);
+			writer.Write("Created {0}", project);
 
 			if (template.File == null)
 				return;
@@ -141,9 +141,9 @@ namespace CSharp.Commands
 		private void gotoFile(IResponseWriter writer, string file, int line, int column, string location)
 		{
 			writer.Write(
-				string.Format("editor goto \"{0}|{1}|{2}\"",
+				string.Format("command|editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			writer.Write("editor setfocus");
+			writer.Write("command|editor setfocus");
 		}
 	}
 

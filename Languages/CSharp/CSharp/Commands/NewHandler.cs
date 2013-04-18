@@ -116,8 +116,8 @@ namespace CSharp.Commands
 			_project.AppendFile(template.File);
 			_project.Write();
 			
-			writer.Write("comment|Created class {0}.{1}", ns, className);
-			writer.Write("comment|Full path {0}", template.File.Fullpath);
+			writer.Write("Created class {0}.{1}", ns, className);
+			writer.Write("Full path {0}", template.File.Fullpath);
 			
 			gotoFile(writer, template.File.Fullpath, template.Line, template.Column, location);
 		}
@@ -187,9 +187,9 @@ namespace CSharp.Commands
 		private void gotoFile(IResponseWriter writer, string file, int line, int column, string location)
 		{
 			writer.Write(
-				string.Format("editor goto \"{0}|{1}|{2}\"",
+				string.Format("command|editor goto \"{0}|{1}|{2}\"",
 					file, line, column));
-			writer.Write("editor setfocus");
+			writer.Write("command|editor setfocus");
 		}
 	}
 	

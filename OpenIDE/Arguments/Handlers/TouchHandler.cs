@@ -36,7 +36,7 @@ namespace OpenIDE.Arguments.Handlers
 			var file = Path.GetFullPath(arguments[0]);
 			PathExtensions.CreateDirectories(file);
 			File.WriteAllText(file, "");
-			_dispatch("editor goto \"" + file + "|0|0\"");
+			_dispatch("command|editor goto \"" + file + "|0|0\"");
 		}
 	}
 }
