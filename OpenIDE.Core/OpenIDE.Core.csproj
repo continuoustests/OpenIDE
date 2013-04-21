@@ -107,6 +107,7 @@
     <Compile Include="FileSystem\OiLnkReader.cs" />
     <Compile Include="Packaging\Source.cs" />
     <Compile Include="FileSystem\SourceLocator.cs" />
+    <Compile Include="Configs\ConfigReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

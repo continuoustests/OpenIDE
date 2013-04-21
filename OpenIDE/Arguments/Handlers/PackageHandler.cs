@@ -8,6 +8,7 @@ using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Packaging;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Config;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
@@ -30,7 +31,7 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or package.json");
 				usage.Add("build", "Builds package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript")
-						.Add("DESTINATION", "Directory to write package to");
+						.Add("[DESTINATION]", "Destination directory (default destination from config)");
 				usage.Add("install", "Installs package")
 					.Add("SOURCE", "Path to local file or URL")
 						.Add("[-g]", "Installs to global profiles");
@@ -72,8 +73,8 @@ namespace OpenIDE.Arguments.Handlers
 				init(arguments[1]);
 			if (arguments.Length == 2 && arguments[0] == "read")
 				read(arguments[1]);
-			if (arguments.Length == 3 && arguments[0] == "build")
-				build(arguments[1], arguments[2]);
+			if (new[] {2,3}.Contains(arguments.Length) && arguments[0] == "build")
+				build(arguments);
 			if (arguments.Length > 1 && arguments[0] == "install")
 				install(arguments);
 			if (arguments.Length > 1 && arguments[0] == "update")
@@ -142,12 +143,12 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void list() {
 			var profiles = new ProfileLocator(_token);
-			printPackages(profiles.GetLocalProfilePath("default"));
-			printPackages(profiles.GetGlobalProfilePath("default"));
+			printPackages(
+				profiles.GetFilesCurrentProfiles("package.json"));
 		}
 
-		private void printPackages(string dir) {
-			getPackages(dir)
+		private void printPackages(IEnumerable<string> packages) {
+			packages.ToList()
 				.ForEach(x => {
 						try {
 							var package = Package.Read(File.ReadAllText(x));
@@ -158,10 +159,8 @@ namespace OpenIDE.Arguments.Handlers
 					});
 		}
 
-		private List<string> getPackages(string directory) {
-			return Directory
-				.GetFiles(directory, "package.json", SearchOption.AllDirectories)
-				.ToList();
+		private List<string> getPackages(ProfileLocator locator, string directory) {
+			return locator.GetFiles(directory, "package.json").ToList();
 		}
 
 		private string getPackageDescription(string dir, string name) {
@@ -185,7 +184,18 @@ namespace OpenIDE.Arguments.Handlers
 			return package.Replace("{0}", name).Replace("{1}", type);
 		}
 
-		private void build(string source, string destination) {
+		private void build(string[] args) {
+			string source = args[1];
+			string destination = null;
+			if (args.Length == 3) {
+				destination = Path.GetFullPath(args[2]);
+			} else {
+				var setting = new ConfigReader(_token).Get("default.package.destination");
+				if (setting != null)
+					destination = setting;
+			}
+			if (!Directory.Exists(destination))
+				return;
 			source = Path.GetFullPath(source);
 			destination = Path.GetFullPath(destination);
 			var name = Path.GetFileNameWithoutExtension(source);

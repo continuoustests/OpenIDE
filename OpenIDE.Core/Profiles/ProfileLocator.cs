@@ -96,6 +96,60 @@ namespace OpenIDE.Core.Profiles
 			return Path.Combine(appDir, "active.profile");
 		}
 
+		public IEnumerable<string> GetFilesCurrentProfiles() {
+			return GetFiles(null);
+		}
+
+		public IEnumerable<string> GetFilesCurrentProfiles(string pattern) {
+			var files = new List<string>();
+			// Get from local profile
+			var localProfile = GetActiveLocalProfile();
+			var path = GetLocalProfilePath(localProfile);
+			getFilesRecursive(path, files, pattern);
+
+			// Get from local default profile
+			if (localProfile != "default") {
+				path = GetLocalProfilePath("default");
+				getFilesRecursive(path, files, pattern);
+			}
+
+			// Get from global profile
+			var globalProfile = GetActiveGlobalProfile();
+			path = GetGlobalProfilePath(globalProfile);
+			getFilesRecursive(path, files, pattern);
+
+			// Get from global default profile
+			if (globalProfile != "default") {
+				path = GetGlobalProfilePath("default");
+				getFilesRecursive(path, files, pattern);
+			}
+			return files;
+		}
+
+		public IEnumerable<string> GetFiles(string path) {
+			return GetFiles(path, null);
+		}
+
+		public IEnumerable<string> GetFiles(string path, string pattern) {
+			var files = new List<string>();
+			getFilesRecursive(path, files, pattern);
+			return files;
+		}
+
+		private void getFilesRecursive(string path, List<string> files, string pattern) {
+			Directory.GetDirectories(path).ToList()
+				.ForEach(x => {
+						if (Path.GetFileName(x).StartsWith("profile."))
+							return;
+						getFilesRecursive(x, files, pattern);
+					});
+
+			if (pattern != null)
+				Directory.GetFiles(path, pattern).ToList().ForEach(x => files.Add(x));
+			else
+				Directory.GetFiles(path).ToList().ForEach(x => files.Add(x));
+		}
+
 		private string getActiveProfile(string rootPath) {
 			if (rootPath == null)
 				return null;
