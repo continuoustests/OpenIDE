@@ -15,8 +15,10 @@ namespace oipckmngr
 			if (Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix) {
 				var tarfile = 
 					Path.Combine(
-						Path.GetTempPath(),
+						directory,
 						Path.GetFileName(archiveFile) + ".tar.gz");
+				if (File.Exists(tarfile))
+					File.Delete(tarfile);
 				File.Copy(archiveFile, tarfile);
 				run(directory, "gunzip", string.Format("-q \"{0}\"", tarfile));
 				tarfile = 
@@ -49,6 +51,10 @@ namespace oipckmngr
             proc.StartInfo.FileName   = command;
             proc.StartInfo.Arguments = arguments;
             proc.StartInfo.WorkingDirectory = directory;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
             proc.Start();
             proc.WaitForExit();
 		}

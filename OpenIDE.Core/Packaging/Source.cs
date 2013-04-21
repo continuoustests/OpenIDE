@@ -18,8 +18,8 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var json = _fileReader(file);
 				var data = JObject.Parse(json);
-				var source = new Source(data["origin"].ToString(), file);
 				var baseLocation = data["base"].ToString();
+				var source = new Source(data["origin"].ToString(), file, baseLocation);
 				data["packages"].Children().ToList()
 						.ForEach(x => 
 							source.AddPackage(
@@ -51,12 +51,14 @@ namespace OpenIDE.Core.Packaging
 		public string Path { get; private set; }
 		public string Name { get; private set; }
 		public string Origin { get; private set; }
+		public string Base { get; private set; }
 		public List<SourcePackage> Packages { get { return _packages; } }
 
- 		public Source(string origin, string file) {
+ 		public Source(string origin, string file, string baseLocation) {
  			Path = file;
 			Name = System.IO.Path.GetFileNameWithoutExtension(file);
 			Origin = origin;
+			Base = baseLocation;
 			_packages = new List<SourcePackage>();
 		}
 

@@ -21,6 +21,7 @@ namespace OpenIDE.Core.Tests.Packaging
 			var source = Source.Read("/path/to/source1.source");
 			Assert.That(source.Path , Is.EqualTo("/path/to/source1.source"));
 			Assert.That(source.Name, Is.EqualTo("source1"));
+			Assert.That(source.Base, Is.EqualTo("/origin/"));
 			Assert.That(source.Origin, Is.EqualTo("/origin/list.source"));
 			Assert.That(source.Packages.Count, Is.EqualTo(2));
 			Assert.That(source.Packages[0].ID, Is.EqualTo("package1"));
