@@ -20,6 +20,7 @@ namespace oipckmngr
 					return;
 				}
 				writeSource(source, origin, dir);
+				Console.WriteLine("Created " + source);
 				return;
 			}
 			if (args.Length == 3 && args[1] == "update") {

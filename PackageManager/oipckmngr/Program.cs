@@ -54,7 +54,7 @@ namespace oipckmngr
 				Console.WriteLine("Usage:");
 				Console.WriteLine("\tbuild NAME SOURCE-DIR DESTINATION-DIR");
 				Console.WriteLine("\textract FILE DESTINATION-DIR");
-				Console.WriteLine("\tsource create NAME ORIGIN DIRECTORY");
+				Console.WriteLine("\tsource create SOURCE-FILE ORIGIN");
 				Console.WriteLine("\tsource update SOURCE-FILE");
 			}
 		}

@@ -38,17 +38,17 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("update", "Updates package")
 					.Add("SOURCE", "Path to local file or URL")
 						.Add("[-g]", "Updates package in global profiles");
-				usage.Add("remove", "Removes package")
+				usage.Add("rm", "Removes package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
 
-				var sources = usage.Add("source", "Lists, adds and removes package sources");
+				var sources = usage.Add("src", "Lists, adds and removes package sources");
 				sources
 					.Add("add", "Add source")
 						.Add("NAME", "Name of new source")
 							.Add("LOCATION", "File reference/URL")
 								.Add("[-g]", "Adds source to global profile");
 				sources
-					.Add("remove", "Remove source")
+					.Add("rm", "Remove source")
 						.Add("NAME", "Name of source to remove");
 				sources
 					.Add("update", "Updates existing source list.")
@@ -79,9 +79,9 @@ namespace OpenIDE.Arguments.Handlers
 				install(arguments);
 			if (arguments.Length > 1 && arguments[0] == "update")
 				update(arguments);
-			if (arguments.Length > 1 && arguments[0] == "remove")
+			if (arguments.Length > 1 && arguments[0] == "rm")
 				remove(arguments);
-			if (arguments[0] == "source")
+			if (arguments[0] == "src")
 				sourceCommands(arguments);
 		}
 
@@ -289,7 +289,7 @@ namespace OpenIDE.Arguments.Handlers
 					printError("Failed while downloading source file " + args[3]);
 				return;
 			}
-			if (args.Length == 3 && args[1] == "remove") {
+			if (args.Length == 3 && args[1] == "rm") {
 				var name = args[2];
 				var source = 
 					locator
