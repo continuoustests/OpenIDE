@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
@@ -277,7 +278,10 @@ namespace OpenIDE.Arguments.Handlers
 				return Path.GetFullPath(source);
 			var package = new SourceLocator(_token).GetPackage(source);
 			if (package != null) {
-				return package.Package;
+				source = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString() + ".oipkg");
+				download(package.Package, source);
+				deleteWhenDone = true;
+				return source;
 			}
 			return null;
 		}
@@ -374,12 +378,19 @@ namespace OpenIDE.Arguments.Handlers
 
 		private bool download(string source, string destination) {
 			try {
-				_dispatch(string.Format("Downloading {0}...", source));
-				File.Copy(source, destination, true);
-				return true;
+				_dispatch(string.Format("Downloading {0} ...", source));
+				if (File.Exists(source)) {
+					File.Copy(source, destination, true);
+					return true;
+				}
+				if (source.StartsWith("http://") || source.StartsWith("https://")) {
+					var client = new WebClient();
+					client.DownloadFile(source, destination);
+					return true;
+				}
 			} catch {
-				return false;
 			}
+			return false;
 		}
 
 		private void printError(string msg) {
