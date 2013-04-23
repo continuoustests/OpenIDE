@@ -54,6 +54,17 @@ namespace OpenIDE.Core.FileSystem
 			return getGlobalPath(_locator.GetActiveGlobalProfile());
 		}
 
+		public Source.SourcePackage GetPackage(string name) {
+			var sources = GetSources();
+			foreach (var source in sources) {
+				foreach (var package in source.Packages) {
+					if (package.ID == name)
+						return package;
+				}
+			}
+			return null;
+		}
+
 		private void addSources(List<Source> sources, string path) {
 			var list = getSources(path);
 			foreach (var source in list) {

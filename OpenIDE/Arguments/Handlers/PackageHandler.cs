@@ -28,18 +28,18 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("init", "Initialize package for script, rscript or language")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
 				usage.Add("read", "reads package contents")
-					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or package.json");
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript, name or package.json");
 				usage.Add("build", "Builds package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript")
 						.Add("[DESTINATION]", "Destination directory (default destination from config)");
 				usage.Add("install", "Installs package")
-					.Add("SOURCE", "Path to local file or URL")
+					.Add("SOURCE", "Path to local file, URL or name")
 						.Add("[-g]", "Installs to global profiles");
 				usage.Add("update", "Updates package")
-					.Add("SOURCE", "Path to local file or URL")
+					.Add("SOURCE", "Path to local file, URL or name")
 						.Add("[-g]", "Updates package in global profiles");
 				usage.Add("rm", "Removes package")
-					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or name");
 
 				var sources = usage.Add("src", "Lists, adds and removes package sources");
 				sources
@@ -234,22 +234,28 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void install(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var source = Path.GetFullPath(args[1]);
+			var deleteWhenDone = false;
+			var source = downloadPackage(args[1], ref deleteWhenDone);
 			if (!File.Exists(source))
 				return;
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(source);
+			if (deleteWhenDone)
+				File.Delete(source);
 		}
 		
 		private void update(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var source = Path.GetFullPath(args[1]);
+			var deleteWhenDone = false;
+			var source = downloadPackage(args[1], ref deleteWhenDone);
 			if (!File.Exists(source))
 				return;
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(source);
+			if (deleteWhenDone)
+				File.Delete(source);
 		}
 
 		private bool globalSpecified(ref string[] args) {
@@ -265,9 +271,31 @@ namespace OpenIDE.Arguments.Handlers
 			args = newArgs.ToArray();
 			return useGlobal;
 		}
+
+		private string downloadPackage(string source, ref bool deleteWhenDone) {
+			if (File.Exists(Path.GetFullPath(source)))
+				return Path.GetFullPath(source);
+			var package = new SourceLocator(_token).GetPackage(source);
+			if (package != null) {
+				return package.Package;
+			}
+			return null;
+		}
 		
 		private void remove(string[] args) {
-			var source = Path.GetFullPath(args[1]);
+			var source = args[1];
+			var package = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (package != null) {
+				source = 
+					Path.Combine(
+						Path.GetDirectoryName(
+							Path.GetDirectoryName(package.File)),
+						package.ID);
+			} else {
+				source = Path.GetFullPath(source);
+			}
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.Remove(source);
 		}

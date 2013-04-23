@@ -123,6 +123,7 @@ namespace OpenIDE.Core.Packaging
 
 		public string ToVerboseString() {
 			var sb = new StringBuilder();
+			sb.AppendLine("Location:\t" + File);
 			sb.AppendLine("Target:\t\t" + Target);
 			sb.AppendLine("ID:\t\t" + ID);
 			sb.AppendLine("Version:\t" + Version);

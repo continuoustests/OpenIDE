@@ -15,6 +15,7 @@ namespace oipckmngr
 				var source = Path.GetFullPath(args[2]);
 				var origin = args[3];
 				var dir = Path.GetDirectoryName(source);
+				dir = source.Substring(0, dir.Length + 1);
 				if (File.Exists(source)) {
 					writeError("Source {0} already exists. Try using update instead", source);
 					return;
