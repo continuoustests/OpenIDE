@@ -1,0 +1,13 @@
+{
+	"#Comment": "# is used here to comment out optional fields",
+	"#Comment": "pre and post install actions accepts only OpenIDE non edior commands",
+	"target": "language",
+	"id": "C#-v1.0",
+	"description": "C# language package",
+	"#config-prefix": "C#.",
+	"#pre-install-actions": [],
+	"#post-install-actions": [],
+	"#dependencies": [
+			{"id": "name", "version": "v1.0"}
+		]
+}

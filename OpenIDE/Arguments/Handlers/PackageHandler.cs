@@ -101,18 +101,25 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void read(string source) {
-			if (!File.Exists(source)) {
-				var dir = 
-					Path.Combine(
-						Path.GetDirectoryName(source),
-						Path.GetFileNameWithoutExtension(source) + "-files");
-				source = Path.Combine(dir, "package.json");
+			var pkg = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (pkg == null) {
+				if (!File.Exists(source)) {
+					var dir = 
+						Path.Combine(
+							Path.GetDirectoryName(source),
+							Path.GetFileNameWithoutExtension(source) + "-files");
+					source = Path.Combine(dir, "package.json");
+				}
+			} else {
+				source = pkg.File;
 			}
-
-			if (!File.Exists(source))
+			
+			if (!File.Exists(source)) 
 				return;
 
-			var package = Package.Read(File.ReadAllText(source));
+			var package = Package.Read(source);
 			if (package != null) {
 				Console.WriteLine(package.ToVerboseString());
 				return;
@@ -138,29 +145,31 @@ namespace OpenIDE.Arguments.Handlers
 						tempPath,
 						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
 					"package.json");
-			return Package.Read(File.ReadAllText(pkgFile));
+			return Package.Read(pkgFile);
 		}
 
 		private void list() {
-			var profiles = new ProfileLocator(_token);
-			printPackages(
-				profiles.GetFilesCurrentProfiles("package.json"));
+			printPackages(getPackages());
 		}
 
-		private void printPackages(IEnumerable<string> packages) {
-			packages.ToList()
+		private IEnumerable<Package> getPackages() {
+			var profiles = new ProfileLocator(_token);
+			var packages = new List<Package>();
+			profiles.GetFilesCurrentProfiles("package.json").ToList()
 				.ForEach(x => {
 						try {
-							var package = Package.Read(File.ReadAllText(x));
+							var package = Package.Read(x);
 							if (package != null)
-								Console.WriteLine(package.ToString() + " (" + x + ")");
+								packages.Add(package);
 						} catch {
 						}
 					});
+			return packages;
 		}
 
-		private List<string> getPackages(ProfileLocator locator, string directory) {
-			return locator.GetFiles(directory, "package.json").ToList();
+		private void printPackages(IEnumerable<Package> packages) {
+			packages.ToList()
+				.ForEach(x => Console.WriteLine(x.ID + " (" + x.Version + ")"));
 		}
 
 		private string getPackageDescription(string dir, string name) {
@@ -196,10 +205,23 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			if (!Directory.Exists(destination))
 				return;
-			source = Path.GetFullPath(source);
+
+			string name;
+			string dir;
+			var package = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (package != null) {
+				name = package.ID;
+				dir = Path.GetDirectoryName(Path.GetDirectoryName(package.File));
+			} else {
+				source = Path.GetFullPath(source);
+				name = Path.GetFileNameWithoutExtension(source);
+				dir = Path.GetDirectoryName(source);
+			}
+
 			destination = Path.GetFullPath(destination);
-			var name = Path.GetFileNameWithoutExtension(source);
-			var dir = Path.GetDirectoryName(source);
+			
 			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			new Process()
 				.Query(
@@ -267,7 +289,7 @@ namespace OpenIDE.Arguments.Handlers
 				locator
 					.GetSources().ToList()
 					.ForEach(x => 
-						Console.WriteLine(x.Name + " - " + x.Origin + " (" + x.Path + ")"));
+						Console.WriteLine(x.Name + " - " + x.Origin));
 				return;
 			}
 			var useGlobal = globalSpecified(ref args);
@@ -324,6 +346,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private bool download(string source, string destination) {
 			try {
+				_dispatch(string.Format("Downloading {0}...", source));
 				File.Copy(source, destination, true);
 				return true;
 			} catch {

@@ -99,7 +99,7 @@ namespace oipckmngr
 						tempPath,
 						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
 					"package.json");
-			return Package.Read(File.ReadAllText(pkgFile));
+			return Package.Read(pkgFile);
 		}
 
 		private void extractPackage(string source, string path) {

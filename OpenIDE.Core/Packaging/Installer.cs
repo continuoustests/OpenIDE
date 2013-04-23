@@ -249,7 +249,7 @@ namespace OpenIDE.Core.Packaging
 						tempPath,
 						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
 					"package.json");
-			return Package.Read(File.ReadAllText(pkgFile));
+			return Package.Read(pkgFile);
 		}
 		
 		private Package getPackage(string file) {
@@ -260,7 +260,7 @@ namespace OpenIDE.Core.Packaging
 					Path.Combine(path, name + "-files"),
 					"package.json");
 			if (File.Exists(pkgFile))
-				return Package.Read(File.ReadAllText(pkgFile));
+				return Package.Read(pkgFile);
 			return null;
 		}
 

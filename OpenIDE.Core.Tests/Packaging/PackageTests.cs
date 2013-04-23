@@ -10,7 +10,17 @@ namespace OpenIDE.Core.Packaging.Tests
 
 		[Test]
 		public void When_parsing_an_invalid_package_description_it_returns_null() {
-			Assert.That(Package.Read("invalid json!"), Is.Null);
+			Assert.That(Package.Read("invalid json!", "myfile"), Is.Null);
+		}
+
+		[Test]
+		public void Can_read_package_file() {
+			var package = Package.Read(
+				new Package("language", "Name", "v1.1", "MyDescription")
+					.AddPreInstallAction("action")
+					.Write(),
+				"myfile");
+			Assert.That(package.File, Is.EqualTo("myfile"));
 		}
 
 		[Test]
@@ -18,7 +28,8 @@ namespace OpenIDE.Core.Packaging.Tests
 			var package = Package.Read(
 				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPreInstallAction("action")
-					.Write());
+					.Write(),
+				"myfile");
 			Assert.That(package.Signature, Is.EqualTo("Name-v1.1"));
 		}
 
@@ -27,20 +38,23 @@ namespace OpenIDE.Core.Packaging.Tests
 			var package = Package.Read(
 				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPreInstallAction("action")
-					.Write());
+					.Write(),
+				"myfile");
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
 				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPostInstallAction("action")
-					.Write());
+					.Write(),
+				"myfile");
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
 				new Package("language", "Name", "v1.1", "MyDescription")
-					.Write());
+					.Write(),
+				"myfile");
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 		}
@@ -51,7 +65,8 @@ namespace OpenIDE.Core.Packaging.Tests
 				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPreInstallAction("action")
 					.AddDependency("dependency", "v1.0")
-					.Write());
+					.Write(),
+				"myfile");
 			Assert.That(package.Dependencies.Count, Is.EqualTo(1));
 		}
 
@@ -61,27 +76,31 @@ namespace OpenIDE.Core.Packaging.Tests
 				Package.Read(
 					new Package("language", "", "v1.1", "MyDescription")
 						.AddPreInstallAction("action1")
-						.Write()),
+						.Write(),
+				"myfile"),
 				Is.Null);
 			
 			Assert.That(
 				Package.Read(
 					new Package("language", "MyPackage", "v1.1", "")
 						.AddPreInstallAction("action1")
-						.Write()),
+						.Write(),
+					"myfile"),
 				Is.Null);
 
 			Assert.That(
 				Package.Read(
 					new Package("language", "MyPackage", "", "MyDescription")
 						.AddPreInstallAction("action1")
-						.Write()),
+						.Write(),
+					"myfile"),
 				Is.Null);
 
 			Assert.That(
 				Package.Read(
 					new Package("not-valid", "MyPackage", "v1.1", "MyDescription")
-						.Write()),
+						.Write(),
+					"myfile"),
 				Is.Null);
 		}
 

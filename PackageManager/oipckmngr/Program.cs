@@ -28,7 +28,7 @@ namespace oipckmngr
 					Console.WriteLine("Invalid Package: Cannot find package description: " + json);
 					return;
 				}
-				var package = Package.Read(File.ReadAllText(json));
+				var package = Package.Read(json);
 				if (package == null) {
 					Console.WriteLine("Invalid package format");
 					return;

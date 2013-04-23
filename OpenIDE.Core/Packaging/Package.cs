@@ -8,10 +8,19 @@ namespace OpenIDE.Core.Packaging
 {
 	public class Package
 	{
-		public static Package Read(string json) {
+		public static Package Read(string json, string file) {
+			return read(file, json);
+		}
+
+		public static Package Read(string file) {
+			return read(file, System.IO.File.ReadAllText(file));
+		}
+
+		private static Package read(string file, string json) {
 			try {
 				var data = JObject.Parse(json);
 				var package = new Package(data["target"].ToString(), data["id"].ToString(), data["version"].ToString(), data["description"].ToString());
+				package.File = file;
 				if (data["pre-install-actions"] != null) {
 					data["pre-install-actions"].Children().ToList()
 						.ForEach(x => package.AddPreInstallAction(x.ToString()));
@@ -40,6 +49,7 @@ namespace OpenIDE.Core.Packaging
 			public string Version { get; set; }
 		}
 
+		public string File { get; set; }
 		public string Target { get; set; }
 		public string Signature { get{ return ID + "-" + Version; } }
 		public string ID { get; set; }
