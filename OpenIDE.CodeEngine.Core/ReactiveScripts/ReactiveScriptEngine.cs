@@ -23,12 +23,9 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 			_dispatch = dispatch;
 			_reader = 
 				new ReactiveScriptReader(
-				Path.GetDirectoryName(
-					Path.GetDirectoryName(
-						Assembly.GetExecutingAssembly().Location)),
-				_keyPath,
-				() => { return locator; },
-				(m) => _dispatch(m));
+					_keyPath,
+					() => { return locator; },
+					(m) => _dispatch(m));
 			_touchHandler = new ScriptTouchHandler(_reader.GetPaths());
 			_scripts = _reader.Read();
 		}

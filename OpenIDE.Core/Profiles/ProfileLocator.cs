@@ -12,6 +12,7 @@ namespace OpenIDE.Core.Profiles
 		private string _rootPath;
 		private string _appRoot;
 
+		public string AppRootPath { get { return _appRoot; } }
 		public static string ActiveGlobalProfile { get; set; }
 		public static string ActiveLocalProfile { get; set; }
 
@@ -100,27 +101,40 @@ namespace OpenIDE.Core.Profiles
 			return GetFiles(null);
 		}
 
-		public IEnumerable<string> GetFilesCurrentProfiles(string pattern) {
-			var files = new List<string>();
+		public IEnumerable<string> GetPathsCurrentProfiles() {
+			var paths = new List<string>();
 			// Get from local profile
 			var localProfile = GetActiveLocalProfile();
 			var path = GetLocalProfilePath(localProfile);
-			getFilesRecursive(path, files, pattern);
+			if (Directory.Exists(path))
+				paths.Add(path);
 
 			// Get from local default profile
 			if (localProfile != "default") {
 				path = GetLocalProfilePath("default");
-				getFilesRecursive(path, files, pattern);
+				if (Directory.Exists(path))
+					paths.Add(path);
 			}
 
 			// Get from global profile
 			var globalProfile = GetActiveGlobalProfile();
 			path = GetGlobalProfilePath(globalProfile);
-			getFilesRecursive(path, files, pattern);
+			if (Directory.Exists(path))
+				paths.Add(path);
 
 			// Get from global default profile
 			if (globalProfile != "default") {
 				path = GetGlobalProfilePath("default");
+				if (Directory.Exists(path))
+					paths.Add(path);
+			}
+			return paths;
+		}
+
+		public IEnumerable<string> GetFilesCurrentProfiles(string pattern) {
+			var files = new List<string>();
+			var paths = GetPathsCurrentProfiles();
+			foreach (var path in paths) {
 				getFilesRecursive(path, files, pattern);
 			}
 			return files;
