@@ -108,6 +108,9 @@
     <Compile Include="Packaging\Source.cs" />
     <Compile Include="FileSystem\SourceLocator.cs" />
     <Compile Include="Configs\ConfigReader.cs" />
+    <Compile Include="Definitions\DefinitionCacheReader.cs" />
+    <Compile Include="Definitions\DefinitionCacheWriter.cs" />
+    <Compile Include="Definitions\DefinitionCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

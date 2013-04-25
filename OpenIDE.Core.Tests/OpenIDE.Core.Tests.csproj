@@ -41,6 +41,8 @@
     <Compile Include="Packaging\PackageTests.cs" />
     <Compile Include="FileSystem\OiLnkReaderTests.cs" />
     <Compile Include="Packaging\Source.cs" />
+    <Compile Include="Definitions\DefinitionCacheReaderTests.cs" />
+    <Compile Include="Definitions\DefinitionCacheWriterTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
