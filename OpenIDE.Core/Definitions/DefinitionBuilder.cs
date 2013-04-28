@@ -131,13 +131,14 @@ namespace OpenIDE.Core.Definitions
 			var scripts = new ScriptFilter().GetScripts(scriptPath);
 			foreach (var scriptFile in scripts) {
 				var script  = new Script(_token, _workingDirectory, scriptFile);
+				var usages = script.Usages; // Description is built when fetching usages
 				cache.Add(
 					DefinitionCacheItemType.Script,
 					scriptFile,
 					DateTime.Now,
 					script.Name,
 					script.Description,
-					script.Usages);
+					usages);
 			}
 
 			// Add languages

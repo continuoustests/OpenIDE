@@ -8,22 +8,22 @@
           "description": "Kills processes",
           "type": "script",
           "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/alive.sh",
-          "updated": "2013.04.27 22:42:18"
+          "updated": "2013.04.28 22:14:46"
         }
       ],
       "cmd": "alive",
-      "description": "",
+      "description": "Checks whether any of the starting processes are still alive",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/alive.sh",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:46"
     },
     {
       "arguments": [],
       "cmd": "build-source",
-      "description": "",
+      "description": "Running source builder",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/build-source.oilnk",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:46"
     },
     {
       "arguments": [
@@ -33,46 +33,46 @@
           "description": "Language to run (cs,go)",
           "type": "script",
           "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/lang.sh",
-          "updated": "2013.04.27 22:42:18"
+          "updated": "2013.04.28 22:14:47"
         }
       ],
       "cmd": "lang",
-      "description": "",
+      "description": "Running language plugin",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/lang.sh",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:47"
     },
     {
       "arguments": [],
       "cmd": "mngr",
-      "description": "",
+      "description": "Run package manager from AutoTest.Net folder",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/mngr.py",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:47"
     },
     {
       "arguments": [],
       "cmd": "runform",
-      "description": "",
+      "description": "Starts the run dialog (oi run)",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/runform.sh",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:47"
     },
     {
       "arguments": [],
       "cmd": "runoi",
-      "description": "",
+      "description": "Runs oi executable form at build directory",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/runoi.sh",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:47"
     },
     {
       "arguments": [],
       "cmd": "updatego",
-      "description": "",
+      "description": "Updates go binary",
       "type": "script",
       "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/updatego.sh",
-      "updated": "2013.04.27 22:42:18"
+      "updated": "2013.04.28 22:14:47"
     }
   ]
 }

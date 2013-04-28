@@ -136,7 +136,7 @@ namespace OpenIDE.Bootstrapping
 				newArgs.Add(arg);
 			}
 
-			var unhandledArg = true;
+			/*var unhandledArg = true;
 			if (newArgs.Count > 0)
 			{
 				if (_handlers == null)
@@ -161,7 +161,7 @@ namespace OpenIDE.Bootstrapping
 							newArgs.Insert(0, DefaultLanguage);
 					}
 				}
-			}
+			}*/
 			return newArgs.ToArray();
 		}		
 	}

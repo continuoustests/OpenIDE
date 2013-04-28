@@ -37,7 +37,7 @@ namespace OpenIDE.Core.Tests.Definitions
 		}
 
 		[Test]
-		public void Should_accept_valid_optional_arguments_amongst_required() {
+		public void Stops_at_first_optional_argument() {
 			var type = DefinitionCacheItemType.Script;
 			var time = DateTime.Now;
 			var cache = new DefinitionCache();
@@ -46,7 +46,7 @@ namespace OpenIDE.Core.Tests.Definitions
 					.Add(type, "", time, true, "cmd2", "")
 						.Add(type, "", time, true, "cmd3", "")
 							.Add(type, "", time, false, "-g", "");
-			Assert.That(cache.Get(new[] {"cmd1", "-g","cmd2","cmd3"}).Name, Is.EqualTo("cmd3"));
+			Assert.That(cache.Get(new[] {"cmd1", "-g","cmd2","cmd3"}).Name, Is.EqualTo("cmd1"));
 		}
 
 		[Test]

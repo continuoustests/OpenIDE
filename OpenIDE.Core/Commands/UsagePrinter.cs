@@ -1,28 +1,24 @@
 using System;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Definitions;
 
 namespace OpenIDE.Core.Commands
 {
 	public class UsagePrinter
 	{
-		public static void PrintCommand(CommandHandlerParameter command)
-		{
-			Console.WriteLine("");
-			Console.WriteLine("\t{2} : {0} ({1})",
-				command.GetDescription(Environment.NewLine + "\t"),
-				command.Language,
-				command.Name);
+		public static void PrintDefinition(DefinitionCacheItem item) {
+			int level = 0;
+			PrintDefinition(item, ref level);
 		}
-
-		public static void PrintParameter(BaseCommandHandlerParameter parameter, ref int level)
-		{
+		
+		public static void PrintDefinition(DefinitionCacheItem item, ref int level) {
 			level++;
-			var name = parameter.Name;
-			if (!parameter.Required)
+			var name = item.Name;
+			if (!item.Required)
 				name = "[" + name + "]";
-			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, parameter.Description);
-			foreach (var child in parameter.Parameters)
-				PrintParameter(child, ref level);
+			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, item.Description);
+			foreach (var child in item.Parameters)
+				PrintDefinition(child, ref level);
 			level--;
 		}
 	}

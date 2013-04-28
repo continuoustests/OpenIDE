@@ -103,7 +103,6 @@
     <Compile Include="Arguments\Handlers\GoToDefinitionHandler.cs" />
     <Compile Include="Arguments\Handlers\TouchHandler.cs" />
     <Compile Include="Arguments\Handlers\CreateScriptHandler.cs" />
-    <Compile Include="Arguments\Handlers\ScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\SnippetEditHandler.cs" />
     <Compile Include="Arguments\Handlers\SnippetDeleteHandler.cs" />
     <Compile Include="Arguments\Handlers\EditScriptHandler.cs" />

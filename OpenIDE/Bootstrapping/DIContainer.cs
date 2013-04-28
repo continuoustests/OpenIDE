@@ -13,6 +13,7 @@ using OpenIDE.Core.Language;
 using OpenIDE.Core.Profiles;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Definitions;
 
 namespace OpenIDE.Bootstrapping
 {
@@ -21,6 +22,7 @@ namespace OpenIDE.Bootstrapping
 		private AppSettings _settings;
 		private ICommandDispatcher _dispatcher;
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
+		private DefinitionBuilder _definitionBuilder = null;
 
 		public Action<string> DispatchMessage { get { return dispatchMessage; } }
 
@@ -33,17 +35,21 @@ namespace OpenIDE.Bootstrapping
 				EventDispatcher());
 		}
 
-		public OpenIDE.Core.Definitions.DefinitionBuilder GetDefinitionBuilder() {
-			return new OpenIDE.Core.Definitions.DefinitionBuilder(
-					_settings.RootPath,
-					Environment.CurrentDirectory,
-					_settings.DefaultLanguage,
-					() => {
-						return GetDefaultHandlersWithoutRunHandler()
-							.Select(x => 
-								new OpenIDE.Core.Definitions.BuiltInCommand(x.Command, x.Usage));
-					},
-					(path) => PluginLocator().LocateFor(path));
+		public DefinitionBuilder GetDefinitionBuilder() {
+			if (_definitionBuilder == null) {
+				_definitionBuilder = 
+					new DefinitionBuilder(
+						_settings.RootPath,
+						Environment.CurrentDirectory,
+						_settings.DefaultLanguage,
+						() => {
+							return GetDefaultHandlersWithoutRunHandler()
+								.Select(x => 
+									new BuiltInCommand(x.Command, x.Usage));
+						},
+						(path) => PluginLocator().LocateFor(path));
+			}
+			return _definitionBuilder;
 		}
 
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
@@ -74,7 +80,6 @@ namespace OpenIDE.Bootstrapping
 					
 					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
 					new TouchHandler(dispatchMessage),
-					new ScriptHandler(_settings.RootPath, dispatchMessage),
 					new HandleScriptHandler(_settings.RootPath, dispatchMessage),
 					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 					new HandleSnippetHandler(ICodeEngineLocator()),

@@ -107,13 +107,13 @@ namespace OpenIDE.Core.Definitions
 
 		private DefinitionCacheItem get(string[] args, int index, IEnumerable<DefinitionCacheItem> items, DefinitionCacheItem parent) {
 			if (index > args.Length - 1)
-				return null;
+				return parent;
 			if (items.Count() == 0)
-				return null;
+				return parent;
 			var item = items.FirstOrDefault(x => x.Name == args[index]);
 			if (item == null) {
 				if (isOptionalArgument(args[index], items)) {
-					return get(args, index + 1, items, parent);
+					return parent;
 				}
 				var possibleItems = new List<DefinitionCacheItem>();
 				if (items.Any(x => x.Name == x.Name.ToUpper()))
