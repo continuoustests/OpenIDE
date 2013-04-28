@@ -20,7 +20,6 @@ namespace OpenIDE.Bootstrapping
 	public class DIContainer
 	{
 		private AppSettings _settings;
-		private ICommandDispatcher _dispatcher;
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
 		private DefinitionBuilder _definitionBuilder = null;
 
@@ -29,10 +28,6 @@ namespace OpenIDE.Bootstrapping
 		public DIContainer(AppSettings settings)
 		{
 			_settings = settings;
-			_dispatcher = new CommandDispatcher(
-				GetDefaultHandlers().ToArray(),
-				GetPluginHandlers,
-				EventDispatcher());
 		}
 
 		public DefinitionBuilder GetDefinitionBuilder() {
@@ -43,7 +38,7 @@ namespace OpenIDE.Bootstrapping
 						Environment.CurrentDirectory,
 						_settings.DefaultLanguage,
 						() => {
-							return GetDefaultHandlersWithoutRunHandler()
+							return GetDefaultHandlers()
 								.Select(x => 
 									new BuiltInCommand(x.Command, x.Usage));
 						},
@@ -53,20 +48,6 @@ namespace OpenIDE.Bootstrapping
 		}
 
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
-		{
-			var handlers = new List<ICommandHandler>();
-			handlers.AddRange(GetDefaultHandlersWithoutRunHandler());
-			handlers.Add(new RunCommandHandler(() =>
-				{
-					var runHandlers = new List<ICommandHandler>();
-					runHandlers.AddRange(GetDefaultHandlersWithoutRunHandler());
-					runHandlers.AddRange(GetPluginHandlers());
-					return runHandlers;
-				}));
-			return handlers;
-		}
-
-		public IEnumerable<ICommandHandler> GetDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
 			var configHandler = new ConfigurationHandler(PluginLocator());
@@ -101,6 +82,8 @@ namespace OpenIDE.Bootstrapping
 
 					new GetCommandsHandler(),
 
+					new RunCommandHandler(),
+
 					new HelpHandler()
 				});
 			return handlers;
@@ -120,11 +103,6 @@ namespace OpenIDE.Bootstrapping
 						});
 			}
 			return _pluginHandlers;
-		}
-
-		public ICommandDispatcher GetDispatcher()
-		{
-			return _dispatcher;
 		}
 
 		public IFS IFS()
@@ -168,10 +146,11 @@ namespace OpenIDE.Bootstrapping
 				var args = 
 					parser.Parse(
 						command.Substring(prefix.Length, command.Length - prefix.Length));
-				_dispatcher.For(
-					parser.GetCommand(args),
-					parser.GetArguments(args),
-					(m) => {});
+				var cmd = GetDefinitionBuilder().Get(args.ToArray());
+				if (cmd != null) {
+					new CommandRunner()
+						.Run(cmd, args.ToArray());
+				}
 				return;
 			}
 			Console.WriteLine(command);			
@@ -215,22 +194,14 @@ namespace OpenIDE.Bootstrapping
 			return new EngineLocator(IFS());
 		}
 
-		public EventIntegration.IEventDispatcher EventDispatcher()
+		/*public EventIntegration.IEventDispatcher EventDispatcher()
 		{
 			return new EventIntegration.EventDispatcher(_settings.Path);
-		}
+		}*/
 
 		public ICodeEngineLocator ICodeEngineLocator()
 		{
 			return new CodeEngineDispatcher(IFS());
-		}
-
-		public IEnumerable<ICommandHandler> ICommandHandlers()
-		{
-			var list = new List<ICommandHandler>();
-			list.AddRange(GetDefaultHandlers());
-			list.AddRange(GetPluginHandlers());
-			return list;
 		}
 	}
 }

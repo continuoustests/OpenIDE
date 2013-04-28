@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using OpenIDE;
 using OpenIDE.Messaging;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Bootstrapping;
@@ -40,33 +41,8 @@ namespace oi
 				printUsage(arguments[0]);
 				return;
 			}
-			arguments.RemoveAt(0);
-			if (cmd.Type == DefinitionCacheItemType.Script) {
-				var script = new Script(Bootstrapper.Settings.RootPath, Environment.CurrentDirectory, cmd.Location);
-				var sb = new StringBuilder();
-				for (int i = 0; i < arguments.Count; i++)
-					sb.Append(" \"" + arguments[i] + "\"");
-				script.Run(sb.ToString(), Bootstrapper.DispatchMessage);
-			} else if (cmd.Type == DefinitionCacheItemType.Language) {
-				var language = new LanguagePlugin(cmd.Location, Bootstrapper.DispatchMessage);
-				language.Run(arguments.ToArray());
-			} else {
-				var command = Bootstrapper.GetDefaultHandlersWithoutRunHandler()
-					.FirstOrDefault(x => x.Command == args[0]);
-				if (command == null) {
-					printUsage(args[0]);
-					return;
-				}
-				command.Execute(arguments.ToArray());
-			}
-			return;
-
-						var execute = Bootstrapper.GetDispatcher();
-			var parser = new CommandStringParser();
-			execute.For(
-				parser.GetCommand(args),
-				parser.GetArguments(args),
-				(command) => printUsage(command));
+			if (!new CommandRunner().Run(cmd, arguments))
+				printUsage(cmd.Name);
 		}
 
 		private static string[] parseProfile(string[] args)

@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using OpenIDE.Arguments;
 using System.Text;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Definitions;
 
 namespace OpenIDE.CommandBuilding
 {
 	public class CommandBuilder
 	{
-		private List<BaseCommandHandlerParameter> _parameters;
+		private List<DefinitionCacheItem> _parameters;
         
 		public string[] AvailableCommands { get; private set; }
 
-		public CommandBuilder(IEnumerable<BaseCommandHandlerParameter> parameters)
+		public CommandBuilder(IEnumerable<DefinitionCacheItem> parameters)
 		{
 			_parameters = parameters.ToList();
             NavigateTo("");
@@ -55,7 +56,7 @@ namespace OpenIDE.CommandBuilding
                 }
                 else
                     builder.AppendLine("".PadLeft(level * 4, ' ') + command.Name + " : " + command.Description);
-                available = new List<BaseCommandHandlerParameter>(command.Parameters);
+                available = new List<DefinitionCacheItem>(command.Parameters);
                 level++;
             }
             return builder.ToString();
@@ -69,7 +70,7 @@ namespace OpenIDE.CommandBuilding
             return paths;
         }
 
-        private IEnumerable<string> getPaths(BaseCommandHandlerParameter x, string path)
+        private IEnumerable<string> getPaths(DefinitionCacheItem x, string path)
         {
             if (x.Parameters.Count() == 0)
                 return new string[] { path };

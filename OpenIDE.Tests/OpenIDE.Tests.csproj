@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -68,7 +68,6 @@
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="FileSystem\PathExtensionsTests.cs" />
     <Compile Include="Bootstrapping\DIContainerTests.cs" />
-    <Compile Include="Arguments\CommandDispatcherTests.cs" />
     <Compile Include="EditorEngineIntegration\EngineLocatorTests.cs" />
     <Compile Include="CommandBuilding\CommandBuilderTests.cs" />
     <Compile Include="CommandBuilding\CommandAutoCompletionTests.cs" />

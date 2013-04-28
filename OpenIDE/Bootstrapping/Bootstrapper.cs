@@ -41,19 +41,9 @@ namespace OpenIDE.Bootstrapping
 			return _container.GetDefinitionBuilder();
 		}
 
-		public static ICommandDispatcher GetDispatcher()
+		public static IEnumerable<ICommandHandler> GetDefaultHandlers()
 		{
-			return _container.GetDispatcher();
-		}
-
-		public static IEnumerable<ICommandHandler> GetCommandHandlers()
-		{
-			return _container.ICommandHandlers();
-		}
-
-		public static IEnumerable<ICommandHandler> GetDefaultHandlersWithoutRunHandler()
-		{
-			return _container.GetDefaultHandlersWithoutRunHandler();
+			return _container.GetDefaultHandlers();
 		}
 
 		private static IEnumerable<ICommandHandler> getDefaultHandlers()

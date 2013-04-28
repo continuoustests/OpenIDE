@@ -67,7 +67,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Arguments\ICommandDispatcher.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="UI\RunCommandForm.cs">
       <SubType>Form</SubType>
@@ -83,7 +82,6 @@
     <Compile Include="Messaging\Messages\FailMessage.cs" />
     <Compile Include="Bootstrapping\DIContainer.cs" />
     <Compile Include="Bootstrapping\Bootstrapper.cs" />
-    <Compile Include="Arguments\CommandDispatcher.cs" />
     <Compile Include="Arguments\ICommandHandler.cs" />
     <Compile Include="Exceptions\InvalidArgumentsException.cs" />
     <Compile Include="Arguments\Handlers\EditorHandler.cs" />
@@ -123,6 +121,7 @@
     <Compile Include="Arguments\Handlers\PkgTestHandler.cs" />
     <Compile Include="Arguments\Handlers\GetCommandsHandler.cs" />
     <Compile Include="Arguments\Handlers\PackageHandler.cs" />
+    <Compile Include="CommandRunner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
