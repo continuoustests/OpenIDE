@@ -26,19 +26,22 @@ namespace OpenIDE.Core.Tests.Definitions
 			Assert.That(cache.Definitions[0].Type, Is.EqualTo(DefinitionCacheItemType.Language));
 			Assert.That(cache.Definitions[0].Location, Is.EqualTo("/my/script"));
 			Assert.That(cache.Definitions[0].Updated, Is.EqualTo(new DateTime(2013,1,1,2,3,1)));
+			Assert.That(cache.Definitions[0].Required, Is.True);
 			Assert.That(cache.Definitions[0].Name, Is.EqualTo("mycmd"));
 			Assert.That(cache.Definitions[0].Description, Is.EqualTo("My command does my stuff."));
 			Assert.That(cache.Definitions[0].Parameters.Count, Is.EqualTo(1));
 			Assert.That(cache.Definitions[0].Parameters[0].Type, Is.EqualTo(DefinitionCacheItemType.Language));
 			Assert.That(cache.Definitions[0].Parameters[0].Location, Is.EqualTo("/my/script"));
 			Assert.That(cache.Definitions[0].Parameters[0].Updated, Is.EqualTo(new DateTime(2013,1,1,2,3,1)));
+			Assert.That(cache.Definitions[0].Parameters[0].Required, Is.True);
 			Assert.That(cache.Definitions[0].Parameters[0].Name, Is.EqualTo("FILE"));
 			Assert.That(cache.Definitions[0].Parameters[0].Description, Is.EqualTo("another param"));
 			Assert.That(cache.Definitions[0].Parameters[0].Parameters.Count, Is.EqualTo(1));
 			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Type, Is.EqualTo(DefinitionCacheItemType.Language));
 			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Location, Is.EqualTo("/my/script"));
 			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Updated, Is.EqualTo(new DateTime(2013,1,1,2,3,1)));
-			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Name, Is.EqualTo("[optional]"));
+			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Required, Is.False);
+			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Name, Is.EqualTo("optional"));
 			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Description, Is.EqualTo("This one is optional"));
 			Assert.That(cache.Definitions[0].Parameters[0].Parameters[0].Parameters.Count, Is.EqualTo(0));
 		}

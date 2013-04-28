@@ -22,6 +22,8 @@ namespace OpenIDE.Bootstrapping
 		private ICommandDispatcher _dispatcher;
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
 
+		public Action<string> DispatchMessage { get { return dispatchMessage; } }
+
 		public DIContainer(AppSettings settings)
 		{
 			_settings = settings;
@@ -31,21 +33,34 @@ namespace OpenIDE.Bootstrapping
 				EventDispatcher());
 		}
 
+		public OpenIDE.Core.Definitions.DefinitionBuilder GetDefinitionBuilder() {
+			return new OpenIDE.Core.Definitions.DefinitionBuilder(
+					_settings.RootPath,
+					Environment.CurrentDirectory,
+					_settings.DefaultLanguage,
+					() => {
+						return GetDefaultHandlersWithoutRunHandler()
+							.Select(x => 
+								new OpenIDE.Core.Definitions.BuiltInCommand(x.Command, x.Usage));
+					},
+					(path) => PluginLocator().LocateFor(path));
+		}
+
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
 		{
 			var handlers = new List<ICommandHandler>();
-			handlers.AddRange(getDefaultHandlersWithoutRunHandler());
+			handlers.AddRange(GetDefaultHandlersWithoutRunHandler());
 			handlers.Add(new RunCommandHandler(() =>
 				{
 					var runHandlers = new List<ICommandHandler>();
-					runHandlers.AddRange(getDefaultHandlersWithoutRunHandler());
+					runHandlers.AddRange(GetDefaultHandlersWithoutRunHandler());
 					runHandlers.AddRange(GetPluginHandlers());
 					return runHandlers;
 				}));
 			return handlers;
 		}
 
-		private IEnumerable<ICommandHandler> getDefaultHandlersWithoutRunHandler()
+		public IEnumerable<ICommandHandler> GetDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
 			var configHandler = new ConfigurationHandler(PluginLocator());

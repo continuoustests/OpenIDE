@@ -14,7 +14,7 @@ namespace OpenIDE.Core.Tests.Definitions
 		{
 			string actualJSON = null;
 			var writer = 
-				new DefinitionCacheWriter()
+				new DefinitionCacheWriter("/write/path")
 					.WriteUsing((file,content) => actualJSON = content);
 
 			var type = DefinitionCacheItemType.Script;
@@ -22,17 +22,12 @@ namespace OpenIDE.Core.Tests.Definitions
 			var time = new DateTime(2013,1,1,2,3,1);
 			var cache = new DefinitionCache();
 			cache
-				.Add(type, script, time, "mycmd", "My command does my stuff.")
-					.Add(type, script, time, "FILE", "another param")
-						.Add(type, script, time, "optional", "This one is optional");
+				.Add(type, script, time, true, "mycmd", "My command does my stuff.")
+					.Add(type, script, time, true, "FILE", "another param")
+						.Add(type, script, time, false, "optional", "This one is optional");
 			
 			writer.Write(cache);
 			Assert.That(actualJSON, Is.EqualTo(expectedJSON()));
-		}
-
-		private BaseCommandHandlerParameter getParam(string cmd, string desc) {
-			return 
-				new BaseCommandHandlerParameter(cmd, desc);
 		}
 
 		private string expectedJSON() {

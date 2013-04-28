@@ -1,0 +1,78 @@
+{
+  "commands": [
+    {
+      "arguments": [
+        {
+          "arguments": [],
+          "cmd": "[-k]",
+          "description": "Kills processes",
+          "type": "script",
+          "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/alive.sh",
+          "updated": "2013.04.27 22:42:18"
+        }
+      ],
+      "cmd": "alive",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/alive.sh",
+      "updated": "2013.04.27 22:42:18"
+    },
+    {
+      "arguments": [],
+      "cmd": "build-source",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/build-source.oilnk",
+      "updated": "2013.04.27 22:42:18"
+    },
+    {
+      "arguments": [
+        {
+          "arguments": [],
+          "cmd": "[LANGUAGE]",
+          "description": "Language to run (cs,go)",
+          "type": "script",
+          "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/lang.sh",
+          "updated": "2013.04.27 22:42:18"
+        }
+      ],
+      "cmd": "lang",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/lang.sh",
+      "updated": "2013.04.27 22:42:18"
+    },
+    {
+      "arguments": [],
+      "cmd": "mngr",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/mngr.py",
+      "updated": "2013.04.27 22:42:18"
+    },
+    {
+      "arguments": [],
+      "cmd": "runform",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/runform.sh",
+      "updated": "2013.04.27 22:42:18"
+    },
+    {
+      "arguments": [],
+      "cmd": "runoi",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/runoi.sh",
+      "updated": "2013.04.27 22:42:18"
+    },
+    {
+      "arguments": [],
+      "cmd": "updatego",
+      "description": "",
+      "type": "script",
+      "location": "/home/ack/src/OpenIDE/.OpenIDE/profile.ack/scripts/updatego.sh",
+      "updated": "2013.04.27 22:42:18"
+    }
+  ]
+}

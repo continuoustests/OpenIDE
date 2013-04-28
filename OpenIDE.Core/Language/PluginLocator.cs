@@ -24,10 +24,24 @@ namespace OpenIDE.Core.Language
 
 		public LanguagePlugin[] Locate()
 		{
-			return getPlugins()
-				.Select(x => getPlugin(x))
-				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()))
-				.ToArray();
+			return 
+				filterEnabledPlugins(
+					getPlugins()
+						.Select(x => getPlugin(x)))
+					.ToArray();
+		}
+
+		public LanguagePlugin[] LocateFor(string path) {
+			return 
+				filterEnabledPlugins(
+					getPlugins(path)
+						.Select(x => getPlugin(x)))
+					.ToArray();
+		}
+
+		private IEnumerable<LanguagePlugin> filterEnabledPlugins(IEnumerable<LanguagePlugin> plugins) {
+			return plugins	
+				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()));
 		}
 
 		private LanguagePlugin getPlugin(string name) {

@@ -33,7 +33,8 @@ namespace OpenIDE.Core.Definitions
 						getType(json["type"].ToString()),
 						json["location"].ToString(),
 						getTime(json["updated"].ToString()),
-						json["cmd"].ToString(),
+						!json["cmd"].ToString().StartsWith("["),
+						json["cmd"].ToString().Replace("[", "").Replace("]", ""),
 						json["description"].ToString());
 			foreach (var child in json["arguments"].Children())
 				addItem(item, child);
@@ -46,7 +47,8 @@ namespace OpenIDE.Core.Definitions
 						getType(json["type"].ToString()),
 						json["location"].ToString(),
 						getTime(json["updated"].ToString()),
-						json["cmd"].ToString(),
+						!json["cmd"].ToString().StartsWith("["),
+						json["cmd"].ToString().Replace("[", "").Replace("]", ""),
 						json["description"].ToString());
 			foreach (var child in json["arguments"].Children())
 				addItem(item, child);

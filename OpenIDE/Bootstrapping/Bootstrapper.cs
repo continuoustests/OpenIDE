@@ -19,6 +19,7 @@ namespace OpenIDE.Bootstrapping
 		private static Interpreters _interpreters;
 
 		public static AppSettings Settings = null; 
+		public static Action<string> DispatchMessage { get { return _container.DispatchMessage ; } }
 		
 		public static void Initialize()
 		{
@@ -36,6 +37,10 @@ namespace OpenIDE.Bootstrapping
 			_container = new DIContainer(Settings);
 		}
 		
+		public static OpenIDE.Core.Definitions.DefinitionBuilder GetDefinitionBuilder() {
+			return _container.GetDefinitionBuilder();
+		}
+
 		public static ICommandDispatcher GetDispatcher()
 		{
 			return _container.GetDispatcher();
@@ -44,6 +49,11 @@ namespace OpenIDE.Bootstrapping
 		public static IEnumerable<ICommandHandler> GetCommandHandlers()
 		{
 			return _container.ICommandHandlers();
+		}
+
+		public static IEnumerable<ICommandHandler> GetDefaultHandlersWithoutRunHandler()
+		{
+			return _container.GetDefaultHandlersWithoutRunHandler();
 		}
 
 		private static IEnumerable<ICommandHandler> getDefaultHandlers()

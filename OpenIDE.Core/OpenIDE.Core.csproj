@@ -111,6 +111,7 @@
     <Compile Include="Definitions\DefinitionCacheReader.cs" />
     <Compile Include="Definitions\DefinitionCacheWriter.cs" />
     <Compile Include="Definitions\DefinitionCache.cs" />
+    <Compile Include="Definitions\DefinitionBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

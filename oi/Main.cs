@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using OpenIDE.Messaging;
@@ -10,6 +11,7 @@ using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Commands;
+using OpenIDE.Core.Definitions;
 namespace oi
 {
 	class MainClass
@@ -20,7 +22,11 @@ namespace oi
 		public static void Main(string[] args)
 		{
 			args = parseProfile(args);
-			Bootstrapper.Initialize();
+			Bootstrapper.Initialize();			
+			if (args.Length > 0 && args[0] == "test") {
+				tryDefinitionBuilder(args);
+				return;
+			}
 			args = Bootstrapper.Settings.Parse(args);
 			if (args.Length == 0)
 			{
@@ -33,6 +39,39 @@ namespace oi
 				parser.GetCommand(args),
 				parser.GetArguments(args),
 				(command) => printUsage(command));
+		}
+
+		private static void tryDefinitionBuilder(string[] args) {
+			var token = Bootstrapper.Settings.RootPath;
+			var builder = Bootstrapper.GetDefinitionBuilder(); 
+			builder.Build();
+			var arguments = new List<string>();
+			arguments.AddRange(args);
+			arguments.RemoveAt(0);
+			var cmd = builder.Get(arguments.ToArray());
+			if (cmd == null) {
+				Console.WriteLine("Invlid command");
+				return;
+			}
+			arguments.RemoveAt(0);
+			if (cmd.Type == DefinitionCacheItemType.Script) {
+				var script = new Script(token, Environment.CurrentDirectory, cmd.Location);
+				var sb = new StringBuilder();
+				for (int i = 0; i < arguments.Count; i++)
+					sb.Append(" \"" + arguments[i] + "\"");
+				script.Run(sb.ToString(), Bootstrapper.DispatchMessage);
+			} else if (cmd.Type == DefinitionCacheItemType.Language) {
+				var language = new LanguagePlugin(cmd.Location, Bootstrapper.DispatchMessage);
+				language.Run(arguments.ToArray());
+			} else {
+				var command = Bootstrapper.GetDefaultHandlersWithoutRunHandler()
+					.FirstOrDefault(x => x.Command == cmd.Name);
+				if (command == null) {
+					Console.WriteLine("Invalid command");
+					return;
+				}
+				command.Execute(arguments.ToArray());
+			}
 		}
 
 		private static string[] parseProfile(string[] args)

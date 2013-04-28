@@ -10,6 +10,7 @@ namespace OpenIDE.Core.Definitions
 {
 	public class DefinitionCacheWriter
 	{
+		private string _path;
 		private Action<string,string> _writer = (file,content) => File.WriteAllText(file, content);
 
 		public DefinitionCacheWriter WriteUsing(Action<string,string> writer) {
@@ -17,8 +18,12 @@ namespace OpenIDE.Core.Definitions
 			return this;
 		}
 
+		public DefinitionCacheWriter(string path) {
+			_path = path;
+		}
+
 		public void Write(DefinitionCache cache) {
-			var file = "";
+			var file = Path.Combine(_path, "oi-definitions.json");
 			var json = new List<DefinitionJson>();
 			cache.Definitions.ToList()
 				.ForEach(x => json.Add(get(x)));
@@ -44,7 +49,10 @@ namespace OpenIDE.Core.Definitions
 
 		private DefinitionJson getDefinition(DefinitionCacheItem parameter) {
 			var json = new DefinitionJson();
-			json.Cmd = parameter.Name;
+			if (parameter.Required)
+				json.Cmd = parameter.Name;
+			else
+				json.Cmd = "[" + parameter.Name + "]";
 			json.Type = parameter.Type.ToString().ToLower();
 			json.Location = parameter.Location;
 			json.Updated = 
