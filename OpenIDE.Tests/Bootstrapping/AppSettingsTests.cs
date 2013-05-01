@@ -51,21 +51,6 @@ namespace OpenIDE.Tests.Bootstrapping
 		}
 
 		[Test]
-		public void When_parsing_a_command_it_should_default_to_the_default_language_if_not_in_original_commands()
-		{
-			var args = _appSettings.Parse(new[]
-				{
-					"subcommand",
-					"--default.language=fake_language"
-				});
-
-			Assert.That(_appSettings.DefaultLanguage, Is.EqualTo("fake_language"));
-			Assert.That(args.Length, Is.EqualTo(2));
-			Assert.That(args[0], Is.EqualTo("fake_language"));
-			Assert.That(args[1], Is.EqualTo("subcommand"));
-		}
-
-		[Test]
 		public void When_parsing_a_command_it_should_to_original_commands()
 		{
 			var args = _appSettings.Parse(new[]

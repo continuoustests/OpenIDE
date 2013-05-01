@@ -182,7 +182,8 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
 					"\t\"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
 					"\t\"target\": \"{1}\"," + NL +
-					"\t\"id\": \"{0}-v1.0\"," + NL +
+					"\t\"id\": \"{0}\"," + NL +
+					"\t\"version\": \"v1.0\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
 					"\t\"#pre-install-actions\": []," + NL +

@@ -55,13 +55,13 @@ namespace OpenIDE.Core.Definitions
 		public void Build() {
 			_cache = new DefinitionCache();
 			var profiles = new ProfileLocator(_token);
-			mergeBuiltInCommands(profiles);
 
 			// Loop reversed to handle local profile first
 			// because of overriding definitions
 			var paths = profiles.GetPathsCurrentProfiles().ToArray();
 			for (int i = paths.Length - 1; i >= 0; i--)
 				mergeExternalCommands(paths[i]);
+			mergeBuiltInCommands(profiles);
 		}
 
 		private void mergeExternalCommands(string path) {

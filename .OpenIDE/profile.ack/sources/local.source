@@ -4,6 +4,11 @@
       "id": "mngr",
       "version": "v1.0",
       "package": "mngr.oipkg"
+    },
+    {
+      "id": "tryout",
+      "version": "v1.0",
+      "package": "tryout.oipkg"
     }
   ],
   "origin": "/home/ack/bin/oi-packages/local.source",

@@ -15,9 +15,10 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
 	{
+		private string _token;
 		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorFactory;
 		private Func<PluginLocator> _pluginLocator;
-		
+
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
@@ -50,8 +51,9 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
+		public EditorHandler(string token, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
 		{
+			_token = token;
 			_editorFactory = editorFactory;
 			_pluginLocator = locator;
 		}
@@ -60,18 +62,30 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var instance = _editorFactory.GetInstance(Environment.CurrentDirectory);
 			// TODO remove that unbeleavable nasty setfocus solution. Only init if launching editor
-			if (instance == null && arguments.Length > 0 && arguments[0] != "setfocus")
+			var isSetfocus = arguments.Length > 0 && arguments[0] == "setfocus";
+			if (instance == null && arguments.Length >= 0 && !isSetfocus)
 			{
 				instance = startInstance();
 				if (instance == null)
 					return;
 				var args = new List<string>();
-				args.AddRange(arguments);
+				var configuration = new Configuration(Environment.CurrentDirectory, true);
+				var configReader = new ConfigReader(_token);
+				if (arguments.Length == 0) {
+					var name = configReader.Get("default.editor");
+					if (name == null) {
+						Console.WriteLine("To launch without specifying editor you must specify the default.editor config option");
+						return;
+					}
+					args.Add(name);
+				} else {
+					args.AddRange(arguments);
+				}
+				var editorName = args[0];
 				args.AddRange( 
-					new Configuration(Environment.CurrentDirectory, true)
-						.EditorSettings
-						.Where(x => x.StartsWith("editor." + arguments[0]))
-						.Select(x => "--" + x));
+					configReader	
+						.GetStartingWith("editor." + editorName)
+						.Select(x => "--" + x.Key + "=" + x.Value));
 				var editor = instance.Start(args.ToArray());
 				if (editor != null && editor != "")
 					runInitScripts();

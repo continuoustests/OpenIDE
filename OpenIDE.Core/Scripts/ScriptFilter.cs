@@ -9,6 +9,8 @@ namespace OpenIDE.Core.Scripts
 	{
 		public IEnumerable<string> GetScripts(string path)
 		{
+			if (!Directory.Exists(path))
+				return new string[] {};
 			return 
 				FilterScripts(
 					Directory

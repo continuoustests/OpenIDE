@@ -21,6 +21,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Handles reactive scripts. No arguments will list available scripts");
+				
 				var newHandler = usage.Add("new", "Creates a script that is triggered by it's specified events");
 				var newName = newHandler.Add("SCRIPT-NAME", "Script name with optional file extension.");
 				newName.Add("[--global]", "Will create the new script in the main script folder")

@@ -59,6 +59,7 @@ namespace OpenIDE.Core.Language
         							_isQuerying = false;
         							return;
         						}
+								_dispatch("event|Language-plugin-outout " + line);
         						_responseDispatcher(line);
 	        					_dispatch(line);
 	        				});

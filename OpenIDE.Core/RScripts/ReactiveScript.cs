@@ -81,12 +81,15 @@ namespace OpenIDE.Core.RScripts
 	            			if (m == null)
 	            				return;
 	            			var cmdText = "command|";
+	            			var eventText = "event|";
 	            			if (error) {
 	            				Logger.Write("rscript-" + Name + " produced an error:");
 	            				Logger.Write("rscript-" + Name + "-" + m);
 	            			} else {
 	            				if (m.StartsWith(cmdText))
 	            					_dispatch(m.Substring(cmdText.Length, m.Length - cmdText.Length));
+	            				else if (m.StartsWith(eventText))
+	            					_dispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
 	            				else
 	            					_dispatch("rscript-" + Name + " " + m);
 	            			}
@@ -122,7 +125,7 @@ namespace OpenIDE.Core.RScripts
 							return;
 						}
 						if (m.Length > 0) {
-							var expression = m.Trim(new[] {'\"'});
+							var expression = m; //m.Trim(new[] {'\"'});
 							_events.Add(expression);
 							Logger.Write(_file + " reacts to: " + expression);
 						}

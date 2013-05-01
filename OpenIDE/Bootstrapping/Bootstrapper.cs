@@ -125,33 +125,6 @@ namespace OpenIDE.Bootstrapping
 				}
 				newArgs.Add(arg);
 			}
-
-			/*var unhandledArg = true;
-			if (newArgs.Count > 0)
-			{
-				if (_handlers == null)
-					_handlers = _handlerFactory().ToArray();
-				if (_handlers.FirstOrDefault(x => x.Command.Equals(newArgs[0])) != null)
-					unhandledArg = false;
-			}
-
-			if (DefaultLanguage != null && unhandledArg && newArgs.Count > 0)
-			{
-				if (_pluginHandlers == null)
-					_pluginHandlers = _pluginHandlerFactory().ToArray();
-				var command = 
-					_pluginHandlers
-						.FirstOrDefault(x => x.Command.Equals(DefaultLanguage));
-				if (command != null)
-				{
-					var usage = command.Usage;
-					if (usage != null)
-					{
-						if (usage.Parameters.Count(x => x.Name.Equals(newArgs[0])) > 0)
-							newArgs.Insert(0, DefaultLanguage);
-					}
-				}
-			}*/
 			return newArgs.ToArray();
 		}		
 	}
