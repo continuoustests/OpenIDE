@@ -11,9 +11,15 @@ namespace CSharp.Crawlers.TypeResolvers
     public class TypeResolver
     {
         private ICacheReader _cache;
+        private bool _resolveMembers = false;
 
         public TypeResolver(ICacheReader cache) {
             _cache = cache;
+        }
+
+        public TypeResolver ResolveMembers() {
+            _resolveMembers = true;
+            return this;
         }
 
         public void ResolveAllUnresolved(IOutputWriter cache) {
@@ -28,9 +34,11 @@ namespace CSharp.Crawlers.TypeResolvers
                         getPartials(cache.Interfaces, file, partials);
                         getPartials(cache.Structs, file, partials);
                         getPartials(cache.Enums, file, partials);
-                        getPartials(cache.Fields, file, partials);
-                        getPartials(cache.Methods, file, partials);
-                        getPartials(cache.Variables, file, partials);
+                        if (_resolveMembers) {
+                            getPartials(cache.Fields, file, partials);
+                            getPartials(cache.Methods, file, partials);
+                            getPartials(cache.Variables, file, partials);
+                        }
                         _cache.ResolveMatchingType(partials.ToArray());
                         lock (padlock) {
                             numFinished++;
