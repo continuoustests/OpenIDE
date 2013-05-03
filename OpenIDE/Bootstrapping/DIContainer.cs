@@ -153,12 +153,24 @@ namespace OpenIDE.Bootstrapping
 				}
 				return;
 			}
+			if (isEvent(command))
+			{
+				var prefix = "event|";
+				EventDispatcher()
+					.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
+				return;
+			}
 			Console.WriteLine(command);			
 		}
 
 		private bool isCommand(string command)
 		{
 			return command.StartsWith("command|");
+		}
+
+		private bool isEvent(string command)
+		{
+			return command.StartsWith("event|");
 		}
 
 		private bool isError(string command)
@@ -194,10 +206,10 @@ namespace OpenIDE.Bootstrapping
 			return new EngineLocator(IFS());
 		}
 
-		/*public EventIntegration.IEventDispatcher EventDispatcher()
+		public EventIntegration.IEventDispatcher EventDispatcher()
 		{
 			return new EventIntegration.EventDispatcher(_settings.Path);
-		}*/
+		}
 
 		public ICodeEngineLocator ICodeEngineLocator()
 		{

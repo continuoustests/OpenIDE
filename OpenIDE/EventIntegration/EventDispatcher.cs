@@ -8,6 +8,7 @@ namespace OpenIDE.EventIntegration
 {
 	public interface IEventDispatcher
 	{
+		void Forward(string message);
 		void Forward(string command, string[] arguments);
 	}
 
@@ -26,6 +27,11 @@ namespace OpenIDE.EventIntegration
 				"{0} {1}",
 				command,
 				new CommandStringParser().GetArgumentString(arguments));
+			Forward(message);
+		}
+
+		public void Forward(string message)
+		{
 			var instances = getInstances(_path);
 			instances
 				.Where(x => _path.StartsWith(x.Key))

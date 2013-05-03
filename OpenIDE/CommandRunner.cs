@@ -6,6 +6,7 @@ using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Definitions;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE
 {
@@ -33,6 +34,7 @@ namespace OpenIDE
 					return false;
 				command.Execute(arguments.ToArray());
 			}
+			Bootstrapper.DispatchMessage("event|command-completed " + new CommandStringParser().GetArgumentString(args));
 			return true;
 		}	
 	}
