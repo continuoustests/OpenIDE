@@ -7,6 +7,7 @@ using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using System.Linq;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Caching;
 using System.Reflection;
 using OpenIDE.Core.Profiles;
@@ -33,6 +34,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_cache = cache;
 			_crawlReader = crawlReader;
 			_eventDispatcher = eventDispatcher;
+			Logger.Write("Setting up file trackers");
 			_tracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
@@ -59,16 +61,21 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 						_cache.Plugins.Add(
 							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
 					});
+			Logger.Write("Starting tracker for {0}", path);
 			_tracker.Start(path, getFilter(), handleChanges);
 			var locator = new ProfileLocator(path);
 			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
 				var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
-				if (Directory.Exists(profilePath))
+				if (Directory.Exists(profilePath)) {
+					Logger.Write("Starting tracker for {0}", profilePath);
 					_localTracker.Start(profilePath, getFilter(), handleChanges);
+				}
 			}
 			var globalPath = locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile());
-			if (Directory.Exists(globalPath))
+			if (Directory.Exists(globalPath)) {
+				Logger.Write("Starting tracker for {0}", globalPath);
 				_globalTracker.Start(globalPath, getFilter(), handleChanges);
+			}
 		}
 
 		private string getFilter()
