@@ -81,7 +81,7 @@ namespace OpenIDE.Core.Language
 
 		public string GetCrawlFileTypes()
 		{
-			return ToSingleLine("crawl-file-types");
+			return ToSingleLine("crawl-file-types", new Process());
 		}
 
 		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived)
@@ -163,8 +163,16 @@ namespace OpenIDE.Core.Language
 
 		private string ToSingleLine(string arguments)
 		{
+			return ToSingleLine(arguments, null);
+		}
+
+		private string ToSingleLine(string arguments, Process proc)
+		{
 			var sb = new StringBuilder();
-			run(arguments, (x) => sb.Append(x));
+			if (proc == null)
+				run(arguments, (x) => sb.Append(x));
+			else
+				run(proc, arguments, (x) => sb.Append(x));
 			return sb.ToString();
 		}
 
