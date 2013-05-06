@@ -35,24 +35,28 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_crawlReader = crawlReader;
 			_eventDispatcher = eventDispatcher;
 			Logger.Write("Setting up file trackers");
+			Logger.Write("Setting up token file trackers");
 			_tracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			Logger.Write("Setting up local file trackers");
 			_localTracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			Logger.Write("Setting up global file trackers");
 			_globalTracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			Logger.Write("Adding plugins to cache");
 			pluginLocator.Locate().ToList()
 				.ForEach(x =>
 					{
