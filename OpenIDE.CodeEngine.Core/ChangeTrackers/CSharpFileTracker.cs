@@ -164,6 +164,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		{
 			Plugin = plugin;
 			Patterns = new List<string>();
+			Logger.Write("Getting file types for " + plugin.FullPath);
 			Patterns.AddRange(
 				Plugin
 					.GetCrawlFileTypes()
