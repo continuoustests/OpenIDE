@@ -72,8 +72,10 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 						if (RecievedMessage != null && m != null && m.Trim().Length > 0)
 							RecievedMessage(this, new MessageArgs(Guid.Empty, m));
 					});
-				if (_client.IsConnected)
+				if (_client.IsConnected) {
+					Logger.Write("Connecting to editor on port: {0}", instance.Port);
 					return true;
+				}
 				_client = null;
 				return false;
 			} catch (Exception ex) {

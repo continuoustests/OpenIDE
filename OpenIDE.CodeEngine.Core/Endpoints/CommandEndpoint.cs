@@ -38,6 +38,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
+			Logger.Write("CodeEngine started listening on port {0}", _server.Port);
 			_editor = new Editor();
 			_editor.RecievedMessage += Handle_editorRecievedMessage;
 			_editor.Connect(_keyPath);

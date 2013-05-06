@@ -14,6 +14,8 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private string _instanceFile;
 		private ReactiveScriptEngine _reactiveEngine;
 		private Action<string> _dispatch = (m) => {};
+
+		public int Port { get { return _server.Port; } }
 		
 		public EventEndpoint(string keyPath, PluginLocator locator)
 		{

@@ -40,8 +40,9 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_interpreters = new Interpreters(_path);
 			ProcessExtensions.GetInterpreter = 
 				(file) => {
-						return _interpreters
+						var interpreters = _interpreters
 							.GetInterpreterFor(Path.GetExtension(file));
+						return interpreters;
 					};
             _cache = new TypeCache();
 			_crawlHandler = new CrawlHandler(_cache, (s) => Logger.Write(s));
@@ -53,6 +54,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 
 			_eventEndpoint = new EventEndpoint(_path, _pluginLocator);
 			_eventEndpoint.Start();
+			Logger.Write("Event endpoint listening on port: {0}", _eventEndpoint.Port);
 
 			_tracker = new PluginFileTracker();
 			_tracker.Start(
@@ -61,6 +63,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 				_cache,
 				_pluginLocator,
 				_eventEndpoint);
+			Logger.Write("Plugin file tracker started");
 
             _endpoint = new CommandEndpoint(_path, _cache, _eventEndpoint);
 			_endpoint.AddHandler(messageHandler);
@@ -78,6 +81,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
                     // Make sure this handler is the last one since the command can be file extension or language name
                     new LanguageCommandHandler(_endpoint, _cache, _pluginLocator)
 				});
+			Logger.Write("Command endpoint started");
 			return _endpoint;
 		}
 
@@ -130,6 +134,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 							Logger.Write(ex.ToString());
 						}
 					}
+					Logger.Write("Plugins initialized");
 				}).Start();
 		}
 	}
