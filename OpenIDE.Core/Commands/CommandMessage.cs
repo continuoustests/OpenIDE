@@ -22,7 +22,7 @@ namespace OpenIDE.Core.Commands
             if (args.Length == 0)
                 return new CommandMessage("", null, new string[] { });
             return new CommandMessage(args[0], null, args.Skip(1));
-        }
+		}
 		
 		public static CommandMessage New(string message)
 		{
