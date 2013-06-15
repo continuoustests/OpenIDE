@@ -19,7 +19,7 @@ namespace OpenIDE.Core.Language
 		{
 			Name = name.Replace("[", "").Replace("]", "");
 			_description = description;
-			Required = name.StartsWith("[");
+			Required = !name.StartsWith("[");
 			Type = CommandType.SubParameter;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
