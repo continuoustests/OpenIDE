@@ -91,41 +91,51 @@ namespace CoreExtensions
                 }
             }
 			
-			var exit = false;
             prepareProcess(proc, command, arguments, visible, workingDir, replacements);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
 
-            DataReceivedEventHandler onOutputLine = 
-                (s, data) => {
-                    if (data.Data == null)
-                        exit = true;
-                    else
-                        onRecievedLine(false, data.Data);
-                };
-            DataReceivedEventHandler onErrorLine = 
-                (s, data) => {
-                    if (data.Data == null)
-                        exit = true;
-                    else
-                        onRecievedLine(true, data.Data);
-                };
-
-			proc.OutputDataReceived += onOutputLine;
-            proc.ErrorDataReceived += onErrorLine;
-            if (proc.Start())
+            using (AutoResetEvent outputWaitHandle = new AutoResetEvent(false))
+            using (AutoResetEvent errorWaitHandle = new AutoResetEvent(false))
             {
-                proc.BeginOutputReadLine();
-                proc.BeginErrorReadLine();
-                proc.WaitForExit();
+                DataReceivedEventHandler onOutputLine = 
+                    (s, data) => {
+                        if (data.Data == null)
+                            outputWaitHandle.Set();
+                        else
+                            onRecievedLine(false, data.Data);
+                    };
+                DataReceivedEventHandler onErrorLine = 
+                    (s, data) => {
+                        if (data.Data == null)
+                            errorWaitHandle.Set();
+                        else
+                            onRecievedLine(true, data.Data);
+                    };
+
+    			proc.OutputDataReceived += onOutputLine;
+                proc.ErrorDataReceived += onErrorLine;
+                if (proc.Start())
+                {
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+                    proc.WaitForExit();
+                    outputWaitHandle.WaitOne();
+                    errorWaitHandle.WaitOne();
+                }
+                proc.OutputDataReceived -= onOutputLine;
+                proc.ErrorDataReceived -= onErrorLine;
             }
-            proc.OutputDataReceived -= onOutputLine;
-            proc.ErrorDataReceived -= onErrorLine;
+            
             if (tempFile != null && File.Exists(tempFile))
                 File.Delete(tempFile);
             return proc.ExitCode;
+        }
+
+        private static bool processExists(int id) {
+            return Process.GetProcesses().Any(x => x.Id == id);
         }
 
         private static bool handleOiLnk(ref string command, ref string arguments,

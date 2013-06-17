@@ -23,7 +23,7 @@ file=$(echo "$1"|cut -d' ' -f 3)
 #end=$(echo $filename | grep -b -o ".oi-pkg-test." | awk 'BEGIN {FS=":"}{print $1}')
 #name=${filename:0:end}
 
-result=`oi pkgtest "$file" --only-errors -o -e|sed 's/ *$//g'`
+result=`oi packagetest "$file" --only-errors -o -e|sed 's/ *$//g'`
 failed=false
 if [[ "$result" == *FAILED* ]]; then
 	failed=true

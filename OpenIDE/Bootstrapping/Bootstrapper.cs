@@ -64,10 +64,6 @@ namespace OpenIDE.Bootstrapping
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
 		private string _path;
-		private ICommandHandler[] _handlers;
-		private ICommandHandler[] _pluginHandlers;
-		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
-		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
 		public string TokenPath { get; private set; }
 		public string RootPath { get; private set; }
@@ -97,9 +93,6 @@ namespace OpenIDE.Bootstrapping
 				EnabledLanguages = local.EnabledLanguages;
 			else if (global.EnabledLanguages != null)
 				EnabledLanguages = global.EnabledLanguages;
-
-			_handlerFactory = handlers;
-			_pluginHandlerFactory = pluginHandlers;
 		}
 
 		public string[] Parse(string[] args)

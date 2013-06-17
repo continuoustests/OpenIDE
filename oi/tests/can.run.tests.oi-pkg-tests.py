@@ -16,17 +16,17 @@ def getTests():
 
 def canPassTest():
 	root = os.path.dirname(__file__)
-	tests.out("command|pkgtest " + os.path.join(root, "pkgtest.passing.test.py"))
+	tests.out("command|packagetest " + os.path.join(root, "pkgtest.passing.test.py"))
 	tests.assertOn(tests.hasOutput("PASSED A passing test"))
 
 def canFailTest():
 	root = os.path.dirname(__file__)
-	tests.out("command|pkgtest " + os.path.join(root, "pkgtest.failed.test.py"))
+	tests.out("command|packagetest " + os.path.join(root, "pkgtest.failed.test.py"))
 	tests.assertOn(tests.hasOutput("FAILED A failing test"))
 
 def canMarkTestAsInconclusuve():
 	root = os.path.dirname(__file__)
-	tests.out("command|pkgtest " + os.path.join(root, "pkgtest.inconclusive.test.py"))
+	tests.out("command|packagetest " + os.path.join(root, "pkgtest.inconclusive.test.py"))
 	tests.assertOn(tests.hasOutput("?????? A inconclusive test"))
 
 if __name__ == "__main__":
