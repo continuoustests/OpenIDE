@@ -314,21 +314,22 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void runCommand(string command, bool listenForFeedback) {
 			log(string.Format("Running: oi {0}, listenForFeedback={1} in {2}", command, listenForFeedback, _testRunLocation));
-			new Process()
-					.Query(
-						"oi",
-						command,
-						false,
-						_testRunLocation,
-						(error, line) => {
-								if (!listenForFeedback)
-									return;
-								if (error) {
-									handleFeedback(null, true, line);
-								} else {
-									_outputs.Add(line);
-								}
-							});
+			var process = new Process();
+			process
+				.Query(
+					"oi",
+					command,
+					false,
+					_testRunLocation,
+					(error, line) => {
+							if (!listenForFeedback)
+								return;
+							if (error) {
+								handleFeedback(null, true, line);
+							} else {
+								_outputs.Add(line);
+							}
+						});
 			log("Process exited");
 		}
 

@@ -12,6 +12,12 @@ namespace CoreExtensions
 {
     public static class ProcessExtensions
     {
+        private static Action<string> _logger = (msg) => {};
+
+        public static void SetLogger(this Process proc, Action<string> logger) {
+            _logger = logger;
+        }
+
         public static Func<string,string> GetInterpreter = (file) => null;
 
         public static void Write(this Process proc, string msg) {
@@ -59,17 +65,23 @@ namespace CoreExtensions
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
                                  IEnumerable<KeyValuePair<string,string>> replacements) {
+            _logger("Running process");
             var process = proc;
             var retries = 0;
             var exitCode = 255;
+            _logger("About to start process");
             while (exitCode == 255 && retries < 5) {
+                _logger("Running query");
                 exitCode = query(process, command, arguments, visible, workingDir, onRecievedLine, replacements);
+                _logger("Done running with " + exitCode.ToString());
                 retries++;
                 // Seems to happen on linux when a file is beeing executed while being modified (locked)
                 if (exitCode == 255) {
+                    _logger("Recreating process");
                     process = new Process();
                     Thread.Sleep(100);
                 }
+                _logger("Done running process");
             }
         }
 
@@ -91,7 +103,6 @@ namespace CoreExtensions
                 }
             }
 			
-            var exit = false;
             prepareProcess(proc, command, arguments, visible, workingDir, replacements);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardInput = true;
@@ -100,16 +111,12 @@ namespace CoreExtensions
 
             DataReceivedEventHandler onOutputLine = 
                 (s, data) => {
-                    if (data.Data == null)
-                        exit = true;
-                    else
+                    if (data.Data != null)
                         onRecievedLine(false, data.Data);
                 };
             DataReceivedEventHandler onErrorLine = 
                 (s, data) => {
-                    if (data.Data == null)
-                        exit = true;
-                    else
+                    if (data.Data != null)
                         onRecievedLine(true, data.Data);
                 };
 
