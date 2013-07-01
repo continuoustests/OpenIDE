@@ -55,6 +55,33 @@ namespace CoreExtensions
             proc.Start();
         }
 
+        public static IEnumerable<string> QueryAll(this Process proc, string command, string arguments,
+                                                   bool visible, string workingDir,
+                                                   out string[] errors) {
+            return QueryAll(proc, command, arguments, visible, workingDir, new KeyValuePair<string,string>[] {}, out errors);
+        }
+
+        public static IEnumerable<string> QueryAll(this Process proc, string command, string arguments,
+                                                   bool visible, string workingDir,
+                                                   IEnumerable<KeyValuePair<string,string>> replacements,
+                                                   out string[] errors) {
+            errors = new string[] {};
+            if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
+                return new string[] {};
+            prepareInterpreter(ref command, ref arguments);
+            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.Start();
+            var output = proc.StandardOutput.ReadToEnd();
+            errors = 
+                proc.StandardError.ReadToEnd()
+                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            proc.WaitForExit();
+            return output.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+        }
+
         public static void Query(this Process proc, string command, string arguments,
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine) {

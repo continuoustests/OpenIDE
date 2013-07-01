@@ -69,7 +69,6 @@ namespace OpenIDE.Arguments.Handlers
 				if (instance == null)
 					return;
 				var args = new List<string>();
-				var configuration = new Configuration(Environment.CurrentDirectory, true);
 				var configReader = new ConfigReader(_token);
 				if (arguments.Length == 0) {
 					var name = configReader.Get("default.editor");
