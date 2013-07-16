@@ -13,6 +13,7 @@ namespace OpenIDE.Core.Language
 {
 	public class LanguagePlugin
 	{
+		private Thread _pluginLoop;
 		private string _path;
 		private Action<string> _dispatch;
 		private object _processLock = new object();
@@ -45,7 +46,7 @@ namespace OpenIDE.Core.Language
         public void Initialize(string keyPath)
         {
         	var initialized = false;
-        	new Thread(() => {
+			_pluginLoop = new Thread(() => {
         			var proc = new Process();
         			run(
         				proc,
@@ -64,14 +65,27 @@ namespace OpenIDE.Core.Language
 	        					_dispatch(line);
 	        				});
         			initialized = true;
-        		}).Start();
+        		});
+			_pluginLoop.Start();
         	while (!initialized)
         		Thread.Sleep(10);
+			_pluginLoop = null;
         }
 
         public void Shutdown()
         {
             run("shutdown");
+			Logger.Write("Shutdown sent");
+			if (_pluginLoop != null) {
+				Logger.Write("Joining thread");
+				_pluginLoop.Join();
+			}
+			if (_process != null) {
+				if (!_process.HasExited) {
+					Logger.Write("Killing process");
+					_process.Kill();
+				}
+			}
         }
 
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()

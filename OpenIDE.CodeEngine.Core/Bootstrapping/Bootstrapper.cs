@@ -111,6 +111,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 				var plugins = locator.Locate();
 				foreach (var plugin in plugins) {
 					try {
+						Logger.Write("Shutting down plugin " + plugin.GetLanguage());
 	                    plugin.Shutdown();
 					} catch (Exception ex) {
 						Logger.Write(ex.ToString());
