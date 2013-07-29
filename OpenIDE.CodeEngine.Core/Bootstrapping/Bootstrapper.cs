@@ -134,12 +134,13 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
                     ThreadPool.QueueUserWorkItem(
                     	(o) => {
                     		try {
-								plugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
+                    			var currentPlugin = (LanguagePlugin)o;
+								currentPlugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
 							} catch (Exception ex) {
 								Logger.Write(ex.ToString());
 							}
 						},
-						null);
+						plugin);
 				} catch (Exception ex) {
 					Logger.Write(ex.ToString());
 				}
