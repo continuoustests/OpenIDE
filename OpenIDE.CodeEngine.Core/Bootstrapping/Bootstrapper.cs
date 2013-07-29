@@ -125,20 +125,26 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		
 		private static void initPlugins(PluginLocator locator, CrawlHandler handler)
 		{
-			new Thread(() =>
-				{
-					var plugins = locator.Locate();
-					foreach (var plugin in plugins) {
-						try {
-							handler.SetLanguage(plugin.GetLanguage());
-                            plugin.Initialize(_path);
-							plugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
-						} catch (Exception ex) {
-							Logger.Write(ex.ToString());
-						}
-					}
-					Logger.Write("Plugins initialized");
-				}).Start();
+			var plugins = locator.Locate();
+			foreach (var plugin in plugins) {
+				try {
+					handler.SetLanguage(plugin.GetLanguage());
+                    plugin.Initialize(_path);
+                    plugin.GetCrawlFileTypes();
+                    ThreadPool.QueueUserWorkItem(
+                    	(o) => {
+                    		try {
+								plugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
+							} catch (Exception ex) {
+								Logger.Write(ex.ToString());
+							}
+						},
+						null);
+				} catch (Exception ex) {
+					Logger.Write(ex.ToString());
+				}
+			}
+			Logger.Write("Plugins initialized");
 		}
 	}
 }

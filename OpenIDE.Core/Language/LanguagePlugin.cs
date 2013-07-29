@@ -20,6 +20,7 @@ namespace OpenIDE.Core.Language
 		private Process _process;
 		private bool _isQuerying = false;
 		private Action<string> _responseDispatcher = (m) => {};
+		private string _crawlFileTypes = null;
 
 		public string FullPath { get { return _path; } }
 
@@ -45,6 +46,7 @@ namespace OpenIDE.Core.Language
 
         public void Initialize(string keyPath)
         {
+        	Logger.Write("Initializig " + _path + " with " + keyPath);
         	var initialized = false;
 			_pluginLoop = new Thread(() => {
         			var proc = new Process();
@@ -95,7 +97,9 @@ namespace OpenIDE.Core.Language
 
 		public string GetCrawlFileTypes()
 		{
-			return ToSingleLine("crawl-file-types", new Process());
+			if (_crawlFileTypes == null)
+				_crawlFileTypes = ToSingleLine("crawl-file-types");
+			return _crawlFileTypes;
 		}
 
 		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived)
@@ -220,6 +224,7 @@ namespace OpenIDE.Core.Language
 
 		private void run(Process proc, string arguments, Action<string> onLineReceived)
 		{
+			Logger.Write("Running {0} {1}", _path, arguments);
 			execute(
 				proc,
 				_path,
@@ -233,10 +238,12 @@ namespace OpenIDE.Core.Language
 						}
 						onLineReceived(x);
 					});
+			Logger.Write("Done - Running {0} {1}", _path, arguments);
 		}
 
 		private void execute(Process proc, string cmd, string arguments, Action<bool, string> onLineReceived)
 		{
+			Logger.Write("Executing {0} {1}", cmd, arguments);
             if (onLineReceived != null)
                 proc.Query(cmd, arguments, false, Environment.CurrentDirectory, onLineReceived);
 			else
@@ -244,7 +251,9 @@ namespace OpenIDE.Core.Language
 		}
 
 		private bool queryEngine(string arguments, Action<string> onLineReceived) {
+			Logger.Write("About to query {0} {1}", _path, arguments);
 			if (_process != null && !_process.HasExited) {
+				Logger.Write("Querying {0} {1}", _path, arguments);
 				lock (_processLock) {
 					_isQuerying = true;
 					if (onLineReceived != null)
@@ -255,7 +264,14 @@ namespace OpenIDE.Core.Language
 					if (onLineReceived != null)
 						_responseDispatcher = (m) => {};
 				}
+				Logger.Write("Done - Querying {0} {1}", _path, arguments);
 				return true;
+			}
+			Logger.Write("Process is not ready {0} {1}", _path, arguments);
+			if (_process == null) {
+				Logger.Write("Process has not been started");
+			} else if (_process.HasExited) {
+				Logger.Write("Process has exited");
 			}
 			return false;
 		}
