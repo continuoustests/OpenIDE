@@ -57,14 +57,14 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 						" \"" + x.Path + "\"");
 				});
 			Logger.Write("Adding plugins to cache");
-			pluginLocator.Locate().ToList()
-				.ForEach(x =>
-					{
-						var plugin = new PluginPattern(x);
-						_plugins.Add(plugin);
-						_cache.Plugins.Add(
-							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
-					});
+			var plugins = pluginLocator.Locate().ToList();
+			foreach (var x in plugins) {
+				var plugin = new PluginPattern(x);
+				_plugins.Add(plugin);
+				_cache.Plugins.Add(
+					new CachedPlugin(x.GetLanguage(), plugin.Patterns));
+				Logger.Write("Added plugin " + x.GetLanguage());
+			}
 			Logger.Write("Starting tracker for {0}", path);
 			_tracker.Start(path, getFilter(), handleChanges);
 			var locator = new ProfileLocator(path);

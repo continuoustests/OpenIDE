@@ -56,7 +56,9 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_eventEndpoint.Start();
 			Logger.Write("Event endpoint listening on port: {0}", _eventEndpoint.Port);
 
+			Logger.Write("Creating plugin file tracker");
 			_tracker = new PluginFileTracker();
+			Logger.Write("Starting plugin file tracker");
 			_tracker.Start(
 				_path,
 				_cache,
