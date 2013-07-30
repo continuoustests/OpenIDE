@@ -13,6 +13,7 @@ using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Handlers;
 using OpenIDE.CodeEngine.Core.UI;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Windowing;
 
 namespace OpenIDE.CodeEngine
 {
@@ -186,16 +187,7 @@ namespace OpenIDE.CodeEngine
 			if (Environment.OSVersion.Platform == PlatformID.Unix ||
 				Environment.OSVersion.Platform == PlatformID.MacOSX)
 				extension = "";
-			var startInfo = new ProcessStartInfo(						
-					Path.Combine(
-						Path.GetDirectoryName(
-							Path.GetDirectoryName(
-								Assembly.GetExecutingAssembly().Location)),
-							"oi" + extension),
-					"set-to-foreground " + form.Handle);
-			startInfo.CreateNoWindow = true;
-			startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			Process.Start(startInfo);
+			BringToForeGround.ByHWnd(form.Handle);
 		}
     }
 }

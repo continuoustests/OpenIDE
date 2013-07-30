@@ -28,7 +28,7 @@ def canCreateGlobalProfile():
 	profile = os.path.join(root, ".OpenIDE", "active.profile")
 	backup = profile + ".backup"
 	if os.path.exists(profile) == False:
-		backup = None
+		profile = None
 	if not profile == None:
 		shutil.copyfile(profile, backup)
 
@@ -36,8 +36,8 @@ def canCreateGlobalProfile():
 	tests.out("command|profile load new-global-profile -g")
 	tests.out("command|profile list")
 
-	os.remove(profile)
 	if not profile == None:
+		os.remove(profile)
 		shutil.copyfile(backup, profile)
 		os.remove(backup)
 
