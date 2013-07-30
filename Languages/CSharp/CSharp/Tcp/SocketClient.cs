@@ -97,7 +97,7 @@ namespace CSharp.Tcp
                 }
                 stream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, stream);
             }
-            catch (Exception ex)
+            catch 
             {
                 //WriteError(ex);
                 Reconnect(0);

@@ -84,7 +84,7 @@ namespace oipckmngr
 			Directory.CreateDirectory(tempPath);
 			try {
 				package = getInstallPackage(packageFile, tempPath);
-			} catch (Exception ex) {
+			} catch {
 				Console.WriteLine("Failed to read package: " + Path.GetFileName(packageFile));
 			} finally {
 				Directory.Delete(tempPath, true);

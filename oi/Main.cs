@@ -71,7 +71,6 @@ namespace oi
 				Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDE)");
 				Console.WriteLine();
 			}
-			var isHint = false;
 			if (commandName != null) {
 				definitions = definitions 
 					.Where(x => 
@@ -81,7 +80,6 @@ namespace oi
 						));
 				if (definitions.Count() > 0)
 					Console.WriteLine("Did you mean:");
-				isHint = true;
 			}
 			if (definitions.Count() > 0 && commandName == null) {
 				Console.WriteLine();

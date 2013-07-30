@@ -210,7 +210,6 @@ namespace CSharp.Commands
 
 	class NewTemplate : INewTemplate
 	{
-		private string _keyPath;
 		private IResolveFileTypes _fileTypeResolver;
 		private string _file;
 		
@@ -224,7 +223,6 @@ namespace CSharp.Commands
 			_file = file;
 			Line = 0;
 			Column = 0;
-			_keyPath = keyPath;
 		}
 
 		public string GetUsageDefinition()

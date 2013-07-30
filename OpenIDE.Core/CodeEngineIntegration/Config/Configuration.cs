@@ -233,7 +233,6 @@ namespace OpenIDE.Core.Config
 		{
 			using (var writer = new StreamWriter(file))
 			{
-				var written = false;
 				lines.ToList()
 					.ForEach(x => 
 						{

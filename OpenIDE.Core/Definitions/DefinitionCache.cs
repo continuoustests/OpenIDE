@@ -115,7 +115,6 @@ namespace OpenIDE.Core.Definitions
 				if (isOptionalArgument(args[index], items)) {
 					return parent;
 				}
-				var possibleItems = new List<DefinitionCacheItem>();
 				if (items.Any(x => x.Name == x.Name.ToUpper()))
 					return parent;
 				return null;

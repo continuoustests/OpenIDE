@@ -183,10 +183,6 @@ namespace OpenIDE.CodeEngine
 
 		private void setToForeground(Form form)
 		{
-			var extension = ".bat";
-			if (Environment.OSVersion.Platform == PlatformID.Unix ||
-				Environment.OSVersion.Platform == PlatformID.MacOSX)
-				extension = "";
 			BringToForeGround.ByHWnd(form.Handle);
 		}
     }

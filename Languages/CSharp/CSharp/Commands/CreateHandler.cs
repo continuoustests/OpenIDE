@@ -158,7 +158,6 @@ namespace CSharp.Commands
 	
 	class CreateTemplate : ICreateTemplate
 	{
-		private string _keyPath;
 		private string _file;
 		private CSharp.Files.IResolveFileTypes _typeResolver;
 		
@@ -171,7 +170,6 @@ namespace CSharp.Commands
 			File = null;
 			_file = file;
 			_typeResolver = typeResolver;
-			_keyPath = keyPath;
 		}
 		
 		public string GetUsageDefinition()

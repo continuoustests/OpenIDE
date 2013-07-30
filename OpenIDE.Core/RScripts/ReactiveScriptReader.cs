@@ -14,7 +14,6 @@ namespace OpenIDE.Core.RScripts
 	public class ReactiveScriptReader
 	{
 		private string _keyPath;
-		private string _oiRootPath;
 		private string _localScriptsPathDefault;
 		private string _localScriptsPath;
 		private string _globalScriptsPathDefault;
@@ -32,7 +31,6 @@ namespace OpenIDE.Core.RScripts
 			_localScriptsPath = getPath(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile()));
 			_globalScriptsPathDefault = getPath(profiles.GetGlobalProfilePath("default"));
 			_globalScriptsPath = getPath(profiles.GetGlobalProfilePath(profiles.GetActiveGlobalProfile()));
-			_oiRootPath = profiles.AppRootPath;
 			_pluginLocator = locator;
 		}
 

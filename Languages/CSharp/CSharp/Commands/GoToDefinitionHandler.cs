@@ -4,7 +4,6 @@ using CSharp.Responses;
 using CSharp.Crawlers.TypeResolvers;
 using OpenIDE.Core.EditorEngineIntegration;
 using OpenIDE.Core.FileSystem;
-using CSharp.Crawlers.TypeResolvers;
 
 namespace CSharp.Commands
 {

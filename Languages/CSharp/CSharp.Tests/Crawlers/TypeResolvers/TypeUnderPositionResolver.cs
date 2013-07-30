@@ -14,7 +14,6 @@ namespace CSharp.Tests.Crawlers.TypeResolvers
 		[SetUp]
 		public void Setup()
 		{
-			var cache = new OutputWriter(new NullResponseWriter());
 			_resolver = 
 				new TypeUnderPositionResolver();
 		}

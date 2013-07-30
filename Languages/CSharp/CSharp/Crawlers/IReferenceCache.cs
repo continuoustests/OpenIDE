@@ -43,7 +43,6 @@ namespace CSharp.Crawlers
         private Dictionary<long, EnumType> _enums = new Dictionary<long, EnumType>();
         private Dictionary<long, Field> _fields = new Dictionary<long, Field>();
         private Dictionary<long, Method> _methods = new Dictionary<long, Method>();
-        private Dictionary<long, Parameter> _parameters = new Dictionary<long, Parameter>();
         private Dictionary<long, Variable> _variables = new Dictionary<long, Variable>();
 
         private Dictionary<string, long> _signatures = new Dictionary<string,long>();

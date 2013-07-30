@@ -51,7 +51,6 @@ namespace OpenIDE.Core.Definitions
 			return _cache.Get(args);
 		}
 
-		private DateTime _now;
 		public void Build() {
 			_cache = new DefinitionCache();
 			var profiles = new ProfileLocator(_token);

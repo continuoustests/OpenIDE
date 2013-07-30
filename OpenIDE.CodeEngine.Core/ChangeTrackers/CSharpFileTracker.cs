@@ -7,7 +7,6 @@ using OpenIDE.Core.Logging;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using System.Linq;
 using OpenIDE.Core.Language;
-using OpenIDE.Core.Logging;
 using OpenIDE.Core.Caching;
 using System.Reflection;
 using OpenIDE.Core.Profiles;
