@@ -8,6 +8,9 @@ namespace OpenIDE.Core.Definitions
 {
 	public class DefinitionCache
 	{ 
+		private List<DefinitionCacheItem> _builtIn = new List<DefinitionCacheItem>();
+		private List<DefinitionCacheItem> _languages = new List<DefinitionCacheItem>();
+		private List<DefinitionCacheItem> _scripts = new List<DefinitionCacheItem>();
 		private List<DefinitionCacheItem> _definitions = new List<DefinitionCacheItem>();
 
 		public DefinitionCacheItem[] Definitions { get { return _definitions.ToArray();; } }
@@ -26,7 +29,20 @@ namespace OpenIDE.Core.Definitions
 			return get(args, 0, _definitions, null);
 		}
 
+		public DefinitionCacheItem GetBuiltIn(string[] args) {
+			return get(args, 0, _builtIn, null);
+		}
+		
+		public DefinitionCacheItem GetLanguage(string[] args) {
+			return get(args, 0, _languages, null);
+		}
+		
+		public DefinitionCacheItem GetScript(string[] args) {
+			return get(args, 0, _scripts, null);
+		}
+
 		public void Merge(DefinitionCache cache) {
+			addRaw(cache.Definitions);
 			var merge = cache.Definitions.Where(x => !_definitions.Any(y => x.Name == y.Name));
 			_definitions.AddRange(merge);
 		}
@@ -101,6 +117,7 @@ namespace OpenIDE.Core.Definitions
 						Name = name,
 						Description = description
 					};
+			addRaw(item);
 			_definitions.Add(item);
 			return item;
 		}
@@ -133,6 +150,21 @@ namespace OpenIDE.Core.Definitions
 			items.ToList()
 				.ForEach(x => possibleItems.AddRange(x.Parameters));
 			return isOptionalArgument(argument, possibleItems);
+		}
+
+		private void addRaw(IEnumerable<DefinitionCacheItem> items) {
+			foreach (var item in items) {
+				addRaw(item);
+			}
+		}
+
+		private void addRaw(DefinitionCacheItem item) {
+			if (item.Type == DefinitionCacheItemType.BuiltIn)
+				_builtIn.Add(item);
+			else if (item.Type == DefinitionCacheItemType.Language)
+				_languages.Add(item);
+			else if (item.Type == DefinitionCacheItemType.Script)
+				_scripts.Add(item);
 		}
 	}
 

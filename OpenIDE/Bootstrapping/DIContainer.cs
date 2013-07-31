@@ -141,12 +141,21 @@ namespace OpenIDE.Bootstrapping
 			}
 			if (isCommand(command))
 			{
-				var prefix = "command|";
+				var prefix = getCommandPrefix(command);
 				var parser = new CommandStringParser();
 				var args = 
 					parser.Parse(
 						command.Substring(prefix.Length, command.Length - prefix.Length));
-				var cmd = GetDefinitionBuilder().Get(args.ToArray());
+				DefinitionCacheItem cmd = null;
+				if (prefix == "command|")
+					cmd = GetDefinitionBuilder().Get(args.ToArray());
+				else if (prefix == "command-builtin|")
+					cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
+				else if (prefix == "command-language|")
+					cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
+				else if (prefix == "command-script|")
+					cmd = GetDefinitionBuilder().GetScript(args.ToArray());
+
 				if (cmd != null) {
 					new CommandRunner()
 						.Run(cmd, args.ToArray());
@@ -165,7 +174,14 @@ namespace OpenIDE.Bootstrapping
 
 		private bool isCommand(string command)
 		{
-			return command.StartsWith("command|");
+			return command.StartsWith("command|") ||
+				   command.StartsWith("command-builtin|") ||
+				   command.StartsWith("command-language|") ||
+				   command.StartsWith("command-script|");
+		}
+
+		private string getCommandPrefix(string command) {
+			return command.Substring(0, command.IndexOf('|', 0) + 1);
 		}
 
 		private bool isEvent(string command)

@@ -85,8 +85,8 @@ namespace oi
 				Console.WriteLine();
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified profile", PROFILE);
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified global profile", GLOBAL_PROFILE);
-				Console.WriteLine("\t[--default-language=NAME] : Force command to run using specified default language");
-				Console.WriteLine("\t[--enabled-languages=LANGUAGE_LIST] : Force command to run using specified languages");
+				Console.WriteLine("\t[--default.language=NAME] : Force command to run using specified default language");
+				Console.WriteLine("\t[--enabled.languages=LANGUAGE_LIST] : Force command to run using specified languages");
 				Console.WriteLine();
 			}
 			definitions.ToList()

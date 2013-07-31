@@ -68,21 +68,21 @@ namespace OpenIDE.Core.Language
 		private string[] getPlugins()
 		{
 			var plugins = new List<string>();
-			var dirs = 
-				new[] {
-					Path.Combine(
-						_profiles.GetLocalProfilePath(
-							_profiles.GetActiveLocalProfile()), "languages"),
-					Path.Combine(
-						_profiles.GetLocalProfilePath(
-							"default"), "languages"),
-					Path.Combine(
-						_profiles.GetGlobalProfilePath(
-							_profiles.GetActiveGlobalProfile()), "languages"),
-					Path.Combine(
-						_profiles.GetGlobalProfilePath(
-							"default"), "languages")
-				};
+			var dirs = new List<string>();
+			
+			addLanguagePath(
+				dirs,
+				_profiles.GetLocalProfilePath(_profiles.GetActiveLocalProfile()));
+			addLanguagePath(
+				dirs,
+				_profiles.GetLocalProfilePath("default"));
+			addLanguagePath(
+				dirs,
+				_profiles.GetGlobalProfilePath(_profiles.GetActiveGlobalProfile()));
+			addLanguagePath(
+				dirs,
+				_profiles.GetGlobalProfilePath("default"));
+			
 			foreach (var dir in dirs) {
 				var list = getPlugins(dir);
 				plugins.AddRange(
@@ -92,6 +92,12 @@ namespace OpenIDE.Core.Language
 							.ToArray());
 			}
 			return plugins.ToArray();
+		}
+
+		private void addLanguagePath(List<string> dirs, string path) {
+			if (path == null)
+				return;
+			dirs.Add(Path.Combine(path, "languages"));
 		}
 
 		private IEnumerable<string> getPlugins(string dir)

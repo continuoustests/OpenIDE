@@ -59,7 +59,6 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
-		private const string INTERPRETERPREFIX = "interpreter.";
 		private const string DEFAULT_LANGUAGE = "--default.language=";
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
@@ -81,6 +80,9 @@ namespace OpenIDE.Bootstrapping
 				RootPath = Directory.GetCurrentDirectory();
 			else
 				RootPath = System.IO.Path.GetDirectoryName(RootPath);
+			
+			Environment.CurrentDirectory = RootPath;
+			
 			var local = new Configuration(Directory.GetCurrentDirectory(), false);
 			var global = new Configuration(_path, false);
 
@@ -116,6 +118,7 @@ namespace OpenIDE.Bootstrapping
 									arg.Length - ENABLED_LANGUAGES.Length)).ToArray();
 					continue;
 				}
+
 				newArgs.Add(arg);
 			}
 			return newArgs.ToArray();

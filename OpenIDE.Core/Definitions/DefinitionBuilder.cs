@@ -51,6 +51,18 @@ namespace OpenIDE.Core.Definitions
 			return _cache.Get(args);
 		}
 
+		public DefinitionCacheItem GetBuiltIn(string[] args) {
+			return _cache.GetBuiltIn(args);
+		}
+		
+		public DefinitionCacheItem GetLanguage(string[] args) {
+			return _cache.GetLanguage(args);
+		}
+		
+		public DefinitionCacheItem GetScript(string[] args) {
+			return _cache.GetScript(args);
+		}
+
 		public void Build() {
 			_cache = new DefinitionCache();
 			var profiles = new ProfileLocator(_token);
