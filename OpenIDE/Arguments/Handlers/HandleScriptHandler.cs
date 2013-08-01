@@ -32,6 +32,9 @@ namespace OpenIDE.Arguments.Handlers
 					usage
 						.Add("rm", "Delete a script")
 							.Add("SCRIPT-NAME", "Script name local are picked over global");
+					usage
+						.Add("cat", "Prints the script to the terminal")
+							.Add("SCRIPT-NAME", "Script name with optional file extension.");
 				return usage;
 			}
 		}
@@ -45,6 +48,7 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new CreateScriptHandler(_token, _dispatch));
 			_handlers.Add(new EditScriptHandler(_token, _dispatch));
 			_handlers.Add(new DeleteScriptHandler(_token));
+			_handlers.Add(new CatScriptHandler(_token));
 		}
 
 		public void Execute(string[] arguments)

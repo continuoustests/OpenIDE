@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
@@ -7,10 +8,9 @@ using OpenIDE.Core.Language;
 
 namespace OpenIDE.Arguments.Handlers
 {
-	class EditScriptHandler : ICommandHandler
+	class CatScriptHandler : ICommandHandler
 	{
 		private string _token;
-		private Action<string> _dispatch;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -18,18 +18,17 @@ namespace OpenIDE.Arguments.Handlers
 						"All",
 						CommandType.FileCommand,
 						Command,
-						"Opens a script for edit");
-					usage.Add("SCRIPT-NAME", "Script name. Local are picked over global");
-					return usage;
+						"Prints the script to the terminal");
+					usage.Add("SCRIPT-NAME", "Script name with optional file extension.");
+				return usage;
 			}
 		}
-	
-		public string Command { get { return "edit"; } }
-	
-		public EditScriptHandler(string token, Action<string> dispatch)
+
+		public string Command { get { return "cat"; } }
+
+		public CatScriptHandler(string token)
 		{
 			_token = token;
-			_dispatch = dispatch;
 		}
 
 		public void Execute(string[] arguments)
@@ -43,9 +42,9 @@ namespace OpenIDE.Arguments.Handlers
 				.Where(x => scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
 				.ForEach(x => scripts.Add(x));
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
-			if (script == null || arguments.Length < 1)
+			if (script == null)
 				return;
-			_dispatch(string.Format("command|editor goto \"{0}|0|0\"", script.File));
+			Console.WriteLine(File.ReadAllText(script.File));
 		}
 	}
 }

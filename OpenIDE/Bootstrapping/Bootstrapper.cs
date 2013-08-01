@@ -81,8 +81,6 @@ namespace OpenIDE.Bootstrapping
 			else
 				RootPath = System.IO.Path.GetDirectoryName(RootPath);
 			
-			Environment.CurrentDirectory = RootPath;
-			
 			var local = new Configuration(Directory.GetCurrentDirectory(), false);
 			var global = new Configuration(_path, false);
 
