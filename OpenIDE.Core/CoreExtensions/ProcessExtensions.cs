@@ -34,8 +34,10 @@ namespace CoreExtensions
                                IEnumerable<KeyValuePair<string,string>> replacements) {
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return;
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.Start();
 			proc.WaitForExit();
         }
@@ -50,8 +52,9 @@ namespace CoreExtensions
                                  IEnumerable<KeyValuePair<string,string>> replacements) {
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return;
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.Start();
         }
 
@@ -68,8 +71,9 @@ namespace CoreExtensions
             errors = new string[] {};
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return new string[] {};
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
@@ -119,6 +123,7 @@ namespace CoreExtensions
             string tempFile = null;
             if (handleOiLnk(ref command, ref arguments, workingDir, onRecievedLine, replacements))
                 return 0;
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             if (!prepareInterpreter(ref command, ref arguments)) {
                 if (Environment.OSVersion.Platform != PlatformID.Unix &&
                     Environment.OSVersion.Platform != PlatformID.MacOSX)
@@ -130,7 +135,7 @@ namespace CoreExtensions
                 }
             }
 			
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
@@ -235,17 +240,22 @@ namespace CoreExtensions
                 text = text.Replace(str, "^" + str);
             return text;
         }
+
+		private static string replaceArgumentPlaceholders(string arg,  IEnumerable<KeyValuePair<string,string>> replacements)
+		{
+			foreach (var replacement in replacements)
+				arg = arg.Replace(replacement.Key, replacement.Value);
+			return arg;
+		}
         
         private static void prepareProcess(
             Process proc,
             string command,
             string arguments,
             bool visible,
-            string workingDir,
-            IEnumerable<KeyValuePair<string,string>> replacements)
+            string workingDir)
         {
-            foreach (var replacement in replacements)
-                arguments = arguments.Replace(replacement.Key, replacement.Value);
+           
             var info = new ProcessStartInfo(command, arguments);
             info.CreateNoWindow = !visible;
             if (!visible)
