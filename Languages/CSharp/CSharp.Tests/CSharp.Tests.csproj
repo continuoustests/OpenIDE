@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>CSharp.Tests</RootNamespace>
     <AssemblyName>CSharp.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

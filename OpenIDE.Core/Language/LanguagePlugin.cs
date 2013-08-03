@@ -13,12 +13,14 @@ namespace OpenIDE.Core.Language
 {
 	public class LanguagePlugin
 	{
+		private Thread _pluginLoop;
 		private string _path;
 		private Action<string> _dispatch;
 		private object _processLock = new object();
 		private Process _process;
 		private bool _isQuerying = false;
 		private Action<string> _responseDispatcher = (m) => {};
+		private string _crawlFileTypes = null;
 
 		public string FullPath { get { return _path; } }
 
@@ -44,8 +46,9 @@ namespace OpenIDE.Core.Language
 
         public void Initialize(string keyPath)
         {
+        	Logger.Write("Initializig " + _path + " with " + keyPath);
         	var initialized = false;
-        	new Thread(() => {
+			_pluginLoop = new Thread(() => {
         			var proc = new Process();
         			run(
         				proc,
@@ -59,18 +62,32 @@ namespace OpenIDE.Core.Language
         							_isQuerying = false;
         							return;
         						}
+								_dispatch("event|Language-plugin-outout " + line);
         						_responseDispatcher(line);
 	        					_dispatch(line);
 	        				});
         			initialized = true;
-        		}).Start();
+        		});
+			_pluginLoop.Start();
         	while (!initialized)
         		Thread.Sleep(10);
+			_pluginLoop = null;
         }
 
         public void Shutdown()
         {
             run("shutdown");
+			Logger.Write("Shutdown sent");
+			if (_pluginLoop != null) {
+				Logger.Write("Joining thread");
+				_pluginLoop.Join();
+			}
+			if (_process != null) {
+				if (!_process.HasExited) {
+					Logger.Write("Killing process");
+					_process.Kill();
+				}
+			}
         }
 
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
@@ -80,7 +97,14 @@ namespace OpenIDE.Core.Language
 
 		public string GetCrawlFileTypes()
 		{
-			return ToSingleLine("crawl-file-types");
+			if (_crawlFileTypes == null) {
+				// Go figure, one of those cross platform quirks I guess
+				//if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+				//	_crawlFileTypes = ToSingleLine("crawl-file-types", new Process());
+				//else
+					_crawlFileTypes = ToSingleLine("crawl-file-types");
+			}
+			return _crawlFileTypes;
 		}
 
 		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived)
@@ -162,8 +186,16 @@ namespace OpenIDE.Core.Language
 
 		private string ToSingleLine(string arguments)
 		{
+			return ToSingleLine(arguments, null);
+		}
+
+		private string ToSingleLine(string arguments, Process proc)
+		{
 			var sb = new StringBuilder();
-			run(arguments, (x) => sb.Append(x));
+			if (proc == null)
+				run(arguments, (x) => sb.Append(x));
+			else
+				run(proc, arguments, (x) => sb.Append(x));
 			return sb.ToString();
 		}
 
@@ -197,6 +229,7 @@ namespace OpenIDE.Core.Language
 
 		private void run(Process proc, string arguments, Action<string> onLineReceived)
 		{
+			Logger.Write("Running {0} {1}", _path, arguments);
 			execute(
 				proc,
 				_path,
@@ -210,10 +243,12 @@ namespace OpenIDE.Core.Language
 						}
 						onLineReceived(x);
 					});
+			Logger.Write("Done - Running {0} {1}", _path, arguments);
 		}
 
 		private void execute(Process proc, string cmd, string arguments, Action<bool, string> onLineReceived)
 		{
+			Logger.Write("Executing {0} {1}", cmd, arguments);
             if (onLineReceived != null)
                 proc.Query(cmd, arguments, false, Environment.CurrentDirectory, onLineReceived);
 			else
@@ -221,7 +256,9 @@ namespace OpenIDE.Core.Language
 		}
 
 		private bool queryEngine(string arguments, Action<string> onLineReceived) {
+			Logger.Write("About to query {0} {1}", _path, arguments);
 			if (_process != null && !_process.HasExited) {
+				Logger.Write("Querying {0} {1}", _path, arguments);
 				lock (_processLock) {
 					_isQuerying = true;
 					if (onLineReceived != null)
@@ -232,7 +269,14 @@ namespace OpenIDE.Core.Language
 					if (onLineReceived != null)
 						_responseDispatcher = (m) => {};
 				}
+				Logger.Write("Done - Querying {0} {1}", _path, arguments);
 				return true;
+			}
+			Logger.Write("Process is not ready {0} {1}", _path, arguments);
+			if (_process == null) {
+				Logger.Write("Process has not been started");
+			} else if (_process.HasExited) {
+				Logger.Write("Process has exited");
 			}
 			return false;
 		}

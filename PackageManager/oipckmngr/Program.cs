@@ -8,12 +8,7 @@ namespace oipckmngr
 	class Program
 	{
 		public static void Main(string[] args) {
-			if (args.Length == 0) {
-				Console.WriteLine("Valid parameters are build or extract");
-				return;
-			}
-
-			if (args[0] == "build" && args.Length == 4) {
+			if (args.Length == 4 && args[0] == "build") {
 				var name = args[1];
 				var path = args[2];
 				var destination = args[3];
@@ -33,7 +28,7 @@ namespace oipckmngr
 					Console.WriteLine("Invalid Package: Cannot find package description: " + json);
 					return;
 				}
-				var package = Package.Read(File.ReadAllText(json));
+				var package = Package.Read(json);
 				if (package == null) {
 					Console.WriteLine("Invalid package format");
 					return;
@@ -46,15 +41,21 @@ namespace oipckmngr
 					Console.WriteLine("Invalid Destination: Directory {0} does not exist", destination);
 					return;
 				}
-				destination = Path.Combine(destination, package.ID);
+				destination = Path.Combine(destination, name);
 				Compression.Compress(path, name, destination);
 				Console.WriteLine("Package created: " + destination + ".oipkg");
-			} else if (args[0] == "extract" && args.Length == 3) {
+			} else if (args.Length == 3 && args[0] == "extract") {
 				var file = Path.GetFullPath(args[1]);
 				var path = Path.GetFullPath(args[2]);
 				Compression.Decompress(path, file);
+			} else if (args.Length > 2 && args[0] == "source") {
+				new SourceHandler().Handle(args);
 			} else {
-				Console.WriteLine("Valid parameters are build or install");
+				Console.WriteLine("Usage:");
+				Console.WriteLine("\tbuild NAME SOURCE-DIR DESTINATION-DIR");
+				Console.WriteLine("\textract FILE DESTINATION-DIR");
+				Console.WriteLine("\tsource create SOURCE-FILE ORIGIN");
+				Console.WriteLine("\tsource update SOURCE-FILE");
 			}
 		}
 	}

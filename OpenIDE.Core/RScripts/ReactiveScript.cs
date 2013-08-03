@@ -64,6 +64,7 @@ namespace OpenIDE.Core.RScripts
 							.Replace("<", "^<")
 							.Replace(">", "^>");
 			}
+			var originalMessage = message;
             message = "{event} {global-profile} {local-profile}";
 			var process = new Process();
             Logger.Write("Running: " + _file + " " + message);
@@ -80,18 +81,21 @@ namespace OpenIDE.Core.RScripts
 	            			if (m == null)
 	            				return;
 	            			var cmdText = "command|";
+	            			var eventText = "event|";
 	            			if (error) {
 	            				Logger.Write("rscript-" + Name + " produced an error:");
 	            				Logger.Write("rscript-" + Name + "-" + m);
 	            			} else {
 	            				if (m.StartsWith(cmdText))
 	            					_dispatch(m.Substring(cmdText.Length, m.Length - cmdText.Length));
+	            				else if (m.StartsWith(eventText))
+	            					_dispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
 	            				else
 	            					_dispatch("rscript-" + Name + " " + m);
 	            			}
 	            		},
 	            		new[] {
-							new KeyValuePair<string,string>("{event}", "\"" + message + "\""),
+							new KeyValuePair<string,string>("{event}", "\"" + originalMessage + "\""),
 							new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
 							new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
 						});
@@ -121,7 +125,7 @@ namespace OpenIDE.Core.RScripts
 							return;
 						}
 						if (m.Length > 0) {
-							var expression = m.Trim(new[] {'\"'});
+							var expression = m; //m.Trim(new[] {'\"'});
 							_events.Add(expression);
 							Logger.Write(_file + " reacts to: " + expression);
 						}

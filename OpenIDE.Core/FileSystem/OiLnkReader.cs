@@ -43,6 +43,9 @@ namespace OpenIDE.Core.FileSystem
 				if (link != null) {
 					command = link["executable"].ToString();
 					parameters = link["params"].ToString();
+					if (Environment.OSVersion.Platform != PlatformID.MacOSX && Environment.OSVersion.Platform != PlatformID.Unix) {
+						command = command.Replace("/", "\\");
+					}
 				}
 				return new OiLnkReader(
 					handlers.ToArray(),

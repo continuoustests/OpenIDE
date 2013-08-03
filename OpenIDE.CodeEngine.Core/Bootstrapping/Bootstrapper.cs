@@ -40,8 +40,9 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_interpreters = new Interpreters(_path);
 			ProcessExtensions.GetInterpreter = 
 				(file) => {
-						return _interpreters
+						var interpreters = _interpreters
 							.GetInterpreterFor(Path.GetExtension(file));
+						return interpreters;
 					};
             _cache = new TypeCache();
 			_crawlHandler = new CrawlHandler(_cache, (s) => Logger.Write(s));
@@ -53,14 +54,18 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 
 			_eventEndpoint = new EventEndpoint(_path, _pluginLocator);
 			_eventEndpoint.Start();
+			Logger.Write("Event endpoint listening on port: {0}", _eventEndpoint.Port);
 
+			Logger.Write("Creating plugin file tracker");
 			_tracker = new PluginFileTracker();
+			Logger.Write("Starting plugin file tracker");
 			_tracker.Start(
 				_path,
 				_cache,
 				_cache,
 				_pluginLocator,
 				_eventEndpoint);
+			Logger.Write("Plugin file tracker started");
 
             _endpoint = new CommandEndpoint(_path, _cache, _eventEndpoint);
 			_endpoint.AddHandler(messageHandler);
@@ -78,6 +83,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
                     // Make sure this handler is the last one since the command can be file extension or language name
                     new LanguageCommandHandler(_endpoint, _cache, _pluginLocator)
 				});
+			Logger.Write("Command endpoint started");
 			return _endpoint;
 		}
 
@@ -107,6 +113,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 				var plugins = locator.Locate();
 				foreach (var plugin in plugins) {
 					try {
+						Logger.Write("Shutting down plugin " + plugin.GetLanguage());
 	                    plugin.Shutdown();
 					} catch (Exception ex) {
 						Logger.Write(ex.ToString());
@@ -118,19 +125,27 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		
 		private static void initPlugins(PluginLocator locator, CrawlHandler handler)
 		{
-			new Thread(() =>
-				{
-					var plugins = locator.Locate();
-					foreach (var plugin in plugins) {
-						try {
-							handler.SetLanguage(plugin.GetLanguage());
-                            plugin.Initialize(_path);
-							plugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
-						} catch (Exception ex) {
-							Logger.Write(ex.ToString());
-						}
-					}
-				}).Start();
+			var plugins = locator.Locate();
+			foreach (var plugin in plugins) {
+				try {
+					handler.SetLanguage(plugin.GetLanguage());
+                    plugin.Initialize(_path);
+                    plugin.GetCrawlFileTypes();
+                    ThreadPool.QueueUserWorkItem(
+                    	(o) => {
+                    		try {
+                    			var currentPlugin = (LanguagePlugin)o;
+								currentPlugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
+							} catch (Exception ex) {
+								Logger.Write(ex.ToString());
+							}
+						},
+						plugin);
+				} catch (Exception ex) {
+					Logger.Write(ex.ToString());
+				}
+			}
+			Logger.Write("Plugins initialized");
 		}
 	}
 }

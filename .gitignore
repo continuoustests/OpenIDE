@@ -31,3 +31,4 @@ Release/
 *.sublime-project
 *.sublime-workspace
 .OpenIDE/active.profile
+oi-definitions.json

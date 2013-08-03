@@ -24,6 +24,7 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 		
 		public void Connect(string path)
 		{
+			Logger.Write("Trying to connect to " + path);
 			_path = path;
 			if (_client != null &&_client.IsConnected)
 				_client.Disconnect();
@@ -67,13 +68,16 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 				var instance = new EngineLocator().GetInstance(_path);
 				if (instance == null)
 					return false;
+				Logger.Write("Connecting to port {0} hosted by {1} with token {2}", instance.Port, instance.ProcessID, instance.File);
 				_client = new SocketClient();
 				_client.Connect(instance.Port, (m) => {
 						if (RecievedMessage != null && m != null && m.Trim().Length > 0)
 							RecievedMessage(this, new MessageArgs(Guid.Empty, m));
 					});
-				if (_client.IsConnected)
+				if (_client.IsConnected) {
+					Logger.Write("Connecting to editor on port: {0}", instance.Port);
 					return true;
+				}
 				_client = null;
 				return false;
 			} catch (Exception ex) {

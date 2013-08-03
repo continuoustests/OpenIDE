@@ -28,6 +28,7 @@ namespace OpenIDE.Core.Config
 
 	public class Configuration
 	{
+		private const string DEFAULT_EDITOR_SETTING = "default.editor";
 		private const string DEFAULT_LANGUAGE_SETTING = "default.language";
 		private const string ENABLED_LANGUAGES_SETTING = "enabled.languages";
 		private string[] _operators = new[] { "+=","-=","=" };
@@ -37,6 +38,7 @@ namespace OpenIDE.Core.Config
 
 		public string ConfigurationFile { get; private set; }
 
+		public string DefaultEditor { get; private set; }
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
 		public string[] EditorSettings { get { return _editorSettings.ToArray(); } }
@@ -231,7 +233,6 @@ namespace OpenIDE.Core.Config
 		{
 			using (var writer = new StreamWriter(file))
 			{
-				var written = false;
 				lines.ToList()
 					.ForEach(x => 
 						{
@@ -300,6 +301,8 @@ namespace OpenIDE.Core.Config
 				return;
 			space += 1;
 
+			if (check.StartsWith(DEFAULT_EDITOR_SETTING))
+				DefaultEditor = line.Substring(space, line.Length - space).Trim();
 			if (check.StartsWith(DEFAULT_LANGUAGE_SETTING))
 				DefaultLanguage = line.Substring(space, line.Length - space).Trim();
 			if (check.StartsWith(ENABLED_LANGUAGES_SETTING))

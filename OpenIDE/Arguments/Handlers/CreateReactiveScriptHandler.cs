@@ -36,7 +36,7 @@ namespace OpenIDE.Arguments.Handlers
 		
 		public CreateReactiveScriptHandler(string token, Action<string> dispatch)
 		{
-			_token = _token;
+			_token = token;
 			_dispatch = dispatch;
 		}
 
@@ -78,7 +78,7 @@ namespace OpenIDE.Arguments.Handlers
 				}
 			}
 
-			_dispatch("editor goto \"" + file + "|0|0\"");
+			_dispatch("command|editor goto \"" + file + "|0|0\"");
 		}
 
 		private string getFileName(string name)

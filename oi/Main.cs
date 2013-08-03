@@ -1,6 +1,8 @@
 using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using OpenIDE;
 using OpenIDE.Messaging;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Bootstrapping;
@@ -10,6 +12,7 @@ using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Commands;
+using OpenIDE.Core.Definitions;
 namespace oi
 {
 	class MainClass
@@ -20,19 +23,26 @@ namespace oi
 		public static void Main(string[] args)
 		{
 			args = parseProfile(args);
-			Bootstrapper.Initialize();
+			Bootstrapper.Initialize();			
+
+			var builder = Bootstrapper.GetDefinitionBuilder(); 
+			builder.Build();
 			args = Bootstrapper.Settings.Parse(args);
-			if (args.Length == 0)
-			{
+
+			if (args.Length == 0) {
 				printUsage(null);
 				return;
 			}
-			var execute = Bootstrapper.GetDispatcher();
-			var parser = new CommandStringParser();
-			execute.For(
-				parser.GetCommand(args),
-				parser.GetArguments(args),
-				(command) => printUsage(command));
+
+			var arguments = new List<string>();
+			arguments.AddRange(args);
+			var cmd = builder.Get(arguments.ToArray());
+			if (cmd == null) {
+				printUsage(arguments[0]);
+				return;
+			}
+			if (!new CommandRunner().Run(cmd, arguments))
+				printUsage(cmd.Name);
 		}
 
 		private static string[] parseProfile(string[] args)
@@ -54,57 +64,33 @@ namespace oi
 
 		private static void printUsage(string commandName)
 		{
+			var definitions = Bootstrapper.GetDefinitionBuilder().Definitions;
 			if (commandName == null) {
 				Console.WriteLine("OpenIDE v0.2");
 				Console.WriteLine("OpenIDE is a scriptable environment that provides simple IDE features around your favorite text exitor.");
 				Console.WriteLine("(http://www.openide.net, http://github.com/ContinuousTests/OpenIDE)");
 				Console.WriteLine();
 			}
-			var level = 1;
-			var handlers = Bootstrapper.GetCommandHandlers();
-			var isHint = false;
 			if (commandName != null) {
-				handlers = handlers
+				definitions = definitions 
 					.Where(x => 
-						 x.Command.Contains(commandName) ||
+						 x.Name.Contains(commandName) ||
 						(
-							x.Usage.Parameters.Any(y => y.Required && matchName(y.Name, commandName))
+							x.Parameters.Any(y => y.Required && matchName(y.Name, commandName))
 						));
-				if (handlers.Count() > 0)
+				if (definitions.Count() > 0)
 					Console.WriteLine("Did you mean:");
-				isHint = true;
 			}
-			if (handlers.Count() > 0 && commandName == null) {
+			if (definitions.Count() > 0 && commandName == null) {
 				Console.WriteLine();
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified profile", PROFILE);
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified global profile", GLOBAL_PROFILE);
-				Console.WriteLine("\t[--default-language=NAME] : Force command to run using specified default language");
-				Console.WriteLine("\t[--enabled-languages=LANGUAGE_LIST] : Force command to run using specified languages");
+				Console.WriteLine("\t[--default.language=NAME] : Force command to run using specified default language");
+				Console.WriteLine("\t[--enabled.languages=LANGUAGE_LIST] : Force command to run using specified languages");
 				Console.WriteLine();
 			}
-			handlers.ToList()
-				.ForEach(x =>
-					{
-						var command = x.Usage;
-						if (command.Name != Bootstrapper.Settings.DefaultLanguage)
-							UsagePrinter.PrintCommand(command);
-						else
-						{
-							Console.WriteLine("");
-							Console.WriteLine("\tDirect commands because of default language {0}", command.Name);
-							level--;
-						}
-
-						command.Parameters.ToList()
-							.ForEach(y =>  {
-								if (commandName == null || y.Required && matchName(y.Name, commandName))
-									UsagePrinter.PrintParameter(y, ref level);
-							});
-
-						if ((command.Name == Bootstrapper.Settings.DefaultLanguage))
-							level++;
-					});
-			Console.WriteLine();
+			definitions.ToList()
+				.ForEach(x => UsagePrinter.PrintDefinition(x));
 		}
 
 		private static bool matchName(string actual, string parameter)

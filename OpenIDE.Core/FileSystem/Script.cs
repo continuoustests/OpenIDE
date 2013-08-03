@@ -78,7 +78,7 @@ namespace OpenIDE.Core.FileSystem
 				Description = usage.Trim(new[] { '\"' });
 				return "";
 			}
-			Description = usage.Substring(0, end + 1).Trim(new[] { '\"' });
+			Description = usage.Substring(0, end).Trim(new[] { '\"' });
 			return usage.Substring(
 				end + 1,
 				usage.Length - (end + 1));
@@ -113,7 +113,7 @@ namespace OpenIDE.Core.FileSystem
 					_token,
 					(error, line) => {
 							if (error && !line.StartsWith("error|"))
-								onLine("error|" + error);
+								onLine("error|" + line);
 							else
 								onLine(line);
 						},

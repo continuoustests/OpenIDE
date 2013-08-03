@@ -13,39 +13,41 @@ using OpenIDE.Core.Language;
 using OpenIDE.Core.Profiles;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Definitions;
 
 namespace OpenIDE.Bootstrapping
 {
 	public class DIContainer
 	{
 		private AppSettings _settings;
-		private ICommandDispatcher _dispatcher;
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
+		private DefinitionBuilder _definitionBuilder = null;
+
+		public Action<string> DispatchMessage { get { return dispatchMessage; } }
 
 		public DIContainer(AppSettings settings)
 		{
 			_settings = settings;
-			_dispatcher = new CommandDispatcher(
-				GetDefaultHandlers().ToArray(),
-				GetPluginHandlers,
-				EventDispatcher());
+		}
+
+		public DefinitionBuilder GetDefinitionBuilder() {
+			if (_definitionBuilder == null) {
+				_definitionBuilder = 
+					new DefinitionBuilder(
+						_settings.RootPath,
+						Environment.CurrentDirectory,
+						_settings.DefaultLanguage,
+						() => {
+							return GetDefaultHandlers()
+								.Select(x => 
+									new BuiltInCommand(x.Command, x.Usage));
+						},
+						(path) => PluginLocator().LocateFor(path));
+			}
+			return _definitionBuilder;
 		}
 
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
-		{
-			var handlers = new List<ICommandHandler>();
-			handlers.AddRange(getDefaultHandlersWithoutRunHandler());
-			handlers.Add(new RunCommandHandler(() =>
-				{
-					var runHandlers = new List<ICommandHandler>();
-					runHandlers.AddRange(getDefaultHandlersWithoutRunHandler());
-					runHandlers.AddRange(GetPluginHandlers());
-					return runHandlers;
-				}));
-			return handlers;
-		}
-
-		private IEnumerable<ICommandHandler> getDefaultHandlersWithoutRunHandler()
 		{
 			var handlers = new List<ICommandHandler>();
 			var configHandler = new ConfigurationHandler(PluginLocator());
@@ -57,9 +59,8 @@ namespace OpenIDE.Bootstrapping
 
 					configHandler,
 					
-					new EditorHandler(ILocateEditorEngine(), () => { return PluginLocator(); }),
+					new EditorHandler(_settings.RootPath, ILocateEditorEngine(), () => { return PluginLocator(); }),
 					new TouchHandler(dispatchMessage),
-					new ScriptHandler(_settings.RootPath, dispatchMessage),
 					new HandleScriptHandler(_settings.RootPath, dispatchMessage),
 					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 					new HandleSnippetHandler(ICodeEngineLocator()),
@@ -80,6 +81,8 @@ namespace OpenIDE.Bootstrapping
 					new PkgTestHandler(_settings.RootPath),
 
 					new GetCommandsHandler(),
+
+					new RunCommandHandler(),
 
 					new HelpHandler()
 				});
@@ -102,11 +105,6 @@ namespace OpenIDE.Bootstrapping
 			return _pluginHandlers;
 		}
 
-		public ICommandDispatcher GetDispatcher()
-		{
-			return _dispatcher;
-		}
-
 		public IFS IFS()
 		{
 			return new FS();
@@ -127,24 +125,68 @@ namespace OpenIDE.Bootstrapping
 
 		private void dispatchMessage(string command)
 		{
-			if (command.Length == 0)
+			if (command.Length == 0) {
+				Console.WriteLine();
 				return;
-			var parser = new CommandStringParser();
-			var args = parser.Parse(command);
+			}
 			if (isError(command))
 			{
 				printError(command);
 				return;
 			}
-			if (isComment(command))
+			if (isWarning(command))
 			{
-				printComment(command);
+				printWarning(command);
 				return;
 			}
-			_dispatcher.For(
-				parser.GetCommand(args),
-				parser.GetArguments(args),
-				(m) => {});
+			if (isCommand(command))
+			{
+				var prefix = getCommandPrefix(command);
+				var parser = new CommandStringParser();
+				var args = 
+					parser.Parse(
+						command.Substring(prefix.Length, command.Length - prefix.Length));
+				DefinitionCacheItem cmd = null;
+				if (prefix == "command|")
+					cmd = GetDefinitionBuilder().Get(args.ToArray());
+				else if (prefix == "command-builtin|")
+					cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
+				else if (prefix == "command-language|")
+					cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
+				else if (prefix == "command-script|")
+					cmd = GetDefinitionBuilder().GetScript(args.ToArray());
+
+				if (cmd != null) {
+					new CommandRunner()
+						.Run(cmd, args.ToArray());
+				}
+				return;
+			}
+			if (isEvent(command))
+			{
+				var prefix = "event|";
+				EventDispatcher()
+					.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
+				return;
+			}
+			Console.WriteLine(command);			
+		}
+
+		private bool isCommand(string command)
+		{
+			return command.StartsWith("command|") ||
+				   command.StartsWith("command-builtin|") ||
+				   command.StartsWith("command-language|") ||
+				   command.StartsWith("command-script|");
+		}
+
+		private string getCommandPrefix(string command) {
+			return command.Substring(0, command.IndexOf('|', 0) + 1);
+		}
+
+		private bool isEvent(string command)
+		{
+			return command.StartsWith("event|");
 		}
 
 		private bool isError(string command)
@@ -156,19 +198,23 @@ namespace OpenIDE.Bootstrapping
 		{
 			var commentTag = "error|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(command.Substring(start, command.Length - start));
+			Console.ResetColor();
 		}
 		
-		private bool isComment(string command)
+		private bool isWarning(string command)
 		{
-			return command.Trim().StartsWith("comment|");
+			return command.Trim().StartsWith("warning|");
 		}
 
-		private void printComment(string command)
+		private void printWarning(string command)
 		{
-			var commentTag = "comment|";
+			var commentTag = "warning|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
+			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(command.Substring(start, command.Length - start));
+			Console.ResetColor();
 		}
 		
 		public ILocateEditorEngine ILocateEditorEngine()
@@ -184,14 +230,6 @@ namespace OpenIDE.Bootstrapping
 		public ICodeEngineLocator ICodeEngineLocator()
 		{
 			return new CodeEngineDispatcher(IFS());
-		}
-
-		public IEnumerable<ICommandHandler> ICommandHandlers()
-		{
-			var list = new List<ICommandHandler>();
-			list.AddRange(GetDefaultHandlers());
-			list.AddRange(GetPluginHandlers());
-			return list;
 		}
 	}
 }

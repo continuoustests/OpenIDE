@@ -29,8 +29,10 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		
 		public CommandEndpoint(string editorKey, ITypeCache cache, EventEndpoint eventEndpoint)
 		{
+			Logger.Write("Initializing command endpoint using editor key " + editorKey);
 			_keyPath = editorKey;
 			_cache = cache;
+			Logger.Write("Setting up event endpoint");
 			_eventEndpoint = eventEndpoint;
 			_eventEndpoint.DispatchThrough((m) => {
 					handle(new MessageArgs(Guid.Empty, m));
@@ -38,9 +40,13 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
+			Logger.Write("CodeEngine started listening on port {0}", _server.Port);
 			_editor = new Editor();
+			Logger.Write("Binding editor RecievedMessage");
 			_editor.RecievedMessage += Handle_editorRecievedMessage;
+			Logger.Write("Connecting to editor");
 			_editor.Connect(_keyPath);
+			Logger.Write("Done - Connecting to editor");
 		}
 
 		void Handle_editorRecievedMessage(object sender, MessageArgs e)

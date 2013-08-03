@@ -6,14 +6,12 @@ namespace CSharp.Crawlers.TypeResolvers
 {
 	public class FileContextAnalyzer
 	{
-		private IOutputWriter _globalCache;
 		private IOutputWriter _cache;
         private List<ICodeReference> _references;
         private List<ICodeReference> _referenceContainers;
 
 		public FileContextAnalyzer(IOutputWriter globalCache, IOutputWriter cache)
 		{
-			_globalCache = globalCache;
 			_cache = cache;
             buildReferenceMap();
 		}

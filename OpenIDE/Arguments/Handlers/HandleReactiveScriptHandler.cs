@@ -21,6 +21,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Handles reactive scripts. No arguments will list available scripts");
+				
 				var newHandler = usage.Add("new", "Creates a script that is triggered by it's specified events");
 				var newName = newHandler.Add("SCRIPT-NAME", "Script name with optional file extension.");
 				newName.Add("[--global]", "Will create the new script in the main script folder")
@@ -46,7 +47,7 @@ namespace OpenIDE.Arguments.Handlers
 			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
-			_handlers.Add(new ListReactiveScriptsHandler(_token));
+			_handlers.Add(new ListReactiveScriptsHandler(_token, _locator));
 			_handlers.Add(new CreateReactiveScriptHandler(_token, _dispatch));
 			_handlers.Add(new EditReactiveScriptHandler(_dispatch, _locator, _token));
 			_handlers.Add(new DeleteReactiveScriptHandler(_locator, _token));

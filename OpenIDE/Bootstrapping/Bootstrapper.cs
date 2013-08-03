@@ -19,6 +19,7 @@ namespace OpenIDE.Bootstrapping
 		private static Interpreters _interpreters;
 
 		public static AppSettings Settings = null; 
+		public static Action<string> DispatchMessage { get { return _container.DispatchMessage ; } }
 		
 		public static void Initialize()
 		{
@@ -36,14 +37,13 @@ namespace OpenIDE.Bootstrapping
 			_container = new DIContainer(Settings);
 		}
 		
-		public static ICommandDispatcher GetDispatcher()
-		{
-			return _container.GetDispatcher();
+		public static OpenIDE.Core.Definitions.DefinitionBuilder GetDefinitionBuilder() {
+			return _container.GetDefinitionBuilder();
 		}
 
-		public static IEnumerable<ICommandHandler> GetCommandHandlers()
+		public static IEnumerable<ICommandHandler> GetDefaultHandlers()
 		{
-			return _container.ICommandHandlers();
+			return _container.GetDefaultHandlers();
 		}
 
 		private static IEnumerable<ICommandHandler> getDefaultHandlers()
@@ -59,15 +59,10 @@ namespace OpenIDE.Bootstrapping
 
 	public class AppSettings
 	{
-		private const string INTERPRETERPREFIX = "interpreter.";
 		private const string DEFAULT_LANGUAGE = "--default.language=";
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
 
 		private string _path;
-		private ICommandHandler[] _handlers;
-		private ICommandHandler[] _pluginHandlers;
-		private Func<IEnumerable<ICommandHandler>> _handlerFactory;
-		private Func<IEnumerable<ICommandHandler>> _pluginHandlerFactory;
 
 		public string TokenPath { get; private set; }
 		public string RootPath { get; private set; }
@@ -85,6 +80,7 @@ namespace OpenIDE.Bootstrapping
 				RootPath = Directory.GetCurrentDirectory();
 			else
 				RootPath = System.IO.Path.GetDirectoryName(RootPath);
+			
 			var local = new Configuration(Directory.GetCurrentDirectory(), false);
 			var global = new Configuration(_path, false);
 
@@ -97,9 +93,6 @@ namespace OpenIDE.Bootstrapping
 				EnabledLanguages = local.EnabledLanguages;
 			else if (global.EnabledLanguages != null)
 				EnabledLanguages = global.EnabledLanguages;
-
-			_handlerFactory = handlers;
-			_pluginHandlerFactory = pluginHandlers;
 		}
 
 		public string[] Parse(string[] args)
@@ -123,34 +116,8 @@ namespace OpenIDE.Bootstrapping
 									arg.Length - ENABLED_LANGUAGES.Length)).ToArray();
 					continue;
 				}
+
 				newArgs.Add(arg);
-			}
-
-			var unhandledArg = true;
-			if (newArgs.Count > 0)
-			{
-				if (_handlers == null)
-					_handlers = _handlerFactory().ToArray();
-				if (_handlers.FirstOrDefault(x => x.Command.Equals(newArgs[0])) != null)
-					unhandledArg = false;
-			}
-
-			if (DefaultLanguage != null && unhandledArg && newArgs.Count > 0)
-			{
-				if (_pluginHandlers == null)
-					_pluginHandlers = _pluginHandlerFactory().ToArray();
-				var command = 
-					_pluginHandlers
-						.FirstOrDefault(x => x.Command.Equals(DefaultLanguage));
-				if (command != null)
-				{
-					var usage = command.Usage;
-					if (usage != null)
-					{
-						if (usage.Parameters.Count(x => x.Name.Equals(newArgs[0])) > 0)
-							newArgs.Insert(0, DefaultLanguage);
-					}
-				}
 			}
 			return newArgs.ToArray();
 		}		

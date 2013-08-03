@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Packaging;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Config;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
@@ -27,18 +29,31 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("init", "Initialize package for script, rscript or language")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
 				usage.Add("read", "reads package contents")
-					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or package.json");
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript, name or package.json");
 				usage.Add("build", "Builds package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript")
-						.Add("DESTINATION", "Directory to write package to");
+						.Add("[DESTINATION]", "Destination directory (default destination from config)");
 				usage.Add("install", "Installs package")
-					.Add("SOURCE", "Path to local file or URL")
+					.Add("SOURCE", "Path to local file, URL or name")
 						.Add("[-g]", "Installs to global profiles");
 				usage.Add("update", "Updates package")
-					.Add("SOURCE", "Path to local file or URL")
+					.Add("SOURCE", "Path to local file, URL or name")
 						.Add("[-g]", "Updates package in global profiles");
-				usage.Add("remove", "Removes package")
-					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
+				usage.Add("rm", "Removes package")
+					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or name");
+
+				var sources = usage.Add("src", "Lists, adds and removes package sources");
+				sources
+					.Add("add", "Add source")
+						.Add("NAME", "Name of new source")
+							.Add("LOCATION", "File reference/URL")
+								.Add("[-g]", "Adds source to global profile");
+				sources
+					.Add("rm", "Remove source")
+						.Add("NAME", "Name of source to remove");
+				sources
+					.Add("update", "Updates existing source list.")
+						.Add("[NAME]", "Source name. If not specified it updates all");
 				return usage;
 			}
 		}
@@ -51,20 +66,24 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		public void Execute(string[] arguments) {
-			if (arguments.Length == 0)
+			if (arguments.Length == 0) {
 				list();
+				return;
+			}
 			if (arguments.Length == 2 && arguments[0] == "init")
 				init(arguments[1]);
 			if (arguments.Length == 2 && arguments[0] == "read")
 				read(arguments[1]);
-			if (arguments.Length == 3 && arguments[0] == "build")
-				build(arguments[1], arguments[2]);
+			if (new[] {2,3}.Contains(arguments.Length) && arguments[0] == "build")
+				build(arguments);
 			if (arguments.Length > 1 && arguments[0] == "install")
 				install(arguments);
 			if (arguments.Length > 1 && arguments[0] == "update")
 				update(arguments);
-			if (arguments.Length > 1 && arguments[0] == "remove")
+			if (arguments.Length > 1 && arguments[0] == "rm")
 				remove(arguments);
+			if (arguments[0] == "src")
+				sourceCommands(arguments);
 		}
 
 		private void init(string source) {
@@ -79,22 +98,29 @@ namespace OpenIDE.Arguments.Handlers
 			var packageFile = Path.Combine(files, "package.json");
 			if (!File.Exists(packageFile))
 				File.WriteAllText(packageFile, getPackageDescription(dir, name));
-			_dispatch("editor goto \"" + packageFile + "|0|0\"");
+			_dispatch("command|editor goto \"" + packageFile + "|0|0\"");
 		}
 
 		private void read(string source) {
-			if (!File.Exists(source)) {
-				var dir = 
-					Path.Combine(
-						Path.GetDirectoryName(source),
-						Path.GetFileNameWithoutExtension(source) + "-files");
-				source = Path.Combine(dir, "package.json");
+			var pkg = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (pkg == null) {
+				if (!File.Exists(source)) {
+					var dir = 
+						Path.Combine(
+							Path.GetDirectoryName(source),
+							Path.GetFileNameWithoutExtension(source) + "-files");
+					source = Path.Combine(dir, "package.json");
+				}
+			} else {
+				source = pkg.File;
 			}
-
-			if (!File.Exists(source))
+			
+			if (!File.Exists(source)) 
 				return;
 
-			var package = Package.Read(File.ReadAllText(source));
+			var package = Package.Read(source);
 			if (package != null) {
 				Console.WriteLine(package.ToVerboseString());
 				return;
@@ -120,31 +146,31 @@ namespace OpenIDE.Arguments.Handlers
 						tempPath,
 						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
 					"package.json");
-			return Package.Read(File.ReadAllText(pkgFile));
+			return Package.Read(pkgFile);
 		}
 
 		private void list() {
-			var profiles = new ProfileLocator(_token);
-			printPackages(profiles.GetLocalProfilePath("default"));
-			printPackages(profiles.GetGlobalProfilePath("default"));
+			printPackages(getPackages());
 		}
 
-		private void printPackages(string dir) {
-			getPackages(dir)
+		private IEnumerable<Package> getPackages() {
+			var profiles = new ProfileLocator(_token);
+			var packages = new List<Package>();
+			profiles.GetFilesCurrentProfiles("package.json").ToList()
 				.ForEach(x => {
 						try {
-							var package = Package.Read(File.ReadAllText(x));
+							var package = Package.Read(x);
 							if (package != null)
-								Console.WriteLine(package.ToString() + " - " + x);
+								packages.Add(package);
 						} catch {
 						}
 					});
+			return packages;
 		}
 
-		private List<string> getPackages(string directory) {
-			return Directory
-				.GetFiles(directory, "package.json", SearchOption.AllDirectories)
-				.ToList();
+		private void printPackages(IEnumerable<Package> packages) {
+			packages.ToList()
+				.ForEach(x => Console.WriteLine(x.ID + " (" + x.Version + ")"));
 		}
 
 		private string getPackageDescription(string dir, string name) {
@@ -156,21 +182,48 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
 					"\t\"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
 					"\t\"target\": \"{1}\"," + NL +
-					"\t\"id\": \"{0}-v1.0\"," + NL +
+					"\t\"id\": \"{0}\"," + NL +
+					"\t\"version\": \"v1.0\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
 					"\t\"#pre-install-actions\": []," + NL +
 					"\t\"#post-install-actions\": []," + NL +
-					"\t\"#dependencies\": []" + NL +
+					"\t\"#dependencies\": [" + NL +
+					"\t\t\t{\"id\": \"name\", \"version\": \"v1.0\"}" + NL +
+					"\t\t]" + NL +
 					"}";
 			return package.Replace("{0}", name).Replace("{1}", type);
 		}
 
-		private void build(string source, string destination) {
-			source = Path.GetFullPath(source);
+		private void build(string[] args) {
+			string source = args[1];
+			string destination = null;
+			if (args.Length == 3) {
+				destination = Path.GetFullPath(args[2]);
+			} else {
+				var setting = new ConfigReader(_token).Get("default.package.destination");
+				if (setting != null)
+					destination = setting;
+			}
+			if (!Directory.Exists(destination))
+				return;
+
+			string name;
+			string dir;
+			var package = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (package != null) {
+				name = package.ID;
+				dir = Path.GetDirectoryName(Path.GetDirectoryName(package.File));
+			} else {
+				source = Path.GetFullPath(source);
+				name = Path.GetFileNameWithoutExtension(source);
+				dir = Path.GetDirectoryName(source);
+			}
+
 			destination = Path.GetFullPath(destination);
-			var name = Path.GetFileNameWithoutExtension(source);
-			var dir = Path.GetDirectoryName(source);
+			
 			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			new Process()
 				.Query(
@@ -183,22 +236,28 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void install(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var source = Path.GetFullPath(args[1]);
+			var deleteWhenDone = false;
+			var source = downloadPackage(args[1], ref deleteWhenDone);
 			if (!File.Exists(source))
 				return;
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(source);
+			if (deleteWhenDone)
+				File.Delete(source);
 		}
 		
 		private void update(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var source = Path.GetFullPath(args[1]);
+			var deleteWhenDone = false;
+			var source = downloadPackage(args[1], ref deleteWhenDone);
 			if (!File.Exists(source))
 				return;
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(source);
+			if (deleteWhenDone)
+				File.Delete(source);
 		}
 
 		private bool globalSpecified(ref string[] args) {
@@ -214,9 +273,34 @@ namespace OpenIDE.Arguments.Handlers
 			args = newArgs.ToArray();
 			return useGlobal;
 		}
+
+		private string downloadPackage(string source, ref bool deleteWhenDone) {
+			if (File.Exists(Path.GetFullPath(source)))
+				return Path.GetFullPath(source);
+			var package = new SourceLocator(_token).GetPackage(source);
+			if (package != null) {
+				source = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString() + ".oipkg");
+				download(package.Package, source);
+				deleteWhenDone = true;
+				return source;
+			}
+			return null;
+		}
 		
 		private void remove(string[] args) {
-			var source = Path.GetFullPath(args[1]);
+			var source = args[1];
+			var package = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (package != null) {
+				source = 
+					Path.Combine(
+						Path.GetDirectoryName(
+							Path.GetDirectoryName(package.File)),
+						package.ID);
+			} else {
+				source = Path.GetFullPath(source);
+			}
 			var installer = new Installer(_token, _dispatch, extractPackage);
 			installer.Remove(source);
 		}
@@ -230,6 +314,88 @@ namespace OpenIDE.Arguments.Handlers
 					false,
 					Environment.CurrentDirectory,
 					(err, line) => { });
+		}
+
+		private void sourceCommands(string[] args) {
+			var locator = new SourceLocator(_token);
+			if (args.Length == 1) {
+				locator
+					.GetSources().ToList()
+					.ForEach(x => 
+						Console.WriteLine(x.Name + " - " + x.Origin));
+				return;
+			}
+			var useGlobal = globalSpecified(ref args);
+			var path = locator.GetLocalDir();
+			if (useGlobal)
+				path = locator.GetGlobalDir();
+			if (args.Length == 4 && args[1] == "add") {
+				var name = args[2];
+				var sources = locator.GetSourcesFrom(path);
+				if (sources.Any(x => x.Name == name)) {
+					printError("There is already a source named " + name);
+					return;
+				}
+				if (!Directory.Exists(path))
+					Directory.CreateDirectory(path);
+				var destination = Path.Combine(path, name + ".source");
+				download(args[3], destination);
+				if (!File.Exists(destination))
+					printError("Failed while downloading source file " + args[3]);
+				return;
+			}
+			if (args.Length == 3 && args[1] == "rm") {
+				var name = args[2];
+				var source = 
+					locator
+						.GetSources()
+						.FirstOrDefault(x => x.Name == args[2]);
+				if (source == null) {
+					printError("There is no package source named " + args[2]);
+					return;
+				}
+				File.Delete(source.Path);
+				return;
+			}
+			if (args.Length > 1 && args[1] == "update") {
+				string name = null;
+				if (args.Length > 2)
+					name = args[2];
+				var sources = 
+					locator
+						.GetSources()
+						.Where(x => name == null || x.Name == name);
+				if (sources.Count() == 0) {
+					printError("There are no package sources to update");
+					return;
+				}
+				foreach (var source in sources) {
+					if (!download(source.Origin, source.Path))
+						printError("Failed to download source file " + source.Origin);
+				}
+				return;
+			}
+		}
+
+		private bool download(string source, string destination) {
+			try {
+				_dispatch(string.Format("Downloading {0} ...", source));
+				if (File.Exists(source)) {
+					File.Copy(source, destination, true);
+					return true;
+				}
+				if (source.StartsWith("http://") || source.StartsWith("https://")) {
+					var client = new WebClient();
+					client.DownloadFile(source, destination);
+					return true;
+				}
+			} catch {
+			}
+			return false;
+		}
+
+		private void printError(string msg) {
+			_dispatch("error|" + msg);
 		}
 	}
 }

@@ -40,11 +40,15 @@ def __handleDirectory(path):
 				__handleFile(filename)
 
 def __handleFile(file):
-	print 'file|' + file + '|filesearch'
-	node = ast.parse(open(file, 'r').read())
-	node = ast.fix_missing_locations(node)
-	v = AstVisitor()
-	v.visit(node)
+	try:
+		print 'file|' + file + '|filesearch'
+		node = ast.parse(open(file, 'r').read())
+		node = ast.fix_missing_locations(node)
+		v = AstVisitor()
+		v.visit(node)
+	except Exception,e:
+		print 'error|Failed to parse ' + file
+		print 'error|' + str(e)
 
 def main(argv):
 	if len(argv) > 1:
@@ -57,14 +61,17 @@ def main(argv):
 			print '.py'
 			return
 		if argv[1] == 'crawl-source':
-			with open(argv[2]) as file:
-				lines = file.readlines()
-				for ln in lines:
-					line = ln.replace(os.linesep, '')
-					if os.path.isdir(line):
-						__handleDirectory(line)
-					else:
-						__handleFile(line)
+			if os.path.isfile(argv[2]):
+				with open(argv[2]) as file:
+					lines = file.readlines()
+					for ln in lines:
+						line = ln.replace(os.linesep, '')
+						if os.path.isdir(line):
+							__handleDirectory(line)
+						else:
+							__handleFile(line)
+			else:
+				__handleDirectory(argv[2])
 
 if __name__ == "__main__":
 	main(sys.argv)

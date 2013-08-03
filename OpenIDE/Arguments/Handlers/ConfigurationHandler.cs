@@ -176,7 +176,7 @@ namespace OpenIDE.Arguments.Handlers
 			return lines.ToList()
 				.Where(x => {
 						var s = x.Replace(" ", "").Replace("\t", "");
-						return x.StartsWith(pattern);
+						return s.StartsWith(pattern);
 					})
 				.Select(x => x.Trim(new[] { ' ', '\t' }))
 				.ToList();
@@ -186,7 +186,7 @@ namespace OpenIDE.Arguments.Handlers
 			var item = lines.ToList()
 				.FirstOrDefault(x => {
 						var s = x.Replace(" ", "").Replace("\t", "");
-						return x.StartsWith(pattern + "=");
+						return s.StartsWith(pattern + "=");
 					});
 			if (item == null)
 				return null;

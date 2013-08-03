@@ -63,7 +63,7 @@ namespace CSharp.Commands
 			_project.Reference(file);
 			_project.Write();
 
-			writer.Write("comment|Added reference {0} to {1}", file, projectFile);
+			writer.Write("Added reference {0} to {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)

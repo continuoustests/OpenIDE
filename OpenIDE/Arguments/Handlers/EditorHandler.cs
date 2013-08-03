@@ -15,9 +15,10 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class EditorHandler : ICommandHandler
 	{
+		private string _rootPath;
 		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorFactory;
 		private Func<PluginLocator> _pluginLocator;
-		
+
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
@@ -50,28 +51,40 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
+		public EditorHandler(string rootPath, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
 		{
+			_rootPath = rootPath;
 			_editorFactory = editorFactory;
 			_pluginLocator = locator;
 		}
 		
 		public void Execute(string[] arguments)
 		{
-			var instance = _editorFactory.GetInstance(Environment.CurrentDirectory);
+			var instance = _editorFactory.GetInstance(_rootPath);
 			// TODO remove that unbeleavable nasty setfocus solution. Only init if launching editor
-			if (instance == null && arguments.Length > 0 && arguments[0] != "setfocus")
+			var isSetfocus = arguments.Length > 0 && arguments[0] == "setfocus";
+			if (instance == null && arguments.Length >= 0 && !isSetfocus)
 			{
 				instance = startInstance();
 				if (instance == null)
 					return;
 				var args = new List<string>();
-				args.AddRange(arguments);
+				var configReader = new ConfigReader(_rootPath);
+				if (arguments.Length == 0) {
+					var name = configReader.Get("default.editor");
+					if (name == null) {
+						Console.WriteLine("To launch without specifying editor you must specify the default.editor config option");
+						return;
+					}
+					args.Add(name);
+				} else {
+					args.AddRange(arguments);
+				}
+				var editorName = args[0];
 				args.AddRange( 
-					new Configuration(Environment.CurrentDirectory, true)
-						.EditorSettings
-						.Where(x => x.StartsWith("editor." + arguments[0]))
-						.Select(x => "--" + x));
+					configReader	
+						.GetStartingWith("editor." + editorName)
+						.Select(x => "--" + x.Key + "=" + x.Value));
 				var editor = instance.Start(args.ToArray());
 				if (editor != null && editor != "")
 					runInitScripts();
@@ -110,20 +123,20 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			arg += "\"" + Environment.CurrentDirectory + "\"";
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(exe, arg);
+			proc.StartInfo = new ProcessStartInfo(exe, "\"" + _rootPath + "\"");
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
+			proc.StartInfo.WorkingDirectory = _rootPath;
 			proc.Start();
 			var timeout = DateTime.Now.AddSeconds(5);
 			while (DateTime.Now < timeout)
 			{
-				if (_editorFactory.GetInstance(Environment.CurrentDirectory) != null)
+				if (_editorFactory.GetInstance(_rootPath) != null)
 					break;
 				Thread.Sleep(50);
 			}
-			return _editorFactory.GetInstance(Environment.CurrentDirectory);
+			return _editorFactory.GetInstance(_rootPath);
 		}
 
 		private void runInitScripts()
@@ -136,7 +149,7 @@ namespace OpenIDE.Arguments.Handlers
 					var language = plugin.GetLanguage();
 					runInitScript(Path.Combine(Path.GetDirectoryName(plugin.FullPath), language + "-files"));
 				});
-			var locator = new ProfileLocator(Environment.CurrentDirectory);
+			var locator = new ProfileLocator(_rootPath);
 			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
 			runInitScript(profilePath);
 		}
@@ -162,7 +175,7 @@ namespace OpenIDE.Arguments.Handlers
 			var proc = new Process();
 			proc.StartInfo = new ProcessStartInfo(
 				cmd,
-				arg + "\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages);
+				arg + "\"" + _rootPath + "\"" + defaultLanguage + enabledLanguages);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -186,7 +199,7 @@ namespace OpenIDE.Arguments.Handlers
 			proc
 				.Spawn(
 					initscript,
-					"\"" + Environment.CurrentDirectory + "\"" + defaultLanguage + enabledLanguages,
+					"\"" + _rootPath + "\"" + defaultLanguage + enabledLanguages,
 					false,
 					folder);
 		}

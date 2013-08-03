@@ -62,7 +62,7 @@ namespace CSharp.Commands
 			_project.Dereference(file);
 			_project.Write();
 
-			writer.Write("comment|Rereferenced {0} from {1}", file, projectFile);
+			writer.Write("Rereferenced {0} from {1}", file, projectFile);
 		}
 
 		private string getFile(string argument)

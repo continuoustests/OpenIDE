@@ -63,11 +63,11 @@ namespace OpenIDE.Core.Packaging
 			var dir = Path.GetDirectoryName(source);
 			var package = getPackage(source);
 			if (package == null) {
-				print("There is no package {0} to remove", ConsoleColor.Red, name);
+				_dispatch(string.Format("error|There is no package {0} to remove", name));
 				return;
 			}
 			removePackage(name, dir);
-			print("Removed package {0}", package.ID);
+			_dispatch(string.Format("Removed package {0}", package.Signature));
 		}
 		
 		private void prepareForAction(string source, Action<ActionParameters> actionHandler) {
@@ -88,9 +88,7 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
-					var name = 
-						Path.GetFileNameWithoutExtension(
-							Directory.GetFiles(tempPath)[0]);
+					var name = package.ID;
 					installPath = Path.Combine(installPath, package.Target + "s");
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
@@ -117,11 +115,11 @@ namespace OpenIDE.Core.Packaging
 		private void update(string source, ActionParameters args) {
 			var existingPackage = getPackage(args.Matches.First());
 			if (!runInstallVerify(args.TempPath, args.InstallPath)) {
-				printUpdateFailed(args.Package.ID);
+				printUpdateFailed(args.Package.Signature);
 				return;
 			}
 			if (!runUpgrade(args.TempPath, args.InstallPath, "before-update")) {
-				printUpdateFailed(args.Package.ID);
+				printUpdateFailed(args.Package.Signature);
 				return;
 			}
 
@@ -129,14 +127,15 @@ namespace OpenIDE.Core.Packaging
 			_unpack(source, args.InstallPath);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {
-				printUpdateFailed(args.Package.ID);
+				printUpdateFailed(args.Package.Signature);
 				return;
 			}
 			
-			print(
-				"Package updated from {0} to {1}",
-				existingPackage.ID,
-				args.Package.ID);
+			_dispatch(
+				string.Format(
+					"Package updated from {0} to {1}",
+					existingPackage.Signature,
+					args.Package.Signature));
 		}
 
 		private void removePackage(string name, string path) {
@@ -150,18 +149,18 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private void printUpdateFailed(string id) {
-			print();
-			print("Failed to update package {0}", ConsoleColor.Red, id);
+			_dispatch("");
+			_dispatch(string.Format("error|Failed to update package {0}", id));
 		}
 
 		private void printUnexistingUpdate(string name, Package package) {
-			print("There is no installed {1} package {0} to update", ConsoleColor.Red, name, package.Target);
+			_dispatch(string.Format("error|There is no installed {1} package {0} to update", name, package.Target));
 		}
 
 		private void installPackage(string source, Package package, string tempPath, string installPath, string activeProfile) {
 			if (!runInstallVerify(tempPath, installPath)) {
-				print();
-				Console.WriteLine("Failed to install package {0}", ConsoleColor.Red, package.ID);
+				_dispatch("");
+				_dispatch(string.Format("error|Failed to install package {0}", package.Signature));
 				return;
 			}
 
@@ -173,10 +172,10 @@ namespace OpenIDE.Core.Packaging
 			foreach (var action in package.PostInstallActions)
 				_dispatch(action);
 
-			print("Installed {1} package {0} in profile {2}",
-				package.ID,
+			_dispatch(string.Format("Installed {1} package {0} in profile {2}",
+				package.Signature,
 				package.Target,
-				activeProfile);
+				activeProfile));
 		}
 
 		private bool runInstallVerify(string tempPath, string installPath) {
@@ -217,28 +216,19 @@ namespace OpenIDE.Core.Packaging
 						_token,
 						(err, line) => {
 								if (err) {
-									print(line, ConsoleColor.Red);
+									_dispatch("error|" + line);
 									succeeded = false;
 								} else if (line.StartsWith("error|")) {
-									print(
-										line.Substring(
-											"error|".Length,
-											line.Length - "error|".Length),
-										ConsoleColor.Red);
+									_dispatch(line);
 									succeeded = false;
-								} else if (line.StartsWith("comment|")) {
-									print(
-										line.Substring(
-											"comment|".Length,
-											line.Length - "comment|".Length));
 								} else {
 									_dispatch(line);
 								}
 							});
 			} catch (Exception ex) {
-				print("Failed running package verify. Make sure that environment supports script/executable type " + Path.GetExtension(command), ConsoleColor.Red);
-				print("Exception:", ConsoleColor.Yellow);
-				print(ex.ToString(), ConsoleColor.Yellow);
+				_dispatch("error|Failed running package verify. Make sure that environment supports script/executable type " + Path.GetExtension(command));
+				_dispatch("warning|Exception:");
+				_dispatch("warning|" + ex.ToString());
 				succeeded = false;
 			}
 			return succeeded;
@@ -259,7 +249,7 @@ namespace OpenIDE.Core.Packaging
 						tempPath,
 						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
 					"package.json");
-			return Package.Read(File.ReadAllText(pkgFile));
+			return Package.Read(pkgFile);
 		}
 		
 		private Package getPackage(string file) {
@@ -270,7 +260,7 @@ namespace OpenIDE.Core.Packaging
 					Path.Combine(path, name + "-files"),
 					"package.json");
 			if (File.Exists(pkgFile))
-				return Package.Read(File.ReadAllText(pkgFile));
+				return Package.Read(pkgFile);
 			return null;
 		}
 
@@ -278,7 +268,7 @@ namespace OpenIDE.Core.Packaging
 			var pkgInfo = "";
 			var existingPackage = getPackage(matches.First());
 			if (existingPackage != null)
-				pkgInfo = string.Format(" ({0})", existingPackage.ID);
+				pkgInfo = string.Format(" ({0})", existingPackage.Signature);
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(
 				"There is already an installed {2} package called {0}{1}",
@@ -287,27 +277,12 @@ namespace OpenIDE.Core.Packaging
 				package.Target);
 			Console.ResetColor();
 			if (existingPackage != null) {
-				print();
-				print(existingPackage.ToVerboseString());
+				_dispatch("");
+				_dispatch(existingPackage.ToVerboseString());
 			}
-			print();
-			print(
-				"To replace/update the installed package use the update command",
-				ConsoleColor.Yellow);
-		}
-
-		private void print() {
-			Console.WriteLine();
-		}
-
-		private void print(string text, params object[] args) {
-			Console.WriteLine(text, args);
-		}
-
-		private void print(string text, ConsoleColor color, params object[] args) {
-			Console.ForegroundColor = color;
-			Console.WriteLine(text, args);
-			Console.ResetColor();
+			_dispatch("");
+			_dispatch(
+				"warning|To replace/update the installed package use the update command");
 		}
 	}
 }

@@ -14,7 +14,6 @@ namespace OpenIDE.Core.RScripts
 	public class ReactiveScriptReader
 	{
 		private string _keyPath;
-		private string _oiRootPath;
 		private string _localScriptsPathDefault;
 		private string _localScriptsPath;
 		private string _globalScriptsPathDefault;
@@ -23,7 +22,7 @@ namespace OpenIDE.Core.RScripts
 		private Func<PluginLocator> _pluginLocator;
 		private Action<string> _dispatch;
 
-		public ReactiveScriptReader(string oiRootPath, string path, Func<PluginLocator> locator, Action<string> dispatch)
+		public ReactiveScriptReader(string path, Func<PluginLocator> locator, Action<string> dispatch)
 		{
 			_keyPath = path;
 			_dispatch = dispatch;
@@ -32,7 +31,6 @@ namespace OpenIDE.Core.RScripts
 			_localScriptsPath = getPath(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile()));
 			_globalScriptsPathDefault = getPath(profiles.GetGlobalProfilePath("default"));
 			_globalScriptsPath = getPath(profiles.GetGlobalProfilePath(profiles.GetActiveGlobalProfile()));
-			_oiRootPath = oiRootPath;
 			_pluginLocator = locator;
 		}
 
@@ -74,23 +72,36 @@ namespace OpenIDE.Core.RScripts
 
 		public List<string> GetPaths()
 		{
+			var profiles = new ProfileLocator(_keyPath);
 			var paths = new List<string>();
 			addToList(paths, getLocal());
 			addToList(paths, _localScriptsPathDefault);
 			_pluginLocator().Locate().ToList()
-				.ForEach(plugin => 
-					addToList(
-						paths,
-						Path.Combine(
-							_oiRootPath,
-							Path.Combine(
-								"languages",
-								Path.Combine(
-									plugin.GetLanguage() + "-files",
-									"rscripts")))));
+				.ForEach(plugin => {
+						foreach (var path in getLanguagePaths(plugin, profiles))
+							addToList(paths, path);
+					});
 			addToList(paths, getGlobal());
 			addToList(paths, _globalScriptsPathDefault);
 			return paths;
+		}
+
+		private List<string> getLanguagePaths(LanguagePlugin plugin, ProfileLocator locator) {
+			var languagePaths = new List<string>();
+			var paths = locator.GetPathsCurrentProfiles();
+			foreach (var path in paths) {
+				var languagePath = 
+					Path.Combine(
+						path,
+						Path.Combine(
+							"languages",
+							Path.Combine(
+								plugin.GetLanguage() + "-files",
+								"rscripts")));
+				if (Directory.Exists(languagePath))
+					languagePaths.Add(languagePath);
+			}
+			return languagePaths;
 		}
 
 		private void addToList(List<string> list, string item)

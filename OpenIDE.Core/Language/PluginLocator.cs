@@ -24,10 +24,24 @@ namespace OpenIDE.Core.Language
 
 		public LanguagePlugin[] Locate()
 		{
-			return getPlugins()
-				.Select(x => getPlugin(x))
-				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()))
-				.ToArray();
+			return 
+				filterEnabledPlugins(
+					getPlugins()
+						.Select(x => getPlugin(x)))
+					.ToArray();
+		}
+
+		public LanguagePlugin[] LocateFor(string path) {
+			return 
+				filterEnabledPlugins(
+					getPlugins(path)
+						.Select(x => getPlugin(x)))
+					.ToArray();
+		}
+
+		private IEnumerable<LanguagePlugin> filterEnabledPlugins(IEnumerable<LanguagePlugin> plugins) {
+			return plugins	
+				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()));
 		}
 
 		private LanguagePlugin getPlugin(string name) {
@@ -54,21 +68,21 @@ namespace OpenIDE.Core.Language
 		private string[] getPlugins()
 		{
 			var plugins = new List<string>();
-			var dirs = 
-				new[] {
-					Path.Combine(
-						_profiles.GetLocalProfilePath(
-							_profiles.GetActiveLocalProfile()), "languages"),
-					Path.Combine(
-						_profiles.GetLocalProfilePath(
-							"default"), "languages"),
-					Path.Combine(
-						_profiles.GetGlobalProfilePath(
-							_profiles.GetActiveGlobalProfile()), "languages"),
-					Path.Combine(
-						_profiles.GetGlobalProfilePath(
-							"default"), "languages")
-				};
+			var dirs = new List<string>();
+			
+			addLanguagePath(
+				dirs,
+				_profiles.GetLocalProfilePath(_profiles.GetActiveLocalProfile()));
+			addLanguagePath(
+				dirs,
+				_profiles.GetLocalProfilePath("default"));
+			addLanguagePath(
+				dirs,
+				_profiles.GetGlobalProfilePath(_profiles.GetActiveGlobalProfile()));
+			addLanguagePath(
+				dirs,
+				_profiles.GetGlobalProfilePath("default"));
+			
 			foreach (var dir in dirs) {
 				var list = getPlugins(dir);
 				plugins.AddRange(
@@ -78,6 +92,12 @@ namespace OpenIDE.Core.Language
 							.ToArray());
 			}
 			return plugins.ToArray();
+		}
+
+		private void addLanguagePath(List<string> dirs, string path) {
+			if (path == null)
+				return;
+			dirs.Add(Path.Combine(path, "languages"));
 		}
 
 		private IEnumerable<string> getPlugins(string dir)

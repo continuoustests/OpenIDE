@@ -33,42 +33,52 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_cache = cache;
 			_crawlReader = crawlReader;
 			_eventDispatcher = eventDispatcher;
+			Logger.Write("Setting up file trackers");
+			Logger.Write("Setting up token file trackers");
 			_tracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			Logger.Write("Setting up local file trackers");
 			_localTracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
+			Logger.Write("Setting up global file trackers");
 			_globalTracker = new FileChangeTracker((x) => {
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
 						" \"" + x.Path + "\"");
 				});
-			pluginLocator.Locate().ToList()
-				.ForEach(x =>
-					{
-						var plugin = new PluginPattern(x);
-						_plugins.Add(plugin);
-						_cache.Plugins.Add(
-							new CachedPlugin(x.GetLanguage(), plugin.Patterns));
-					});
+			Logger.Write("Adding plugins to cache");
+			var plugins = pluginLocator.Locate().ToList();
+			foreach (var x in plugins) {
+				var plugin = new PluginPattern(x);
+				_plugins.Add(plugin);
+				_cache.Plugins.Add(
+					new CachedPlugin(x.GetLanguage(), plugin.Patterns));
+				Logger.Write("Added plugin " + x.GetLanguage());
+			}
+			Logger.Write("Starting tracker for {0}", path);
 			_tracker.Start(path, getFilter(), handleChanges);
 			var locator = new ProfileLocator(path);
 			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
 				var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
-				if (Directory.Exists(profilePath))
+				if (Directory.Exists(profilePath)) {
+					Logger.Write("Starting tracker for {0}", profilePath);
 					_localTracker.Start(profilePath, getFilter(), handleChanges);
+				}
 			}
 			var globalPath = locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile());
-			if (Directory.Exists(globalPath))
+			if (Directory.Exists(globalPath)) {
+				Logger.Write("Starting tracker for {0}", globalPath);
 				_globalTracker.Start(globalPath, getFilter(), handleChanges);
+			}
 		}
 
 		private string getFilter()
@@ -153,6 +163,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		{
 			Plugin = plugin;
 			Patterns = new List<string>();
+			Logger.Write("Getting file types for " + plugin.FullPath);
 			Patterns.AddRange(
 				Plugin
 					.GetCrawlFileTypes()

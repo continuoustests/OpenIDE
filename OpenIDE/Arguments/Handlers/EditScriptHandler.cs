@@ -34,6 +34,8 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
+			if (arguments.Length < 1)
+				return;
 			var scripts = new List<Script>();
 			scripts.AddRange(new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts());
 			new ScriptLocator(_token, Environment.CurrentDirectory)
@@ -43,7 +45,7 @@ namespace OpenIDE.Arguments.Handlers
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;
-			_dispatch(string.Format("editor goto \"{0}|0|0\"", script.File));
+			_dispatch(string.Format("command|editor goto \"{0}|0|0\"", script.File));
 		}
 	}
 }

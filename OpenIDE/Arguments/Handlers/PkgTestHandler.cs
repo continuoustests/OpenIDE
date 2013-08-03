@@ -36,6 +36,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.Run,
 					Command,
 					"Runs tests for all or parts of the system");
+				usage.Add("[TEST-FILE]", "Specify test file to run tests for");
 				usage.Add("-v", "Verbose mode prints running tests");
 				usage.Add("-o", "Prints outputs for failing tests");
 				usage.Add("-e", "Prints events for failing tests");
@@ -102,7 +103,6 @@ namespace OpenIDE.Arguments.Handlers
 										});
 							while (true) {
 								eventSocketClient.Connect(_testRunLocation);
-								log("Event listener connecting");
 								eventListenerStarted = true;
 								if (!eventSocketClient.IsConnected) {
 									Thread.Sleep(10);
@@ -237,6 +237,7 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void handleFeedback(Process proc, bool error, string line) {
+			log("Received : " + line);
 			if (line == "passed" || line.StartsWith("passed|")) {
 				handleTestDone("PASSED ", ConsoleColor.Green, !_printOnlyErrorsAndInconclusives);
 			} else if (error || line == "failed" || line.StartsWith("failed|")) {
@@ -256,14 +257,14 @@ namespace OpenIDE.Arguments.Handlers
 					Console.ResetColor();
 				}
 
-				if (_showoutputs && _outputs.Count > 0) {
+				if (_showoutputs) {
 					Console.WriteLine("\tOutputs:");
 					foreach (var output in _outputs)
 						Console.WriteLine("\t" + output);
 					Console.WriteLine();
 				}
 				
-				if (_showevents && _events.Count > 0) {
+				if (_showevents) {
 					Console.WriteLine("\tEvents:");
 					foreach (var @event in _events)
 						Console.WriteLine("\t" + @event);
@@ -273,13 +274,17 @@ namespace OpenIDE.Arguments.Handlers
 				runCommand(line.Substring(8, line.Length - 8));
 			} else if (line.StartsWith("hasoutput|")) {
 				var pattern = line.Substring(10, line.Length - 10);
-				var result = _outputs.Any(x => x.Trim() == pattern.Trim());
+				var result = 
+					retryFor5SecondsIfFalse(
+						() => _outputs.Any(x => x.Trim() == pattern.Trim()));
 				if (!result)
 					_asserts.Add("Expected (output): " + pattern);
 				ask(proc, result.ToString().ToLower());
 			} else if (line.StartsWith("hasevent|")) {
 				var pattern = line.Substring(9, line.Length - 9);
-				var result = _events.Any(x => x.Trim() == pattern.Trim());
+				var result = 
+					retryFor5SecondsIfFalse(
+						() => _events.Any(x => x.Trim() == pattern.Trim()));
 				if (!result)
 					_asserts.Add("Expected (event): " + pattern);
 				ask(proc, result.ToString().ToLower());
@@ -291,25 +296,43 @@ namespace OpenIDE.Arguments.Handlers
 
 		}
 
+		private bool retryFor5SecondsIfFalse(Func<bool> check) {
+			var now = DateTime.Now;
+			while (true) {
+				if (check())
+					return true;
+				if (DateTime.Now > now.AddSeconds(5))
+					break;
+				Thread.Sleep(50);
+			}
+			return false;
+		}
+
 		private void runCommand(string command) {
 			runCommand(command, true);
 		}
 
 		private void runCommand(string command, bool listenForFeedback) {
-			new Process()
-					.Query(
-						"oi",
-						command,
-						false,
-						_testRunLocation,
-						(error, line) => {
-								if (!listenForFeedback)
-									return;
-								if (error)
-									handleFeedback(null, true, line);
-								else
-									_outputs.Add(line);
-							});
+			log(string.Format("Running: oi {0}, listenForFeedback={1} in {2}", command, listenForFeedback, _testRunLocation));
+			var process = new Process();
+			string[] errors;
+			var lines = process
+				.QueryAll(
+					"oi",
+					command,
+					false,
+					_testRunLocation,
+					out errors);
+
+			if (errors.Any(x => x.Trim().Length > 0)) {
+				foreach (var error in errors)
+					handleFeedback(null, true, error);
+			}
+			
+			foreach (var line in lines) {
+					_outputs.Add(line);
+			}
+			log("Process exited");
 		}
 
 		private void handleTestDone(string state, ConsoleColor color) {

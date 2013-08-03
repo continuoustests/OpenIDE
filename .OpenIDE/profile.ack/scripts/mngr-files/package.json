@@ -1,7 +1,8 @@
 {
 	"#Comment": "# is used here to comment out optional fields",
 	"target": "script",
-	"id": "mngr-v1.0",
+	"id": "mngr",
+	"version": "v1.0",
 	"description": "mngr script package",
 	"#config-prefix": "mngr.",
 	"#pre-install-actions": [],

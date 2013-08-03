@@ -64,7 +64,7 @@ namespace CSharp
                 return;
 			var handler = _dispatcher.GetHandler(msg.Command);
 			if (handler == null) {
-				writer.Write("comment|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
+				writer.Write("error|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
 				return;
 			}
 			try {

@@ -22,51 +22,16 @@ namespace OpenIDE.Arguments.Handlers
 		public string Command { get { return "get-commands"; } }
 
 		public void Execute(string[] arguments) {
-			if ((new[] {1,2}).Contains(arguments.Length) && arguments[0] == "help") {
-				if (arguments.Length == 2)
-					arguments = new[] { arguments[1] };
-				else
-					arguments = new string[] { };
-			}
-
+			var builder = Bootstrapper.GetDefinitionBuilder(); 
+			builder.Build(); 
 			var args = new Stack<string>();
 			for (int i = arguments.Length - 1; i >= 0; i--) 
 				args.Push(arguments[i]);
-			
-			var usages = 
-				Bootstrapper
-					.GetCommandHandlers()
-					.ToList();
 			var item = pop(args);
-			printOptions(item, args, usages);
+			printOptions(item, args, builder.Definitions);
 		}
 
-		private void printOptions(string lastItem, Stack<string> args, List<ICommandHandler> usages) {
-			if (lastItem == null) {
-				printAll(usages);
-				return;
-			}
-			var parameters =
-				usages
-					.Where(x => x.Command.StartsWith(lastItem))
-					.Select(x => x.Usage)
-					.Cast<BaseCommandHandlerParameter>()
-					.ToList();
-			var defaultLang = 
-				usages
-					.FirstOrDefault(x => 
-						x.Command == Bootstrapper.Settings.DefaultLanguage);
-			if (defaultLang != null) {
-				parameters.AddRange(defaultLang.Usage.Parameters);
-			}
-
-			printOptions(
-				lastItem,
-				args,
-				parameters);
-		}
-
-		private void printOptions(string lastItem, Stack<string> args, List<BaseCommandHandlerParameter> usages) {
+		private void printOptions(string lastItem, Stack<string> args, IEnumerable<OpenIDE.Core.Definitions.DefinitionCacheItem> usages) {
 			if (lastItem == null) {
 				printAll(usages);
 				return;
@@ -81,23 +46,14 @@ namespace OpenIDE.Arguments.Handlers
 			} else {
 				foreach (var usage in usages) {
 					if (usage.Name == lastItem) {
-						printOptions(item, args, usage.Parameters.ToList());
+						printOptions(item, args, usage.Parameters);
 						break;
 					}
 				}
 			}
 		}
 
-		private void printAll(List<ICommandHandler> handlers) {
-			foreach (var handler in handlers) {
-				if (handler.Command == Bootstrapper.Settings.DefaultLanguage)
-					printAll(handler.Usage.Parameters.ToList());
-				else
-					Console.Write(handler.Command + " ");
-			}
-		}
-
-		private void printAll(List<BaseCommandHandlerParameter> usages) {
+		private void printAll(IEnumerable<OpenIDE.Core.Definitions.DefinitionCacheItem> usages) {
 			foreach (var usage in usages) {
 				if (usage.Required && usage.Name != usage.Name.ToUpper())
 					Console.Write(usage.Name + " ");

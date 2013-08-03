@@ -12,6 +12,12 @@ namespace CoreExtensions
 {
     public static class ProcessExtensions
     {
+        private static Action<string> _logger = (msg) => {};
+
+        public static void SetLogger(this Process proc, Action<string> logger) {
+            _logger = logger;
+        }
+
         public static Func<string,string> GetInterpreter = (file) => null;
 
         public static void Write(this Process proc, string msg) {
@@ -28,8 +34,10 @@ namespace CoreExtensions
                                IEnumerable<KeyValuePair<string,string>> replacements) {
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return;
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.Start();
 			proc.WaitForExit();
         }
@@ -44,9 +52,38 @@ namespace CoreExtensions
                                  IEnumerable<KeyValuePair<string,string>> replacements) {
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return;
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.Start();
+        }
+
+        public static IEnumerable<string> QueryAll(this Process proc, string command, string arguments,
+                                                   bool visible, string workingDir,
+                                                   out string[] errors) {
+            return QueryAll(proc, command, arguments, visible, workingDir, new KeyValuePair<string,string>[] {}, out errors);
+        }
+
+        public static IEnumerable<string> QueryAll(this Process proc, string command, string arguments,
+                                                   bool visible, string workingDir,
+                                                   IEnumerable<KeyValuePair<string,string>> replacements,
+                                                   out string[] errors) {
+            errors = new string[] {};
+            if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
+                return new string[] {};
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
+            prepareInterpreter(ref command, ref arguments);
+            prepareProcess(proc, command, arguments, visible, workingDir);
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.Start();
+            var output = proc.StandardOutput.ReadToEnd();
+            errors = 
+                proc.StandardError.ReadToEnd()
+                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            proc.WaitForExit();
+            return output.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
         }
 
         public static void Query(this Process proc, string command, string arguments,
@@ -59,17 +96,23 @@ namespace CoreExtensions
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
                                  IEnumerable<KeyValuePair<string,string>> replacements) {
+            _logger("Running process");
             var process = proc;
             var retries = 0;
             var exitCode = 255;
+            _logger("About to start process");
             while (exitCode == 255 && retries < 5) {
+                _logger("Running query");
                 exitCode = query(process, command, arguments, visible, workingDir, onRecievedLine, replacements);
+                _logger("Done running with " + exitCode.ToString());
                 retries++;
                 // Seems to happen on linux when a file is beeing executed while being modified (locked)
                 if (exitCode == 255) {
+                    _logger("Recreating process");
                     process = new Process();
                     Thread.Sleep(100);
                 }
+                _logger("Done running process");
             }
         }
 
@@ -80,6 +123,7 @@ namespace CoreExtensions
             string tempFile = null;
             if (handleOiLnk(ref command, ref arguments, workingDir, onRecievedLine, replacements))
                 return 0;
+			arguments = replaceArgumentPlaceholders(arguments, replacements);
             if (!prepareInterpreter(ref command, ref arguments)) {
                 if (Environment.OSVersion.Platform != PlatformID.Unix &&
                     Environment.OSVersion.Platform != PlatformID.MacOSX)
@@ -91,8 +135,7 @@ namespace CoreExtensions
                 }
             }
 			
-			var exit = false;
-            prepareProcess(proc, command, arguments, visible, workingDir, replacements);
+            prepareProcess(proc, command, arguments, visible, workingDir);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
@@ -100,16 +143,12 @@ namespace CoreExtensions
 
             DataReceivedEventHandler onOutputLine = 
                 (s, data) => {
-                    if (data.Data == null)
-                        exit = true;
-                    else
+                    if (data.Data != null)
                         onRecievedLine(false, data.Data);
                 };
             DataReceivedEventHandler onErrorLine = 
                 (s, data) => {
-                    if (data.Data == null)
-                        exit = true;
-                    else
+                    if (data.Data != null)
                         onRecievedLine(true, data.Data);
                 };
 
@@ -123,9 +162,14 @@ namespace CoreExtensions
             }
             proc.OutputDataReceived -= onOutputLine;
             proc.ErrorDataReceived -= onErrorLine;
+            
             if (tempFile != null && File.Exists(tempFile))
                 File.Delete(tempFile);
             return proc.ExitCode;
+        }
+
+        private static bool processExists(int id) {
+            return Process.GetProcesses().Any(x => x.Id == id);
         }
 
         private static bool handleOiLnk(ref string command, ref string arguments,
@@ -196,17 +240,22 @@ namespace CoreExtensions
                 text = text.Replace(str, "^" + str);
             return text;
         }
+
+		private static string replaceArgumentPlaceholders(string arg,  IEnumerable<KeyValuePair<string,string>> replacements)
+		{
+			foreach (var replacement in replacements)
+				arg = arg.Replace(replacement.Key, replacement.Value);
+			return arg;
+		}
         
         private static void prepareProcess(
             Process proc,
             string command,
             string arguments,
             bool visible,
-            string workingDir,
-            IEnumerable<KeyValuePair<string,string>> replacements)
+            string workingDir)
         {
-            foreach (var replacement in replacements)
-                arguments = arguments.Replace(replacement.Key, replacement.Value);
+           
             var info = new ProcessStartInfo(command, arguments);
             info.CreateNoWindow = !visible;
             if (!visible)

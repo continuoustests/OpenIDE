@@ -37,7 +37,6 @@ namespace OpenIDE.Arguments.Handlers
 		public void Execute(string[] arguments)
 		{
 			var scripts = new ReactiveScriptReader(
-				Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 				_keyPath,
 				() => { return _pluginLocator; },
 				(m) => {})
@@ -45,7 +44,7 @@ namespace OpenIDE.Arguments.Handlers
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;
-			_dispatch(string.Format("editor goto \"{0}|0|0\"", script.File));
+			_dispatch(string.Format("command|editor goto \"{0}|0|0\"", script.File));
 		}
 	}
 }

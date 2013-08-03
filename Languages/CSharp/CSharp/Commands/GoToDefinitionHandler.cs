@@ -4,7 +4,6 @@ using CSharp.Responses;
 using CSharp.Crawlers.TypeResolvers;
 using OpenIDE.Core.EditorEngineIntegration;
 using OpenIDE.Core.FileSystem;
-using CSharp.Crawlers.TypeResolvers;
 
 namespace CSharp.Commands
 {
@@ -54,19 +53,19 @@ namespace CSharp.Commands
 
 				var name = new TypeUnderPositionResolver()
 					.GetTypeName(file, File.ReadAllText(file), line, column);
-				writer.Write("comment|Found name {0}", name);
+				writer.Write("Found name {0}", name);
 				var signature = new FileContextAnalyzer(_globalCache, cache)
 					.GetSignatureFromNameAndPosition(file, name, line, column);
-				writer.Write("comment|Found signature {0}", signature);
+				writer.Write("Found signature {0}", signature);
 				var pos = cache.PositionFromSignature(signature);
 				if (pos != null) {
-					writer.Write("editor goto {0}|{1}|{2}", pos.Fullpath, pos.Line, pos.Column);
+					writer.Write("command|editor goto {0}|{1}|{2}", pos.Fullpath, pos.Line, pos.Column);
 					return;
 				}
-				writer.Write("comment|Looking in global cache");
+				writer.Write("Looking in global cache");
 				pos = _globalCache.PositionFromSignature(signature);
 				if (pos != null)
-					writer.Write("editor goto {0}|{1}|{2}", pos.Fullpath, pos.Line, pos.Column);
+					writer.Write("command|editor goto {0}|{1}|{2}", pos.Fullpath, pos.Line, pos.Column);
 			} catch (Exception ex) {
 				writer.Write(ex.ToString());
 			}

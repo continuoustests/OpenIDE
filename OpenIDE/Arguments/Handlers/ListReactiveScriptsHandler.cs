@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.RScripts;
 using OpenIDE.Core.FileSystem;
 
 namespace OpenIDE.Arguments.Handlers
@@ -8,6 +9,7 @@ namespace OpenIDE.Arguments.Handlers
 	public class ListReactiveScriptsHandler : ICommandHandler
 	{
 		private string _token;
+		private PluginLocator _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -22,27 +24,22 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "list"; } }
 
-		public ListReactiveScriptsHandler(string token)
+		public ListReactiveScriptsHandler(string token, PluginLocator pluginLocator)
 		{
 			_token = token;
+			_pluginLocator = pluginLocator;
 		}
 
 		public void Execute(string[] arguments)
 		{
-			var globalScripts = new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetGlobalScripts();
-			if (globalScripts.Length > 0)
-				Console.WriteLine("Global scripts:");
-			foreach (var script in globalScripts)
-				Console.WriteLine("\t" + script.Name);
-			
-			if (globalScripts.Length > 0)
-				Console.WriteLine("");
-				
-			var localScripts = new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts();
-			if (localScripts.Length > 0)
-				Console.WriteLine("Local scripts:");
-			foreach (var script in localScripts)
-				Console.WriteLine("\t" + script.Name);
+			var scripts = 
+				new ReactiveScriptReader(
+					_token,
+					() => { return _pluginLocator; },
+					(m) => {})
+					.Read();
+			foreach (var script in scripts)
+				Console.WriteLine(script.Name);
 		}
 	}
 }

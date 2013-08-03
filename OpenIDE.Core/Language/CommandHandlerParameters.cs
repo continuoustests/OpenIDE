@@ -17,18 +17,18 @@ namespace OpenIDE.Core.Language
 
 		public BaseCommandHandlerParameter(string name, string description)
 		{
-			Name = name;
+			Name = name.Replace("[", "").Replace("]", "");
 			_description = description;
-			Required = true;
+			Required = !name.StartsWith("[");
 			Type = CommandType.SubParameter;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
 
 		public BaseCommandHandlerParameter(string name, string description, CommandType type)
 		{
-			Name = name;
+			Name = name.Replace("[", "").Replace("]", "");
 			_description = description;
-			Required = true;
+			Required = name.StartsWith("[");
 			Type = type;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
@@ -41,7 +41,9 @@ namespace OpenIDE.Core.Language
 
 		public BaseCommandHandlerParameter Add(string name, string description)
 		{
-			var parameter = new BaseCommandHandlerParameter(name, description);
+			var parameter = new BaseCommandHandlerParameter(name.Replace("[", "").Replace("]", ""), description);
+			if (name.StartsWith("["))
+				parameter.IsOptional();
 			_parameters.Add(parameter);
 			return parameter;
 		}
@@ -54,7 +56,9 @@ namespace OpenIDE.Core.Language
 
 		public BaseCommandHandlerParameter Insert(string name, string description)
 		{
-			var parameter = new BaseCommandHandlerParameter(name, description);
+			var parameter = new BaseCommandHandlerParameter(name.Replace("[", "").Replace("]", ""), description);
+			if (name.StartsWith("["))
+				parameter.IsOptional();
 			_parameters.Insert(0, parameter);
 			return parameter;
 		}

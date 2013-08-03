@@ -1,7 +1,10 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Commands;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Definitions;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -29,6 +32,9 @@ namespace OpenIDE.Arguments.Handlers
 					usage
 						.Add("rm", "Delete a script")
 							.Add("SCRIPT-NAME", "Script name local are picked over global");
+					usage
+						.Add("cat", "Prints the script to the terminal")
+							.Add("SCRIPT-NAME", "Script name with optional file extension.");
 				return usage;
 			}
 		}
@@ -39,16 +45,18 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			_token = token;
 			_dispatch = dispatch;
-			_handlers.Add(new ScriptHandler(_token, _dispatch));
 			_handlers.Add(new CreateScriptHandler(_token, _dispatch));
 			_handlers.Add(new EditScriptHandler(_token, _dispatch));
 			_handlers.Add(new DeleteScriptHandler(_token));
+			_handlers.Add(new CatScriptHandler(_token));
 		}
 
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length == 0)
-				arguments = new[] { "x" };
+			if (arguments.Length == 0) {
+				printDefinitions();
+				return;
+			}
 			var handler = _handlers.FirstOrDefault(x => x.Command == arguments[0]);
 			if (handler == null)
 				return;
@@ -61,6 +69,16 @@ namespace OpenIDE.Arguments.Handlers
 			for (int i = 1; i < args.Length; i++)
 				arguments.Add(args[i]);
 			return arguments.ToArray();
+		}
+
+		private void printDefinitions() {
+			var definitions = 
+				Bootstrapper.GetDefinitionBuilder()
+					.Definitions
+					.Where(x => x.Type == DefinitionCacheItemType.Script);
+			Console.WriteLine("Available commands:");
+			foreach (var definition in definitions)
+				UsagePrinter.PrintDefinition(definition);
 		}
 	}
 }

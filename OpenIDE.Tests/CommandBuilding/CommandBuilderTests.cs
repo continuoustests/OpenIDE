@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 using OpenIDE.Arguments;
-using OpenIDE.Core.Language;
+using OpenIDE.Core.Definitions;
 using OpenIDE.CommandBuilding;
 using System.Text;
 
@@ -16,23 +16,20 @@ namespace OpenIDE.Tests.CommandBuilding
 		[SetUp]
 		public void Setup()
 		{
-			var commands = new List<CommandHandlerParameter>();
-			commands.Add(new CommandHandlerParameter(
-				"C#",
-				CommandType.FileCommand,
-				"Option1",
-				"Opt1 desc"));
-			commands[0].Add("opt1sub1", "desc");
+			var type = DefinitionCacheItemType.Script;
+			var commands = new List<DefinitionCacheItem>();
+			commands.Add(new DefinitionCacheItem() {
+					Type = type, Location = "", Updated = DateTime.Now, Required = true, Name = "Option1", Description = "Opt1 desc"
+				});
+			commands[0].Add(type, "", DateTime.Now, true, "opt1sub1", "desc");
 
-			commands.Add(new CommandHandlerParameter(
-				"C#",
-				CommandType.FileCommand,
-				"Option2",
-				"Opt2 desc"));
-			commands[1].Add("opt2sub1", "desc");
-			commands[1].Add("opt2sub2", "desc");
+			commands.Add(new DefinitionCacheItem() {
+					Type = type, Location = "", Updated = DateTime.Now, Required = true, Name = "Option2", Description = "Opt2 desc"
+				});
+			commands[1].Add(type, "", DateTime.Now, true, "opt2sub1", "desc");
+			commands[1].Add(type, "", DateTime.Now, true, "opt2sub2", "desc");
 
-			_builder = new CommandBuilder(commands.Cast<BaseCommandHandlerParameter>());
+			_builder = new CommandBuilder(commands);
 			initialize();
 		}
 

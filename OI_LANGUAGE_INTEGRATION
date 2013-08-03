@@ -8,11 +8,18 @@ Error description with no line separators
 
 ------------------------------------------------------- GENERAL OUTPUT ---------------------------------------------------------
 
-Comment with no line separators
+Warnings with no line separators
 	RESPONSE FORMAT:
-		comment|COMMENT
+		warning|COMMENT
+
+------------------------------------------------------- GENERAL OUTPUT ---------------------------------------------------------
+
+Commands
+	RESPONSE FORMAT:
+		command|editor goto ...
 
 ----------------------------------------------------- REQUIRED INTEGRATION -----------------------------------------------------
+
 Initialize is sent to the plugin when the code engine starts. If the plugin choooses
 to respond with initialized the process will be kept open and all requests will be 
 sent through stdin, stdout for as long as the code engine lives.
@@ -114,9 +121,9 @@ Various language plugin commands. This would be any command handled by the plugi
 		// The error and comment general output commands are also supported
 		// Below is a simple sample
 
-		comment|File /home/me/myfile created
-		editor goto /home/me/myfile|3|18
-		editor setfocus
+		File /home/me/myfile created
+		command|editor goto /home/me/myfile|3|18
+		command|editor setfocus
 
 
 

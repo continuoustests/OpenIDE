@@ -22,8 +22,6 @@ namespace OpenIDE.Tests
 					() => { return new ICommandHandler[] {}; },
 					() => { return new ICommandHandler[] {}; }));
 			
-			Assert.That(container.ICommandHandlers().Count(), Is.EqualTo(29));
-			
 			Assert.That(container.IFS(), Is.InstanceOf<IFS>());
 			Assert.That(container.IMessageBus(), Is.InstanceOf<IMessageBus>());
 			Assert.That(container.ILocateEditorEngine(), Is.InstanceOf<ILocateEditorEngine>());

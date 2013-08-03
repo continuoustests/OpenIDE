@@ -108,7 +108,6 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void createProfile(Args args) {
-			var profileLocator = new ProfileLocator(Environment.CurrentDirectory);
 			// Make sure we have a config point
 			if (!args.IsGlobal)
 				_configHandler.Execute(new[]{"init"});

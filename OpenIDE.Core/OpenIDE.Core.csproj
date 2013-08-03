@@ -105,6 +105,13 @@
     <Compile Include="Packaging\Installer.cs" />
     <Compile Include="CoreExtensions\ProcessExtensions.cs" />
     <Compile Include="FileSystem\OiLnkReader.cs" />
+    <Compile Include="Packaging\Source.cs" />
+    <Compile Include="FileSystem\SourceLocator.cs" />
+    <Compile Include="Configs\ConfigReader.cs" />
+    <Compile Include="Definitions\DefinitionCacheReader.cs" />
+    <Compile Include="Definitions\DefinitionCacheWriter.cs" />
+    <Compile Include="Definitions\DefinitionCache.cs" />
+    <Compile Include="Definitions\DefinitionBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
