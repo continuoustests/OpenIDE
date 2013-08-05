@@ -44,7 +44,8 @@ namespace OpenIDE
 					return false;
 				command.Execute(arguments.ToArray());
 			}
-			Bootstrapper.DispatchMessage("event|command-completed " + new CommandStringParser().GetArgumentString(args));
+			// TODO: Command completed event needs to be triggered when command is done not when command process is started
+			//Bootstrapper.DispatchMessage("event|command-completed " + new CommandStringParser().GetArgumentString(args));
 			return true;
 		}	
 	}

@@ -21,7 +21,11 @@ namespace CoreExtensions
         public static Func<string,string> GetInterpreter = (file) => null;
 
         public static void Write(this Process proc, string msg) {
-            proc.StandardInput.WriteLine(msg);
+            try {
+                proc.StandardInput.WriteLine(msg);
+                proc.StandardInput.Flush();
+            } catch {
+            }
         }
 
         public static void Run(this Process proc, string command, string arguments,
