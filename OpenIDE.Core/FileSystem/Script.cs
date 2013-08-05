@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Logging;
 using CoreExtensions;
 
 namespace OpenIDE.Core.FileSystem
@@ -17,6 +18,7 @@ namespace OpenIDE.Core.FileSystem
 		private string _workingDirectory;
 		private string _localProfileName;
 		private string _globalProfileName;
+		private Action<string> _writer = (msg) => {};
 
 		public IEnumerable<BaseCommandHandlerParameter> Usages { get { return getUsages(); } }
 
@@ -36,8 +38,14 @@ namespace OpenIDE.Core.FileSystem
 			_localProfileName = profiles.GetActiveLocalProfile();
 		}
 
+		public void Write(string message)
+		{
+			_writer(message);
+		}
+
 		public void Run(string arguments, Action<string> onLine)
 		{
+			Logger.Write("Running script {0} with {1}", _file, arguments);
 			arguments = "{global-profile} {local-profile} " + arguments;
 			run(
 				arguments,
@@ -46,6 +54,7 @@ namespace OpenIDE.Core.FileSystem
 						new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
 						new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
 					});
+			Logger.Write("Running script completed {0}", _file);
 		}
 
 		private IEnumerable<BaseCommandHandlerParameter> getUsages()
@@ -105,6 +114,14 @@ namespace OpenIDE.Core.FileSystem
 			finalReplacements.AddRange(replacements);
             arguments = "{run-location} " + arguments;
 			var proc = new Process();
+			_writer = (msg) => { 
+				try {
+					Logger.Write("Writing to the process " + msg);
+					proc.Write(msg);
+				} catch (Exception ex) {
+					Logger.Write(ex);
+				}
+			};
 			proc
 				.Query(
 					cmd,
@@ -118,6 +135,7 @@ namespace OpenIDE.Core.FileSystem
 								onLine(line);
 						},
 					finalReplacements);
+			_writer = (msg) => {};
 		}
 	}
 }

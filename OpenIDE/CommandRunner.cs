@@ -6,6 +6,7 @@ using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Definitions;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE
@@ -20,7 +21,16 @@ namespace OpenIDE
 				var sb = new StringBuilder();
 				for (int i = 0; i < arguments.Count; i++)
 					sb.Append(" \"" + arguments[i] + "\"");
-				script.Run(sb.ToString(), Bootstrapper.DispatchMessage);
+				script.Run(
+					sb.ToString(),
+					(command) => {
+						Bootstrapper.DispatchAndCompleteMessage(
+							command,
+							() => {
+								Logger.Write("Writing end of command");
+								script.Write("end-of-command");
+							});
+					});
 			} else if (cmd.Type == DefinitionCacheItemType.Language) {
 				var language = new LanguagePlugin(cmd.Location, Bootstrapper.DispatchMessage);
 				// If default language command add original parameter

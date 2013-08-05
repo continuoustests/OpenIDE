@@ -20,6 +20,7 @@ namespace OpenIDE.Bootstrapping
 
 		public static AppSettings Settings = null; 
 		public static Action<string> DispatchMessage { get { return _container.DispatchMessage ; } }
+		public static Action<string, Action> DispatchAndCompleteMessage { get { return _container.DispatchAndCompleteMessage; } }
 		
 		public static void Initialize()
 		{
@@ -61,6 +62,7 @@ namespace OpenIDE.Bootstrapping
 	{
 		private const string DEFAULT_LANGUAGE = "--default.language=";
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
+		private const string ENABLE_LOGGING = "--logging";
 
 		private string _path;
 
@@ -70,6 +72,7 @@ namespace OpenIDE.Bootstrapping
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
 		public string Plugin = "";
+		public bool LoggingEnabled = false;
 
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
@@ -114,6 +117,9 @@ namespace OpenIDE.Bootstrapping
 								.Substring(
 									ENABLED_LANGUAGES.Length,
 									arg.Length - ENABLED_LANGUAGES.Length)).ToArray();
+					continue;
+				} else if (arg == ENABLE_LOGGING) {
+					LoggingEnabled = true;
 					continue;
 				}
 
