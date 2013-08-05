@@ -34,4 +34,25 @@ namespace OpenIDE.Core.Logging
 			return _logger != null;
 		}
 	}
+
+	public class ConsoleLogger : ILogger
+	{
+		public void Write(string message) {
+			Console.ForegroundColor = ConsoleColor.Blue;
+			Console.WriteLine(message);
+			Console.ResetColor();
+		}
+
+		public void Write(string message, params object[] args) {
+			Console.ForegroundColor = ConsoleColor.Blue;
+			Console.WriteLine(message, args);
+			Console.ResetColor();
+		}
+
+		public void Write(Exception ex) {
+			Console.ForegroundColor = ConsoleColor.Blue;
+			Console.WriteLine(ex.ToString());
+			Console.ResetColor();
+		}
+	}
 }

@@ -10,6 +10,7 @@ using OpenIDE.Arguments.Handlers;
 using OpenIDE.Core.EditorEngineIntegration;
 using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Profiles;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
@@ -24,6 +25,7 @@ namespace OpenIDE.Bootstrapping
 		private DefinitionBuilder _definitionBuilder = null;
 
 		public Action<string> DispatchMessage { get { return dispatchMessage; } }
+		public Action<string, Action> DispatchAndCompleteMessage { get { return dispatchAndCompleteMessage; } }
 
 		public DIContainer(AppSettings settings)
 		{
@@ -123,8 +125,13 @@ namespace OpenIDE.Bootstrapping
 				(command) => dispatchMessage(command));
 		}
 
-		private void dispatchMessage(string command)
+		private void dispatchMessage(string command) {
+			dispatchAndCompleteMessage(command, () => {});
+		}
+
+		private void dispatchAndCompleteMessage(string command, Action onCommandCompleted)
 		{
+			Logger.Write("Dispatching " + command);
 			if (command.Length == 0) {
 				Console.WriteLine();
 				return;
@@ -160,6 +167,7 @@ namespace OpenIDE.Bootstrapping
 					new CommandRunner()
 						.Run(cmd, args.ToArray());
 				}
+				onCommandCompleted();
 				return;
 			}
 			if (isEvent(command))

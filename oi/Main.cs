@@ -7,12 +7,14 @@ using OpenIDE.Messaging;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Arguments;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Commands;
 using OpenIDE.Core.Definitions;
+
 namespace oi
 {
 	class MainClass
@@ -28,6 +30,8 @@ namespace oi
 			var builder = Bootstrapper.GetDefinitionBuilder(); 
 			builder.Build();
 			args = Bootstrapper.Settings.Parse(args);
+			if (Bootstrapper.Settings.LoggingEnabled)
+				Logger.Assign(new ConsoleLogger());
 
 			if (args.Length == 0) {
 				printUsage(null);
@@ -87,6 +91,7 @@ namespace oi
 				Console.WriteLine("\t[{0}=NAME] : Force command to run under specified global profile", GLOBAL_PROFILE);
 				Console.WriteLine("\t[--default.language=NAME] : Force command to run using specified default language");
 				Console.WriteLine("\t[--enabled.languages=LANGUAGE_LIST] : Force command to run using specified languages");
+				Console.WriteLine("\t[--logging] : Enables logging to console");
 				Console.WriteLine();
 			}
 			definitions.ToList()
