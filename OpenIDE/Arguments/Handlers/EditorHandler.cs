@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Profiles;
@@ -60,11 +61,13 @@ namespace OpenIDE.Arguments.Handlers
 		
 		public void Execute(string[] arguments)
 		{
+			Logger.Write ("Getting editor instance");
 			var instance = _editorFactory.GetInstance(_rootPath);
 			// TODO remove that unbeleavable nasty setfocus solution. Only init if launching editor
 			var isSetfocus = arguments.Length > 0 && arguments[0] == "setfocus";
 			if (instance == null && arguments.Length >= 0 && !isSetfocus)
 			{
+				Logger.Write ("Starting instance");
 				instance = startInstance();
 				if (instance == null)
 					return;
@@ -85,6 +88,7 @@ namespace OpenIDE.Arguments.Handlers
 					configReader	
 						.GetStartingWith("editor." + editorName)
 						.Select(x => "--" + x.Key + "=" + x.Value));
+				writeStartArguments(args);
 				var editor = instance.Start(args.ToArray());
 				if (editor != null && editor != "")
 					runInitScripts();
@@ -106,6 +110,15 @@ namespace OpenIDE.Arguments.Handlers
 					return;
 				instance.Run(arguments);
 			}
+		}
+
+		public void writeStartArguments (List<string> args)
+		{
+			var arguments = "";
+			foreach (var arg in args)
+				arguments = arg + " ";
+			Logger.Write ("Running edtiro with " + arguments);
+				
 		}
 		
 		private OpenIDE.Core.EditorEngineIntegration.Instance startInstance()

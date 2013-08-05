@@ -12,6 +12,7 @@ using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Commands;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Definitions;
 namespace oi
 {
@@ -22,11 +23,15 @@ namespace oi
 
 		public static void Main(string[] args)
 		{
+			Logger.Write("Parsing profile arguments");
 			args = parseProfile(args);
+			Logger.Write("Initializing bootstrapper");
 			Bootstrapper.Initialize();			
-
+			
+			Logger.Write("Building difinition caches");
 			var builder = Bootstrapper.GetDefinitionBuilder(); 
 			builder.Build();
+			Logger.Write("Parsing arguments");
 			args = Bootstrapper.Settings.Parse(args);
 
 			if (args.Length == 0) {
@@ -41,6 +46,7 @@ namespace oi
 				printUsage(arguments[0]);
 				return;
 			}
+			Logger.Write("Running command " + cmd.Name);
 			if (!new CommandRunner().Run(cmd, arguments))
 				printUsage(cmd.Name);
 		}
