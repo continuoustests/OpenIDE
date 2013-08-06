@@ -74,7 +74,7 @@ namespace OpenIDE.Arguments.Handlers
 				paths.Add(plugin.GetPluginDir());
 			var reader = new ConfigOptionsReader(paths.ToArray());
 			reader.Parse();
-			foreach (var line in reader.Options)
+			foreach (var line in reader.Options.OrderBy(x => x))
 				Console.WriteLine(line);
 		}
 
