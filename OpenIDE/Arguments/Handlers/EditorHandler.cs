@@ -72,6 +72,7 @@ namespace OpenIDE.Arguments.Handlers
 				if (instance == null)
 					return;
 				var args = new List<string>();
+				Logger.Write("Reading configuration from " + _rootPath);
 				var configReader = new ConfigReader(_rootPath);
 				if (arguments.Length == 0) {
 					var name = configReader.Get("default.editor");
@@ -117,7 +118,7 @@ namespace OpenIDE.Arguments.Handlers
 			var arguments = "";
 			foreach (var arg in args)
 				arguments = arg + " ";
-			Logger.Write ("Running edtiro with " + arguments);
+			Logger.Write ("Running editor with " + arguments);
 				
 		}
 		
@@ -134,9 +135,10 @@ namespace OpenIDE.Arguments.Handlers
 				exe = assembly;
 				arg = "";
 			}
-			arg += "\"" + Environment.CurrentDirectory + "\"";
+			arg += "\"" + _rootPath + "\"";
+			Logger.Write ("Starting editor " + exe + " " + arg);
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(exe, "\"" + _rootPath + "\"");
+			proc.StartInfo = new ProcessStartInfo(exe, arg);
 			proc.StartInfo.CreateNoWindow = true;
 			proc.StartInfo.UseShellExecute = true;
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

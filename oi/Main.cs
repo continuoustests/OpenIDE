@@ -25,15 +25,12 @@ namespace oi
 
 		public static void Main(string[] args)
 		{
-			Logger.Write("Parsing profile arguments");
 			args = parseProfile(args);
-			Logger.Write("Initializing bootstrapper");
 			Bootstrapper.Initialize();			
 			
-			Logger.Write("Building difinition caches");
 			var builder = Bootstrapper.GetDefinitionBuilder(); 
 			builder.Build();
-			Logger.Write("Parsing arguments");
+			
 			args = Bootstrapper.Settings.Parse(args);
 			if (Bootstrapper.Settings.LoggingEnabled)
 				Logger.Assign(new ConsoleLogger());
