@@ -1,0 +1,3 @@
+editor.sublime.executable|Path to sublime executable
+editor.sublime.project|Relative / Full path to sublime project
+editor.vim.executable|Path to vim executable

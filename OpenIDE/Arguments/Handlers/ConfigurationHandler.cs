@@ -65,6 +65,10 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var file = new Configuration(path, true).ConfigurationFile;
 			var paths = new List<string>();
+			paths.Add(
+				Path.Combine(
+					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+					"EditorEngine"));
 			paths.Add(Path.GetDirectoryName(file));
 			foreach (var plugin in _pluginLocator.Locate())
 				paths.Add(plugin.GetPluginDir());
