@@ -43,7 +43,7 @@ namespace OpenIDE.Core.Definitions
 		private void addItem(DefinitionCacheItem parent, JToken json) {
 			var item = 
 				parent
-					.Add(
+					.Append(
 						getType(json["type"].ToString()),
 						json["location"].ToString(),
 						getTime(json["updated"].ToString()),

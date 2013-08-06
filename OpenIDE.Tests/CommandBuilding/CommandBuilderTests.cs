@@ -12,22 +12,27 @@ namespace OpenIDE.Tests.CommandBuilding
 	public abstract class CommandBuilderTests
 	{
 		protected CommandBuilder _builder;
+		protected Func<List<DefinitionCacheItem>,DefinitionCacheItem,DefinitionCacheItem> _parameterAppender = (parameters, parameter) => {
+			parameters.Add(parameter);
+			return parameter;
+		};
+
 
 		[SetUp]
 		public void Setup()
 		{
 			var type = DefinitionCacheItemType.Script;
 			var commands = new List<DefinitionCacheItem>();
-			commands.Add(new DefinitionCacheItem() {
+			commands.Add(new DefinitionCacheItem(_parameterAppender) {
 					Type = type, Location = "", Updated = DateTime.Now, Required = true, Name = "Option1", Description = "Opt1 desc"
 				});
-			commands[0].Add(type, "", DateTime.Now, true, "opt1sub1", "desc");
+			commands[0].Append(type, "", DateTime.Now, true, "opt1sub1", "desc");
 
-			commands.Add(new DefinitionCacheItem() {
+			commands.Add(new DefinitionCacheItem(_parameterAppender) {
 					Type = type, Location = "", Updated = DateTime.Now, Required = true, Name = "Option2", Description = "Opt2 desc"
 				});
-			commands[1].Add(type, "", DateTime.Now, true, "opt2sub1", "desc");
-			commands[1].Add(type, "", DateTime.Now, true, "opt2sub2", "desc");
+			commands[1].Append(type, "", DateTime.Now, true, "opt2sub1", "desc");
+			commands[1].Append(type, "", DateTime.Now, true, "opt2sub2", "desc");
 
 			_builder = new CommandBuilder(commands);
 			initialize();

@@ -19,8 +19,8 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "", time, true, "cmd1", "")
-					.Add(type, "", time, true, "cmd2", "")
-						.Add(type, "", time, true, "cmd3", "");
+					.Append(type, "", time, true, "cmd2", "")
+						.Append(type, "", time, true, "cmd3", "");
 			Assert.That(cache.Get(new[] {"cmd1","cmd2"}).Name, Is.EqualTo("cmd2"));
 		}
 
@@ -31,8 +31,8 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "", time, true, "cmd1", "")
-					.Add(type, "", time, true, "USER_DEFINED_ARE_UPPER_CASE", "")
-						.Add(type, "", time, true, "cmd3", "");
+					.Append(type, "", time, true, "USER_DEFINED_ARE_UPPER_CASE", "")
+						.Append(type, "", time, true, "cmd3", "");
 			Assert.That(cache.Get(new[] {"cmd1","bleh","cmd3"}).Name, Is.EqualTo("cmd1"));
 		}
 
@@ -43,9 +43,9 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "", time, true, "cmd1", "")
-					.Add(type, "", time, true, "cmd2", "")
-						.Add(type, "", time, true, "cmd3", "")
-							.Add(type, "", time, false, "-g", "");
+					.Append(type, "", time, true, "cmd2", "")
+						.Append(type, "", time, true, "cmd3", "")
+							.Append(type, "", time, false, "-g", "");
 			Assert.That(cache.Get(new[] {"cmd1", "-g","cmd2","cmd3"}).Name, Is.EqualTo("cmd1"));
 		}
 
@@ -56,13 +56,13 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "", time, true, "cmd1", "")
-					.Add(type, "", time, true, "cmd2", "")
-						.Add(type, "", time, true, "cmd3", "")
-							.Add(type, "", time, false, "-g", "");
+					.Append(type, "", time, true, "cmd2", "")
+						.Append(type, "", time, true, "cmd3", "")
+							.Append(type, "", time, false, "-g", "");
 			var another = new DefinitionCache();
 			another	
 				.Add(type, "", time, true, "cmdAnother", "")
-					.Add(type, "", time, true, "cmdAnother2", "");
+					.Append(type, "", time, true, "cmdAnother2", "");
 			cache.Merge(another);
 			Assert.That(cache.Definitions.Length, Is.EqualTo(2));
 		}
@@ -74,13 +74,13 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "", time, true, "cmd1", "")
-					.Add(type, "", time, true, "cmd2", "")
-						.Add(type, "", time, true, "cmd3", "")
-							.Add(type, "", time, false, "-g", "");
+					.Append(type, "", time, true, "cmd2", "")
+						.Append(type, "", time, true, "cmd3", "")
+							.Append(type, "", time, false, "-g", "");
 			var another = new DefinitionCache();
 			another	
 				.Add(type, "", time, true, "cmd1", "")
-					.Add(type, "", time, true, "cmdAnother", "");
+					.Append(type, "", time, true, "cmdAnother", "");
 			cache.Merge(another);
 			Assert.That(cache.Definitions.Length, Is.EqualTo(1));
 		}
@@ -92,12 +92,12 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "", DateTime.Now, true, "cmd1", "")
-					.Add(type, "", DateTime.Now, true, "cmd2", "")
-						.Add(type, "", DateTime.Now, true, "cmd3", "")
-							.Add(type, "", time, false, "-g", "");
+					.Append(type, "", DateTime.Now, true, "cmd2", "")
+						.Append(type, "", DateTime.Now, true, "cmd3", "")
+							.Append(type, "", time, false, "-g", "");
 			cache	
 				.Add(type, "", DateTime.Now, true, "cmd1", "")
-					.Add(type, "", DateTime.Now, true, "cmdAnother", "");
+					.Append(type, "", DateTime.Now, true, "cmdAnother", "");
 			Assert.That(cache.GetOldestItem().Name, Is.EqualTo("-g"));
 		}
 
@@ -107,9 +107,9 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "loc1", DateTime.Now, true, "cmd1", "")
-					.Add(type, "loc1", DateTime.Now, true, "cmd2", "")
-						.Add(type, "loc1", new DateTime(2012,10,1,0,0,0), true, "cmd3", "")
-							.Add(type, "loc2", new DateTime(2012,1,1,0,0,0), false, "-g", "");
+					.Append(type, "loc1", DateTime.Now, true, "cmd2", "")
+						.Append(type, "loc1", new DateTime(2012,10,1,0,0,0), true, "cmd3", "")
+							.Append(type, "loc2", new DateTime(2012,1,1,0,0,0), false, "-g", "");
 			Assert.That(cache.GetOldestItem("loc1").Name, Is.EqualTo("cmd3"));
 		}
 
@@ -119,9 +119,9 @@ namespace OpenIDE.Core.Tests.Definitions
 			var cache = new DefinitionCache();
 			cache
 				.Add(type, "loc1", DateTime.Now, true, "cmd1", "")
-					.Add(type, "loc1", DateTime.Now, true, "cmd2", "")
-						.Add(DefinitionCacheItemType.Language, "loc3", new DateTime(2012,10,1,0,0,0), true, "cmd3", "")
-							.Add(type, "loc2", new DateTime(2012,1,1,0,0,0), false, "-g", "");
+					.Append(type, "loc1", DateTime.Now, true, "cmd2", "")
+						.Append(DefinitionCacheItemType.Language, "loc3", new DateTime(2012,10,1,0,0,0), true, "cmd3", "")
+							.Append(type, "loc2", new DateTime(2012,1,1,0,0,0), false, "-g", "");
 			Assert.That(cache.GetLocations(DefinitionCacheItemType.Script).Length, Is.EqualTo(2));
 		}
 	}

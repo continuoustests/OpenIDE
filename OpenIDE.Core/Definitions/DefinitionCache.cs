@@ -94,7 +94,7 @@ namespace OpenIDE.Core.Definitions
 		private void add(DefinitionCacheItem item, BaseCommandHandlerParameter parameter) {
 			var name = parameter.Name;
 			var child =
-				new DefinitionCacheItem() {
+				new DefinitionCacheItem(parameterAppender) {
 						Type = item.Type,
 						Location = item.Location,
 						Updated = item.Updated,
@@ -104,12 +104,12 @@ namespace OpenIDE.Core.Definitions
 					};
 			foreach (var cmd in parameter.Parameters)
 				add(child, cmd);
-			item.Parameters.Add(child);
+			item.Append(child);
 		}
 
 		private DefinitionCacheItem add(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
 			var item =
-				new DefinitionCacheItem() {
+				new DefinitionCacheItem(parameterAppender) {
 						Type = type,
 						Location = location,
 						Updated = updated,
@@ -120,6 +120,11 @@ namespace OpenIDE.Core.Definitions
 			addRaw(item);
 			_definitions.Add(item);
 			return item;
+		}
+
+		private DefinitionCacheItem parameterAppender(List<DefinitionCacheItem> parameters, DefinitionCacheItem parameterToAdd) {
+			parameters.Add(parameterToAdd);
+			return parameterToAdd;
 		}
 
 		private DefinitionCacheItem get(string[] args, int index, IEnumerable<DefinitionCacheItem> items, DefinitionCacheItem parent) {
@@ -177,26 +182,37 @@ namespace OpenIDE.Core.Definitions
 
 	public class DefinitionCacheItem
 	{
+		private List<DefinitionCacheItem> _parameters = new List<DefinitionCacheItem>();
+		private Func<List<DefinitionCacheItem>,DefinitionCacheItem,DefinitionCacheItem> _parameterAppender;
+
 		public DefinitionCacheItemType Type { get; set; }
 		public string Location { get; set; }
 		public DateTime Updated { get; set; }
 		public bool Required { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public List<DefinitionCacheItem> Parameters = new List<DefinitionCacheItem>();
+		public DefinitionCacheItem[] Parameters { get { return _parameters.ToArray(); } }
 
-		public DefinitionCacheItem Add(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
-			var item =
-				new DefinitionCacheItem() {
-						Type = type,
-						Location = location,
-						Updated = updated,
-						Required = required,
-						Name = name,
-						Description = description
-					};
-			Parameters.Add(item);
-			return item;
+		public DefinitionCacheItem(Func<List<DefinitionCacheItem>,DefinitionCacheItem,DefinitionCacheItem> parameterAppender) {
+			_parameterAppender = parameterAppender;
+		}
+
+		public DefinitionCacheItem Append(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
+			return 
+				_parameterAppender(
+					_parameters,
+					new DefinitionCacheItem(_parameterAppender) {
+							Type = type,
+							Location = location,
+							Updated = updated, 
+							Required = required,
+							Name = name,
+							Description = description
+						});
+		}
+
+		public DefinitionCacheItem Append(DefinitionCacheItem parameter) {
+			return _parameterAppender(_parameters, parameter);
 		}
 	}
 }
