@@ -47,7 +47,7 @@ namespace oi
 				printUsage(arguments[0]);
 				return;
 			}
-			Logger.Write("Running command " + cmd.Name);
+			Logger.Write("Running command {0} of type {1}", cmd.Name, cmd.Type);
 			if (!new CommandRunner().Run(cmd, arguments))
 				printUsage(cmd.Name);
 		}

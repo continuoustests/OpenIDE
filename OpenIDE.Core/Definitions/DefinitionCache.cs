@@ -10,6 +10,7 @@ namespace OpenIDE.Core.Definitions
 	{ 
 		private List<DefinitionCacheItem> _builtIn = new List<DefinitionCacheItem>();
 		private List<DefinitionCacheItem> _languages = new List<DefinitionCacheItem>();
+		private List<DefinitionCacheItem> _languageScripts = new List<DefinitionCacheItem>();
 		private List<DefinitionCacheItem> _scripts = new List<DefinitionCacheItem>();
 		private List<DefinitionCacheItem> _definitions = new List<DefinitionCacheItem>();
 
@@ -29,6 +30,10 @@ namespace OpenIDE.Core.Definitions
 		
 		public DefinitionCacheItem GetLanguage(string[] args) {
 			return get(args, 0, _languages, null);
+		}
+
+		public DefinitionCacheItem GetLanguageScript(string[] args) {
+			return get(args, 0, _languageScripts, null);
 		}
 		
 		public DefinitionCacheItem GetScript(string[] args) {
@@ -152,6 +157,8 @@ namespace OpenIDE.Core.Definitions
 				_builtIn.Add(item);
 			else if (item.Type == DefinitionCacheItemType.Language)
 				_languages.Add(item);
+			else if (item.Type == DefinitionCacheItemType.LanguageScript)
+				_languageScripts.Add(item);
 			else if (item.Type == DefinitionCacheItemType.Script)
 				_scripts.Add(item);
 		}
@@ -160,6 +167,7 @@ namespace OpenIDE.Core.Definitions
 	public enum DefinitionCacheItemType
 	{
 		Script,
+		LanguageScript,
 		Language,
 		BuiltIn
 	}

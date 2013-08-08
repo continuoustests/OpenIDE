@@ -7,6 +7,7 @@ using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Definitions;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Scripts;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Definitions
 {
@@ -59,6 +60,10 @@ namespace OpenIDE.Core.Definitions
 			return _cache.GetLanguage(args);
 		}
 		
+		public DefinitionCacheItem GetLanguageScript(string[] args) {
+			return _cache.GetLanguageScript(args);
+		}
+
 		public DefinitionCacheItem GetScript(string[] args) {
 			return _cache.GetScript(args);
 		}
@@ -149,6 +154,27 @@ namespace OpenIDE.Core.Definitions
 					language.GetLanguage(),
 					"Commands for the " + language.GetLanguage() + " plugin");
 				add(item, language.GetUsages());
+
+				var languageScriptPath = 
+					Path.Combine(
+						Path.Combine(
+							languagePath, language.GetLanguage() + "-files"),
+							"scripts");
+				Logger.Write("Adding scripts from " + languageScriptPath);
+				var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
+				foreach (var scriptFile in languageScripts) {
+					var script  = new Script(_token, _workingDirectory, scriptFile);
+					var usages = script.Usages; // Description is built when fetching usages
+					var scriptItem = item.Append(
+						DefinitionCacheItemType.LanguageScript,
+						scriptFile,
+						DateTime.Now,
+						true,
+						script.Name,
+						script.Description);
+					add(scriptItem, usages);
+				}
+
 				if (language.GetLanguage() == _defaultLanguage)
 					defaultLanguage = language;
 			}

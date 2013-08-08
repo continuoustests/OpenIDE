@@ -57,9 +57,12 @@ namespace OpenIDE.Core.Definitions
 		private DefinitionCacheItemType getType(string type) {
 			if (type == "script")
 				return DefinitionCacheItemType.Script;
-			if (type == "language")
+			else if (type == "language")
 				return DefinitionCacheItemType.Language;
-			return DefinitionCacheItemType.BuiltIn;
+			else if (type == "languagescript")
+				return DefinitionCacheItemType.LanguageScript;
+			else
+				return DefinitionCacheItemType.BuiltIn;
 		}
 
 		private DateTime getTime(string expression) {

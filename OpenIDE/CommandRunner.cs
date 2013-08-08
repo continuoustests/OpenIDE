@@ -16,11 +16,17 @@ namespace OpenIDE
 		public bool Run(DefinitionCacheItem cmd, IEnumerable<string> args) {
 			var arguments = args.ToList();
 			arguments.RemoveAt(0);
-			if (cmd.Type == DefinitionCacheItemType.Script) {
+			if (cmd.Type == DefinitionCacheItemType.Script || cmd.Type == DefinitionCacheItemType.LanguageScript) {
+				Logger.Write("Running command as script");
 				var script = new Script(Bootstrapper.Settings.RootPath, Environment.CurrentDirectory, cmd.Location);
 				var sb = new StringBuilder();
-				for (int i = 0; i < arguments.Count; i++)
+				// On language commands remove the second argument too if
+				// it matches the command name (oi langcommand vs oi C# langcommand)
+				if (cmd.Type == DefinitionCacheItemType.LanguageScript && arguments.Count > 0 && arguments[0] == cmd.Name)
+					arguments.RemoveAt(0);
+				for (int i = 0; i < arguments.Count; i++) {
 					sb.Append(" \"" + arguments[i] + "\"");
+				}
 				script.Run(
 					sb.ToString(),
 					(command) => {
@@ -32,12 +38,14 @@ namespace OpenIDE
 							});
 					});
 			} else if (cmd.Type == DefinitionCacheItemType.Language) {
+				Logger.Write("Running command as language command");
 				var language = new LanguagePlugin(cmd.Location, Bootstrapper.DispatchMessage);
 				// If default language command add original parameter
 				if (args.ElementAt(0) != language.GetLanguage())
 					arguments.Insert(0, args.ElementAt(0));
 				language.Run(arguments.ToArray());
 			} else {
+				Logger.Write("Running command as built in command");
 				var command = Bootstrapper.GetDefaultHandlers()
 					.FirstOrDefault(x => x.Command == args.ElementAt(0));
 				if (command == null)

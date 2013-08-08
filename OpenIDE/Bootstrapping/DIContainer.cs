@@ -160,6 +160,8 @@ namespace OpenIDE.Bootstrapping
 					cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
 				else if (prefix == "command-language|")
 					cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
+				else if (prefix == "command-languagescript|")
+					cmd = GetDefinitionBuilder().GetLanguageScript(args.ToArray());
 				else if (prefix == "command-script|")
 					cmd = GetDefinitionBuilder().GetScript(args.ToArray());
 
