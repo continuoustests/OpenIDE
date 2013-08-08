@@ -96,7 +96,7 @@ namespace OpenIDE.Core.Tests.Definitions
 						.Append(type, "", DateTime.Now, true, "cmd3", "")
 							.Append(type, "", time, false, "-g", "");
 			cache	
-				.Add(type, "", DateTime.Now, true, "cmd1", "")
+				.Add(type, "", DateTime.Now, true, "cmd1-1", "")
 					.Append(type, "", DateTime.Now, true, "cmdAnother", "");
 			Assert.That(cache.GetOldestItem().Name, Is.EqualTo("-g"));
 		}
@@ -123,6 +123,36 @@ namespace OpenIDE.Core.Tests.Definitions
 						.Append(DefinitionCacheItemType.Language, "loc3", new DateTime(2012,10,1,0,0,0), true, "cmd3", "")
 							.Append(type, "loc2", new DateTime(2012,1,1,0,0,0), false, "-g", "");
 			Assert.That(cache.GetLocations(DefinitionCacheItemType.Script).Length, Is.EqualTo(2));
+		}
+
+		[Test]
+		public void Can_override_existing_command() {
+			var cache = new DefinitionCache();
+			cache
+				.Add(DefinitionCacheItemType.BuiltIn, "l1", DateTime.Now, true, "cmd1", "")
+					.Append(DefinitionCacheItemType.BuiltIn, "l1", DateTime.Now, true, "cmd1-1", "");
+			cache
+				.Add(DefinitionCacheItemType.Script, "l2", DateTime.Now, true, "cmd1", "")
+					.Append(DefinitionCacheItemType.Script, "l2", DateTime.Now, true, "override-1", "");
+			var item = cache.Get(new[] { "cmd1" });
+			Assert.That(item.Type, Is.EqualTo(DefinitionCacheItemType.Script));
+			Assert.That(item.Location, Is.EqualTo("l2"));
+			Assert.That(item.Parameters[0].Name, Is.EqualTo("override-1"));
+		}
+
+		[Test]
+		public void Can_get_built_in_command_hidden_by_override() {
+			var cache = new DefinitionCache();
+			cache
+				.Add(DefinitionCacheItemType.BuiltIn, "l1", DateTime.Now, true, "cmd1", "")
+					.Append(DefinitionCacheItemType.BuiltIn, "l1", DateTime.Now, true, "cmd1-1", "");
+			cache
+				.Add(DefinitionCacheItemType.Script, "l2", DateTime.Now, true, "cmd1", "")
+					.Append(DefinitionCacheItemType.Script, "l2", DateTime.Now, true, "override-1", "");
+			var item = cache.GetBuiltIn(new[] { "cmd1" });
+			Assert.That(item.Type, Is.EqualTo(DefinitionCacheItemType.BuiltIn));
+			Assert.That(item.Location, Is.EqualTo("l1"));
+			Assert.That(item.Parameters[0].Name, Is.EqualTo("cmd1-1"));
 		}
 	}
 }

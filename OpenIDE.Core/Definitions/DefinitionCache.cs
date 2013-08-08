@@ -19,12 +19,6 @@ namespace OpenIDE.Core.Definitions
 			return add(type, location, updated, required, name, description);
 		}
 
-		public void Add(DefinitionCacheItemType type, string location, DateTime updated, string name, string description, IEnumerable<BaseCommandHandlerParameter> parameters) {
-			var item = add(type, location, updated, true, name, description);
-			foreach (var parameter in parameters)
-				add(item, parameter);
-		}
-
 		public DefinitionCacheItem Get(string[] args) {
 			return get(args, 0, _definitions, null);
 		}
@@ -42,9 +36,8 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		public void Merge(DefinitionCache cache) {
-			addRaw(cache.Definitions);
-			var merge = cache.Definitions.Where(x => !_definitions.Any(y => x.Name == y.Name));
-			_definitions.AddRange(merge);
+			foreach (var definition in cache.Definitions)
+				add(definition);
 		}
 
 		public DefinitionCacheItem GetOldestItem() {
@@ -91,22 +84,6 @@ namespace OpenIDE.Core.Definitions
 			}
 		}
 
-		private void add(DefinitionCacheItem item, BaseCommandHandlerParameter parameter) {
-			var name = parameter.Name;
-			var child =
-				new DefinitionCacheItem(parameterAppender) {
-						Type = item.Type,
-						Location = item.Location,
-						Updated = item.Updated,
-						Required = parameter.Required,
-						Name = name,
-						Description = parameter.Description 
-					};
-			foreach (var cmd in parameter.Parameters)
-				add(child, cmd);
-			item.Append(child);
-		}
-
 		private DefinitionCacheItem add(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
 			var item =
 				new DefinitionCacheItem(parameterAppender) {
@@ -117,7 +94,14 @@ namespace OpenIDE.Core.Definitions
 						Name = name,
 						Description = description
 					};
+			return add(item);
+		}
+
+		private DefinitionCacheItem add(DefinitionCacheItem item) {
+			
 			addRaw(item);
+			if (_definitions.Any(x => x.Name == item.Name))
+				_definitions.RemoveAll(x => x.Name == item.Name);
 			_definitions.Add(item);
 			return item;
 		}

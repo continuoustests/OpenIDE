@@ -97,7 +97,9 @@ namespace oi
 				Console.WriteLine("\t[--logging] : Enables logging to console");
 				Console.WriteLine();
 			}
-			definitions.ToList()
+			definitions
+				.OrderBy(x => x.Name)
+				.ToList()
 				.ForEach(x => UsagePrinter.PrintDefinition(x));
 		}
 

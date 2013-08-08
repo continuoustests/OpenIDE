@@ -67,12 +67,11 @@ namespace OpenIDE.Core.Definitions
 			_cache = new DefinitionCache();
 			var profiles = new ProfileLocator(_token);
 
-			// Loop reversed to handle local profile first
-			// because of overriding definitions
-			var paths = profiles.GetPathsCurrentProfiles().ToArray();
+			mergeBuiltInCommands(profiles);
+			// Reverse paths to handle global first then local
+			var paths = profiles.GetPathsCurrentProfiles().Reverse().ToArray();
 			for (int i = paths.Length - 1; i >= 0; i--)
 				mergeExternalCommands(paths[i]);
-			mergeBuiltInCommands(profiles);
 		}
 
 		private void mergeExternalCommands(string path) {
@@ -106,14 +105,15 @@ namespace OpenIDE.Core.Definitions
 		private DefinitionCache writeBuiltInCommands(string file, ProfileLocator profiles) {
 			var builtInCache = new DefinitionCache();
 			foreach (var cmd in _builtIn()) {
-				builtInCache	
+				var item = builtInCache	
 					.Add(
 						DefinitionCacheItemType.BuiltIn,
 						null,
 						DateTime.Now,
+						true,
 						cmd.Name,
-						cmd.Usage.Description,
-						cmd.Usage.Parameters);
+						cmd.Usage.Description);
+				add(item, cmd.Usage.Parameters);
 			}
 			writeCache(profiles.AppRootPath, builtInCache);
 			return builtInCache;
@@ -136,33 +136,19 @@ namespace OpenIDE.Core.Definitions
 		private DefinitionCache buildDefinitions(string file) {
 			var cache = new DefinitionCache();
 			var dir = Path.GetDirectoryName(file);
-
-			// Add scripts
-			var scriptPath = Path.Combine(dir, "scripts");
-			var scripts = new ScriptFilter().GetScripts(scriptPath);
-			foreach (var scriptFile in scripts) {
-				var script  = new Script(_token, _workingDirectory, scriptFile);
-				var usages = script.Usages; // Description is built when fetching usages
-				cache.Add(
-					DefinitionCacheItemType.Script,
-					scriptFile,
-					DateTime.Now,
-					script.Name,
-					script.Description,
-					usages);
-			}
-
+			
 			// Add languages
 			var languagePath = Path.Combine(dir, "languages");
 			LanguagePlugin defaultLanguage = null;
 			foreach (var language in _languages(languagePath)) {
-				cache.Add(
+				var item = cache.Add(
 					DefinitionCacheItemType.Language,
 					language.FullPath,
 					DateTime.Now,
+					true,
 					language.GetLanguage(),
-					"Commands for the " + language.GetLanguage() + " plugin",
-					language.GetUsages());
+					"Commands for the " + language.GetLanguage() + " plugin");
+				add(item, language.GetUsages());
 				if (language.GetLanguage() == _defaultLanguage)
 					defaultLanguage = language;
 			}
@@ -170,17 +156,53 @@ namespace OpenIDE.Core.Definitions
 			// Add default language
 			if (defaultLanguage != null) {
 				foreach (var usage in defaultLanguage.GetUsages()) {
-					cache.Add(
+					var item = cache.Add(
 						DefinitionCacheItemType.Language,
 						defaultLanguage.FullPath,
 						DateTime.Now,
+						true,
 						usage.Name,
-						usage.Description,
-						usage.Parameters);
+						usage.Description);
+					add(item, usage.Parameters);
 				}
+			}
+
+			// Add scripts
+			var scriptPath = Path.Combine(dir, "scripts");
+			var scripts = new ScriptFilter().GetScripts(scriptPath);
+			foreach (var scriptFile in scripts) {
+				var script  = new Script(_token, _workingDirectory, scriptFile);
+				var usages = script.Usages; // Description is built when fetching usages
+				var item = cache.Add(
+					DefinitionCacheItemType.Script,
+					scriptFile,
+					DateTime.Now,
+					true,
+					script.Name,
+					script.Description);
+				add(item, usages);
 			}
 			writeCache(dir, cache);
 			return cache;
+		}
+
+		private void add(DefinitionCacheItem item, IEnumerable<BaseCommandHandlerParameter> parameters) {
+			foreach (var parameter in parameters)
+				add(item, parameter);
+		}
+
+		private void add(DefinitionCacheItem item, BaseCommandHandlerParameter parameter) {
+			var name = parameter.Name;
+			var child =
+				item.Append(
+						item.Type,
+						item.Location,
+						item.Updated,
+						parameter.Required,
+						name,
+						parameter.Description);
+			foreach (var cmd in parameter.Parameters)
+				add(child, cmd);
 		}
 
 		private bool cacheIsOutOfDate(string file, DefinitionCache cache) {

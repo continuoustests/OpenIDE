@@ -349,9 +349,9 @@ namespace OpenIDE.Arguments.Handlers
 				var source = 
 					locator
 						.GetSources()
-						.FirstOrDefault(x => x.Name == args[2]);
+						.FirstOrDefault(x => x.Name == name);
 				if (source == null) {
-					printError("There is no package source named " + args[2]);
+					printError("There is no package source named " + name);
 					return;
 				}
 				File.Delete(source.Path);
