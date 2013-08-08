@@ -153,20 +153,6 @@ namespace OpenIDE.Core.Definitions
 					defaultLanguage = language;
 			}
 
-			// Add default language
-			if (defaultLanguage != null) {
-				foreach (var usage in defaultLanguage.GetUsages()) {
-					var item = cache.Add(
-						DefinitionCacheItemType.Language,
-						defaultLanguage.FullPath,
-						DateTime.Now,
-						true,
-						usage.Name,
-						usage.Description);
-					add(item, usage.Parameters);
-				}
-			}
-
 			// Add scripts
 			var scriptPath = Path.Combine(dir, "scripts");
 			var scripts = new ScriptFilter().GetScripts(scriptPath);
@@ -182,8 +168,45 @@ namespace OpenIDE.Core.Definitions
 					script.Description);
 				add(item, usages);
 			}
+
+			// Add default language
+			if (defaultLanguage != null) {
+				var parameters = cache.Get(new[] { defaultLanguage.GetLanguage() }).Parameters;
+				foreach (var usage in parameters) {
+					// Don't override existing commands with default language
+					if (cache.Get(new[] { usage.Name }) == null) {
+						var item = cache.Add(
+							usage.Type,
+							usage.Location,
+							DateTime.Now,
+							true,
+							usage.Name,
+							usage.Description);
+						add(item, usage.Parameters);
+					}
+				}
+			}
 			writeCache(dir, cache);
 			return cache;
+		}
+
+		private void add(DefinitionCacheItem item, IEnumerable<DefinitionCacheItem> parameters) {
+			foreach (var parameter in parameters)
+				add(item, parameter);
+		}
+
+		private void add(DefinitionCacheItem item, DefinitionCacheItem parameter) {
+			var name = parameter.Name;
+			var child =
+				item.Append(
+						item.Type,
+						item.Location,
+						item.Updated,
+						parameter.Required,
+						name,
+						parameter.Description);
+			foreach (var cmd in parameter.Parameters)
+				add(child, cmd);
 		}
 
 		private void add(DefinitionCacheItem item, IEnumerable<BaseCommandHandlerParameter> parameters) {
