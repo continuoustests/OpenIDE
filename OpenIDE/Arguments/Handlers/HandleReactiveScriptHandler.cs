@@ -26,8 +26,6 @@ namespace OpenIDE.Arguments.Handlers
 				var newName = newHandler.Add("SCRIPT-NAME", "Script name with optional file extension.");
 				newName.Add("[--global]", "Will create the new script in the main script folder")
 					.Add("[-g]", "Short for --global");
-				newName.Add("[--language=LANGUAGE]", "Language to add the reactive script to")
-					.Add("[-l=LANGUAGE]", "Short for --language");
 
 				usage
 					.Add("edit", "Opens an existing reactive script for editor")
@@ -48,7 +46,7 @@ namespace OpenIDE.Arguments.Handlers
 			_dispatch = dispatch;
 			_locator = locator;
 			_handlers.Add(new ListReactiveScriptsHandler(_token, _locator));
-			_handlers.Add(new CreateReactiveScriptHandler(_token, _dispatch));
+			_handlers.Add(new CreateReactiveScriptHandler(_token, _dispatch, _locator));
 			_handlers.Add(new EditReactiveScriptHandler(_dispatch, _locator, _token));
 			_handlers.Add(new DeleteReactiveScriptHandler(_locator, _token));
 		}

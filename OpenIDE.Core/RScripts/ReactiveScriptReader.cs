@@ -40,6 +40,17 @@ namespace OpenIDE.Core.RScripts
 			return _scripts;
 		}
 
+		public List<ReactiveScript> ReadLanguageScripts()
+		{
+			if (_scripts.Count == 0)
+				Read();
+			var paths = getLanguagePaths();
+			return
+				_scripts
+					.Where(x => paths.Any(y => x.File.StartsWith(y)))
+					.ToList();
+		}
+
 		public ReactiveScript ReadScript(string path)
 		{
             try {
@@ -76,32 +87,24 @@ namespace OpenIDE.Core.RScripts
 			var paths = new List<string>();
 			addToList(paths, getLocal());
 			addToList(paths, _localScriptsPathDefault);
-			_pluginLocator().Locate().ToList()
-				.ForEach(plugin => {
-						foreach (var path in getLanguagePaths(plugin, profiles))
-							addToList(paths, path);
-					});
+			foreach (var path in getLanguagePaths())
+				addToList(paths, path);
 			addToList(paths, getGlobal());
 			addToList(paths, _globalScriptsPathDefault);
 			return paths;
 		}
 
-		private List<string> getLanguagePaths(LanguagePlugin plugin, ProfileLocator locator) {
-			var languagePaths = new List<string>();
-			var paths = locator.GetPathsCurrentProfiles();
-			foreach (var path in paths) {
-				var languagePath = 
+		private List<string> getLanguagePaths() {
+			var paths = new List<string>();
+			foreach (var plugin in _pluginLocator().Locate()) {
+				paths.Add(
 					Path.Combine(
-						path,
+						Path.GetDirectoryName(plugin.FullPath),
 						Path.Combine(
-							"languages",
-							Path.Combine(
-								plugin.GetLanguage() + "-files",
-								"rscripts")));
-				if (Directory.Exists(languagePath))
-					languagePaths.Add(languagePath);
+							plugin.GetLanguage() + "-files",
+							"rscripts")));
 			}
-			return languagePaths;
+			return paths;
 		}
 
 		private void addToList(List<string> list, string item)

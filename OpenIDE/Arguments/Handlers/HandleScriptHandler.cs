@@ -21,11 +21,12 @@ namespace OpenIDE.Arguments.Handlers
 						CommandType.FileCommand,
 						Command,
 						"No arguments will list available scripts. Run scripts with 'oi x [script-name]'.");
-					usage
+					var name = usage
 						.Add("new", "Creates a new script")
-							.Add("SCRIPT-NAME", "Script name with optional file extension.")
-								.Add("[--global]", "Will create the new script in the main script folder")
-									.Add("[-g]", "Short for --global");
+							.Add("SCRIPT-NAME", "Script name with optional file extension.");
+					name.Add("[--global]", "Will create the new script in the main script folder")
+						.Add("[-g]", "Short for --global");
+					
 					usage
 						.Add("edit", "Opens a script for edit")
 							.Add("SCRIPT-NAME", "Script name. Local are picked over global");
@@ -41,14 +42,14 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "script"; } }
 
-		public HandleScriptHandler(string token, Action<string> dispatch)
+		public HandleScriptHandler(string token, Action<string> dispatch, PluginLocator pluginLocator)
 		{
 			_token = token;
 			_dispatch = dispatch;
-			_handlers.Add(new CreateScriptHandler(_token, _dispatch));
-			_handlers.Add(new EditScriptHandler(_token, _dispatch));
-			_handlers.Add(new DeleteScriptHandler(_token));
-			_handlers.Add(new CatScriptHandler(_token));
+			_handlers.Add(new CreateScriptHandler(_token, _dispatch, pluginLocator));
+			_handlers.Add(new EditScriptHandler(_dispatch));
+			_handlers.Add(new DeleteScriptHandler());
+			_handlers.Add(new CatScriptHandler());
 		}
 
 		public void Execute(string[] arguments)

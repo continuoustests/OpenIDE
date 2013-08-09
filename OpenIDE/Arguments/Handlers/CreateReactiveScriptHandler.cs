@@ -15,6 +15,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
+		private PluginLocator _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -26,18 +27,17 @@ namespace OpenIDE.Arguments.Handlers
 					var name = usage.Add("SCRIPT-NAME", "Script name with optional file extension.");
 					name.Add("[--global]", "Will create the new script in the main script folder")
 						.Add("[-g]", "Short for --global");
-					name.Add("[--language=LANGUAGE]", "Language to add the reactive script to")
-						.Add("[-l=LANGUAGE]", "Short for --language");
 					return usage;
 			}
 		}
 	
 		public string Command { get { return "new"; } }
 		
-		public CreateReactiveScriptHandler(string token, Action<string> dispatch)
+		public CreateReactiveScriptHandler(string token, Action<string> dispatch, PluginLocator pluginLocator)
 		{
 			_token = token;
 			_dispatch = dispatch;
+			_pluginLocator = pluginLocator;
 		}
 
 		public void Execute(string[] arguments)
@@ -48,8 +48,11 @@ namespace OpenIDE.Arguments.Handlers
 			if (filename == null)
 				return;
 			var extension = getExtension(arguments[0]);
+			var path = getPath(arguments);
+			if (path == null)
+				return;
 			var file = Path.Combine(
-				getPath(arguments),
+				path,
 				filename);
 			if (extension != null)
 				file += extension;
@@ -97,29 +100,12 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private string getPath(string[] arguments)
 		{
-			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetGlobalPath();
-			else if (arguments.Count(x => x.StartsWith("--language=")) > 0 || 
-					 arguments.Count(x => x.StartsWith("-l=")) > 0)
-				return new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetLanguagePath(getLanguage(arguments));
+			var isGlobal = arguments.Contains("--global") || arguments.Contains("-g");
+			var locator = new ReactiveScriptLocator(_token, Environment.CurrentDirectory);
+			if (isGlobal)
+				return locator.GetGlobalPath();
 			else
-				return new ReactiveScriptLocator(_token, Environment.CurrentDirectory).GetLocalPath();
-		}
-
-		private string getLanguage(string[] arguments)
-		{
-			var language = getLanguage("--language=", arguments);
-			if (language != null)
-				return language;
-			return getLanguage("--l", arguments);
-		}
-
-		private string getLanguage(string pattern, string[] arguments)
-		{
-			var parameter = arguments.FirstOrDefault(x => x.StartsWith(pattern));
-			if (parameter != null)
-				return parameter.Substring(pattern.Length, parameter.Length - pattern.Length);
-			return null;
+				return locator.GetLocalPath();
 		}
 		
 		private void run(string cmd, string arguments)

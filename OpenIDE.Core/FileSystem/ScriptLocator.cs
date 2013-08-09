@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Scripts;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Language;
 
 namespace OpenIDE.Core.FileSystem
 {
@@ -112,14 +113,6 @@ namespace OpenIDE.Core.FileSystem
 			if (profilePath == null)
 				return profilePath;
 			return getPath(profilePath);
-		}
-
-		public string GetLanguagePath(string language)
-		{
-			return getPath(
-				Path.Combine(
-					GetGlobalPath("default"), 
-					Path.Combine("languages", language + "-files")));
 		}
 
 		private string getPath(string location)

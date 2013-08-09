@@ -15,6 +15,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
+		private PluginLocator _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -23,19 +24,20 @@ namespace OpenIDE.Arguments.Handlers
 						CommandType.FileCommand,
 						Command,
 						"Creates a script. Run scripts with 'oi x [script-name]'.");
-					usage.Add("SCRIPT-NAME", "Script name with optional file extension.")
-						.Add("[--global]", "Will create the new script in the main script folder")
-							.Add("[-g]", "Short for --global");
+					var name = usage.Add("SCRIPT-NAME", "Script name with optional file extension.");
+					name.Add("[--global]", "Will create the new script in the main script folder")
+						.Add("[-g]", "Short for --global");
 				return usage;
 			}
 		}
 
 		public string Command { get { return "new"; } }
 
-		public CreateScriptHandler(string token, Action<string> dispatch)
+		public CreateScriptHandler(string token, Action<string> dispatch, PluginLocator pluginLocator)
 		{
 			_dispatch = dispatch;
 			_token = token;
+			_pluginLocator = pluginLocator;
 		}
 
 		public void Execute(string[] arguments)
@@ -46,8 +48,11 @@ namespace OpenIDE.Arguments.Handlers
 			if (filename == null)
 				return;
 			var extension = getExtension(arguments[0]);
+			var path = getPath(arguments);
+			if (path == null)
+				return;
 			var file = Path.Combine(
-				getPath(arguments),
+				path,
 				filename);
 			if (extension != null)
 				file += extension;
@@ -93,10 +98,12 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private string getPath(string[] arguments)
 		{
-			if (arguments.Contains("--global") || arguments.Contains("-g"))
-				return new ScriptLocator(_token, Environment.CurrentDirectory).GetGlobalPath();
+			var isGlobal = arguments.Contains("--global") || arguments.Contains("-g");
+			var locator = new ScriptLocator(_token, Environment.CurrentDirectory);
+			if (isGlobal)
+				return locator.GetGlobalPath();
 			else
-				return new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalPath();
+				return locator.GetLocalPath();
 		}
 		
 		private void run(string cmd, string arguments)

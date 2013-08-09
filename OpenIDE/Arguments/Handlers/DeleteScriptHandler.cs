@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Definitions;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
 
@@ -10,8 +12,6 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class DeleteScriptHandler : ICommandHandler
 	{
-		private string _token;
-
 		public CommandHandlerParameter Usage {
 			get {
 					var usage = new CommandHandlerParameter(
@@ -26,23 +26,21 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "rm"; } }
 
-		public DeleteScriptHandler(string token) {
-			_token = token;
-		}
-
 		public void Execute(string[] arguments)
 		{
-			var scripts = new List<Script>();
-			scripts.AddRange(new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts());
-			new ScriptLocator(_token, Environment.CurrentDirectory)
-				.GetGlobalScripts()
-				.Where(x => scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
-				.ForEach(x => scripts.Add(x));
-			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
-			if (script == null || arguments.Length < 1)
+			if (arguments.Length < 1)
 				return;
-			if (File.Exists(script.File))
-				File.Delete(script.File);
+			var scriptName = arguments[0];
+			var script =
+				Bootstrapper.GetDefinitionBuilder()
+					.Definitions
+					.FirstOrDefault(x => x.Name == scriptName &&
+										 (x.Type == DefinitionCacheItemType.Script ||
+										  x.Type == DefinitionCacheItemType.LanguageScript));
+			if (script == null)
+				return;
+			if (File.Exists(script.Location))
+				File.Delete(script.Location);
 		}
 	}
 }

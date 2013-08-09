@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Definitions;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
 
@@ -10,8 +12,6 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class CatScriptHandler : ICommandHandler
 	{
-		private string _token;
-
 		public CommandHandlerParameter Usage {
 			get {
 					var usage = new CommandHandlerParameter(
@@ -26,25 +26,20 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "cat"; } }
 
-		public CatScriptHandler(string token)
-		{
-			_token = token;
-		}
-
 		public void Execute(string[] arguments)
 		{
 			if (arguments.Length < 1)
 				return;
-			var scripts = new List<Script>();
-			scripts.AddRange(new ScriptLocator(_token, Environment.CurrentDirectory).GetLocalScripts());
-			new ScriptLocator(_token, Environment.CurrentDirectory)
-				.GetGlobalScripts()
-				.Where(x => scripts.Count(y => x.Name.Equals(y.Name)) == 0).ToList()
-				.ForEach(x => scripts.Add(x));
-			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
+			var scriptName = arguments[0];
+			var script =
+				Bootstrapper.GetDefinitionBuilder()
+					.Definitions
+					.FirstOrDefault(x => x.Name == scriptName &&
+										 (x.Type == DefinitionCacheItemType.Script ||
+										  x.Type == DefinitionCacheItemType.LanguageScript));
 			if (script == null)
 				return;
-			Console.WriteLine(File.ReadAllText(script.File));
+			Console.WriteLine(File.ReadAllText(script.Location));
 		}
 	}
 }

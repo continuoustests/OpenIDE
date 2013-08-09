@@ -13,7 +13,6 @@ using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Commands;
-using OpenIDE.Core.Logging;
 using OpenIDE.Core.Definitions;
 
 namespace oi
@@ -25,31 +24,41 @@ namespace oi
 
 		public static void Main(string[] args)
 		{
+			if (args.Any(x => x == "--logging"))
+				Logger.Assign(new ConsoleLogger());
+
+			Logger.Write("Parsing profiles");
 			args = parseProfile(args);
+			Logger.Write("Initializing application");
 			Bootstrapper.Initialize();			
 			
+			Logger.Write("Getting definition builder");
 			var builder = Bootstrapper.GetDefinitionBuilder(); 
+			Logger.Write("Building definitions");
 			builder.Build();
 			
+			Logger.Write("Parsing arguments");
 			args = Bootstrapper.Settings.Parse(args);
-			if (Bootstrapper.Settings.LoggingEnabled)
-				Logger.Assign(new ConsoleLogger());
 
 			if (args.Length == 0) {
 				printUsage(null);
+				Logger.Write("Application exiting");
 				return;
 			}
 
 			var arguments = new List<string>();
 			arguments.AddRange(args);
+			Logger.Write("Getting command from arguments");
 			var cmd = builder.Get(arguments.ToArray());
 			if (cmd == null) {
 				printUsage(arguments[0]);
+				Logger.Write("Application exiting");
 				return;
 			}
 			Logger.Write("Running command {0} of type {1}", cmd.Name, cmd.Type);
 			if (!new CommandRunner().Run(cmd, arguments))
 				printUsage(cmd.Name);
+			Logger.Write("Application exiting");
 		}
 
 		private static string[] parseProfile(string[] args)

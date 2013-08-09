@@ -285,6 +285,24 @@ namespace OpenIDE.Core.Definitions
 							isOutOfDate = true;
 							break;
 						}
+						var languageScriptPath = 
+							Path.Combine(
+								Path.Combine(languagePath, language.GetLanguage() + "-files"),
+								"scripts");
+						if (Directory.Exists(languageScriptPath)) {
+							var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
+							isOutOfDate = languageScripts.Any(x => !locations.Contains(x));
+							if (!isOutOfDate)
+								isOutOfDate = locations.Any(x => !languageScripts.Contains(x));
+							if (!isOutOfDate) {
+								foreach (var script in languageScripts) {
+									if (isUpdated(script, cache)) {
+										isOutOfDate = true;
+										break;
+									}
+								}
+							}
+						}
 					}
 				}
 			}

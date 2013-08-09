@@ -123,6 +123,7 @@
     <Compile Include="Arguments\Handlers\PackageHandler.cs" />
     <Compile Include="CommandRunner.cs" />
     <Compile Include="Arguments\Handlers\CatScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\HandleLanguageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
