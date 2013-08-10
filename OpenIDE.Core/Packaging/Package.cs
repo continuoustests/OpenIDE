@@ -3,6 +3,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Packaging 
 {
@@ -20,6 +21,9 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var data = JObject.Parse(json);
 				var package = new Package(data["target"].ToString(), data["id"].ToString(), data["version"].ToString(), data["description"].ToString());
+				var language = data["language"];
+				if (language != null)
+					package.Language = language.ToString();
 				package.File = file;
 				if (data["pre-install-actions"] != null) {
 					data["pre-install-actions"].Children().ToList()
@@ -38,7 +42,8 @@ namespace OpenIDE.Core.Packaging
 				}
 				if (package.IsValid())
 					return package;
-			} catch {
+			} catch (Exception ex) {
+				Logger.Write(ex);
 			}
 			return null;
 		}
@@ -51,6 +56,7 @@ namespace OpenIDE.Core.Packaging
 
 		public string File { get; set; }
 		public string Target { get; set; }
+		public string Language { get; set; }
 		public string Signature { get{ return ID + "-" + Version; } }
 		public string ID { get; set; }
 		public string Version { get; set; }
@@ -82,17 +88,24 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public bool IsValid() {
-			return 
-				new[] { "language", "script", "rscript" }.Contains(Target) &&
+			var basicValid = 
+				new[] { "language", "script", "rscript", "language-script", "language-rscript" }.Contains(Target) &&
 				ID.Length > 0 &&
 				Version.Length > 0 &&
 				Description.Length > 0;
+			if (!basicValid)
+				return false;
+			if ((Target == "language-script" || Target == "language-rscript") && (Language == null || Language.Length == 0))
+				return false;
+			return true;
 		}
 
 		public string Write() {
 			var sb = new StringBuilder();
 			sb.AppendLine("{");
 			sb.AppendLine(string.Format("\t\"target\": \"{0}\",", Target));
+			if (Language != null)
+				sb.AppendLine(string.Format("\t\"language\": \"{0}\",", Language));
 			sb.AppendLine(string.Format("\t\"id\": \"{0}\",", ID));
 			sb.AppendLine(string.Format("\t\"version\": \"{0}\",", Version));
 			sb.AppendLine(string.Format("\t\"description\": \"{0}\",", Description));
@@ -125,6 +138,8 @@ namespace OpenIDE.Core.Packaging
 			var sb = new StringBuilder();
 			sb.AppendLine("Location:\t" + File);
 			sb.AppendLine("Target:\t\t" + Target);
+			if (Language != null)
+				sb.AppendLine("Language:\t" + Language);
 			sb.AppendLine("ID:\t\t" + ID);
 			sb.AppendLine("Version:\t" + Version);
 			sb.AppendLine();

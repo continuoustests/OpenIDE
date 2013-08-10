@@ -44,6 +44,10 @@ namespace OpenIDE.Core.Packaging
 				Version = version;
 				Package = package;
 			}
+
+			public override string ToString() {
+				return string.Format("{0} ({1})", ID, Version);
+			}
 		}
 
 		private List<SourcePackage> _packages;

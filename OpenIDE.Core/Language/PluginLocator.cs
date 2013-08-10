@@ -13,7 +13,8 @@ namespace OpenIDE.Core.Language
 		private string[] _enabledLanguages;
 		private ProfileLocator _profiles;
 		private Action<string> _dispatchMessage;
-		private List<LanguagePlugin> _plugins = new List<LanguagePlugin>();
+		private List<LanguagePlugin> _plugins = null; 
+		private object _padlock = new object();
 
 		public PluginLocator(string[] enabledLanguages, ProfileLocator profiles, Action<string> dispatchMessage)
 		{
@@ -24,45 +25,38 @@ namespace OpenIDE.Core.Language
 
 		public LanguagePlugin[] Locate()
 		{
-			return 
-				filterEnabledPlugins(
-					getPlugins()
-						.Select(x => getPlugin(x)))
-					.ToArray();
-		}
-
-		public LanguagePlugin[] LocateFor(string path) {
-			return 
-				filterEnabledPlugins(
-					getPlugins(path)
-						.Select(x => getPlugin(x)))
-					.ToArray();
-		}
-
-		private IEnumerable<LanguagePlugin> filterEnabledPlugins(IEnumerable<LanguagePlugin> plugins) {
-			return plugins	
-				.Where(x => _enabledLanguages == null || _enabledLanguages.Contains(x.GetLanguage()));
-		}
-
-		private LanguagePlugin getPlugin(string name) {
-			var plugin = _plugins.FirstOrDefault(x => x.FullPath == name);
-			if (plugin == null) {
-				plugin = new LanguagePlugin(name, _dispatchMessage);
-				_plugins.Add(plugin);
+			if (_plugins == null) {
+				lock (_padlock) {
+					_plugins = new List<LanguagePlugin>();
+					foreach (var file in getPlugins()) {
+						var plugin = new LanguagePlugin(file, _dispatchMessage);
+						if (isEnabledPlugin(plugin))
+							_plugins.Add(plugin);
+					}
+				}
 			}
-			return plugin;
+			return _plugins.ToArray();
 		}
-		
+
+		public LanguagePlugin[] LocateFor(string path)
+		{
+			return
+				Locate()
+					.Where(x => x.FullPath.StartsWith(path)) 
+					.ToArray();
+		}
+
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
 		{
 			var commands = new List<BaseCommandHandlerParameter>();
-			Locate().ToList()
-				.ForEach(plugin => 
-					{
-						plugin.GetUsages().ToList()
-							.ForEach(y => commands.Add(y));
-					});
+			foreach (var plugin in Locate())
+				commands.AddRange(plugin.GetUsages());
 			return commands;
+		}
+
+		private bool isEnabledPlugin(LanguagePlugin plugin)
+		{
+			return _enabledLanguages == null || _enabledLanguages.Contains(plugin.GetLanguage());
 		}
 
 		private string[] getPlugins()

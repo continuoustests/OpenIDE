@@ -23,6 +23,7 @@ namespace OpenIDE.Bootstrapping
 		private AppSettings _settings;
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
 		private DefinitionBuilder _definitionBuilder = null;
+		private PluginLocator _pluginLocator = null;
 
 		public Action<string> DispatchMessage { get { return dispatchMessage; } }
 		public Action<string, Action> DispatchAndCompleteMessage { get { return dispatchAndCompleteMessage; } }
@@ -80,7 +81,7 @@ namespace OpenIDE.Bootstrapping
 
 					new EventListener(_settings.RootPath),
 
-					new PackageHandler(_settings.RootPath, dispatchMessage),
+					new PackageHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 					new PkgTestHandler(_settings.RootPath),
 
 					new GetCommandsHandler(),
@@ -120,10 +121,14 @@ namespace OpenIDE.Bootstrapping
 
 		public PluginLocator PluginLocator()
 		{
-			return new PluginLocator(
-				_settings.EnabledLanguages,
-				new ProfileLocator(_settings.Path),
-				(command) => dispatchMessage(command));
+			if (_pluginLocator == null) {
+				_pluginLocator =
+					new PluginLocator(
+						_settings.EnabledLanguages,
+						new ProfileLocator(_settings.Path),
+						(command) => dispatchMessage(command));
+			}
+			return _pluginLocator;
 		}
 
 		private void dispatchMessage(string command) {

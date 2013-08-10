@@ -57,6 +57,24 @@ namespace OpenIDE.Core.Packaging.Tests
 				"myfile");
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
+
+			package = Package.Read(
+				new Package("language-script", "Name", "v1.1", "MyDescription") {
+						Language = "C#"
+					}
+					.Write(),
+				"myfile");
+			Assert.That(package, Is.Not.Null);
+			Assert.That(package.IsValid(), Is.True);
+
+			package = Package.Read(
+				new Package("language-rscript", "Name", "v1.1", "MyDescription") {
+						Language = "C#"
+					}
+					.Write(),
+				"myfile");
+			Assert.That(package, Is.Not.Null);
+			Assert.That(package.IsValid(), Is.True);
 		}
 
 		[Test]
@@ -102,6 +120,13 @@ namespace OpenIDE.Core.Packaging.Tests
 						.Write(),
 					"myfile"),
 				Is.Null);
+
+			Assert.That(
+				Package.Read(
+					new Package("language-rscript", "Name", "v1.1", "MyDescription")
+					.Write(),
+				"myfile"),
+			Is.Null);
 		}
 
 		[Test]

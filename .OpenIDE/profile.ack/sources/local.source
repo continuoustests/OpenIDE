@@ -1,6 +1,16 @@
 {
   "packages": [
     {
+      "id": "bleh",
+      "version": "v1.0",
+      "package": "bleh.oipkg"
+    },
+    {
+      "id": "init",
+      "version": "v1.0",
+      "package": "init.oipkg"
+    },
+    {
       "id": "mngr",
       "version": "v1.0",
       "package": "mngr.oipkg"

@@ -10,6 +10,7 @@ using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Packaging;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Logging;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
@@ -18,6 +19,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
+		private PluginLocator _locator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -54,15 +56,19 @@ namespace OpenIDE.Arguments.Handlers
 				sources
 					.Add("update", "Updates existing source list.")
 						.Add("[NAME]", "Source name. If not specified it updates all");
+				sources
+					.Add("list", "Lists available packages from sources")
+						.Add("[NAME]", "Source to list packages for");
 				return usage;
 			}
 		}
 
 		public string Command { get { return "package"; } }
 
-		public PackageHandler(string token, Action<string> dispatch) {
+		public PackageHandler(string token, Action<string> dispatch, PluginLocator locator) {
 			_token = token;
 			_dispatch = dispatch;
+			_locator = locator;
 		}
 
 		public void Execute(string[] arguments) {
@@ -159,6 +165,7 @@ namespace OpenIDE.Arguments.Handlers
 			profiles.GetFilesCurrentProfiles("package.json").ToList()
 				.ForEach(x => {
 						try {
+							Logger.Write("Reading package " + x);
 							var package = Package.Read(x);
 							if (package != null)
 								packages.Add(package);
@@ -174,14 +181,18 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private string getPackageDescription(string dir, string name) {
-			var type = Path.GetFileName(dir);
-			type = type.Substring(0, type.Length - 1);
 			var NL = Environment.NewLine;
+			var type = getType(dir);
+			var language = getLanguage(type, dir);
+			var languageText = "";
+			if (language != null)
+				languageText = "\t\"language\": \"" + language + "\"," + NL;
 			var package = 
 					"{" + NL +
 					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
 					"\t\"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
 					"\t\"target\": \"{1}\"," + NL +
+					languageText +
 					"\t\"id\": \"{0}\"," + NL +
 					"\t\"version\": \"v1.0\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
@@ -192,7 +203,29 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\t\t{\"id\": \"name\", \"version\": \"v1.0\"}" + NL +
 					"\t\t]" + NL +
 					"}";
-			return package.Replace("{0}", name).Replace("{1}", type);
+			return package
+						.Replace("{0}", name)
+						.Replace("{1}", type);
+		}
+
+		private string getType(string dir) {
+			var type = Path.GetFileName(dir);
+			var subDir = Path.GetDirectoryName(dir);
+			if (subDir != null) {
+				subDir = Path.GetDirectoryName(subDir);
+				if (subDir != null) {
+					if (Path.GetFileName(subDir) == "languages")
+						type = "language-" + type;
+				}
+			}
+			return type.Substring(0, type.Length - 1);
+		}
+
+		private string getLanguage(string type, string dir) {
+			if (!type.StartsWith("language-"))
+				return null;
+			var dirName = Path.GetFileName(Path.GetDirectoryName(dir));
+			return dirName.Substring(0, dirName.IndexOf("-files"));
 		}
 
 		private void build(string[] args) {
@@ -240,7 +273,7 @@ namespace OpenIDE.Arguments.Handlers
 			var source = downloadPackage(args[1], ref deleteWhenDone);
 			if (!File.Exists(source))
 				return;
-			var installer = new Installer(_token, _dispatch, extractPackage);
+			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(source);
 			if (deleteWhenDone)
@@ -253,7 +286,7 @@ namespace OpenIDE.Arguments.Handlers
 			var source = downloadPackage(args[1], ref deleteWhenDone);
 			if (!File.Exists(source))
 				return;
-			var installer = new Installer(_token, _dispatch, extractPackage);
+			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(source);
 			if (deleteWhenDone)
@@ -301,7 +334,7 @@ namespace OpenIDE.Arguments.Handlers
 			} else {
 				source = Path.GetFullPath(source);
 			}
-			var installer = new Installer(_token, _dispatch, extractPackage);
+			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
 			installer.Remove(source);
 		}
 				
@@ -374,6 +407,20 @@ namespace OpenIDE.Arguments.Handlers
 						printError("Failed to download source file " + source.Origin);
 				}
 				return;
+			}
+			if (args.Length > 1 && args[1] == "list") {
+				string name = null;
+				if (args.Length > 2)
+					name = args[2];
+				var sources = 
+					locator
+						.GetSources()
+						.Where(x => name == null || x.Name == name);
+				foreach (var source in sources) {
+					_dispatch("Packages in " +  source.Name);
+					foreach (var package in source.Packages)
+						_dispatch("\t" + package.ToString());
+				}
 			}
 		}
 

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Language;
 using CoreExtensions;
 
 namespace OpenIDE.Core.Packaging
@@ -25,11 +26,13 @@ namespace OpenIDE.Core.Packaging
 		private Action<string> _dispatch;
 		private Action<string,string> _unpack;
 		private bool _useGlobal = false;
+		private PluginLocator _locator;
 
-		public Installer(string token, Action<string> dispatch, Action<string,string> unpack) {
+		public Installer(string token, Action<string> dispatch, Action<string,string> unpack, PluginLocator locator) {
 			_token = token;
 			_dispatch = dispatch;
 			_unpack = unpack;
+			_locator = locator;
 		}
 
 		public void UseGlobalProfiles(bool useGlobal) {
@@ -78,21 +81,16 @@ namespace OpenIDE.Core.Packaging
 			else
 				activeProfile = profiles.GetActiveLocalProfile();
 
-			string installPath;
-			if (_useGlobal)
-				installPath = profiles.GetGlobalProfilePath(activeProfile);
-			else
-				installPath = profiles.GetLocalProfilePath(activeProfile);
 			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
 			Directory.CreateDirectory(tempPath);
 			try {
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
 					var name = package.ID;
-					installPath = Path.Combine(installPath, package.Target + "s");
+					var installPath = getInstallPath(package, profiles, activeProfile);
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
-					var matches = 
+					var matches =  
 						Directory.GetFiles(installPath)
 							.Where(x => matchPackage(x, name));
 					actionHandler(
@@ -110,6 +108,29 @@ namespace OpenIDE.Core.Packaging
 			} finally {
 				Directory.Delete(tempPath, true);
 			}
+		}
+
+		private string getInstallPath(Package package, ProfileLocator profiles, string activeProfile) {
+			string installPath;
+			if (package.Target.StartsWith("language-"))
+				return getLanguageInstallPath(package);
+			if (_useGlobal)
+				installPath = profiles.GetGlobalProfilePath(activeProfile);
+			else
+				installPath = profiles.GetLocalProfilePath(activeProfile);
+			return Path.Combine(installPath, package.Target + "s");
+		}
+
+		private string  getLanguageInstallPath(Package package) {
+			var language = _locator
+				.Locate()
+				.FirstOrDefault(x => x.GetLanguage() == package.Language);
+			return
+				Path.Combine(
+					Path.Combine(
+						Path.GetDirectoryName(language.FullPath),
+						language.GetLanguage() + "-files"),
+					package.Target.Replace("language-", "") + "s");
 		}
 
 		private void update(string source, ActionParameters args) {

@@ -83,7 +83,6 @@ namespace OpenIDE.Core.RScripts
 
 		public List<string> GetPaths()
 		{
-			var profiles = new ProfileLocator(_keyPath);
 			var paths = new List<string>();
 			addToList(paths, getLocal());
 			addToList(paths, _localScriptsPathDefault);

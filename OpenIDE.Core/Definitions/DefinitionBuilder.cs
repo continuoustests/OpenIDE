@@ -79,20 +79,6 @@ namespace OpenIDE.Core.Definitions
 				mergeExternalCommands(paths[i]);
 		}
 
-		private void mergeExternalCommands(string path) {
-			var localCache = new DefinitionCache();
-			var file = Path.Combine(path, "oi-definitions.json");
-			if (File.Exists(file)) {
-				localCache = appendDefinitions(file);
-				if (cacheIsOutOfDate(file, localCache))
-					localCache = buildDefinitions(file);
-			} else {
-				localCache = buildDefinitions(file);
-			}
-			
-			_cache.Merge(localCache);
-		}
-
 		private void mergeBuiltInCommands(ProfileLocator profiles) {
 			var builtInFile = Path.Combine(profiles.AppRootPath, "oi-definitions.json");
 			var builtInCache = new DefinitionCache();
@@ -102,9 +88,28 @@ namespace OpenIDE.Core.Definitions
 				if (updated != null && fileTime(System.Reflection.Assembly.GetExecutingAssembly().Location) > updated.Updated)
 					builtInCache = writeBuiltInCommands(builtInFile, profiles);
 			} else {
+				Logger.Write("Could not find definition file: " + builtInFile);
 				builtInCache = writeBuiltInCommands(builtInFile, profiles);
 			}
 			_cache.Merge(builtInCache);
+		}
+
+		private void mergeExternalCommands(string path) {
+			Logger.Write("Merging path " + path);
+			var localCache = new DefinitionCache();
+			var file = Path.Combine(path, "oi-definitions.json");
+			if (File.Exists(file)) {
+				localCache = appendDefinitions(file);
+				if (cacheIsOutOfDate(file, localCache)) {
+					Logger.Write("Definition file was out of date, updating " + file);
+					localCache = buildDefinitions(file);
+				}
+			} else {
+				Logger.Write("Could not find definition file: " + file);
+				localCache = buildDefinitions(file);
+			}
+			
+			_cache.Merge(localCache);
 		}
 
 		private DefinitionCache writeBuiltInCommands(string file, ProfileLocator profiles) {
@@ -255,64 +260,69 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		private bool cacheIsOutOfDate(string file, DefinitionCache cache) {
-			var isOutOfDate = false;
 			var dir = Path.GetDirectoryName(file);
 			var locations = cache.GetLocations(DefinitionCacheItemType.Script);
 			var scriptPath = Path.Combine(dir, "scripts");
 			var scripts = new ScriptFilter().GetScripts(scriptPath);
-			isOutOfDate = scripts.Any(x => !locations.Contains(x));
-			if (!isOutOfDate)
-				isOutOfDate = locations.Any(x => !scripts.Contains(x));
-			if (!isOutOfDate) {
-				foreach (var script in scripts) {
-					if (isUpdated(script, cache)) {
-						isOutOfDate = true;
-						break;
-					}
-				}
+			if (scripts.Any(x => !locations.Contains(x))) {
+				Logger.Write("New script has been added");
+				return true;
+			}
+			if (locations.Any(x => !scripts.Contains(x))) {
+				Logger.Write("New script has been added");
+				return true;
 			}
 			
-			if (!isOutOfDate) {
-				locations = cache.GetLocations(DefinitionCacheItemType.Language);
-				var languagePath = Path.Combine(dir, "languages");
-				var languages = _languages(languagePath);
-				isOutOfDate = languages.Any(x => !locations.Contains(x.FullPath));
-				if (!isOutOfDate)
-					isOutOfDate = locations.Any(x => !languages.Any(y => y.FullPath == x));
-				if (!isOutOfDate) {
-					foreach (var language in languages) {
-						if (isUpdated(language.FullPath, cache)) {
-							isOutOfDate = true;
-							break;
-						}
-						var languageScriptPath = 
-							Path.Combine(
-								Path.Combine(languagePath, language.GetLanguage() + "-files"),
-								"scripts");
-						if (Directory.Exists(languageScriptPath)) {
-							var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
-							isOutOfDate = languageScripts.Any(x => !locations.Contains(x));
-							if (!isOutOfDate)
-								isOutOfDate = locations.Any(x => !languageScripts.Contains(x));
-							if (!isOutOfDate) {
-								foreach (var script in languageScripts) {
-									if (isUpdated(script, cache)) {
-										isOutOfDate = true;
-										break;
-									}
-								}
-							}
-						}
+			foreach (var script in scripts) {
+				if (isUpdated(script, cache))
+					return true;
+			}
+			
+			locations = cache.GetLocations(DefinitionCacheItemType.Language);
+			var languagePath = Path.Combine(dir, "languages");
+			var languages = _languages(languagePath);
+			if (languages.Any(x => !locations.Contains(x.FullPath))) {
+				Logger.Write("New language has been added");
+				return true;
+			}
+			if (locations.Any(x => !languages.Any(y => y.FullPath == x))) {
+				Logger.Write("Language has been removed");
+				return true;
+			}
+			
+			foreach (var language in languages) {
+				if (isUpdated(language.FullPath, cache))
+					return true;
+				var languageScriptPath = 
+					Path.Combine(
+						Path.Combine(languagePath, language.GetLanguage() + "-files"),
+						"scripts");
+				if (Directory.Exists(languageScriptPath)) {
+					locations = cache.GetLocations(DefinitionCacheItemType.LanguageScript);
+					var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
+					if (languageScripts.Any(x => !locations.Contains(x))) {
+						Logger.Write("Language script has been added");
+						return true;
+					}
+					if (locations.Any(x => !languageScripts.Contains(x))) {
+						Logger.Write("Language script has been removed");
+						return true;
+					}
+					foreach (var script in languageScripts) {
+						if (isUpdated(script, cache))
+							return true;
 					}
 				}
 			}
-			return isOutOfDate;
+			return false;
 		}
 
 		private bool isUpdated(string file, DefinitionCache cache) {
 			var updated = cache.GetOldestItem(file).Updated;
-			if (fileTime(file) > updated)
+			if (fileTime(file) > updated) {
+				Logger.Write("Definition is out of date for " + file);
 				return true;
+			}
 
 			var dir = Path.GetDirectoryName(file);
 			var name = Path.GetFileNameWithoutExtension(file);
@@ -325,8 +335,10 @@ namespace OpenIDE.Core.Definitions
 
 		private bool isUpdated(DateTime updated, string dir, string stateDir) {
 			foreach (var file in Directory.GetFiles(dir)) {
-				if (fileTime(file) > updated)
+				if (fileTime(file) > updated) {
+					Logger.Write("Definition is out of date for " + file);
 					return true;
+				}
 			}
 			foreach (var subDir in Directory.GetDirectories(dir)) {
 				if (subDir == stateDir)
