@@ -37,7 +37,7 @@ namespace OpenIDE.Arguments.Handlers
 					_token,
 					() => { return _pluginLocator; },
 					(m) => {})
-					.Read();
+					.ReadNonLanguageScripts();
 			foreach (var script in scripts)
 				Console.WriteLine(script.Name);
 		}

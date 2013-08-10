@@ -40,6 +40,17 @@ namespace OpenIDE.Core.RScripts
 			return _scripts;
 		}
 
+		public List<ReactiveScript> ReadNonLanguageScripts()
+		{
+			if (_scripts.Count == 0)
+				Read();
+			var paths = GetPathsNoLanguage();
+			return
+				_scripts
+					.Where(x => paths.Any(y => x.File.StartsWith(y)))
+					.ToList();
+		}
+
 		public List<ReactiveScript> ReadLanguageScripts()
 		{
 			if (_scripts.Count == 0)
@@ -88,6 +99,16 @@ namespace OpenIDE.Core.RScripts
 			addToList(paths, _localScriptsPathDefault);
 			foreach (var path in getLanguagePaths())
 				addToList(paths, path);
+			addToList(paths, getGlobal());
+			addToList(paths, _globalScriptsPathDefault);
+			return paths;
+		}
+
+		public List<string> GetPathsNoLanguage()
+		{
+			var paths = new List<string>();
+			addToList(paths, getLocal());
+			addToList(paths, _localScriptsPathDefault);
 			addToList(paths, getGlobal());
 			addToList(paths, _globalScriptsPathDefault);
 			return paths;
