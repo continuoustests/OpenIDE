@@ -195,11 +195,18 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void listScript(string languageName, Action<LanguagePlugin> onLanguage, Action<DefinitionCacheItem> onItem) {
-			var definitions = 
+			var definitions = new List<DefinitionCacheItem>();
+			var languages =
 				Bootstrapper.GetDefinitionBuilder()
 					.Definitions
-					.Where(x => x.Type == DefinitionCacheItemType.LanguageScript)
-					.ToList();
+					.Where(x => x.Type == DefinitionCacheItemType.Language)
+					.ToArray();
+			foreach (var lang in languages) {
+				definitions
+					.AddRange(
+						lang.Parameters
+							.Where(x => x.Type == DefinitionCacheItemType.LanguageScript));
+			}
 			itemsPrLanguage(
 				onLanguage,
 				onItem,

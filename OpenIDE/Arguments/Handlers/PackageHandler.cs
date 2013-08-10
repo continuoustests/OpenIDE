@@ -43,6 +43,8 @@ namespace OpenIDE.Arguments.Handlers
 						.Add("[-g]", "Updates package in global profiles");
 				usage.Add("rm", "Removes package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or name");
+				usage.Add("edit", "Opens package file in text editor")
+					.Add("NAME", "Package name");
 
 				var sources = usage.Add("src", "Lists, adds and removes package sources");
 				sources
@@ -88,6 +90,8 @@ namespace OpenIDE.Arguments.Handlers
 				update(arguments);
 			if (arguments.Length > 1 && arguments[0] == "rm")
 				remove(arguments);
+			if (arguments.Length > 1 && arguments[0] == "edit")
+				edit(arguments);
 			if (arguments[0] == "src")
 				sourceCommands(arguments);
 		}
@@ -336,6 +340,16 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
 			installer.Remove(source);
+		}
+
+		private void edit(string[] args) {
+			var source = args[1];
+			var package = 
+				getPackages()
+					.FirstOrDefault(x => x.ID == source);
+			if (package != null) {
+				_dispatch("command|editor goto \"" + package.File + "|0|0\"");
+			}
 		}
 				
 		private void extractPackage(string source, string path) {

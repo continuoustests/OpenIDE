@@ -131,7 +131,13 @@ namespace OpenIDE.Core.Definitions
 
 		private DateTime fileTime(string file) {
 			var time = new FileInfo(file).LastWriteTime;
-			return new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+			var writeTime = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+			if (writeTime > DateTime.Now) {
+				Logger.Write("Updating write time for " + file);
+				File.SetLastWriteTime(file, DateTime.Now);
+				writeTime = DateTime.Now;
+			}
+			return writeTime;
 		}
 
 		private void writeCache(string path, DefinitionCache cache) {
@@ -298,7 +304,10 @@ namespace OpenIDE.Core.Definitions
 						Path.Combine(languagePath, language.GetLanguage() + "-files"),
 						"scripts");
 				if (Directory.Exists(languageScriptPath)) {
-					locations = cache.GetLocations(DefinitionCacheItemType.LanguageScript);
+					locations = cache
+						.GetLocations(DefinitionCacheItemType.LanguageScript)
+						.Where(x => x.StartsWith(languageScriptPath))
+						.ToArray();
 					var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
 					if (languageScripts.Any(x => !locations.Contains(x))) {
 						Logger.Write("Language script has been added");
@@ -319,8 +328,10 @@ namespace OpenIDE.Core.Definitions
 
 		private bool isUpdated(string file, DefinitionCache cache) {
 			var updated = cache.GetOldestItem(file).Updated;
-			if (fileTime(file) > updated) {
-				Logger.Write("Definition is out of date for " + file);
+			var filetime = fileTime(file);
+			if (filetime > updated) {
+				Logger.Write("Oldest is {0} {1} for {2}", updated.ToShortDateString(), updated.ToLongTimeString(), file);
+				Logger.Write("Definition is out of date for {0} with file time {1} {2}", file, filetime.ToShortDateString(), filetime.ToLongTimeString());
 				return true;
 			}
 
@@ -335,8 +346,10 @@ namespace OpenIDE.Core.Definitions
 
 		private bool isUpdated(DateTime updated, string dir, string stateDir) {
 			foreach (var file in Directory.GetFiles(dir)) {
-				if (fileTime(file) > updated) {
-					Logger.Write("Definition is out of date for " + file);
+				var filetime = fileTime(file);
+				if (filetime > updated) {
+					Logger.Write("Oldest is {0} {1} for {2}", updated.ToShortDateString(), updated.ToLongTimeString(), file);
+					Logger.Write("Definition is out of date for {0} with file time {1} {2}", file, filetime.ToShortDateString(), filetime.ToLongTimeString());
 					return true;
 				}
 			}
