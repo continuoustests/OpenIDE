@@ -129,6 +129,9 @@ namespace OpenIDE.Arguments.Handlers
 
 					log("Initializing test location");
 					runCommand("init");
+					// Make sure we run tests in default profile is
+					// this by any chance overloaded in init command
+					runCommand("profile load default");
 					eventListener.Start();
 
 					new Thread(() => {
