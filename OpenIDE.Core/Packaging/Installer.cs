@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
 using CoreExtensions;
 
@@ -19,61 +20,105 @@ namespace OpenIDE.Core.Packaging
 			public string TempPath { get; set; }
 			public string InstallPath { get; set; }
 			public string ProfileName { get; set; }
-			public IEnumerable<string> Matches { get; set; }
+			public string Match { get; set; }
 		}
 
 		private string _token;
 		private Action<string> _dispatch;
-		private Action<string,string> _unpack;
 		private bool _useGlobal = false;
 		private PluginLocator _locator;
+		private PackageFetcher _packageFetcher;
 
-		public Installer(string token, Action<string> dispatch, Action<string,string> unpack, PluginLocator locator) {
+		public Installer(string token, Action<string> dispatch, PluginLocator locator) {
 			_token = token;
 			_dispatch = dispatch;
-			_unpack = unpack;
 			_locator = locator;
+			_packageFetcher = new PackageFetcher(_token, _dispatch);
 		}
 
 		public void UseGlobalProfiles(bool useGlobal) {
 			_useGlobal = useGlobal;
 		}
 
-		public void Install(string source) {
-			prepareForAction(
-				source,
-				(args) => {
-						if (args.Matches.Count() > 0)
-							printConflictingPackage(args.Name, args.Package, args.Matches);
-						else
-							installPackage(source, args.Package, args.TempPath, args.InstallPath, args.ProfileName);
-					});
+		public void Install(string packageToken) {
+			install(packageToken, null);
 		}
 
-		public void Update(string source) {
-			prepareForAction(
-				source,
+		private bool install(string packageToken, string[] acceptedVersions) {
+			var installType = "package";
+			if (acceptedVersions != null)
+				installType = "dependency";
+			_dispatch("Installing " + installType + " " + packageToken);
+			var source = _packageFetcher.Fetch(packageToken);
+			if (source == null || !File.Exists(source.Package)) {
+				_dispatch("error|could not find package " + packageToken);
+				return false;
+			}
+
+			var actionSucceeded = prepareForAction(
+				source.Package,
 				(args) => {
-						if (args.Matches.Count() == 0)
+						if (args.Match != null) {
+							Logger.Write("Found matching package " + args.Match);
+							var package = getPackage(Path.GetFileNameWithoutExtension(args.Match));
+							Logger.Write("Loaded package " + package.ID);
+							if (acceptedVersions != null) {
+								if (acceptedVersions.Length > 0 && !acceptedVersions.Any(x => x == package.Version)) {
+									var versions = "";
+									foreach (var version in acceptedVersions) {
+										versions += version + ",";
+									}
+									versions = versions.Trim(new[] {','});
+									_dispatch(string.Format("error|dependency {0} ({1}) is installed. Accepted versions are {2}", args.Name, package.Version, versions));
+									return false;
+								}
+							}
+							_dispatch(string.Format("package {0} ({1}) is already installed", package.ID, package.Version));
+						} else if (acceptedVersions != null && !acceptedVersions.Any(x => x == args.Package.Version)) {
+							var versions = "";
+							foreach (var version in acceptedVersions) {
+								versions += version + ",";
+							}
+							versions = versions.Trim(new[] {','});
+							_dispatch(string.Format("error|dependency {0} of version {1} is not a valid. Accepted versions are {2}", args.Name, args.Package.Version, versions));
+							return false;
+						} else
+							installPackage(source.Package, args.Package, args.TempPath, args.InstallPath, args.ProfileName);
+						return true;
+					});
+			if (source.IsTemporaryPackage)
+				File.Delete(source.Package);
+			return actionSucceeded;
+		}
+
+		public void Update(string packageToken) {
+			var source = _packageFetcher.Fetch(packageToken);
+			if (!File.Exists(source.Package))
+				return;
+			prepareForAction(
+				source.Package,
+				(args) => {
+						if (args.Match == null)
 							printUnexistingUpdate(args.Name, args.Package);
 						else
-							update(source, args);
+							update(source.Package, args);
+						return true;
 					});
+			if (source.IsTemporaryPackage)
+				File.Delete(source.Package);
 		}
 
 		public void Remove(string source) {
-			var name = Path.GetFileNameWithoutExtension(source);
-			var dir = Path.GetDirectoryName(source);
 			var package = getPackage(source);
 			if (package == null) {
-				_dispatch(string.Format("error|There is no package {0} to remove", name));
+				_dispatch(string.Format("error|There is no package {0} to remove", source));
 				return;
 			}
-			removePackage(name, dir);
+			removePackage(source, Path.GetDirectoryName(Path.GetDirectoryName(package.File)));
 			_dispatch(string.Format("Removed package {0}", package.Signature));
 		}
 		
-		private void prepareForAction(string source, Action<ActionParameters> actionHandler) {
+		private bool prepareForAction(string source, Func<ActionParameters,bool> actionHandler) {
 			var profiles = new ProfileLocator(_token);
 			string activeProfile;
 			if (_useGlobal)
@@ -81,6 +126,7 @@ namespace OpenIDE.Core.Packaging
 			else
 				activeProfile = profiles.GetActiveLocalProfile();
 
+			var actionSucceeded = false;
 			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
 			Directory.CreateDirectory(tempPath);
 			try {
@@ -90,17 +136,17 @@ namespace OpenIDE.Core.Packaging
 					var installPath = getInstallPath(package, profiles, activeProfile);
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
-					var matches =  
+					var match =  
 						Directory.GetFiles(installPath)
-							.Where(x => matchPackage(x, name));
-					actionHandler(
+							.FirstOrDefault(x => matchPackage(x, name));
+					actionSucceeded = actionHandler(
 						new ActionParameters() {
 							Package = package,
 							Name = name,
 							TempPath = tempPath,
 							InstallPath = installPath,
 							ProfileName = activeProfile,
-							Matches = matches
+							Match = match
 						});
 				}
 			} catch (Exception ex) {
@@ -108,6 +154,27 @@ namespace OpenIDE.Core.Packaging
 			} finally {
 				Directory.Delete(tempPath, true);
 			}
+			return actionSucceeded;
+		}
+
+		private Package getPackage(string name) {
+			Logger.Write("Looking for package " + name);
+			var profiles = new ProfileLocator(_token);
+			var packages = new List<Package>();
+			profiles.GetFilesCurrentProfiles("package.json").ToList()
+				.ForEach(x => {
+						try {
+							Logger.Write("Reading package " + x);
+							var package = Package.Read(x);
+							if (package != null) {
+								Logger.Write("Adding package {0} ({1})", package.ID, package.Version);
+								packages.Add(package);
+							}
+						} catch (Exception ex) {
+							Logger.Write(ex);
+						}
+					});
+			return packages.FirstOrDefault(x => x.ID == name);
 		}
 
 		private string getInstallPath(Package package, ProfileLocator profiles, string activeProfile) {
@@ -134,7 +201,7 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private void update(string source, ActionParameters args) {
-			var existingPackage = getPackage(args.Matches.First());
+			var existingPackage = getPackage(Path.GetFileNameWithoutExtension(args.Match));
 			if (!runInstallVerify(args.TempPath, args.InstallPath)) {
 				printUpdateFailed(args.Package.Signature);
 				return;
@@ -145,7 +212,7 @@ namespace OpenIDE.Core.Packaging
 			}
 
 			removePackage(args.Name, args.InstallPath);
-			_unpack(source, args.InstallPath);
+			new PackageExtractor().Extract(source, args.InstallPath);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {
 				printUpdateFailed(args.Package.Signature);
@@ -188,7 +255,9 @@ namespace OpenIDE.Core.Packaging
 			foreach (var action in package.PreInstallActions)
 				_dispatch(action);
 
-			_unpack(source, installPath);
+			if (!installDependencies(package.Dependencies))
+				return;
+			new PackageExtractor().Extract(source, installPath);
 
 			foreach (var action in package.PostInstallActions)
 				_dispatch(action);
@@ -197,6 +266,14 @@ namespace OpenIDE.Core.Packaging
 				package.Signature,
 				package.Target,
 				activeProfile));
+		}
+
+		private bool installDependencies(List<Package.Dependency> dependencies) {
+			foreach (var dependency in dependencies) {
+				if (!install(dependency.ID, dependency.Versions))
+					return false;
+			}
+			return true;
 		}
 
 		private bool runInstallVerify(string tempPath, string installPath) {
@@ -263,7 +340,7 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private Package getInstallPackage(string source, string tempPath) {
-			_unpack(source, tempPath);
+			new PackageExtractor().Extract(source, tempPath);
 			var pkgFile =
 				Path.Combine(
 					Path.Combine(
@@ -271,18 +348,6 @@ namespace OpenIDE.Core.Packaging
 						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
 					"package.json");
 			return Package.Read(pkgFile);
-		}
-		
-		private Package getPackage(string file) {
-			var path = Path.GetDirectoryName(file);
-			var name = Path.GetFileNameWithoutExtension(file);
-			var pkgFile =
-				Path.Combine(
-					Path.Combine(path, name + "-files"),
-					"package.json");
-			if (File.Exists(pkgFile))
-				return Package.Read(pkgFile);
-			return null;
 		}
 
 		private void printConflictingPackage(string name, Package package, IEnumerable<string> matches) {

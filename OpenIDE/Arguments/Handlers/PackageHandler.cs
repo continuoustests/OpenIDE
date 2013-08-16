@@ -20,6 +20,7 @@ namespace OpenIDE.Arguments.Handlers
 		private string _token;
 		private Action<string> _dispatch;
 		private PluginLocator _locator;
+		private PackageFetcher _packageFetcher;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -41,7 +42,7 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("update", "Updates package")
 					.Add("SOURCE", "Path to local file, URL or name")
 						.Add("[-g]", "Updates package in global profiles");
-				usage.Add("rm", "Removes package")
+				usage.Add("uninstall", "Uninstalls package")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or name");
 				usage.Add("edit", "Opens package file in text editor")
 					.Add("NAME", "Package name");
@@ -71,6 +72,7 @@ namespace OpenIDE.Arguments.Handlers
 			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
+			_packageFetcher = new PackageFetcher(_token, _dispatch);
 		}
 
 		public void Execute(string[] arguments) {
@@ -88,7 +90,7 @@ namespace OpenIDE.Arguments.Handlers
 				install(arguments);
 			if (arguments.Length > 1 && arguments[0] == "update")
 				update(arguments);
-			if (arguments.Length > 1 && arguments[0] == "rm")
+			if (arguments.Length > 1 && arguments[0] == "uninstall")
 				remove(arguments);
 			if (arguments.Length > 1 && arguments[0] == "edit")
 				edit(arguments);
@@ -149,7 +151,7 @@ namespace OpenIDE.Arguments.Handlers
 		}
 		
 		private Package getInstallPackage(string source, string tempPath) {
-			extractPackage(source, tempPath);
+			new PackageExtractor().Extract(source, tempPath);
 			var pkgFile =
 				Path.Combine(
 					Path.Combine(
@@ -204,7 +206,13 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\"#pre-install-actions\": []," + NL +
 					"\t\"#post-install-actions\": []," + NL +
 					"\t\"#dependencies\": [" + NL +
-					"\t\t\t{\"id\": \"name\", \"version\": \"v1.0\"}" + NL +
+					"\t\t\t{" + NL +
+					"\t\t\t\t\"id\": \"name\"," + NL +
+					"\t\t\t\t\"versions\":" + NL +
+					"\t\t\t\t[" + NL +
+					"\t\t\t\t\t\"v1.0\"" + NL +
+					"\t\t\t\t]" + NL +
+					"\t\t\t}" + NL +
 					"\t\t]" + NL +
 					"}";
 			return package
@@ -273,28 +281,20 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void install(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var deleteWhenDone = false;
-			var source = downloadPackage(args[1], ref deleteWhenDone);
-			if (!File.Exists(source))
-				return;
-			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
+			var installer = new Installer(_token, _dispatch, _locator);
 			installer.UseGlobalProfiles(useGlobal);
-			installer.Install(source);
-			if (deleteWhenDone)
-				File.Delete(source);
+			installer.Install(args[1]);
+		}
+
+		private void install(string package, bool isGlobal) {
+			
 		}
 		
 		private void update(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var deleteWhenDone = false;
-			var source = downloadPackage(args[1], ref deleteWhenDone);
-			if (!File.Exists(source))
-				return;
-			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
+			var installer = new Installer(_token, _dispatch, _locator);
 			installer.UseGlobalProfiles(useGlobal);
-			installer.Update(source);
-			if (deleteWhenDone)
-				File.Delete(source);
+			installer.Update(args[1]);
 		}
 
 		private bool globalSpecified(ref string[] args) {
@@ -311,34 +311,13 @@ namespace OpenIDE.Arguments.Handlers
 			return useGlobal;
 		}
 
-		private string downloadPackage(string source, ref bool deleteWhenDone) {
-			if (File.Exists(Path.GetFullPath(source)))
-				return Path.GetFullPath(source);
-			var package = new SourceLocator(_token).GetPackage(source);
-			if (package != null) {
-				source = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString() + ".oipkg");
-				download(package.Package, source);
-				deleteWhenDone = true;
-				return source;
-			}
-			return null;
+		private PackageFetcher.FetchedPackage downloadPackage(string source) {
+			return _packageFetcher.Fetch(source);
 		}
 		
 		private void remove(string[] args) {
 			var source = args[1];
-			var package = 
-				getPackages()
-					.FirstOrDefault(x => x.ID == source);
-			if (package != null) {
-				source = 
-					Path.Combine(
-						Path.GetDirectoryName(
-							Path.GetDirectoryName(package.File)),
-						package.ID);
-			} else {
-				source = Path.GetFullPath(source);
-			}
-			var installer = new Installer(_token, _dispatch, extractPackage, _locator);
+			var installer = new Installer(_token, _dispatch, _locator);
 			installer.Remove(source);
 		}
 
@@ -351,18 +330,7 @@ namespace OpenIDE.Arguments.Handlers
 				_dispatch("command|editor goto \"" + package.File + "|0|0\"");
 			}
 		}
-				
-		private void extractPackage(string source, string path) {
-			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			new Process()
-				.Query(
-					Path.Combine(Path.Combine(appDir, "Packaging"), "oipckmngr.exe"),
-					string.Format("extract \"{0}\" \"{1}\"", source, path),
-					false,
-					Environment.CurrentDirectory,
-					(err, line) => { });
-		}
-
+		
 		private void sourceCommands(string[] args) {
 			var locator = new SourceLocator(_token);
 			if (args.Length == 1) {
@@ -439,20 +407,7 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private bool download(string source, string destination) {
-			try {
-				_dispatch(string.Format("Downloading {0} ...", source));
-				if (File.Exists(source)) {
-					File.Copy(source, destination, true);
-					return true;
-				}
-				if (source.StartsWith("http://") || source.StartsWith("https://")) {
-					var client = new WebClient();
-					client.DownloadFile(source, destination);
-					return true;
-				}
-			} catch {
-			}
-			return false;
+			return new FileFetcher(_dispatch).Download(source, destination);
 		}
 
 		private void printError(string msg) {

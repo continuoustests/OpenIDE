@@ -82,7 +82,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			var package = Package.Read(
 				new Package("language", "Name", "v1.1", "MyDescription")
 					.AddPreInstallAction("action")
-					.AddDependency("dependency", "v1.0")
+					.AddDependency("dependency", new[] { "v1.0", "v1.1", "v1.2" })
 					.Write(),
 				"myfile");
 			Assert.That(package.Dependencies.Count, Is.EqualTo(1));
@@ -135,8 +135,8 @@ namespace OpenIDE.Core.Packaging.Tests
 				new Package("language", "MyPackage", "v1.1", "My Description")
 					.AddPreInstallAction("action1")
 					.AddPreInstallAction("action2")
-					.AddDependency("Dep1", "v1")
-					.AddDependency("Dep2", "v1")
+					.AddDependency("Dep1", new[] {"v1","v2"})
+					.AddDependency("Dep2", new[] {"v1"})
 					.AddPostInstallAction("action3")
 					.AddPostInstallAction("action4");
 
@@ -150,8 +150,21 @@ namespace OpenIDE.Core.Packaging.Tests
 					"\t\"description\": \"My Description\"," + NL +
 					"\t\"dependencies\":" + NL +
 					"\t\t[" + NL +
-					"\t\t\t{ \"id\": \"Dep1\", \"version\": \"v1\" }," + NL +
-					"\t\t\t{ \"id\": \"Dep2\", \"version\": \"v1\" }" + NL +
+					"\t\t\t{" + NL +
+					"\t\t\t\t\"id\": \"Dep1\"," + NL +
+					"\t\t\t\t\"versions\":" + NL +
+					"\t\t\t\t[" + NL +
+					"\t\t\t\t\t\"v1\"," + NL +
+					"\t\t\t\t\t\"v2\"" + NL +
+					"\t\t\t\t]" + NL +
+					"\t\t\t}," + NL +
+					"\t\t\t{" + NL +
+					"\t\t\t\t\"id\": \"Dep2\"," + NL +
+					"\t\t\t\t\"versions\":" + NL +
+					"\t\t\t\t[" + NL +
+					"\t\t\t\t\t\"v1\"" + NL +
+					"\t\t\t\t]" + NL +
+					"\t\t\t}" + NL +
 					"\t\t]," + NL +
 					"\t\"pre-install-actions\":" + NL +
 					"\t\t[" + NL +

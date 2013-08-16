@@ -1,16 +1,32 @@
 Needs to be done before 0.1 alpha
 
-* Done - Support initialize in language as well as oi
-* Move CSharp to it's own git project
-* Done - Rename OpenIDENet ot OpenIDE
-* Done - Change GoToType in code engine to gototype and Explore to explore
-* Done - Make EditorEngine use normal commands not keypress t and stuff
-* Greater than and less than search on line and column in code engine search
-* F1 to bring up keyboard shortcuts for all forms
-* General stabilisation
-* Done - Support local initialization file within .OpenIDE folder
-* Make get usage also return wiki url
+General stabilisation
+Overload / injection of sub commands
+Move CSharp to it's own git project
+Greater than and less than search on line and column in code engine search
+F1 to bring up keyboard shortcuts for all forms
+Make get usage also return wiki url
 
+Installer
+	Update all packages from sources
+	Rollback failed installation
+	Uninstall dependencies if no other packages depend on it
+	Mark packages as installed as dependencies or installed separately
+	If installed spearately NEVER uninstall as dependency
+
+*******************************************************************************
+
+Done - Support initialize in language as well as oi
+Done - Rename OpenIDENet ot OpenIDE
+Done - Change GoToType in code engine to gototype and Explore to explore
+Done - Make EditorEngine use normal commands not keypress t and stuff
+Done - Support local initialization file within .OpenIDE folder
+
+Installer
+	Done - Rename rm to uninstall for package
+	Done - Install dependencies with package
+
+*******************************************************************************
 
 Wiki TODO
 	C#

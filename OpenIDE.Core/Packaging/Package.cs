@@ -34,7 +34,8 @@ namespace OpenIDE.Core.Packaging
 						.ForEach(x => 
 							package.AddDependency(
 								x["id"].ToString(),
-								x["version"].ToString()));
+								x["versions"].Children()
+									.Select(y => y.ToString())));
 				}
 				if (data["post-install-actions"] != null) {
 					data["post-install-actions"].Children().ToList()
@@ -50,8 +51,19 @@ namespace OpenIDE.Core.Packaging
 
 		public class Dependency
 		{
+			private List<string> _versions = new List<string>();
 			public string ID { get; set; }
-			public string Version { get; set; }
+			public string[] Versions { get { return _versions.ToArray(); } }
+
+			public Dependency AddVersion(string version) {
+				_versions.Add(version);
+				return this;
+			}
+
+			public Dependency AddVersions(IEnumerable<string> versions) {
+				_versions.AddRange(versions);
+				return this;
+			}
 		}
 
 		public string File { get; set; }
@@ -77,8 +89,8 @@ namespace OpenIDE.Core.Packaging
 			return this;
 		}
 
-		public Package AddDependency(string name, string version) {
-			Dependencies.Add(new Dependency() { ID = name, Version = version });
+		public Package AddDependency(string name, IEnumerable<string> versions) {
+			Dependencies.Add((new Dependency() { ID = name}).AddVersions(versions));
 			return this;
 		}
 
@@ -113,10 +125,22 @@ namespace OpenIDE.Core.Packaging
 			sb.AppendLine(
 				getArrayOf(
 					Dependencies.OfType<object>(),
-					(itm,tabs) => 
-							"{ \"id\": \"{0}\", \"version\": \"{1}\" }"
-								.Replace("{0}", ((Dependency)itm).ID)
-								.Replace("{1}", ((Dependency)itm).Version),
+					(itm,tabs) => {
+						var depSb = new StringBuilder();
+						depSb.AppendLine("{");
+						depSb.AppendLine(
+							tab(tabs + 1) + 
+							"\"id\": \"{0}\"".Replace("{0}", ((Dependency)itm).ID) +
+							",");
+						depSb.AppendLine(tab(tabs + 1) + "\"versions\":");
+						depSb.AppendLine(
+							getArrayOf(
+								((Dependency)itm).Versions.OfType<object>(),
+								(dep,depTabs) => "\"{1}\"".Replace("{1}", dep.ToString()),
+								4));
+						depSb.Append(tab(tabs) + "}");
+						return depSb.ToString();
+					},
 					2) + ",");
 			sb.AppendLine("\t\"pre-install-actions\":");
 			sb.AppendLine(

@@ -1,6 +1,11 @@
 {
   "packages": [
     {
+      "id": "alive",
+      "version": "v1.0",
+      "package": "alive.oipkg"
+    },
+    {
       "id": "bleh",
       "version": "v1.0",
       "package": "bleh.oipkg"

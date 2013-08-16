@@ -112,6 +112,7 @@
     <Compile Include="Definitions\DefinitionCacheWriter.cs" />
     <Compile Include="Definitions\DefinitionCache.cs" />
     <Compile Include="Definitions\DefinitionBuilder.cs" />
+    <Compile Include="Packaging\PackageFetcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
