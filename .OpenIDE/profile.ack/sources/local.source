@@ -24,6 +24,11 @@
       "id": "tryout",
       "version": "v1.0",
       "package": "tryout.oipkg"
+    },
+    {
+      "id": "update-diagram",
+      "version": "v1.0",
+      "package": "update-diagram.oipkg"
     }
   ],
   "origin": "/home/ack/bin/oi-packages/local.source",
