@@ -134,6 +134,8 @@ namespace OpenIDE.Core.Packaging
 				if (package != null) {
 					var name = package.ID;
 					var installPath = getInstallPath(package, profiles, activeProfile);
+					if (installPath == null)
+						return false;
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
 					var match =  
@@ -185,6 +187,8 @@ namespace OpenIDE.Core.Packaging
 				installPath = profiles.GetGlobalProfilePath(activeProfile);
 			else
 				installPath = profiles.GetLocalProfilePath(activeProfile);
+			if (installPath == null)
+				return null;
 			return Path.Combine(installPath, package.Target + "s");
 		}
 
