@@ -345,6 +345,10 @@ namespace OpenIDE.Arguments.Handlers
 			if (useGlobal)
 				path = locator.GetGlobalDir();
 			if (args.Length == 4 && args[1] == "add") {
+				if (path == null) {
+					printError("Config point is not initialized");
+					return;
+				}
 				var name = args[2];
 				var sources = locator.GetSourcesFrom(path);
 				if (sources.Any(x => x.Name == name)) {

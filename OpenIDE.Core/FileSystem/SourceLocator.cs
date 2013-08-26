@@ -47,7 +47,10 @@ namespace OpenIDE.Core.FileSystem
 		}
 
 		public string GetLocalDir() {
-			return getLocalPath(_locator.GetActiveLocalProfile());
+			var path = _locator.GetActiveLocalProfile();
+			if (path == null)
+				return null;
+			return getLocalPath(path);
 		}
 
 		public string GetGlobalDir() {
