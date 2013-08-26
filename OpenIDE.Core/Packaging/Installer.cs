@@ -134,8 +134,10 @@ namespace OpenIDE.Core.Packaging
 				if (package != null) {
 					var name = package.ID;
 					var installPath = getInstallPath(package, profiles, activeProfile);
-					if (installPath == null)
+					if (installPath == null) {
+						_dispatch("error|Config point is not initialized");
 						return false;
+					}
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
 					var match =  
