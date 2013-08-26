@@ -69,6 +69,8 @@ namespace OpenIDE.Core.FileSystem
 		}
 
 		private void addSources(List<Source> sources, string path) {
+			if (path == null)
+				return;
 			var list = getSources(path);
 			foreach (var source in list) {
 				if (!sources.Any(x => x.Origin == source.Origin))
@@ -77,7 +79,10 @@ namespace OpenIDE.Core.FileSystem
 		}
 
 		private string getLocalPath(string profile) {
-			return getPath(_locator.GetLocalProfilePath(profile));
+			var path = _locator.GetLocalProfilePath(profile);
+			if (path == null)
+				return null;
+			return getPath(path);
 		}
 
 		private string getGlobalPath(string profile) {
