@@ -26,6 +26,7 @@ namespace OpenIDE.Core.Packaging
 								new SourcePackage(
 									x["id"].ToString(),
 									x["version"].ToString(),
+									x["description"].ToString(),
 									baseLocation + x["package"].ToString())));
 				return source;
 			} catch {
@@ -37,11 +38,13 @@ namespace OpenIDE.Core.Packaging
 		{
 			public string ID { get; private set; }
 			public string Version { get; private set; }
+			public string Description{ get; private set; }
 			public string Package { get; private set; }
 
-			public SourcePackage(string id, string version, string package) {
+			public SourcePackage(string id, string version, string description, string package) {
 				ID = id;
 				Version = version;
+				Description = description;
 				Package = package;
 			}
 

@@ -74,6 +74,7 @@ namespace oipckmngr
 				new PackageItem() {
 						ID = package.ID,
 						Version = package.Version,
+						Description = package.Description,
 						Package = Path.GetFileName(packageFile)
 					});
 		}
@@ -112,6 +113,7 @@ namespace oipckmngr
 	{
 		public string ID { get; set; }
 		public string Version { get; set; }
+		public string Description { get; set; }
 		public string Package { get; set; }
 	}
 
