@@ -56,7 +56,9 @@ namespace OpenIDE.Core.Language
 
 		private bool isEnabledPlugin(LanguagePlugin plugin)
 		{
-			return _enabledLanguages == null || _enabledLanguages.Contains(plugin.GetLanguage());
+			if (_enabledLanguages == null)
+				return false;
+			return _enabledLanguages.Contains(plugin.GetLanguage());
 		}
 
 		private string[] getPlugins()
