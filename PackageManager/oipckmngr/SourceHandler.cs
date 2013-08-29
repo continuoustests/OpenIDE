@@ -74,6 +74,7 @@ namespace oipckmngr
 				new PackageItem() {
 						ID = package.ID,
 						Version = package.Version,
+						Name = package.Name,
 						Description = package.Description,
 						Package = Path.GetFileName(packageFile)
 					});
