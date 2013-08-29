@@ -16,7 +16,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_read_package_file() {
 			var package = Package.Read(
-				new Package("language", "Name", "v1.1", "MyDescription")
+				new Package("language", "id", "v1.1", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write(),
 				"myfile");
@@ -26,17 +26,17 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_read_package_signature() {
 			var package = Package.Read(
-				new Package("language", "Name", "v1.1", "MyDescription")
+				new Package("language", "id", "v1.1", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write(),
 				"myfile");
-			Assert.That(package.Signature, Is.EqualTo("Name-v1.1"));
+			Assert.That(package.Signature, Is.EqualTo("id-v1.1"));
 		}
 
 		[Test]
 		public void When_parsing_minimum_valid_options_parsing_validates() {
 			var package = Package.Read(
-				new Package("language", "Name", "v1.1", "MyDescription")
+				new Package("language", "id", "v1.1", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write(),
 				"myfile");
@@ -44,7 +44,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language", "Name", "v1.1", "MyDescription")
+				new Package("language", "id", "v1.1", "name", "MyDescription")
 					.AddPostInstallAction("action")
 					.Write(),
 				"myfile");
@@ -52,14 +52,14 @@ namespace OpenIDE.Core.Packaging.Tests
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language", "Name", "v1.1", "MyDescription")
+				new Package("language", "id", "v1.1", "name", "MyDescription")
 					.Write(),
 				"myfile");
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language-script", "Name", "v1.1", "MyDescription") {
+				new Package("language-script", "id", "v1.1", "name", "MyDescription") {
 						Language = "C#"
 					}
 					.Write(),
@@ -68,7 +68,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language-rscript", "Name", "v1.1", "MyDescription") {
+				new Package("language-rscript", "id", "v1.1", "name", "MyDescription") {
 						Language = "C#"
 					}
 					.Write(),
@@ -80,7 +80,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_parse_dependencies() {
 			var package = Package.Read(
-				new Package("language", "Name", "v1.1", "MyDescription")
+				new Package("language", "id", "v1.1", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.AddDependency("dependency", new[] { "v1.0", "v1.1", "v1.2" })
 					.Write(),
@@ -92,7 +92,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		public void When_parsing_package_without_minimum_nessesary_options_parsing_fails() {
 			Assert.That(
 				Package.Read(
-					new Package("language", "", "v1.1", "MyDescription")
+					new Package("language", "", "v1.1", "name", "MyDescription")
 						.AddPreInstallAction("action1")
 						.Write(),
 				"myfile"),
@@ -100,7 +100,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "v1.1", "")
+					new Package("language", "MyPackage", "v1.1", "name", "")
 						.AddPreInstallAction("action1")
 						.Write(),
 					"myfile"),
@@ -108,7 +108,7 @@ namespace OpenIDE.Core.Packaging.Tests
 
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "", "MyDescription")
+					new Package("language", "MyPackage", "", "name", "MyDescription")
 						.AddPreInstallAction("action1")
 						.Write(),
 					"myfile"),
@@ -116,14 +116,30 @@ namespace OpenIDE.Core.Packaging.Tests
 
 			Assert.That(
 				Package.Read(
-					new Package("not-valid", "MyPackage", "v1.1", "MyDescription")
+					new Package("not-valid", "MyPackage", "v1.1", "name", "MyDescription")
 						.Write(),
 					"myfile"),
 				Is.Null);
 
 			Assert.That(
 				Package.Read(
-					new Package("language-rscript", "Name", "v1.1", "MyDescription")
+					new Package("language-rscript", "id", "v1.1", "name", "MyDescription")
+					.Write(),
+				"myfile"),
+			Is.Null);
+
+			Assert.That(
+				Package.Read(
+				new Package("language", "id", "v1.1", "", "MyDescription")
+					.AddPreInstallAction("action")
+					.AddDependency("dependency", new[] { "v1.0", "v1.1", "v1.2" })
+					.Write(),
+				"myfile"),
+			Is.Null);
+
+			Assert.That(
+				Package.Read(
+				new Package("language", "id", "v1.1", "This name is more than 50 chars. And that's too long", "MyDescription")
 					.Write(),
 				"myfile"),
 			Is.Null);
@@ -132,7 +148,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_write_package() {
 			var package = 
-				new Package("language", "MyPackage", "v1.1", "My Description")
+				new Package("language", "MyPackage", "v1.1", "My package", "My Description")
 					.AddPreInstallAction("action1")
 					.AddPreInstallAction("action2")
 					.AddDependency("Dep1", new[] {"v1","v2"})
@@ -147,6 +163,7 @@ namespace OpenIDE.Core.Packaging.Tests
 					"\t\"target\": \"language\"," + NL +
 					"\t\"id\": \"MyPackage\"," + NL +
 					"\t\"version\": \"v1.1\"," + NL +
+					"\t\"name\": \"My package\"," + NL +
 					"\t\"description\": \"My Description\"," + NL +
 					"\t\"dependencies\":" + NL +
 					"\t\t[" + NL +

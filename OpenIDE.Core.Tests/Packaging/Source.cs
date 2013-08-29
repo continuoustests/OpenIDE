@@ -26,9 +26,13 @@ namespace OpenIDE.Core.Tests.Packaging
 			Assert.That(source.Packages.Count, Is.EqualTo(2));
 			Assert.That(source.Packages[0].ID, Is.EqualTo("package1"));
 			Assert.That(source.Packages[0].Version, Is.EqualTo("v1.0"));
+			Assert.That(source.Packages[0].Name, Is.EqualTo("Package 1"));
+			Assert.That(source.Packages[0].Description, Is.EqualTo("Package descr"));
 			Assert.That(source.Packages[0].Package, Is.EqualTo("/origin/package1-v1.0.oipkg"));
 			Assert.That(source.Packages[1].ID, Is.EqualTo("package2"));
 			Assert.That(source.Packages[1].Version, Is.EqualTo("v1.1"));
+			Assert.That(source.Packages[1].Name, Is.EqualTo("Package 2"));
+			Assert.That(source.Packages[1].Description, Is.EqualTo("Package descr2"));
 			Assert.That(source.Packages[1].Package, Is.EqualTo("/origin/package2-v1.1.oipkg"));
 		}
 
@@ -41,11 +45,15 @@ namespace OpenIDE.Core.Tests.Packaging
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\t\"id\": \"package1\",");
 			sb.AppendLine("\t\t\t\"version\": \"v1.0\",");
+			sb.AppendLine("\t\t\t\"name\": \"Package 1\",");
+			sb.AppendLine("\t\t\t\"description\": \"Package descr\",");
 			sb.AppendLine("\t\t\t\"package\": \"package1-v1.0.oipkg\"");
 			sb.AppendLine("\t\t},");
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\t\"id\": \"package2\",");
 			sb.AppendLine("\t\t\t\"version\": \"v1.1\",");
+			sb.AppendLine("\t\t\t\"name\": \"Package 2\",");
+			sb.AppendLine("\t\t\t\"description\": \"Package descr2\",");
 			sb.AppendLine("\t\t\t\"package\": \"package2-v1.1.oipkg\"");
 			sb.AppendLine("\t\t}");
 			sb.AppendLine("\t]");

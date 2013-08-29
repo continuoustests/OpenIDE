@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Packaging
 {
@@ -26,10 +27,12 @@ namespace OpenIDE.Core.Packaging
 								new SourcePackage(
 									x["id"].ToString(),
 									x["version"].ToString(),
+									x["name"].ToString(),
 									x["description"].ToString(),
 									baseLocation + x["package"].ToString())));
 				return source;
 			} catch {
+				Logger.Write("Failed to read source package " + file);
 			}
 			return null;
 		}
@@ -38,18 +41,20 @@ namespace OpenIDE.Core.Packaging
 		{
 			public string ID { get; private set; }
 			public string Version { get; private set; }
+			public string Name { get; private set; }
 			public string Description{ get; private set; }
 			public string Package { get; private set; }
 
-			public SourcePackage(string id, string version, string description, string package) {
+			public SourcePackage(string id, string version, string name, string description, string package) {
 				ID = id;
 				Version = version;
+				Name = name;
 				Description = description;
 				Package = package;
 			}
 
 			public override string ToString() {
-				return string.Format("{0} ({1})", ID, Version);
+				return string.Format("{0} ({1} {2})", Name, ID, Version);
 			}
 		}
 

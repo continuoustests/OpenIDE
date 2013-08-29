@@ -20,7 +20,13 @@ namespace OpenIDE.Core.Packaging
 		private static Package read(string file, string json) {
 			try {
 				var data = JObject.Parse(json);
-				var package = new Package(data["target"].ToString(), data["id"].ToString(), data["version"].ToString(), data["description"].ToString());
+				var package = 
+					new Package(
+						data["target"].ToString(),
+						data["id"].ToString(), 
+						data["version"].ToString(), 
+						data["name"].ToString(), 
+						data["description"].ToString());
 				var language = data["language"];
 				if (language != null)
 					package.Language = language.ToString();
@@ -72,15 +78,17 @@ namespace OpenIDE.Core.Packaging
 		public string Signature { get{ return ID + "-" + Version; } }
 		public string ID { get; set; }
 		public string Version { get; set; }
+		public string Name { get; set; }
 		public string Description { get; set; }
 		public List<string> PreInstallActions = new List<string>();
 		public List<Dependency> Dependencies = new List<Dependency>();
 		public List<string> PostInstallActions = new List<string>();
 
-		public Package(string target, string id, string version, string description) {
+		public Package(string target, string id, string version, string name, string description) {
 			Target = target;
 			ID = id;
 			Version = version;
+			Name = name;
 			Description = description;
 		}
 
@@ -104,6 +112,8 @@ namespace OpenIDE.Core.Packaging
 				new[] { "language", "script", "rscript", "language-script", "language-rscript" }.Contains(Target) &&
 				ID.Length > 0 &&
 				Version.Length > 0 &&
+				Name.Length > 0 &&
+				Name.Length <= 50 &&
 				Description.Length > 0;
 			if (!basicValid)
 				return false;
@@ -120,6 +130,7 @@ namespace OpenIDE.Core.Packaging
 				sb.AppendLine(string.Format("\t\"language\": \"{0}\",", Language));
 			sb.AppendLine(string.Format("\t\"id\": \"{0}\",", ID));
 			sb.AppendLine(string.Format("\t\"version\": \"{0}\",", Version));
+			sb.AppendLine(string.Format("\t\"name\": \"{0}\",", Name));
 			sb.AppendLine(string.Format("\t\"description\": \"{0}\",", Description));
 			sb.AppendLine("\t\"dependencies\":");
 			sb.AppendLine(

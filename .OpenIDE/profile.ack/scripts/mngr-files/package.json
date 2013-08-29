@@ -3,6 +3,7 @@
 	"target": "script",
 	"id": "mngr",
 	"version": "v1.0",
+	"name": "pckmngr tester",
 	"description": "mngr script package",
 	"#config-prefix": "mngr.",
 	"#pre-install-actions": [],

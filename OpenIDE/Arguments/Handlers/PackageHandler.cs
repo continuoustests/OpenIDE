@@ -182,8 +182,9 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void printPackages(IEnumerable<Package> packages) {
-			packages.ToList()
-				.ForEach(x => Console.WriteLine(x.ID + " (" + x.Version + ")"));
+			packages
+				.OrderBy(x => x.Name).ToList()
+				.ForEach(x => Console.WriteLine(x.Name + " (" + x.ID + " " + x.Version + ")"));
 		}
 
 		private string getPackageDescription(string dir, string name) {
@@ -201,13 +202,14 @@ namespace OpenIDE.Arguments.Handlers
 					languageText +
 					"\t\"id\": \"{0}\"," + NL +
 					"\t\"version\": \"v1.0\"," + NL +
+					"\t\"name\": \"{0}\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
 					"\t\"#pre-install-actions\": []," + NL +
 					"\t\"#post-install-actions\": []," + NL +
 					"\t\"#dependencies\": [" + NL +
 					"\t\t\t{" + NL +
-					"\t\t\t\t\"id\": \"name\"," + NL +
+					"\t\t\t\t\"id\": \"package id\"," + NL +
 					"\t\t\t\t\"versions\":" + NL +
 					"\t\t\t\t[" + NL +
 					"\t\t\t\t\t\"v1.0\"" + NL +
@@ -404,7 +406,7 @@ namespace OpenIDE.Arguments.Handlers
 						.Where(x => name == null || x.Name == name);
 				foreach (var source in sources) {
 					_dispatch("Packages in " +  source.Name);
-					foreach (var package in source.Packages)
+					foreach (var package in source.Packages.OrderBy(x => x.Name))
 						_dispatch("\t" + package.ToString());
 				}
 			}
