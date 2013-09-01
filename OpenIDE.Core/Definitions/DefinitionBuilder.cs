@@ -174,6 +174,7 @@ namespace OpenIDE.Core.Definitions
 				Logger.Write("Adding scripts from " + languageScriptPath);
 				var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
 				foreach (var scriptFile in languageScripts) {
+					Logger.Write("Script " + scriptFile);
 					var script  = new Script(_token, _workingDirectory, scriptFile);
 					var usages = script.Usages; // Description is built when fetching usages
 					var scriptItem = item.Append(
@@ -289,6 +290,10 @@ namespace OpenIDE.Core.Definitions
 			var languages = _languages(languagePath);
 			if (languages.Any(x => !locations.Contains(x.FullPath))) {
 				Logger.Write("New language has been added");
+				if (Logger.IsEnabled) {
+					foreach (var newLanguage in languages.Where(x => !locations.Contains(x.FullPath)))
+						Logger.Write("\t" + newLanguage.FullPath);
+				}
 				return true;
 			}
 			if (locations.Any(x => !languages.Any(y => y.FullPath == x))) {

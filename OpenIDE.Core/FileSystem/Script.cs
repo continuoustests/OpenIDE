@@ -101,7 +101,9 @@ namespace OpenIDE.Core.FileSystem
 		private string ToSingleLine(string arguments)
 		{
 			var sb = new StringBuilder();
-			run(arguments, (line) => sb.Append(line), new KeyValuePair<string,string>[] {});
+			run(arguments,
+				(line) => sb.Append(line.Replace(Environment.NewLine, "")),
+				new KeyValuePair<string,string>[] {});
 			return sb.ToString();
 		}
 
@@ -129,9 +131,10 @@ namespace OpenIDE.Core.FileSystem
 					false,
 					_token,
 					(error, line) => {
-							if (error && !line.StartsWith("error|"))
+							if (error && !line.StartsWith("error|")) {
 								onLine("error|" + line);
-							else
+								Logger.Write(line);
+							} else
 								onLine(line);
 						},
 					finalReplacements);

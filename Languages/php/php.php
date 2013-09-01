@@ -14,6 +14,7 @@
 	}
 
 	function handleDefinition() {		
+		write("");
 	}
 
 	function handleTypes() {
@@ -72,6 +73,8 @@
 	            	continue;
 	            if ($this->getClass($line, $lineNum))
 	            	continue;
+	            if ($this->getInterface($line, $lineNum))
+	            	continue;
 			}
 		}
 
@@ -104,7 +107,7 @@
 				}
 	            $signature = $item->Name;
 	            if ($this->namespace != "") {
-	            	$signature = $this->namespace . "." . $signature;
+	            	$signature = $this->namespace . "\\" . $signature;
 	            }
 	            $column = $item->Column + 2;
 	            write("signature||" .
@@ -119,8 +122,31 @@
 	        return FALSE;
 		}
 
+		function getInterface($line, $lineNum) {
+			if (strstr(strtolower($line), "interface") != FALSE) {
+				$item = $this->getKeyword("interface", $line);
+				if ($item == NULL) {
+					return FALSE;
+				}
+	            $signature = $item->Name;
+	            if ($this->namespace != "") {
+	            	$signature = $this->namespace . "\\" . $signature;
+	            }
+	            $column = $item->Column + 2;
+	            write("signature||" .
+					  $signature . "|" . 
+					  $item->Name . 
+					  "|interface||" . 
+					  $lineNum . "|" . 
+					  $column . 
+					  "||typesearch");
+	            return TRUE;
+	        }
+	        return FALSE;
+		}
+
 		function getKeyword($type, $line) {
-			$paramPos = strpos($line, ":");
+			$paramPos = strpos($line, "implements");
             if ($paramPos === FALSE) {
                 $paramPos = strpos($line, "{");
                 if ($paramPos === FALSE) {
@@ -153,5 +179,13 @@
 
 	function write($s) {
 		echo $s . "\n";
+	}
+
+	interface iTestIntefrace
+	{
+	}
+
+	class ImplementingInterface implements iTestIntefrace
+	{
 	}
 ?>

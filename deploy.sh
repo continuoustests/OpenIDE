@@ -114,4 +114,4 @@ cp $ROOT/Languages/js/js-files/lib/parse-js.License $DEPLOYDIR/.OpenIDE/language
 cp $ROOT/Languages/js/js-files/lib/carrier.js $DEPLOYDIR/.OpenIDE/languages/js-files/lib/carrier.js
 cp $ROOT/Languages/js/js-files/lib/carrier.License $DEPLOYDIR/.OpenIDE/languages/js-files/lib/carrier.License
 
-cp $ROOT/Languages/php/php.php $DEPLOYDIR/.OpenIDE/languages/php
+cp -r $ROOT/Languages/php/* $DEPLOYDIR/.OpenIDE/languages

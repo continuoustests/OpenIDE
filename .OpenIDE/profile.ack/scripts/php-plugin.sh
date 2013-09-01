@@ -25,8 +25,20 @@ if [ "$2" = "get-command-definitions" ]; then
 	# 	param|"Param description" end
 	# end
 
-	echo "Runs oi executable form at build directory"
+	echo "Php plugin dev options|"
+	echo "crawl|\"Runs crawl-source on the plugin directory\" end "
+	echo "new|\"Runs php language script new\" end "
+	echo "new-definitions|\"Gets definitions for the new command\" end "
 	exit
 fi
 
-oi/bin/AutoTest.Net/oi.exe "${@:4}"
+if [ "$4" == "crawl" ]; then
+	./Languages/php/php.php crawl-source Languages/php
+fi
+if [ "$4" == "new" ]; then
+	location=$(pwd)/Languages/php/php-files/scripts
+	./Languages/php/php-files/scripts/new.php "${location}" default default "${@:5}" 
+fi
+if [ "$4" == "new-definitions" ]; then
+	./Languages/php/php-files/scripts/new.php get-command-definitions
+fi

@@ -94,4 +94,4 @@ rem xcopy %LANGUAGES%\js\js-files\lib\parse-js.License %DEPLOYDIR%\.OpenIDE\lang
 rem xcopy %LANGUAGES%\js\js-files\lib\carrier.js %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
 rem xcopy %LANGUAGES%\js\js-files\lib\carrier.License %DEPLOYDIR%\.OpenIDE\languages\js-files\lib
 
-rem xcopy %LANGUAGES%\php\php.php %DEPLOYDIR%\.OpenIDE\languages
+xcopy /S /I /E %LANGUAGES%\php %DEPLOYDIR%\.OpenIDE\languages

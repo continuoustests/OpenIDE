@@ -27,8 +27,37 @@
 			# 	param|"Param description" end
 			# end
 
-			echo "Script description\n";
-			exit();	
+			echo "Creates a new php file\n";
+			exit();
 		}
+	}
+
+	if (count($argv) == 5) {
+		$file = $argv[1] . DIRECTORY_SEPARATOR . $argv[4];
+		if (!endsWith($file, ".php")) {
+			$file = $file . ".php";
+		}
+		$directory = dirname($file);
+		if (!is_dir($directory)) {
+			mkdir($directory, 0777, true);
+		}
+		$fp = fopen($file, 'w');
+		fwrite($fp, "<?php\n\t\n?>");
+		fclose($fp);
+		echo "command|editor goto \"" . $file . "|2|2\"\n";
+		waitForEndOfCommand();
+	}
+
+	function waitForEndOfCommand() {
+		while (TRUE) {
+			$line = readline();
+			if ($line == "end-of-command")
+				break;
+			echo $line;
+		}
+	}
+
+	function endsWith($haystack, $needle) {
+	    return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 	}
 ?>

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.FileSystem;
@@ -137,55 +138,57 @@ namespace OpenIDE.Bootstrapping
 
 		private void dispatchAndCompleteMessage(string command, Action onCommandCompleted)
 		{
-			Logger.Write("Dispatching " + command);
-			if (command.Length == 0) {
-				Console.WriteLine();
-				return;
-			}
-			if (isError(command))
-			{
-				printError(command);
-				return;
-			}
-			if (isWarning(command))
-			{
-				printWarning(command);
-				return;
-			}
-			if (isCommand(command))
-			{
-				var prefix = getCommandPrefix(command);
-				var parser = new CommandStringParser();
-				var args = 
-					parser.Parse(
-						command.Substring(prefix.Length, command.Length - prefix.Length));
-				DefinitionCacheItem cmd = null;
-				if (prefix == "command|")
-					cmd = GetDefinitionBuilder().Get(args.ToArray());
-				else if (prefix == "command-builtin|")
-					cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
-				else if (prefix == "command-language|")
-					cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
-				else if (prefix == "command-languagescript|")
-					cmd = GetDefinitionBuilder().GetLanguageScript(args.ToArray());
-				else if (prefix == "command-script|")
-					cmd = GetDefinitionBuilder().GetScript(args.ToArray());
-
-				if (cmd != null) {
-					new CommandRunner()
-						.Run(cmd, args.ToArray());
+			ThreadPool.QueueUserWorkItem((m) => {
+				Logger.Write("Dispatching " + command);
+				if (command.Length == 0) {
+					Console.WriteLine();
+					return;
 				}
-				onCommandCompleted();
-				return;
-			}
-			if (isEvent(command))
-			{
-				var prefix = "event|";
-				EventDispatcher()
-					.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
-				return;
-			}
-			Console.WriteLine(command);			
+				if (isError(command))
+				{
+					printError(command);
+					return;
+				}
+				if (isWarning(command))
+				{
+					printWarning(command);
+					return;
+				}
+				if (isCommand(command))
+				{
+					var prefix = getCommandPrefix(command);
+					var parser = new CommandStringParser();
+					var args = 
+						parser.Parse(
+							command.Substring(prefix.Length, command.Length - prefix.Length));
+					DefinitionCacheItem cmd = null;
+					if (prefix == "command|")
+						cmd = GetDefinitionBuilder().Get(args.ToArray());
+					else if (prefix == "command-builtin|")
+						cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
+					else if (prefix == "command-language|")
+						cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
+					else if (prefix == "command-languagescript|")
+						cmd = GetDefinitionBuilder().GetLanguageScript(args.ToArray());
+					else if (prefix == "command-script|")
+						cmd = GetDefinitionBuilder().GetScript(args.ToArray());
+
+					if (cmd != null) {
+						new CommandRunner()
+							.Run(cmd, args.ToArray());
+					}
+					onCommandCompleted();
+					return;
+				}
+				if (isEvent(command))
+				{
+					var prefix = "event|";
+					EventDispatcher()
+						.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
+					return;
+				}
+				Console.WriteLine(command);
+			}, null);
 		}
 
 		private bool isCommand(string command)

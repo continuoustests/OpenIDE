@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
+using OpenIDE.Core.Logging;
+
 namespace OpenIDE.Core.EditorEngineIntegration
 {
 	public class Instance
@@ -47,6 +49,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			foreach (var arg in arguments)
 				query += " \"" + arg + "\"";
 			var reply = client.Request(query);
+			Logger.Write("Editor engine started on port " + Port.ToString() + " responding with " + reply);
 			client.Disconnect();
 			return reply;
 		}
@@ -80,6 +83,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			var sb = new StringBuilder();
 			arguments.ToList()
 				.ForEach(x => sb.Append(x + " "));
+			Logger.Write("Sending to editor: " + sb.ToString());
 			send(sb.ToString());
 		}
 
@@ -98,9 +102,12 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		private void send(string message)
 		{
 			var client = _clientFactory.Invoke();
+			Logger.Write("Connecting to port " + Port.ToString());
 			client.Connect(Port, (s) => {});
-			if (!client.IsConnected)
+			if (!client.IsConnected) {
+				Logger.Write("Editor is not connected. Not sending " + message);
 				return;
+			}
 			client.SendAndWait(message);
 			client.Disconnect();
 		}

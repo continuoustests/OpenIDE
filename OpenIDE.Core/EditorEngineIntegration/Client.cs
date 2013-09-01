@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections;
 using System.Threading;
 using System.Linq;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.EditorEngineIntegration
 {
@@ -95,9 +96,8 @@ namespace OpenIDE.Core.EditorEngineIntegration
                 }
                 stream.BeginRead(_buffer, 0, _buffer.Length, ReadCompleted, stream);
             }
-            catch (Exception ex)
+            catch
             {
-                WriteError(ex);
                 Reconnect(0);
             }
         }
@@ -123,6 +123,8 @@ namespace OpenIDE.Core.EditorEngineIntegration
             var timeout = DateTime.Now;
             while (IsSending && DateTime.Now.Subtract(timeout).TotalMilliseconds < 8000)
                 Thread.Sleep(10);
+            if (DateTime.Now.Subtract(timeout).TotalMilliseconds > 8000)
+                Logger.Write("Message \"" + message + "\" not sent! Operation timed out");
         }
 
 		public string Request(string message)
@@ -155,6 +157,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
             var client = (NetworkStream)result.AsyncState;
             try
             {
+                Logger.Write("Message sent");
                 client.EndWrite(result);
                 lock(queue)
                 {
@@ -164,9 +167,8 @@ namespace OpenIDE.Core.EditorEngineIntegration
                 }
                 
             }
-            catch (Exception ex)
+            catch
             {
-                WriteError(ex);
 				Reconnect(0);
             }
         }
@@ -183,17 +185,20 @@ namespace OpenIDE.Core.EditorEngineIntegration
             {
                 try
                 {
+                    Logger.Write("Pushing message to socket " + _currentPort.ToString());
 					byte[] toSend = Encoding.UTF8.GetBytes(message).Concat(new byte[] { 0x0 }).ToArray();
                     _stream.BeginWrite(toSend, 0, toSend.Length, WriteCompleted, _stream);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    WriteError(ex);
                 }
             }
         }
 
         private void WriteError(Exception ex)
         {
+            Logger.Write(ex);
         }
 	}
 }

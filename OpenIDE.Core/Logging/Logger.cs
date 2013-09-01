@@ -6,6 +6,8 @@ namespace OpenIDE.Core.Logging
 	{
 		private static ILogger _logger = null;
 
+		public static bool IsEnabled { get { return isEnabled(); } }
+
 		public static void Assign(ILogger logger)
 		{
 			_logger = logger;

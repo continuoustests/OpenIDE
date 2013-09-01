@@ -1,10 +1,10 @@
 #!/usr/bin/env php
 <?php
-	if (count($argv) > 1) {
+	if (count($argv) == 2) {
 		if ($argv[1] == "reactive-script-reacts-to") {
 			# Write one event pr line that this script will react to
 			# echo "goto*.cs|*";
-			return;
+			exit();	
 		}
 	}
 
