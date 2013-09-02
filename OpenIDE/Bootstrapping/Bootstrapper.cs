@@ -21,6 +21,7 @@ namespace OpenIDE.Bootstrapping
 		public static AppSettings Settings = null; 
 		public static Action<string> DispatchMessage { get { return _container.DispatchMessage ; } }
 		public static Action<string, Action> DispatchAndCompleteMessage { get { return _container.DispatchAndCompleteMessage; } }
+		public static bool IsProcessing { get { return _container.IsProcessing; } }
 		
 		public static void Initialize()
 		{

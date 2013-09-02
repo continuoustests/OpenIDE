@@ -25,9 +25,12 @@ namespace OpenIDE.Bootstrapping
 		private List<ICommandHandler> _pluginHandlers = new List<ICommandHandler>();
 		private DefinitionBuilder _definitionBuilder = null;
 		private PluginLocator _pluginLocator = null;
+		private object _commandProcessLock = new object();
+		private int _commandsInProcessing = 0;
 
 		public Action<string> DispatchMessage { get { return dispatchMessage; } }
 		public Action<string, Action> DispatchAndCompleteMessage { get { return dispatchAndCompleteMessage; } }
+		public bool IsProcessing { get { return _commandsInProcessing > 0; } }
 
 		public DIContainer(AppSettings settings)
 		{
@@ -138,24 +141,18 @@ namespace OpenIDE.Bootstrapping
 
 		private void dispatchAndCompleteMessage(string command, Action onCommandCompleted)
 		{
+			lock (_commandProcessLock) {
+				_commandsInProcessing++;
+			}
 			ThreadPool.QueueUserWorkItem((m) => {
 				Logger.Write("Dispatching " + command);
 				if (command.Length == 0) {
 					Console.WriteLine();
-					return;
-				}
-				if (isError(command))
-				{
+				} else if (isError(command)) {
 					printError(command);
-					return;
-				}
-				if (isWarning(command))
-				{
+				} else if (isWarning(command)) {
 					printWarning(command);
-					return;
-				}
-				if (isCommand(command))
-				{
+				} else if (isCommand(command)) {
 					var prefix = getCommandPrefix(command);
 					var parser = new CommandStringParser();
 					var args = 
@@ -178,16 +175,16 @@ namespace OpenIDE.Bootstrapping
 							.Run(cmd, args.ToArray());
 					}
 					onCommandCompleted();
-					return;
-				}
-				if (isEvent(command))
-				{
+				} else if (isEvent(command)) {
 					var prefix = "event|";
 					EventDispatcher()
 						.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
-					return;
+				} else {
+					Console.WriteLine(command);
 				}
-				Console.WriteLine(command);
+				lock (_commandProcessLock) {
+					_commandsInProcessing--;
+				}
 			}, null);
 		}
 

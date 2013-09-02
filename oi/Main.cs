@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Linq;
+using System.Threading;
 using System.Collections.Generic;
 using OpenIDE;
 using OpenIDE.Messaging;
@@ -58,6 +59,10 @@ namespace oi
 			Logger.Write("Running command {0} of type {1}", cmd.Name, cmd.Type);
 			if (!new CommandRunner().Run(cmd, arguments))
 				printUsage(cmd.Name);
+
+			Logger.Write("Waiting for background commands");
+			while (Bootstrapper.IsProcessing)
+				Thread.Sleep(10);
 			Logger.Write("Application exiting");
 		}
 
