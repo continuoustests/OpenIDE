@@ -148,11 +148,14 @@
 		function getKeyword($type, $line) {
 			$paramPos = strpos($line, "implements");
             if ($paramPos === FALSE) {
-                $paramPos = strpos($line, "{");
+                $paramPos = strpos($line, "extends");
                 if ($paramPos === FALSE) {
-                	$paramPos = strpos($line, ";");
+					$paramPos = strpos($line, "{");
                 	if ($paramPos === FALSE) {
-                		$paramPos = strlen($line);
+                		$paramPos = strpos($line, ";");
+                		if ($paramPos === FALSE) {
+                			$paramPos = strlen($line);
+						}
                 	}
                 }
             }

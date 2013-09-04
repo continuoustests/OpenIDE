@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>{PROJECT_NAME}</RootNamespace>
-    <AssemblyName>ClassLibrary1</AssemblyName>
     <AssemblyName>{PROJECT_NAME}</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
