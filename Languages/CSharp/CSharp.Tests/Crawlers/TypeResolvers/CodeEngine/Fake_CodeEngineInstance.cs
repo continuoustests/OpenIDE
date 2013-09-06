@@ -13,6 +13,11 @@ namespace CSharp.Tests.Crawlers.TypeResolvers.CodeEngine
         public string Key { get; set; }
         public int Port { get; set; }
 
+        public bool IsAlive()
+        {
+            return true;
+        }
+
         public void KeepAlive()
         {
         }

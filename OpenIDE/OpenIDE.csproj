@@ -124,6 +124,8 @@
     <Compile Include="CommandRunner.cs" />
     <Compile Include="Arguments\Handlers\CatScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\HandleLanguageHandler.cs" />
+    <Compile Include="Arguments\Handlers\EnvironmentHandler.cs" />
+    <Compile Include="Arguments\Handlers\ShutdownHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

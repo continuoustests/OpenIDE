@@ -88,6 +88,9 @@ namespace OpenIDE.Bootstrapping
 					new PackageHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 					new PkgTestHandler(_settings.RootPath),
 
+					new EnvironmentHandler(dispatchMessage, ICodeEngineLocator(), ILocateEditorEngine()),
+					new ShutdownHandler(_settings.RootPath, dispatchMessage, ILocateEditorEngine()),
+
 					new GetCommandsHandler(),
 
 					new RunCommandHandler(),

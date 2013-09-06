@@ -16,16 +16,21 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			_fs = fs;
 			ClientFactory = () => { return new Client(); };
 		}
+
+		public List<Instance> GetInstances()
+		{
+			return getInstances().Where(x => canConnectTo(x)).ToList();
+		}
 		
 		public Instance GetInstance(string path)
 		{
-			var instances = getInstances(path);
+			var instances = getInstances();
 			return instances.Where(x => path.StartsWith(x.Key) && canConnectTo(x))
 				.OrderByDescending(x => x.Key.Length)
 				.FirstOrDefault();
 		}
 		
-		private IEnumerable<Instance> getInstances(string path)
+		private IEnumerable<Instance> getInstances()
 		{
 			var dir = Path.Combine(Path.GetTempPath(), "EditorEngine");
 			if (_fs.DirectoryExists(dir))
