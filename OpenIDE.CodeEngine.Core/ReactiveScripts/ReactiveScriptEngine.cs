@@ -15,13 +15,15 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		private ScriptTouchHandler _touchHandler;
 		private ReactiveScriptReader _reader;
 		private List<ReactiveScript> _scripts;	
+		private List<string> _pausedScripts;
 		private Action<string> _dispatch;
 
 		public ReactiveScriptEngine(string path, PluginLocator locator, Action<string> dispatch)
 		{
 			_keyPath = path;
 			_dispatch = dispatch;
-			_reader = 
+			_pausedScripts = new List<string>();
+			_reader =
 				new ReactiveScriptReader(
 					_keyPath,
 					() => { return locator; },
@@ -38,9 +40,21 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 				if (touchState != ScriptTouchEvents.None)
 					handleScriptTouched(message, touchState);
 				_scripts
-					.Where(x => x.ReactsTo(message)).ToList()
+					.Where(x => 
+						!_pausedScripts.Contains(x.Name) &&
+						x.ReactsTo(message)).ToList()
 					.ForEach(x => x.Run(message));
 			}
+		}
+
+		public string GetState(string name)
+		{
+			if (!_scripts.Any(x => x.Name == name))
+				return "unknown";
+			else if (_pausedScripts.Contains(name))
+				return "paused";
+			else
+				return "ready";
 		}
 
 		private void handleScriptTouched(string message, ScriptTouchEvents type) {

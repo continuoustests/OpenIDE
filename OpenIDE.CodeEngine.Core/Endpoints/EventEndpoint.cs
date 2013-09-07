@@ -61,6 +61,11 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			if (File.Exists(_instanceFile))
 				File.Delete(_instanceFile);
 		}
+
+		public string GetScriptState(string name)
+		{
+			return _reactiveEngine.GetState(name);
+		}
 		
 		private void writeInstanceInfo(string key)
 		{

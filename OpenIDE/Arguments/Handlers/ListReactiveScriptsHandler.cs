@@ -3,6 +3,7 @@ using System.Linq;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.RScripts;
 using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -10,6 +11,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private PluginLocator _pluginLocator;
+		private ICodeEngineLocator _codeEngineLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -24,10 +26,11 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "list"; } }
 
-		public ListReactiveScriptsHandler(string token, PluginLocator pluginLocator)
+		public ListReactiveScriptsHandler(string token, PluginLocator pluginLocator, ICodeEngineLocator codeEngineLocator)
 		{
 			_token = token;
 			_pluginLocator = pluginLocator;
+			_codeEngineLocator = codeEngineLocator;
 		}
 
 		public void Execute(string[] arguments)
@@ -38,8 +41,13 @@ namespace OpenIDE.Arguments.Handlers
 					() => { return _pluginLocator; },
 					(m) => {})
 					.ReadNonLanguageScripts();
-			foreach (var script in scripts)
-				Console.WriteLine(script.Name);
+			var instance = _codeEngineLocator.GetInstance(_token);
+			foreach (var script in scripts) {
+				var status = "unavailable";
+				if (instance != null)
+					status = instance.GetRScriptState(script.Name);
+				Console.WriteLine(script.Name + " (" + status + ")");
+			}
 		}
 	}
 }

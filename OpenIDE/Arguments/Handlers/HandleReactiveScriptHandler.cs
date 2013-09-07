@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.RScripts;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -34,18 +35,21 @@ namespace OpenIDE.Arguments.Handlers
 				usage
 					.Add("rm", "Deletes a reactive script")
 					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
+
+				usage
+					.Add("status", "Displays script status");
 				return usage;
 			}
 		}
 	
 		public string Command { get { return "rscript"; } }
 
-		public HandleReactiveScriptHandler(string token, Action<string> dispatch, PluginLocator locator)
+		public HandleReactiveScriptHandler(string token, Action<string> dispatch, PluginLocator locator, ICodeEngineLocator codeEnginelocator)
 		{
 			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
-			_handlers.Add(new ListReactiveScriptsHandler(_token, _locator));
+			_handlers.Add(new ListReactiveScriptsHandler(_token, _locator, codeEnginelocator));
 			_handlers.Add(new CreateReactiveScriptHandler(_token, _dispatch));
 			_handlers.Add(new EditReactiveScriptHandler(_dispatch, _locator, _token));
 			_handlers.Add(new DeleteReactiveScriptHandler(_locator, _token));

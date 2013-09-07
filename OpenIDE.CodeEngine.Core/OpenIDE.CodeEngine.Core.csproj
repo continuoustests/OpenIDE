@@ -115,6 +115,7 @@
     <Compile Include="ReactiveScripts\ReactiveScriptEngine.cs" />
     <Compile Include="ChangeTrackers\Change.cs" />
     <Compile Include="ReactiveScripts\ScriptTouchHandler.cs" />
+    <Compile Include="Handlers\GetRScriptStateHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

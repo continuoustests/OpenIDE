@@ -69,7 +69,7 @@ namespace OpenIDE.Bootstrapping
 					new EditorHandler(_settings.RootPath, ILocateEditorEngine(), () => { return PluginLocator(); }),
 					new TouchHandler(dispatchMessage),
 					new HandleScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
-					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
+					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator(), ICodeEngineLocator()),
 					new HandleSnippetHandler(ICodeEngineLocator()),
 					new HandleLanguageHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
 
@@ -144,51 +144,53 @@ namespace OpenIDE.Bootstrapping
 
 		private void dispatchAndCompleteMessage(string command, Action onCommandCompleted)
 		{
-			lock (_commandProcessLock) {
-				_commandsInProcessing++;
-			}
-			ThreadPool.QueueUserWorkItem((m) => {
-				Logger.Write("Dispatching " + command);
-				if (command.Length == 0) {
-					Console.WriteLine();
-				} else if (isError(command)) {
-					printError(command);
-				} else if (isWarning(command)) {
-					printWarning(command);
-				} else if (isCommand(command)) {
-					var prefix = getCommandPrefix(command);
-					var parser = new CommandStringParser();
-					var args = 
-						parser.Parse(
-							command.Substring(prefix.Length, command.Length - prefix.Length));
-					DefinitionCacheItem cmd = null;
-					if (prefix == "command|")
-						cmd = GetDefinitionBuilder().Get(args.ToArray());
-					else if (prefix == "command-builtin|")
-						cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
-					else if (prefix == "command-language|")
-						cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
-					else if (prefix == "command-languagescript|")
-						cmd = GetDefinitionBuilder().GetLanguageScript(args.ToArray());
-					else if (prefix == "command-script|")
-						cmd = GetDefinitionBuilder().GetScript(args.ToArray());
-
-					if (cmd != null) {
-						new CommandRunner()
-							.Run(cmd, args.ToArray());
-					}
-					onCommandCompleted();
-				} else if (isEvent(command)) {
-					var prefix = "event|";
-					EventDispatcher()
-						.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
-				} else {
-					Console.WriteLine(command);
-				}
+			Logger.Write("Dispatching " + command);
+			if (command.Length == 0) {
+				Console.WriteLine();
+			} else if (isError(command)) {
+				printError(command);
+			} else if (isWarning(command)) {
+				printWarning(command);
+			} else if (isCommand(command) || isEvent(command)) {
 				lock (_commandProcessLock) {
-					_commandsInProcessing--;
+					_commandsInProcessing++;
 				}
-			}, null);
+				ThreadPool.QueueUserWorkItem((m) => {
+					if (isCommand(command)) {
+						var prefix = getCommandPrefix(command);
+						var parser = new CommandStringParser();
+						var args = 
+							parser.Parse(
+								command.Substring(prefix.Length, command.Length - prefix.Length));
+						DefinitionCacheItem cmd = null;
+						if (prefix == "command|")
+							cmd = GetDefinitionBuilder().Get(args.ToArray());
+						else if (prefix == "command-builtin|")
+							cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
+						else if (prefix == "command-language|")
+							cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
+						else if (prefix == "command-languagescript|")
+							cmd = GetDefinitionBuilder().GetLanguageScript(args.ToArray());
+						else if (prefix == "command-script|")
+							cmd = GetDefinitionBuilder().GetScript(args.ToArray());
+
+						if (cmd != null) {
+							new CommandRunner()
+								.Run(cmd, args.ToArray());
+						}
+						onCommandCompleted();
+					} else if (isEvent(command)) {
+						var prefix = "event|";
+						EventDispatcher()
+							.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
+					}
+					lock (_commandProcessLock) {
+						_commandsInProcessing--;
+					}
+				}, null);
+			} else {
+				Console.WriteLine(command);
+			}
 		}
 
 		private bool isCommand(string command)

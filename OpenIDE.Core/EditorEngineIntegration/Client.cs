@@ -133,6 +133,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			var correlationID = "correlationID=" + Guid.NewGuid().ToString() + "|";
 			var messageToSend = correlationID + message;
 			EventHandler<MessageArgs> msgHandler = (o,a) => {
+                    Logger.Write("Received " + a.Message);
 					if (a.Message.StartsWith(correlationID) && a.Message != messageToSend)
 						recieved = a.Message
 							.Substring(
@@ -140,6 +141,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
 								a.Message.Length - correlationID.Length);
 				};
 			_messageReceived += msgHandler;
+            Logger.Write("Requesting " + messageToSend);
 			Send(messageToSend);
 			var timeout = DateTime.Now;
             while (DateTime.Now.Subtract(timeout).TotalMilliseconds < 8000)

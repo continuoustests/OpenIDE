@@ -34,6 +34,7 @@ namespace OpenIDE.Core.CodeEngineIntegration
         void SnippetDelete(string[] arguments);
         void MemberLookup(string[] arguments);
         void GoToDefinition(string[] arguments);
+        string GetRScriptState(string scriptName); 
     }
 
     public class Instance : ICodeEngineInstance, ICodeEngineInstanceSimple
@@ -137,6 +138,11 @@ namespace OpenIDE.Core.CodeEngineIntegration
 		public void GoToDefinition(string[] arguments)
 		{
 			sendArgumentCommand("goto-defiinition", arguments);
+		}
+
+		public string GetRScriptState(string scriptName)
+		{
+			return Query("rscript-state " + scriptName);
 		}
 
 		private void sendArgumentCommand(string command, string[] arguments)
