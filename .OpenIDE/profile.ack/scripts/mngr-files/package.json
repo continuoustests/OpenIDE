@@ -3,6 +3,7 @@
 	"target": "script",
 	"id": "mngr",
 	"version": "v1.0",
+	"command": "mngr",
 	"name": "pckmngr tester",
 	"description": "mngr script package",
 	"#config-prefix": "mngr.",

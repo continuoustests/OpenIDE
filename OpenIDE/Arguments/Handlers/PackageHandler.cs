@@ -202,6 +202,7 @@ namespace OpenIDE.Arguments.Handlers
 					languageText +
 					"\t\"id\": \"{0}\"," + NL +
 					"\t\"version\": \"v1.0\"," + NL +
+					"\t\"command\": \"{0}\"," + NL +
 					"\t\"name\": \"{0}\"," + NL +
 					"\t\"description\": \"{0} {1} package\"," + NL +
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
@@ -257,15 +258,18 @@ namespace OpenIDE.Arguments.Handlers
 
 			string name;
 			string dir;
+			string command;
 			var package = 
 				getPackages()
 					.FirstOrDefault(x => x.ID == source);
 			if (package != null) {
 				name = package.ID;
+				command = package.Command;
 				dir = Path.GetDirectoryName(Path.GetDirectoryName(package.File));
 			} else {
 				source = Path.GetFullPath(source);
 				name = Path.GetFileNameWithoutExtension(source);
+				command = name;
 				dir = Path.GetDirectoryName(source);
 			}
 
@@ -275,7 +279,7 @@ namespace OpenIDE.Arguments.Handlers
 			new Process()
 				.Query(
 					Path.Combine(Path.Combine(appDir, "Packaging"), "oipckmngr.exe"),
-					string.Format("build \"{0}\" \"{1}\" \"{2}\"", name, dir, destination),
+					string.Format("build \"{0}\" \"{1}\" \"{2}\" \"{3}\"", name, command, dir, destination),
 					false,
 					Environment.CurrentDirectory,
 					(err, line) => { Console.WriteLine(line); });

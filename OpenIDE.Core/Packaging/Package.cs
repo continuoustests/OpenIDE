@@ -25,6 +25,7 @@ namespace OpenIDE.Core.Packaging
 						data["target"].ToString(),
 						data["id"].ToString(), 
 						data["version"].ToString(), 
+						data["command"].ToString(), 
 						data["name"].ToString(), 
 						data["description"].ToString());
 				var language = data["language"];
@@ -78,16 +79,18 @@ namespace OpenIDE.Core.Packaging
 		public string Signature { get{ return ID + "-" + Version; } }
 		public string ID { get; set; }
 		public string Version { get; set; }
+		public string Command { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public List<string> PreInstallActions = new List<string>();
 		public List<Dependency> Dependencies = new List<Dependency>();
 		public List<string> PostInstallActions = new List<string>();
 
-		public Package(string target, string id, string version, string name, string description) {
+		public Package(string target, string id, string version, string command, string name, string description) {
 			Target = target;
 			ID = id;
 			Version = version;
+			Command = command;
 			Name = name;
 			Description = description;
 		}
@@ -112,6 +115,7 @@ namespace OpenIDE.Core.Packaging
 				new[] { "language", "script", "rscript", "language-script", "language-rscript" }.Contains(Target) &&
 				ID.Length > 0 &&
 				Version.Length > 0 &&
+				Command.Length > 0 &&
 				Name.Length > 0 &&
 				Name.Length <= 50 &&
 				Description.Length > 0;
@@ -130,6 +134,7 @@ namespace OpenIDE.Core.Packaging
 				sb.AppendLine(string.Format("\t\"language\": \"{0}\",", Language));
 			sb.AppendLine(string.Format("\t\"id\": \"{0}\",", ID));
 			sb.AppendLine(string.Format("\t\"version\": \"{0}\",", Version));
+			sb.AppendLine(string.Format("\t\"command\": \"{0}\",", Command));
 			sb.AppendLine(string.Format("\t\"name\": \"{0}\",", Name));
 			sb.AppendLine(string.Format("\t\"description\": \"{0}\",", Description));
 			sb.AppendLine("\t\"dependencies\":");

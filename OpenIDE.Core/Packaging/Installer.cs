@@ -16,7 +16,6 @@ namespace OpenIDE.Core.Packaging
 		class ActionParameters
 		{
 			public Package Package { get; set; }
-			public string Name { get; set; }
 			public string TempPath { get; set; }
 			public string InstallPath { get; set; }
 			public string ProfileName { get; set; }
@@ -69,7 +68,7 @@ namespace OpenIDE.Core.Packaging
 										versions += version + ",";
 									}
 									versions = versions.Trim(new[] {','});
-									_dispatch(string.Format("error|dependency {0} ({1}) is installed. Accepted versions are {2}", args.Name, package.Version, versions));
+									_dispatch(string.Format("error|dependency {0} ({1}) is installed. Accepted versions are {2}", args.Package.ID, package.Version, versions));
 									return false;
 								}
 							}
@@ -80,7 +79,7 @@ namespace OpenIDE.Core.Packaging
 								versions += version + ",";
 							}
 							versions = versions.Trim(new[] {','});
-							_dispatch(string.Format("error|dependency {0} of version {1} is not a valid. Accepted versions are {2}", args.Name, args.Package.Version, versions));
+							_dispatch(string.Format("error|dependency {0} of version {1} is not a valid. Accepted versions are {2}", args.Package.ID, args.Package.Version, versions));
 							return false;
 						} else
 							installPackage(source.Package, args.Package, args.TempPath, args.InstallPath, args.ProfileName);
@@ -99,7 +98,7 @@ namespace OpenIDE.Core.Packaging
 				source.Package,
 				(args) => {
 						if (args.Match == null)
-							printUnexistingUpdate(args.Name, args.Package);
+							printUnexistingUpdate(args.Package.ID, args.Package);
 						else
 							update(source.Package, args);
 						return true;
@@ -132,7 +131,6 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
-					var name = package.ID;
 					var installPath = getInstallPath(package, profiles, activeProfile);
 					if (installPath == null) {
 						_dispatch("error|Config point is not initialized");
@@ -142,11 +140,10 @@ namespace OpenIDE.Core.Packaging
 						Directory.CreateDirectory(installPath);
 					var match =  
 						Directory.GetFiles(installPath)
-							.FirstOrDefault(x => matchPackage(x, name));
+							.FirstOrDefault(x => matchPackage(x, package.Command));
 					actionSucceeded = actionHandler(
 						new ActionParameters() {
 							Package = package,
-							Name = name,
 							TempPath = tempPath,
 							InstallPath = installPath,
 							ProfileName = activeProfile,
@@ -217,7 +214,7 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 
-			removePackage(args.Name, args.InstallPath);
+			removePackage(args.Package.Command, args.InstallPath);
 			new PackageExtractor().Extract(source, args.InstallPath);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {

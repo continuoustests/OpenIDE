@@ -8,13 +8,14 @@ namespace oipckmngr
 	class Program
 	{
 		public static void Main(string[] args) {
-			if (args.Length == 4 && args[0] == "build") {
+			if (args.Length == 5 && args[0] == "build") {
 				var name = args[1];
-				var path = args[2];
-				var destination = args[3];
+				var command = args[2];
+				var path = args[3];
+				var destination = args[4];
 				path = Path.GetFullPath(path);
 				destination = Path.GetFullPath(destination);
-				var filesPath = Path.Combine(path, name + "-files");
+				var filesPath = Path.Combine(path, command + "-files");
 				var json = Path.Combine(filesPath, "package.json");
 				if (!Directory.Exists(path)) {
 					Console.WriteLine("Invalid Package: Package directory does not exist: " + path);
@@ -42,7 +43,7 @@ namespace oipckmngr
 					return;
 				}
 				destination = Path.Combine(destination, name);
-				Compression.Compress(path, name, destination);
+				Compression.Compress(path, command, destination);
 				Console.WriteLine("Package created: " + destination + ".oipkg");
 			} else if (args.Length == 3 && args[0] == "extract") {
 				var file = Path.GetFullPath(args[1]);
@@ -52,7 +53,7 @@ namespace oipckmngr
 				new SourceHandler().Handle(args);
 			} else {
 				Console.WriteLine("Usage:");
-				Console.WriteLine("\tbuild NAME SOURCE-DIR DESTINATION-DIR");
+				Console.WriteLine("\tbuild ID COMMAND SOURCE-DIR DESTINATION-DIR");
 				Console.WriteLine("\textract FILE DESTINATION-DIR");
 				Console.WriteLine("\tsource create SOURCE-FILE ORIGIN");
 				Console.WriteLine("\tsource update SOURCE-FILE");

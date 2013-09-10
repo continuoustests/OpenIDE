@@ -68,15 +68,15 @@ namespace oipckmngr
 			Directory.CreateDirectory(path);
 		}
 
-		public static void Compress(string directory, string name, string destination) {
+		public static void Compress(string directory, string command, string destination) {
 			try
 			{
-				var filesDirectory = Path.Combine(directory, name + "-files");
+				var filesDirectory = Path.Combine(directory, command + "-files");
 				var file = destination + ".oipkg";
 				using (Stream tar = new MemoryStream()) {
 					using (IWriter zip = WriterFactory.Open(tar, ArchiveType.Tar, CompressionType.None)) {
 						Directory
-							.GetFiles(directory, name + ".*")
+							.GetFiles(directory, command + ".*")
 							.ToList()
 							.ForEach(x => addFile(zip, x, directory));
 						addDirectory(zip, filesDirectory, directory);
