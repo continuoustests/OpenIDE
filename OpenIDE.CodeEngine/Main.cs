@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using OpenIDE.CodeEngine.Core.Bootstrapping;
 using OpenIDE.CodeEngine.Core.Endpoints;
+using OpenIDE.Core.Config;
 using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine
@@ -12,10 +13,11 @@ namespace OpenIDE.CodeEngine
 	{
 		public static void Main (string[] args)
 		{
-            Logger.Assign(new FileLogger());
 			if (args.Length < 1)
 				return;
 			var path = args[0];
+			setupLogging(path);
+			
 			Logger.Write("Initializing with path: {0}", path);
 			string defaultLanguage = null;
 			if (args.Length > 1) {
@@ -34,6 +36,13 @@ namespace OpenIDE.CodeEngine
 			if (!runForm(endpoint, defaultLanguage))
 				startEngine(endpoint);
 			Bootstrapper.Shutdown();
+		}
+
+		private static void setupLogging(string path) {
+			var reader = new ConfigReader(path);
+			var logPath = reader.Get("oi.logpath");
+			if (Directory.Exists(logPath))
+            	Logger.Assign(new FileLogger(Path.Combine(logPath, "OpenIDE.CodeEngine.log")));
 		}
 		
 		private static bool runForm(CommandEndpoint endpoint, string defaultLanguage)

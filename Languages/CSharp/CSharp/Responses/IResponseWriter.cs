@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CSharp.Tcp;
+using OpenIDE.Core.Logging;
 
 namespace CSharp.Responses
 {
@@ -22,11 +23,13 @@ namespace CSharp.Responses
     {
         public void Write(string message)
         {
+            Logger.Write("Response: " + message);
             Console.WriteLine(message);
         }
 
         public void Write(string message, params object[] args)
         {
+            Logger.Write("Response: " + message, args);
             Console.WriteLine(message, args);
         }
     }

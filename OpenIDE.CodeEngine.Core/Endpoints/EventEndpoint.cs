@@ -2,9 +2,11 @@ using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.ReactiveScripts;
+
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
 	public class EventEndpoint
@@ -31,6 +33,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		}
 
 		private void dispatch(string message) {
+			Logger.Write("Event dispatching: " + message);
 			_dispatch(message);
 		}
  
@@ -41,11 +44,13 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
+			Logger.Write("Event handle: " + command.Message);
             _reactiveEngine.Handle(command.Message);
 		}
 		
 		public void Send(string message)
 		{
+			Logger.Write("Event send: " + message);
 			_server.Send(message);
 			_reactiveEngine.Handle(message);
 		}

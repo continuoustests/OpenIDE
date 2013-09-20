@@ -9,9 +9,9 @@ namespace OpenIDE.Core.Logging
 		private string _file;
 		private object _padlock = new object();
 
-		public FileLogger()
+		public FileLogger(string filePath)
 		{
-			_file = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "OpenIDE.CodeEngine.log");
+			_file = filePath;
 		}
 		public void Write(string message)
 		{

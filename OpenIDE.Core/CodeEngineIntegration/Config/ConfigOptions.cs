@@ -21,6 +21,7 @@ namespace OpenIDE.Core.Config
 			addOption("default.package.destination", "Default directory to drop built packages");
 			addOption("enabled.languages", "Languages enabled within this configuration");
 			addOption("interpreter.FILE-EXTENSION=PATH", "Setup interpreters for handling scripts");
+			addOption("oi.logpath", "Enables and specifies where to place logs");
 			foreach (var path in _paths) {
 				var files = Directory.GetFiles(path, "*.oicfgoptions");
 				foreach (var file in files) {

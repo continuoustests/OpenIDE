@@ -15,7 +15,9 @@ using CSharp.Projects.Appenders;
 using CSharp.Projects.Removers;
 using CSharp.Projects.Referencers;
 using OpenIDE.Core.CodeEngineIntegration;
+using OpenIDE.Core.Config;
 using OpenIDE.Core.Commands;
+using OpenIDE.Core.Logging;
 
 namespace CSharp
 {
@@ -33,6 +35,7 @@ namespace CSharp
             if (args[0] == "initialize") {
 				var writer = new ConsoleResponseWriter();
             	_keyPath = args[1];
+				setupLogging(_keyPath);
             	_cache = new OutputWriter(new NullResponseWriter());
             	_dispatcher = new Dispatcher();
 				configureHandlers(_dispatcher);
@@ -40,6 +43,7 @@ namespace CSharp
             	writer.Write("initialized");
             	while (args[0] == "initialize") {
 					var msg = CommandMessage.New(Console.ReadLine());
+					Logger.Write("Handling command " + msg);
 					if (msg.Command == "shutdown") {
 						writer.Write("end-of-conversation");
 						break;
@@ -49,6 +53,7 @@ namespace CSharp
 	            }
             } else {
             	_keyPath = Environment.CurrentDirectory;
+				setupLogging(_keyPath);
             	_cache = new OutputWriter(new NullResponseWriter());
             	_dispatcher = new Dispatcher();
 				configureHandlers(_dispatcher);
@@ -57,6 +62,13 @@ namespace CSharp
             	handleMessage(msg, new ConsoleResponseWriter(), false);
             }
         }
+
+		private static void setupLogging(string path) {
+			var reader = new ConfigReader(path);
+			var logPath = reader.Get("oi.logpath");
+			if (Directory.Exists(logPath))
+            	Logger.Assign(new FileLogger(Path.Combine(logPath, "C#.log")));
+		}
 
         private static void handleMessage(CommandMessage msg, IResponseWriter writer, bool serverMode)
         {
