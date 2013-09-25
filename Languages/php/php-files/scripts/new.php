@@ -28,20 +28,25 @@ if (count($argv) == 3) {
 		# end
 
 		echo "Creates a new php file|\n";
+		echo "file|\"Create empty php file\" \n";
+		echo "	FILE|\"Path to file\" end \n";
+		echo "end \n";
 		echo "class|\"Create new class\" \n";
+		echo "	FILE|\"Path to file\" end \n";
+		echo "end \n";
+		echo "interface|\"Create new interface\" \n";
+		echo "	FILE|\"Path to file\" end \n";
+		echo "end \n";
+		echo "fixture|\"Create new phpunit test fixture\" \n";
 		echo "	FILE|\"Path to file\" end \n";
 		echo "end \n";
 		exit();
 	}
 }
 
-if ($argc >= 5) {
-	$type = "class";
-	$filechunk = $argv[4];
-	if ($argc == 6) {
-		$type = $argv[4];
-		$filechunk = $argv[5];
-	}
+if ($argc == 6) {
+	$type = $argv[4];
+	$filechunk = $argv[5];
 	$file = $argv[1] . DIRECTORY_SEPARATOR . $filechunk;
 	if (!endsWith($file, ".php")) {
 		$file = $file . ".php";
@@ -57,27 +62,52 @@ if ($argc >= 5) {
 }
 
 function writeFile($type, $file, $filename) {
-	$line = 5;
+	$line = 2;
 	$namespace = getNamespace(dirname($file));
 	$fp = fopen($file, 'w');
 	fwrite($fp, "<?php\n");
 	if ($namespace !== null) {
 		fwrite($fp, "namespace " . $namespace . ";\n");
-		$line = 6;
+		$line = 3;
 	}
 	fwrite($fp, "\n");
 	if ($type == "class")
-		writeClass($fp, $filename);
+		$line = writeClass($fp, $filename, $line);
+	if ($type == "interface")
+		$line = writeInterface($fp, $filename, $line);
+	if ($type == "fixture")
+		$line = writeFixture($fp, $filename, $line);
 	fclose($fp);
 	return $line;
 }
 
-function writeClass($fp, $name) {
+function writeClass($fp, $name, $line) {
 	fwrite($fp, "class " . $name . "\n");
 	fwrite($fp, "{\n");
 	fwrite($fp, "\t\n");
 	fwrite($fp, "}\n");
 	fwrite($fp, "\n");
+	return $line + 3;
+}
+
+function writeInterface($fp, $name, $line) {
+	fwrite($fp, "interface " . $name . "\n");
+	fwrite($fp, "{\n");
+	fwrite($fp, "\t\n");
+	fwrite($fp, "}\n");
+	fwrite($fp, "\n");
+	return $line + 3;
+}
+
+function writeFixture($fp, $name, $line) {
+	fwrite($fp, "use PHPUnit_Framework_TestCase;\n");
+	fwrite($fp, "\n");
+	fwrite($fp, "class " . $name . " extends PHPUnit_Framework_TestCase\n");
+	fwrite($fp, "{\n");
+	fwrite($fp, "\t\n");
+	fwrite($fp, "}\n");
+	fwrite($fp, "\n");
+	return $line + 5;
 }
 
 function getNamespace($runPath) {
