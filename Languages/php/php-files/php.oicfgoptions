@@ -1,0 +1,2 @@
+php.namespace.basepath|Path to use as base path for calculating namespaces
+php.namespace.base|Namespace prefix
