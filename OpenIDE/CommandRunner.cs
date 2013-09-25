@@ -15,6 +15,7 @@ namespace OpenIDE
 	{
 		public bool Run(DefinitionCacheItem cmd, IEnumerable<string> args) {
 			var arguments = args.ToList();
+			Logger.Write("Removing the command name from parameters: " + arguments[0]);
 			arguments.RemoveAt(0);
 			if (cmd.Type == DefinitionCacheItemType.Script || cmd.Type == DefinitionCacheItemType.LanguageScript) {
 				Logger.Write("Running command as script");
@@ -22,8 +23,13 @@ namespace OpenIDE
 				var sb = new StringBuilder();
 				// On language commands remove the second argument too if
 				// it matches the command name (oi langcommand vs oi C# langcommand)
-				if (cmd.Type == DefinitionCacheItemType.LanguageScript && arguments.Count > 0 && arguments[0] == cmd.Name)
+				if (cmd.Type == DefinitionCacheItemType.LanguageScript &&
+					arguments.Count > 0 && 
+					Bootstrapper.Settings.EnabledLanguages.Contains(args.ElementAt(0)))
+				{
+					Logger.Write("Removing second parameter from language command as it's a language script prefixed by language: " + arguments[0]);
 					arguments.RemoveAt(0);
+				}
 				for (int i = 0; i < arguments.Count; i++) {
 					sb.Append(" \"" + arguments[i] + "\"");
 				}
