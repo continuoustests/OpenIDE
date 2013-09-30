@@ -84,7 +84,7 @@ function writeFile($type, $file, $filename) {
 function writeClass($fp, $name, $line) {
 	fwrite($fp, "class " . $name . "\n");
 	fwrite($fp, "{\n");
-	fwrite($fp, "\t\n");
+	fwrite($fp, "    \n");
 	fwrite($fp, "}\n");
 	fwrite($fp, "\n");
 	return $line + 3;
@@ -93,7 +93,7 @@ function writeClass($fp, $name, $line) {
 function writeInterface($fp, $name, $line) {
 	fwrite($fp, "interface " . $name . "\n");
 	fwrite($fp, "{\n");
-	fwrite($fp, "\t\n");
+	fwrite($fp, "    \n");
 	fwrite($fp, "}\n");
 	fwrite($fp, "\n");
 	return $line + 3;
@@ -104,7 +104,7 @@ function writeFixture($fp, $name, $line) {
 	fwrite($fp, "\n");
 	fwrite($fp, "class " . $name . " extends PHPUnit_Framework_TestCase\n");
 	fwrite($fp, "{\n");
-	fwrite($fp, "\t\n");
+	fwrite($fp, "    \n");
 	fwrite($fp, "}\n");
 	fwrite($fp, "\n");
 	return $line + 5;

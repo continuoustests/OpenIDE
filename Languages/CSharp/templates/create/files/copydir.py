@@ -12,6 +12,7 @@ def copyFile(projectName, replacements, source, destination):
 		for replacement in replacements:
 			newLine = newLine.replace(replacement, replacements[replacement])
 		newLine = newLine.replace("{NEW_GUID}", "{" + str(uuid.uuid1()) + "}")
+		newLine = newLine.replace("{NEW_NOBRACES_GUID}", str(uuid.uuid1()))
 		f2.write(newLine)
 	f1.close()
 	f2.close()
