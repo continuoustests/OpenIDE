@@ -70,10 +70,17 @@ namespace OpenIDE.CodeEngine
 
         private void startEngine()
         {
+            var editorHasExisted = false;
 			_endpoint.AddHandler(handleMessage);
             _endpoint.Start();
-            while (_endpoint.IsAlive && !_terminateApplication)
+            while (!_terminateApplication) {
+                var isAlive = _endpoint.IsAlive;
+                if (isAlive)
+                    editorHasExisted = true;
+                if (editorHasExisted && !isAlive)
+                    break;
                 Thread.Sleep(100);
+            }
 			_ctx.Post((s) => {
 	            Close();
 			}, null);
