@@ -15,7 +15,7 @@ namespace OpenIDE.CodeEngine
 		{
 			if (args.Length < 1)
 				return;
-			var path = args[0];
+			var path =  args[0];
 			setupLogging(path);
 			
 			Logger.Write("Initializing with path: {0}", path);
