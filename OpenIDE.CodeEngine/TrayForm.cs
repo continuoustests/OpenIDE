@@ -25,6 +25,7 @@ namespace OpenIDE.CodeEngine
         private NotifyIcon trayIcon;
         private ContextMenu trayMenu;
 		private ICacheBuilder _cacheBuilder;
+		private bool _terminateApplication = false;
 
         public TrayForm(CommandEndpoint endpoint, string defaultLanguage, ICacheBuilder builder)
         {
@@ -71,7 +72,7 @@ namespace OpenIDE.CodeEngine
         {
 			_endpoint.AddHandler(handleMessage);
             _endpoint.Start();
-            while (_endpoint.IsAlive)
+            while (_endpoint.IsAlive && !_terminateApplication)
                 Thread.Sleep(100);
 			_ctx.Post((s) => {
 	            Close();
@@ -90,6 +91,8 @@ namespace OpenIDE.CodeEngine
 				snippetCreate(message, editor);
 			if (message.Message.StartsWith("member-lookup "))
 				memberLookup(message, editor);
+			if (message.Message == "shutdown")
+				_terminateApplication = true;
         }
 
         private TypeSearchForm _gotoType = null;

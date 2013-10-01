@@ -35,6 +35,7 @@ namespace OpenIDE.Core.CodeEngineIntegration
         void MemberLookup(string[] arguments);
         void GoToDefinition(string[] arguments);
         string GetRScriptState(string scriptName); 
+        void Shutdown();
     }
 
     public class Instance : ICodeEngineInstance, ICodeEngineInstanceSimple
@@ -143,6 +144,11 @@ namespace OpenIDE.Core.CodeEngineIntegration
 		public string GetRScriptState(string scriptName)
 		{
 			return Query("rscript-state " + scriptName);
+		}
+
+		public void Shutdown()
+		{
+			Send("shutdown");
 		}
 
 		private void sendArgumentCommand(string command, string[] arguments)

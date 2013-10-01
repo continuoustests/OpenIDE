@@ -3,6 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.EditorEngineIntegration;
+using OpenIDE.Core.CodeEngineIntegration;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -11,6 +12,7 @@ namespace OpenIDE.Arguments.Handlers
 		private string _rootPath;
 		private Action<string> _dispatch;
 		private ILocateEditorEngine _editorLocator;
+		private ICodeEngineLocator _codeEngineLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -26,16 +28,20 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "shutdown"; } }
 
-		public ShutdownHandler(string rootPath, Action<string> dispatch, ILocateEditorEngine editorLocator) {
+		public ShutdownHandler(string rootPath, Action<string> dispatch, ILocateEditorEngine editorLocator, ICodeEngineLocator codeEngineLocator) {
 			_rootPath = rootPath;
 			_dispatch = dispatch;
 			_editorLocator = editorLocator;
+			_codeEngineLocator = codeEngineLocator;
 		}
 
 		public void Execute(string[] arguments) {
 			var path = _rootPath;
 			if (arguments.Length == 1 && Directory.Exists(arguments[0]))
 				path = arguments[0];
+			var codeEngine = _codeEngineLocator.GetInstance(path);
+			if (codeEngine != null)
+				codeEngine.Shutdown();
 			var instance = _editorLocator.GetInstance(path);
 			if (instance == null)
 				return;
