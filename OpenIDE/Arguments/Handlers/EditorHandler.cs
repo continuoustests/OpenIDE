@@ -11,6 +11,7 @@ using OpenIDE.Core.Scripts;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Environments;
 using CoreExtensions;
 namespace OpenIDE.Arguments.Handlers
 {
@@ -18,7 +19,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _rootPath;
 		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorFactory;
-		private Func<PluginLocator> _pluginLocator;
+		private EnvironmentService _environment;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -52,11 +53,11 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(string rootPath, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, Func<PluginLocator> locator)
+		public EditorHandler(string rootPath, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, EnvironmentService environment)
 		{
 			_rootPath = rootPath;
 			_editorFactory = editorFactory;
-			_pluginLocator = locator;
+			_environment = environment;
 		}
 		
 		public void Execute(string[] arguments)
@@ -67,10 +68,6 @@ namespace OpenIDE.Arguments.Handlers
 			var isSetfocus = arguments.Length > 0 && arguments[0] == "setfocus";
 			if (instance == null && arguments.Length >= 0 && !isSetfocus)
 			{
-				Logger.Write ("Starting instance");
-				instance = startInstance();
-				if (instance == null)
-					return;
 				var args = new List<string>();
 				Logger.Write("Reading configuration from " + _rootPath);
 				var configReader = new ConfigReader(_rootPath);
@@ -89,12 +86,12 @@ namespace OpenIDE.Arguments.Handlers
 					configReader	
 						.GetStartingWith("editor." + editorName)
 						.Select(x => "--" + x.Key + "=" + x.Value));
-				writeStartArguments(args);
-				var editor = instance.Start(args.ToArray());
-				if (editor != null && editor != "")
-					runInitScripts();
-				else
-					instance = null;
+
+				_environment.StartEditorEngine(args, _rootPath);
+				if (!_environment.HasEditorEngine(_rootPath))
+					return;
+				if (!_environment.IsRunning(_rootPath))
+					_environment.Start(_rootPath);
 			}
 			else if (arguments.Length >= 1 && arguments[0] == "get-dirty-files")
 			{
@@ -111,135 +108,6 @@ namespace OpenIDE.Arguments.Handlers
 					return;
 				instance.Run(arguments);
 			}
-		}
-
-		public void writeStartArguments (List<string> args)
-		{
-			var arguments = "";
-			foreach (var arg in args)
-				arguments = arg + " ";
-			Logger.Write ("Running editor with " + arguments);
-				
-		}
-		
-		private OpenIDE.Core.EditorEngineIntegration.Instance startInstance()
-		{
-			var assembly = 
-				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-					Path.Combine("EditorEngine", "EditorEngine.exe"));
-			var exe = "mono";
-			var arg = assembly + " ";
-			if (Environment.OSVersion.Platform != PlatformID.Unix &&
-				Environment.OSVersion.Platform != PlatformID.MacOSX)
-			{
-				exe = assembly;
-				arg = "";
-			}
-			arg += "\"" + _rootPath + "\"";
-			Logger.Write ("Starting editor " + exe + " " + arg);
-			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(exe, arg);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = _rootPath;
-			proc.Start();
-			var timeout = DateTime.Now.AddSeconds(5);
-			while (DateTime.Now < timeout)
-			{
-				if (_editorFactory.GetInstance(_rootPath) != null)
-					break;
-				Thread.Sleep(50);
-			}
-			return _editorFactory.GetInstance(_rootPath);
-		}
-
-		private void runInitScripts()
-		{
-			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			initCodeEngine(appdir);
-			runInitScript(appdir);
-			_pluginLocator().Locate().ToList()
-				.ForEach(plugin => {
-					var language = plugin.GetLanguage();
-					runInitScript(Path.Combine(Path.GetDirectoryName(plugin.FullPath), language + "-files"));
-				});
-			var locator = new ProfileLocator(_rootPath);
-			var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
-			runInitScript(profilePath);
-		}
-
-		private void initCodeEngine(string folder)
-		{
-			var defaultLanguage = getDefaultLanguage();
-			if (defaultLanguage == null)
-				defaultLanguage = "none-default-language";
-			var enabledLanguages = getEnabledLanguages();
-			if (enabledLanguages == null)
-				enabledLanguages = "none-enabled-language";
-
-			var cmd = "mono";
-			var arg = "./CodeEngine/OpenIDE.CodeEngine.exe ";
-			if (Environment.OSVersion.Platform != PlatformID.Unix &&
-				Environment.OSVersion.Platform != PlatformID.MacOSX)
-			{
-				cmd = Path.Combine("CodeEngine", "OpenIDE.CodeEngine.exe");
-				arg = "";
-			}
-			
-			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(
-				cmd,
-				arg + "\"" + _rootPath + "\"" + defaultLanguage + enabledLanguages);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = folder;
-			proc.Start();
-		}
-	
-		private void runInitScript(string folder)
-		{
-			if (!Directory.Exists(folder))
-				return;
-			var initscript = 
-				new ScriptFilter()
-					.FilterScripts(Directory.GetFiles(folder, "initialize.*"))
-					.FirstOrDefault();
-			if (initscript == null)
-				return;
-			var defaultLanguage = getDefaultLanguage();
-			var enabledLanguages = getEnabledLanguages();
-			var proc = new Process();
-			proc
-				.Spawn(
-					initscript,
-					"\"" + _rootPath + "\"" + defaultLanguage + enabledLanguages,
-					false,
-					folder);
-		}
-
-		private string getDefaultLanguage()
-		{
-			var defaultLanguage = "";
-			if (Bootstrapper.Settings.DefaultLanguage != null)
-				defaultLanguage = " " + Bootstrapper.Settings.DefaultLanguage;
-			return defaultLanguage;
-		}
-
-		private string getEnabledLanguages()
-		{
-			var enabledLanguages = "";
-			if (Bootstrapper.Settings.EnabledLanguages != null && Bootstrapper.Settings.EnabledLanguages.Length > 0)
-			{
-				enabledLanguages = " \"";
-				Bootstrapper.Settings.EnabledLanguages.ToList()
-					.ForEach(x => enabledLanguages += x + ",");
-				enabledLanguages = 
-					enabledLanguages
-						.Substring(0, enabledLanguages.Length - 1) + "\"";
-			}
-			return enabledLanguages;
 		}
 	}
 }

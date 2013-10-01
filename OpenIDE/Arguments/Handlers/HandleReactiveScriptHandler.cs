@@ -12,7 +12,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
-		private PluginLocator _locator;
+		private Func<PluginLocator> _locator;
 		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
 
 		public CommandHandlerParameter Usage {
@@ -44,7 +44,7 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "rscript"; } }
 
-		public HandleReactiveScriptHandler(string token, Action<string> dispatch, PluginLocator locator, ICodeEngineLocator codeEnginelocator)
+		public HandleReactiveScriptHandler(string token, Action<string> dispatch, Func<PluginLocator> locator, ICodeEngineLocator codeEnginelocator)
 		{
 			_token = token;
 			_dispatch = dispatch;

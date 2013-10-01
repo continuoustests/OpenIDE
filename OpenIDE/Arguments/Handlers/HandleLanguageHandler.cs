@@ -18,7 +18,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
-		private PluginLocator _locator;
+		private Func<PluginLocator> _locator;
 
 		public CommandHandlerParameter Usage { 
 			get {
@@ -70,7 +70,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "language"; } }
 
-		public HandleLanguageHandler(string token, Action<string> dispatch, PluginLocator locator) {
+		public HandleLanguageHandler(string token, Action<string> dispatch, Func<PluginLocator> locator) {
 			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
@@ -88,7 +88,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void listLanguages() {
 			Console.WriteLine("Available language plugins:");
-			foreach (var language in _locator.Locate()) {
+			foreach (var language in _locator().Locate()) {
 				Console.WriteLine("\t" + language.GetLanguage());
 			}
 		}
@@ -322,7 +322,7 @@ namespace OpenIDE.Arguments.Handlers
 			var scripts = 
 				new ReactiveScriptReader(
 					_token,
-					() => { return _locator; },
+					_locator,
 					(m) => {})
 					.ReadLanguageScripts();
 			itemsPrLanguage(
@@ -347,13 +347,13 @@ namespace OpenIDE.Arguments.Handlers
 
 		private LanguagePlugin getLanguage(string languageName) {
 			return 
-				_locator
+				_locator()
 					.Locate()
 					.FirstOrDefault(x => x.GetLanguage() == languageName);
 		}
 
 		private void itemsPrLanguage<T>(Action<LanguagePlugin> onLanguage, Action<T> onItem, Func<T,string> pathExtractor, List<T> items, string languageName, string type) {
-			foreach (var language in _locator.Locate()) {
+			foreach (var language in _locator().Locate()) {
 				if (languageName != null && language.GetLanguage() != languageName)
 					continue;
 				var path = getLanguagePath(language, type);

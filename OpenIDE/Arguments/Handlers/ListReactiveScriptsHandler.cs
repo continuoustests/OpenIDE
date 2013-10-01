@@ -10,7 +10,7 @@ namespace OpenIDE.Arguments.Handlers
 	public class ListReactiveScriptsHandler : ICommandHandler
 	{
 		private string _token;
-		private PluginLocator _pluginLocator;
+		private Func<PluginLocator> _pluginLocator;
 		private ICodeEngineLocator _codeEngineLocator;
 
 		public CommandHandlerParameter Usage {
@@ -26,7 +26,7 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "list"; } }
 
-		public ListReactiveScriptsHandler(string token, PluginLocator pluginLocator, ICodeEngineLocator codeEngineLocator)
+		public ListReactiveScriptsHandler(string token, Func<PluginLocator> pluginLocator, ICodeEngineLocator codeEngineLocator)
 		{
 			_token = token;
 			_pluginLocator = pluginLocator;
@@ -38,7 +38,7 @@ namespace OpenIDE.Arguments.Handlers
 			var scripts = 
 				new ReactiveScriptReader(
 					_token,
-					() => { return _pluginLocator; },
+					_pluginLocator,
 					(m) => {})
 					.ReadNonLanguageScripts();
 			var instance = _codeEngineLocator.GetInstance(_token);

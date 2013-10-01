@@ -10,7 +10,7 @@ namespace OpenIDE.Arguments.Handlers
 	class DeleteReactiveScriptHandler : ICommandHandler
 	{
 		private string _keyPath;
-		private PluginLocator _pluginLocator;
+		private Func<PluginLocator> _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -26,7 +26,7 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "rm"; } }
 
-		public DeleteReactiveScriptHandler(PluginLocator locator, string keyPath)
+		public DeleteReactiveScriptHandler(Func<PluginLocator> locator, string keyPath)
 		{
 			_keyPath = keyPath;
 			_pluginLocator = locator;
@@ -36,7 +36,7 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var scripts = new ReactiveScriptReader(
 				_keyPath,
-				() => { return _pluginLocator; },
+				_pluginLocator,
 				(m) => {})
 				.ReadNonLanguageScripts();
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));

@@ -15,7 +15,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
-		private PluginLocator _pluginLocator;
+		private Func<PluginLocator> _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -33,7 +33,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "new"; } }
 
-		public CreateScriptHandler(string token, Action<string> dispatch, PluginLocator pluginLocator)
+		public CreateScriptHandler(string token, Action<string> dispatch, Func<PluginLocator> pluginLocator)
 		{
 			_dispatch = dispatch;
 			_token = token;

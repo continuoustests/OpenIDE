@@ -16,6 +16,7 @@ using OpenIDE.Core.Profiles;
 using OpenIDE.CommandBuilding;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Definitions;
+using OpenIDE.Core.Environments;
 
 namespace OpenIDE.Bootstrapping
 {
@@ -58,6 +59,13 @@ namespace OpenIDE.Bootstrapping
 		{
 			var handlers = new List<ICommandHandler>();
 			var configHandler = new ConfigurationHandler(PluginLocator());
+			var environment
+				= new EnvironmentService(
+					_settings.DefaultLanguage,
+					_settings.EnabledLanguages,
+					PluginLocator,
+					ICodeEngineLocator(),
+					ILocateEditorEngine());
 			handlers.AddRange(
 				new ICommandHandler[]
 				{
@@ -66,12 +74,12 @@ namespace OpenIDE.Bootstrapping
 
 					configHandler,
 					
-					new EditorHandler(_settings.RootPath, ILocateEditorEngine(), () => { return PluginLocator(); }),
+					new EditorHandler(_settings.RootPath, ILocateEditorEngine(), environment),
 					new TouchHandler(dispatchMessage),
-					new HandleScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
-					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator(), ICodeEngineLocator()),
+					new HandleScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator),
+					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator, ICodeEngineLocator()),
 					new HandleSnippetHandler(ICodeEngineLocator()),
-					new HandleLanguageHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
+					new HandleLanguageHandler(_settings.RootPath, dispatchMessage, PluginLocator),
 
 					new CodeModelQueryHandler(ICodeEngineLocator()),
 
@@ -85,11 +93,11 @@ namespace OpenIDE.Bootstrapping
 
 					new EventListener(_settings.RootPath),
 
-					new PackageHandler(_settings.RootPath, dispatchMessage, PluginLocator()),
+					new PackageHandler(_settings.RootPath, dispatchMessage, PluginLocator),
 					new PkgTestHandler(_settings.RootPath),
 
 					new EnvironmentHandler(dispatchMessage, ICodeEngineLocator(), ILocateEditorEngine()),
-					new ShutdownHandler(_settings.RootPath, dispatchMessage, ILocateEditorEngine(), ICodeEngineLocator()),
+					new ShutdownHandler(_settings.RootPath, dispatchMessage, environment),
 
 					new GetCommandsHandler(),
 

@@ -42,7 +42,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "script"; } }
 
-		public HandleScriptHandler(string token, Action<string> dispatch, PluginLocator pluginLocator)
+		public HandleScriptHandler(string token, Action<string> dispatch, Func<PluginLocator> pluginLocator)
 		{
 			_token = token;
 			_dispatch = dispatch;

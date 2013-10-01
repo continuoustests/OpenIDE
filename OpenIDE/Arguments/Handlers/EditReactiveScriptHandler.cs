@@ -11,7 +11,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _keyPath;
 		private Action<string> _dispatch;
-		private PluginLocator _pluginLocator;
+		private Func<PluginLocator> _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -27,7 +27,7 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public string Command { get { return "edit"; } }
 		
-		public EditReactiveScriptHandler(Action<string> dispatch, PluginLocator locator, string keyPath)
+		public EditReactiveScriptHandler(Action<string> dispatch, Func<PluginLocator> locator, string keyPath)
 		{
 			_dispatch = dispatch;
 			_pluginLocator = locator;
@@ -38,7 +38,7 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var scripts = new ReactiveScriptReader(
 				_keyPath,
-				() => { return _pluginLocator; },
+				_pluginLocator,
 				(m) => {})
 				.Read();
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));

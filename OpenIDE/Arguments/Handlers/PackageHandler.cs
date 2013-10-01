@@ -19,7 +19,7 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
-		private PluginLocator _locator;
+		private Func<PluginLocator> _locator;
 		private PackageFetcher _packageFetcher;
 
 		public CommandHandlerParameter Usage {
@@ -68,7 +68,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "package"; } }
 
-		public PackageHandler(string token, Action<string> dispatch, PluginLocator locator) {
+		public PackageHandler(string token, Action<string> dispatch, Func<PluginLocator> locator) {
 			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
@@ -287,7 +287,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void install(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var installer = new Installer(_token, _dispatch, _locator);
+			var installer = new Installer(_token, _dispatch, _locator());
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(args[1]);
 		}
@@ -298,7 +298,7 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private void update(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var installer = new Installer(_token, _dispatch, _locator);
+			var installer = new Installer(_token, _dispatch, _locator());
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(args[1]);
 		}
@@ -323,7 +323,7 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private void remove(string[] args) {
 			var source = args[1];
-			var installer = new Installer(_token, _dispatch, _locator);
+			var installer = new Installer(_token, _dispatch, _locator());
 			installer.Remove(source);
 		}
 

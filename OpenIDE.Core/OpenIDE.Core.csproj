@@ -113,6 +113,7 @@
     <Compile Include="Definitions\DefinitionCache.cs" />
     <Compile Include="Definitions\DefinitionBuilder.cs" />
     <Compile Include="Packaging\PackageFetcher.cs" />
+    <Compile Include="Environments\EnvironmentService.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
