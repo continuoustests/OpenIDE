@@ -81,10 +81,10 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		public void Run(string[] arguments)
 		{
 			var sb = new StringBuilder();
-			arguments.ToList()
-				.ForEach(x => sb.Append(x + " "));
-			Logger.Write("Sending to editor: " + sb.ToString());
-			send(sb.ToString());
+			foreach (var argument in arguments)
+				sb.Append("\"" + argument + "\" ");
+			Logger.Write("Sending to editor: " + sb.ToString().Trim());
+			send(sb.ToString().Trim());
 		}
 
 		private string getEditor()
