@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using OpenIDE.Core.Logging;
 using CSharp.Projects;
 
 namespace CSharp.Crawlers.TypeResolvers
@@ -23,12 +24,14 @@ namespace CSharp.Crawlers.TypeResolvers
         }
 
         public void ResolveAllUnresolved(IOutputWriter cache) {
+            Logger.Write("Starting final resolve");
             var padlock = new object();
             var numFinished = 0;
             for (int i = 0; i < cache.Files.Count; i++) {
                 var file = cache.Files[i];
                 ThreadPool
                     .QueueUserWorkItem((evnt) => {
+                        Logger.Write("Starting final resolve for: " + file);
                         var partials = new List<PartialType>();
                         getPartials(cache.Classes, file, partials);
                         getPartials(cache.Interfaces, file, partials);
@@ -43,11 +46,13 @@ namespace CSharp.Crawlers.TypeResolvers
                         lock (padlock) {
                             numFinished++;
                         }
+                        Logger.Write("Completed final resolve for: " + file);
                     });
             }
             while (numFinished != cache.Files.Count) {
                 Thread.Sleep(100);
             }
+            Logger.Write("Completed final resolve");
         }
 
         private static void getPartials(IEnumerable<ICodeReference> codeRefs, FileRef file, List<PartialType> partials)

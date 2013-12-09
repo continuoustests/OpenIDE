@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.IO;
+using OpenIDE.Core.Logging;
 using CSharp.Crawlers;
 using CSharp.Responses;
 
@@ -39,9 +40,12 @@ namespace CSharp.Commands
 					        });
             }
             System.Threading.ThreadPool.QueueUserWorkItem((m) => {
+                Logger.Write("Merging crawl result into cache");
                 var cacheToMerge = (IOutputWriter)m;
-                if (_mainCache != null)
-                    _mainCache.MergeWith(cacheToMerge);
+                if (_mainCache == null)
+                    return;
+                _mainCache.MergeWith(cacheToMerge);
+                Logger.Write("Disposing and cleaning up");
                 cacheToMerge.Dispose();
                 GC.Collect(5);
             }, output);

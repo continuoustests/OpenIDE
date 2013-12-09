@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 using Mono.Cecil;
@@ -61,6 +60,8 @@ namespace CSharp.Crawlers
 		
 		private List<Project> getProjects(string folder)
 		{
+            if (!Directory.Exists(folder))
+                return new List<Project>();
 			var projects = new List<Project>();
 			Directory.GetDirectories(folder).ToList()
 				.ForEach(x => projects.AddRange(getProjects(x)));
