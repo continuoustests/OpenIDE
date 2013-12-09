@@ -20,6 +20,10 @@ namespace CSharp.Projects
         public void SetID(long id) {
             ID = id;
         }
+
+        public void ToString() {
+            return File;
+        }
 	}
 
     public class Project : ISourceItem
