@@ -80,7 +80,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\SendHandler.cs" />
     <Compile Include="Crawlers\AssemblyParser.cs" />
     <Compile Include="Crawlers\IReferenceCache.cs" />
     <Compile Include="Crawlers\JSONWriter.cs" />
@@ -132,10 +131,6 @@
     <Compile Include="Projects\ProjectHandler.cs" />
     <Compile Include="Projects\ProjectXML.cs" />
     <Compile Include="Responses\IResponseWriter.cs" />
-    <Compile Include="Tcp\ITcpServer.cs" />
-    <Compile Include="Tcp\SocketClient.cs" />
-    <Compile Include="Tcp\TcpServer.cs" />
-    <Compile Include="Tcp\TokenHandler.cs" />
     <Compile Include="Versioning\IAmProjectVersion.cs" />
     <Compile Include="Versioning\IProvideVersionedTypes.cs" />
     <Compile Include="Versioning\IResolveProjectVersion.cs" />
