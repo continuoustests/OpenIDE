@@ -33,21 +33,27 @@ namespace CSharp.Commands
             if (Directory.Exists(args[0])) {
                 crawler.Crawl(new CrawlOptions(args[0]));
             } else {
-			    File.ReadAllText(args[0])
-					    .Split(new string[] {  Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList()
-				        .ForEach(x => {
-						        crawler.Crawl(new CrawlOptions(x));
-					        });
+                var lines = File
+                    .ReadAllText(args[0])
+                    .Split(new string[] {  Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                if (lines.Count > 0 && File.Exists(lines[0])) {
+                    lines.ForEach(x => crawler.Crawl(new CrawlOptions(x)));
+                } else {
+                    crawler.Crawl(new CrawlOptions(args[0]));
+                }
             }
             System.Threading.ThreadPool.QueueUserWorkItem((m) => {
-                Logger.Write("Merging crawl result into cache");
-                var cacheToMerge = (IOutputWriter)m;
-                if (_mainCache == null)
-                    return;
-                _mainCache.MergeWith(cacheToMerge);
-                Logger.Write("Disposing and cleaning up");
-                cacheToMerge.Dispose();
-                GC.Collect(5);
+                lock (_mainCache) {
+                    Logger.Write("Merging crawl result into cache");
+                    var cacheToMerge = (IOutputWriter)m;
+                    if (_mainCache == null)
+                        return;
+                    _mainCache.MergeWith(cacheToMerge);
+                    Logger.Write("Disposing and cleaning up");
+                    cacheToMerge.Dispose();
+                    GC.Collect(5);
+                }
             }, output);
 		}
 	}

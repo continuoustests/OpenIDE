@@ -21,7 +21,7 @@ namespace CSharp.Projects
             ID = id;
         }
 
-        public void ToString() {
+        public string ToString() {
             return File;
         }
 	}

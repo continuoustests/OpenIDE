@@ -31,7 +31,7 @@ namespace CSharp.Crawlers.TypeResolvers
                 var file = cache.Files[i];
                 ThreadPool
                     .QueueUserWorkItem((evnt) => {
-                        Logger.Write("Starting final resolve for: " + file);
+                        Logger.Write("Starting final resolve for: " + file.ToString());
                         var partials = new List<PartialType>();
                         getPartials(cache.Classes, file, partials);
                         getPartials(cache.Interfaces, file, partials);
@@ -46,7 +46,7 @@ namespace CSharp.Crawlers.TypeResolvers
                         lock (padlock) {
                             numFinished++;
                         }
-                        Logger.Write("Completed final resolve for: " + file);
+                        Logger.Write("Completed final resolve for: " + file.ToString());
                     });
             }
             while (numFinished != cache.Files.Count) {

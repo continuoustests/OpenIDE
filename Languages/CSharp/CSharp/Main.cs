@@ -32,6 +32,9 @@ namespace CSharp
 				return;
 
             if (args[0] == "initialize") {
+            	if (args.Length != 2) {
+            		Console.WriteLine("Usage: initialize KEY_PATH");
+            	}
             	Logger.Write("Running C# plugin as daemon");
 				var writer = new ConsoleResponseWriter();
             	_keyPath = args[1];
