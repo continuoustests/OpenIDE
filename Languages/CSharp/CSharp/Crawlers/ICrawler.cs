@@ -24,6 +24,13 @@ namespace CSharp.Crawlers
 				Directory = path;
 			}
 		}
+
+		public string ToString() {
+			if (File == null)
+				return Directory;
+			else
+				return File;
+		}
 	}
 	
 	public interface ICrawler

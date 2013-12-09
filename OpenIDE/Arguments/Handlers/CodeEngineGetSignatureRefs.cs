@@ -8,8 +8,9 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class CodeModelQueryHandler : ICommandHandler
 	{
-		private List<CodeEngineQueryHandler> _handlers = new List<CodeEngineQueryHandler>();
+		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
 		private ICodeEngineLocator _codeEngineFactory;
+		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorLocator;
 
 
 		public CommandHandlerParameter Usage {
@@ -25,14 +26,19 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 
-		public CodeModelQueryHandler(ICodeEngineLocator locator)
+		public CodeModelQueryHandler(ICodeEngineLocator locator, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorLocator)
 		{
 			_codeEngineFactory = locator;
+			_editorLocator = editorLocator;
+			_handlers.Add(new CodeEngineGoToHandler(_codeEngineFactory, _editorLocator));
+			_handlers.Add(new CodeEngineExploreHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEngineGetProjectsHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEngineGetFilesHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEngineGetCodeRefsHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEngineGetSignatureRefsHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEngineFindSignatureHandler(_codeEngineFactory));
+			_handlers.Add(new MemberLookupHandler(_codeEngineFactory));
+			_handlers.Add(new GoToDefinitionHandler(_codeEngineFactory));
 		}
 
 		public string Command { get { return "codemodel"; } }

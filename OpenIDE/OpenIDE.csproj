@@ -93,7 +93,6 @@
     <Compile Include="CommandBuilding\PathAutoCompletion.cs" />
     <Compile Include="Arguments\Handlers\LanguageHandler.cs" />
     <Compile Include="Arguments\Handlers\ConfigurationHandler.cs" />
-    <Compile Include="Arguments\Handlers\BringToForegroundHandler.cs" />
     <Compile Include="Arguments\Handlers\CodeEngineGetSignatureRefs.cs" />
     <Compile Include="Arguments\Handlers\PrewievSnippetHandler.cs" />
     <Compile Include="Arguments\Handlers\CreateSnippetHandler.cs" />

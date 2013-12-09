@@ -23,5 +23,5 @@ if %SOLUTION% neq "null" (
 	SET WATCH_PATH=%ROOTPOINT%\%SOLUTION%
 )
 
-REM oi process-start %ROOT%\bin\AutoTest.Net\AutoTest.WinForms.exe "%WATCH_PATH%"
-oi process-start %ROOT%\bin\ContinuousTests\ContinuousTests.exe "%WATCH_PATH%"
+REM oi process start %ROOT%\bin\AutoTest.Net\AutoTest.WinForms.exe "%WATCH_PATH%"
+oi process start %ROOT%\bin\ContinuousTests\ContinuousTests.exe "%WATCH_PATH%"

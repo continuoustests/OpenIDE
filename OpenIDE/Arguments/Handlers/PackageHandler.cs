@@ -21,6 +21,7 @@ namespace OpenIDE.Arguments.Handlers
 		private Action<string> _dispatch;
 		private Func<PluginLocator> _locator;
 		private PackageFetcher _packageFetcher;
+		private PkgTestHandler _testHandler;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -46,6 +47,9 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript or name");
 				usage.Add("edit", "Opens package file in text editor")
 					.Add("NAME", "Package name");
+				var test = usage.Add("test", _testHandler.Usage.Description);
+				foreach (var subcommand in _testHandler.Usage.Parameters)
+					test.Add(subcommand);
 
 				var sources = usage.Add("src", "Lists, adds and removes package sources");
 				sources
@@ -73,6 +77,7 @@ namespace OpenIDE.Arguments.Handlers
 			_dispatch = dispatch;
 			_locator = locator;
 			_packageFetcher = new PackageFetcher(_token, _dispatch);
+			_testHandler = new PkgTestHandler(token);
 		}
 
 		public void Execute(string[] arguments) {
@@ -94,6 +99,8 @@ namespace OpenIDE.Arguments.Handlers
 				remove(arguments);
 			if (arguments.Length > 1 && arguments[0] == "edit")
 				edit(arguments);
+			if (arguments.Length >= 1 && arguments[0] == "test")
+				_testHandler.Execute(arguments.Skip(1).ToArray());
 			if (arguments[0] == "src")
 				sourceCommands(arguments);
 		}

@@ -6,6 +6,7 @@ using System.Threading;
 using CSharp.Crawlers.TypeResolvers;
 using CSharp.Projects;
 using Mono.Cecil;
+using OpenIDE.Core.Logging;
 
 namespace CSharp.Crawlers
 {
@@ -29,10 +30,12 @@ namespace CSharp.Crawlers
 
 		public void Crawl(CrawlOptions options)
 		{
+            Logger.Write("Crawling " + options.ToString());
 			List<Project> projects;
 			if (!options.IsSolutionFile && options.File != null)
 			{
 				parseFile(new FileRef(options.File, null));
+                Logger.Write("Done crawling single file " + options.ToString());
 				return;
 			}
 			else if (options.IsSolutionFile)
@@ -47,6 +50,7 @@ namespace CSharp.Crawlers
                 new TypeResolver(new OutputWriterCacheReader(_builder, _globalCache))
                     .ResolveAllUnresolved(_builder);
             }
+            Logger.Write("Done crawling " + options.ToString());
 		}
 
         private void loadmscorlib()
@@ -111,6 +115,7 @@ namespace CSharp.Crawlers
 
 		private void parseFile(FileRef x)
 		{
+            Logger.Write("Parsing file " + x.File);
 			try
 			{
 				new NRefactoryParser()
@@ -121,6 +126,7 @@ namespace CSharp.Crawlers
 			{
                 parseError(x.File, ex);
 			}
+            Logger.Write("Done parsing file " + x.File);
 		}
 
         private void parseError(string x, Exception ex)

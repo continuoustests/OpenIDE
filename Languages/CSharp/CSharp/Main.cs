@@ -33,6 +33,7 @@ namespace CSharp
 				return;
 
             if (args[0] == "initialize") {
+            	Logger.Write("Running C# plugin as daemon");
 				var writer = new ConsoleResponseWriter();
             	_keyPath = args[1];
 				setupLogging(_keyPath);
@@ -41,7 +42,7 @@ namespace CSharp
 				configureHandlers(_dispatcher);
 
             	writer.Write("initialized");
-            	while (args[0] == "initialize") {
+            	while (true) {
 					var msg = CommandMessage.New(Console.ReadLine());
 					Logger.Write("Handling command " + msg);
 					if (msg.Command == "shutdown") {
@@ -52,6 +53,7 @@ namespace CSharp
 		            writer.Write("end-of-conversation");
 	            }
             } else {
+            	Logger.Write("Running C# plugin as comman-line app");
             	_keyPath = Environment.CurrentDirectory;
 				setupLogging(_keyPath);
             	_cache = new OutputWriter(new NullResponseWriter());
@@ -61,6 +63,7 @@ namespace CSharp
             	var msg = new CommandMessage(args[0], null, getParameters(args));
             	handleMessage(msg, new ConsoleResponseWriter(), false);
             }
+            Logger.Write("Shutting down C# plugin");
         }
 
 		private static void setupLogging(string path) {
@@ -74,6 +77,7 @@ namespace CSharp
         {
             if (msg == null)
                 return;
+            Logger.Write("Handling message: " + msg);
 			var handler = _dispatcher.GetHandler(msg.Command);
 			if (handler == null) {
 				writer.Write("error|" + msg.Command + " is not a valid C# plugin command. For a list of commands type oi.");
@@ -87,6 +91,7 @@ namespace CSharp
 				var builder = new OutputWriter(writer);
                 writeException(builder, ex);
 			}
+			Logger.Write("Done handling message");
 		}
 
 		static string[] getParameters(string[] args)

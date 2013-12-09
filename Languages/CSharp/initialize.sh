@@ -15,5 +15,5 @@ if [[ "$SLN" != "" ]]; then
 	WATCH_PATH=$CONFIG_DIR/$SLN
 fi
 
-#oi process-start $ROOT/bin/AutoTest.Net/AutoTest.WinForms.exe "$WATCH_PATH"
-oi process-start $ROOT/bin/ContinuousTests/ContinuousTests.exe "$WATCH_PATH"
+#oi process start $ROOT/bin/AutoTest.Net/AutoTest.WinForms.exe "$WATCH_PATH"
+oi process start $ROOT/bin/ContinuousTests/ContinuousTests.exe "$WATCH_PATH"

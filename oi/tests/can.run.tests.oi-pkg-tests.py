@@ -37,7 +37,7 @@ def canMarkTestAsInconclusuve():
 def runTest(testfile, expectedcoutput):
 	root = os.path.dirname(__file__)
 	passed = False
-	for line in runProcess(["oi", "packagetest", os.path.join(root, testfile)]):
+	for line in runProcess(["oi", "package", "test", os.path.join(root, testfile)]):
 		if expectedcoutput in line:
 			passed = True
 

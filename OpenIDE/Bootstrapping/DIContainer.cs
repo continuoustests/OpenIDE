@@ -81,20 +81,13 @@ namespace OpenIDE.Bootstrapping
 					new HandleSnippetHandler(ICodeEngineLocator()),
 					new HandleLanguageHandler(_settings.RootPath, dispatchMessage, PluginLocator),
 
-					new CodeModelQueryHandler(ICodeEngineLocator()),
-
-					new CodeEngineGoToHandler(ICodeEngineLocator(), ILocateEditorEngine()),
-					new CodeEngineExploreHandler(ICodeEngineLocator()),
-					new MemberLookupHandler(ICodeEngineLocator()),
-					new GoToDefinitionHandler(ICodeEngineLocator()),
+					new CodeModelQueryHandler(ICodeEngineLocator(), ILocateEditorEngine()),
 
 					new ProcessStartHandler(),
-					new BringToForegroundHandler(),
 
 					new EventListener(_settings.RootPath),
 
 					new PackageHandler(_settings.RootPath, dispatchMessage, PluginLocator),
-					new PkgTestHandler(_settings.RootPath),
 
 					new EnvironmentHandler(dispatchMessage, ICodeEngineLocator(), ILocateEditorEngine(), environment),
 					new ShutdownHandler(_settings.RootPath, dispatchMessage, environment),
