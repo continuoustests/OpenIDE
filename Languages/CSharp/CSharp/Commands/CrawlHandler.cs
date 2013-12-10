@@ -37,7 +37,7 @@ namespace CSharp.Commands
                     .ReadAllText(args[0])
                     .Split(new string[] {  Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                if (lines.Count > 0 && File.Exists(lines[0])) {
+                if (lines.Count > 0 && File.Exists(lines[0]) || Directory.Exists(lines[0])) {
                     lines.ForEach(x => crawler.Crawl(new CrawlOptions(x)));
                 } else {
                     crawler.Crawl(new CrawlOptions(args[0]));

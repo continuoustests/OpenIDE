@@ -16,4 +16,5 @@ if [[ "$SLN" != "" ]]; then
 fi
 
 #oi process start $ROOT/bin/AutoTest.Net/AutoTest.WinForms.exe "$WATCH_PATH"
+#oi process start $ROOT/bin/ContinuousTests/AutoTest.GtkSharp.exe "$WATCH_PATH"
 oi process start $ROOT/bin/ContinuousTests/ContinuousTests.exe "$WATCH_PATH"
