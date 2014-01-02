@@ -12,6 +12,7 @@ namespace OpenIDE.Arguments.Handlers
 	class ProfileHandler : ICommandHandler
 	{
 		private ConfigurationHandler _configHandler;
+		private Action<string> _eventDispatcher;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -49,8 +50,9 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "profile"; } }
 
-		public ProfileHandler(ConfigurationHandler configHandler) {
+		public ProfileHandler(ConfigurationHandler configHandler, Action<string> eventDispatcher) {
 			_configHandler = configHandler;
+			_eventDispatcher = eventDispatcher;
 		}
 
 		public void Execute(string[] arguments) {
@@ -116,6 +118,7 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			Directory.CreateDirectory(profileDir);
 			File.WriteAllText(Path.Combine(profileDir, "oi.config"), "");
+			_eventDispatcher("builtin profile created \"" + args.Arguments[1] + "\"");
 			Console.WriteLine("Profile '{0}' created", args.Arguments[1]);
 		}
 
@@ -127,6 +130,7 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			try {
 				removeDir(profileDir);
+				_eventDispatcher("builtin profile deleted \"" + args.Arguments[1] + "\"");
 				Console.WriteLine("Profile '{0}' removed", args.Arguments[1]);
 			} catch {
 				Console.WriteLine("Failed to remove profile '{0}'", args.Arguments[1]);
@@ -150,6 +154,7 @@ namespace OpenIDE.Arguments.Handlers
 						Path.GetDirectoryName(profileDir),
 						"active.profile"), args.Arguments[1]);
 			}
+			_eventDispatcher("builtin profile loaded \"" + args.Arguments[1] + "\"");
 			Console.WriteLine("Profile '{0}' loaded", args.Arguments[1]);
 		}
 
@@ -168,6 +173,7 @@ namespace OpenIDE.Arguments.Handlers
 						return !Path.GetFileName(item).StartsWith("profile.");
 					return true;
 				});
+			_eventDispatcher("builtin profile created \"" + args.Arguments[1] + "\"");
 			Console.WriteLine("Profile '{0}' created", args.Arguments[1]);
 		}
 

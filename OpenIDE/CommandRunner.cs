@@ -13,6 +13,12 @@ namespace OpenIDE
 {
 	public class CommandRunner
 	{
+		private Action<string> _eventDispatcher;
+
+		public CommandRunner(Action<string> eventDispatcher) {
+			_eventDispatcher = eventDispatcher;
+		}
+
 		public bool Run(DefinitionCacheItem cmd, IEnumerable<string> args) {
 			var arguments = args.ToList();
 			Logger.Write("Removing the command name from parameters: " + arguments[0]);
@@ -57,9 +63,8 @@ namespace OpenIDE
 				if (command == null)
 					return false;
 				command.Execute(arguments.ToArray());
+				_eventDispatcher(string.Format("builtin command ran \"{0}\" {1}", command.Command, new CommandStringParser().GetArgumentString(arguments)));
 			}
-			// TODO: Command completed event needs to be triggered when command is done not when command process is started
-			//Bootstrapper.DispatchMessage("event|command-completed " + new CommandStringParser().GetArgumentString(args));
 			return true;
 		}	
 	}

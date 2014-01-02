@@ -57,7 +57,7 @@ namespace oi
 				return;
 			}
 			Logger.Write("Running command {0} of type {1}", cmd.Name, cmd.Type);
-			if (!new CommandRunner().Run(cmd, arguments))
+			if (!new CommandRunner(Bootstrapper.DispatchEvent).Run(cmd, arguments))
 				printUsage(cmd.Name);
 
 			Logger.Write("Waiting for background commands");

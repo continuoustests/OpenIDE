@@ -117,6 +117,7 @@ namespace OpenIDE.Arguments.Handlers
 			var packageFile = Path.Combine(files, "package.json");
 			if (!File.Exists(packageFile))
 				File.WriteAllText(packageFile, getPackageDescription(dir, name));
+			_dispatch("event|builtin package initialized \"" + packageFile + "\"");
 			_dispatch("command|editor goto \"" + packageFile + "|0|0\"");
 		}
 
@@ -266,6 +267,7 @@ namespace OpenIDE.Arguments.Handlers
 			string name;
 			string dir;
 			string command;
+			string packageFile;
 			var package = 
 				getPackages()
 					.FirstOrDefault(x => x.ID == source);
@@ -273,11 +275,13 @@ namespace OpenIDE.Arguments.Handlers
 				name = package.ID;
 				command = package.Command;
 				dir = Path.GetDirectoryName(Path.GetDirectoryName(package.File));
+				packageFile = package.File;
 			} else {
 				source = Path.GetFullPath(source);
 				name = Path.GetFileNameWithoutExtension(source);
 				command = name;
 				dir = Path.GetDirectoryName(source);
+				packageFile = source;
 			}
 
 			destination = Path.GetFullPath(destination);
@@ -290,6 +294,7 @@ namespace OpenIDE.Arguments.Handlers
 					false,
 					Environment.CurrentDirectory,
 					(err, line) => { Console.WriteLine(line); });
+			_dispatch("event|builtin package built \"" + packageFile + "\"");
 		}
 
 		private void install(string[] args) {
@@ -297,6 +302,7 @@ namespace OpenIDE.Arguments.Handlers
 			var installer = new Installer(_token, _dispatch, _locator());
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(args[1]);
+			_dispatch("event|builtin package installed \"" + args[1] + "\"");
 		}
 
 		private void install(string package, bool isGlobal) {
@@ -308,6 +314,7 @@ namespace OpenIDE.Arguments.Handlers
 			var installer = new Installer(_token, _dispatch, _locator());
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(args[1]);
+			_dispatch("event|builtin package updated \"" + args[1] + "\"");
 		}
 
 		private bool globalSpecified(ref string[] args) {
@@ -332,6 +339,7 @@ namespace OpenIDE.Arguments.Handlers
 			var source = args[1];
 			var installer = new Installer(_token, _dispatch, _locator());
 			installer.Remove(source);
+			_dispatch("event|builtin package removed \"" + source + "\"");
 		}
 
 		private void edit(string[] args) {
@@ -374,6 +382,7 @@ namespace OpenIDE.Arguments.Handlers
 				download(args[3], destination);
 				if (!File.Exists(destination))
 					printError("Failed while downloading source file " + args[3]);
+				_dispatch(string.Format("event|builtin package src added \"{0}\" \"{1}\"", name, destination));
 				return;
 			}
 			if (args.Length == 3 && args[1] == "rm") {
@@ -387,6 +396,7 @@ namespace OpenIDE.Arguments.Handlers
 					return;
 				}
 				File.Delete(source.Path);
+				_dispatch(string.Format("event|builtin package src removed \"{0}\" \"{1}\"", name, source.Path));
 				return;
 			}
 			if (args.Length > 1 && args[1] == "update") {
@@ -404,6 +414,8 @@ namespace OpenIDE.Arguments.Handlers
 				foreach (var source in sources) {
 					if (!download(source.Origin, source.Path))
 						printError("Failed to download source file " + source.Origin);
+					else
+						_dispatch(string.Format("event|builtin package src updated \"{0}\" \"{1}\"", source.Name, source.Path));
 				}
 				return;
 			}

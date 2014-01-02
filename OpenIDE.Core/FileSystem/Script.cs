@@ -124,6 +124,7 @@ namespace OpenIDE.Core.FileSystem
 					Logger.Write(ex);
 				}
 			};
+			var realArguments = arguments;
 			proc
 				.Query(
 					cmd,
@@ -137,7 +138,9 @@ namespace OpenIDE.Core.FileSystem
 							} else
 								onLine(line);
 						},
-					finalReplacements);
+					finalReplacements,
+					(args) => realArguments = args);
+			onLine(string.Format("event|builtin command ran \"{0}\" {1}", Name, realArguments));
 			_writer = (msg) => {};
 		}
 	}

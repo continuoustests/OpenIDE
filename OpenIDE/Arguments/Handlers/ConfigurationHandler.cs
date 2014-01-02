@@ -12,6 +12,8 @@ namespace OpenIDE.Arguments.Handlers
 	class ConfigurationHandler : ICommandHandler
 	{
 		private PluginLocator _pluginLocator;
+		private Action<string> _eventDispatcher;
+
 		public CommandHandlerParameter Usage {
 			get {
 				var usage = new CommandHandlerParameter(
@@ -40,8 +42,9 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "conf"; } }
 
-		public ConfigurationHandler(PluginLocator locator) {
+		public ConfigurationHandler(PluginLocator locator, Action<string> eventDispatcher) {
 			_pluginLocator = locator;
+			_eventDispatcher = eventDispatcher;
 		}
 
 		public void Execute(string[] arguments)
@@ -94,10 +97,21 @@ namespace OpenIDE.Arguments.Handlers
 			}
 
 			var config = new Configuration(path, false);
-			if (args.Delete)
+			if (args.Delete) {
 				config.Delete(args.Settings[0]);
-			else
+				_eventDispatcher(
+					string.Format(
+						"builtin configitem deleted \"{0}\" \"{1}\"",
+						path,
+						args.Settings[0]));
+			} else {
 				config.Write(args.Settings[0]);
+				_eventDispatcher(
+					string.Format(
+						"builtin configitem updated \"{0}\" \"{1}\"",
+						path,
+						args.Settings[0]));
+			}
 		}
 
 		private void initializingConfiguration(string path)

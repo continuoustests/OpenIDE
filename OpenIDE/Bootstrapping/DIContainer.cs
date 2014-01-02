@@ -55,10 +55,14 @@ namespace OpenIDE.Bootstrapping
 			return _definitionBuilder;
 		}
 
+		public void EventDispatcher(string msg) {
+			dispatchMessage("event|" + msg);
+		}
+
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
 		{
 			var handlers = new List<ICommandHandler>();
-			var configHandler = new ConfigurationHandler(PluginLocator());
+			var configHandler = new ConfigurationHandler(PluginLocator(), EventDispatcher);
 			var environment
 				= new EnvironmentService(
 					_settings.DefaultLanguage,
@@ -70,7 +74,7 @@ namespace OpenIDE.Bootstrapping
 				new ICommandHandler[]
 				{
 					new InitHandler(configHandler),
-					new ProfileHandler(configHandler),
+					new ProfileHandler(configHandler, EventDispatcher),
 
 					configHandler,
 					
@@ -176,7 +180,7 @@ namespace OpenIDE.Bootstrapping
 							cmd = GetDefinitionBuilder().GetScript(args.ToArray());
 
 						if (cmd != null) {
-							new CommandRunner()
+							new CommandRunner(EventDispatcher)
 								.Run(cmd, args.ToArray());
 						}
 						onCommandCompleted();

@@ -100,6 +100,14 @@ namespace CoreExtensions
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
                                  IEnumerable<KeyValuePair<string,string>> replacements) {
+            Query(proc, command, arguments, visible, workingDir, onRecievedLine, new KeyValuePair<string,string>[] {}, (args) => {});
+        }
+
+        public static void Query(this Process proc, string command, string arguments,
+                                 bool visible, string workingDir,
+                                 Action<bool, string> onRecievedLine,
+                                 IEnumerable<KeyValuePair<string,string>> replacements,
+                                 Action<string> preparedArguments) {
             _logger("Running process");
             var process = proc;
             var retries = 0;
@@ -107,7 +115,7 @@ namespace CoreExtensions
             _logger("About to start process");
             while (exitCode == 255 && retries < 5) {
                 _logger("Running query");
-                exitCode = query(process, command, arguments, visible, workingDir, onRecievedLine, replacements);
+                exitCode = query(process, command, arguments, visible, workingDir, onRecievedLine, replacements, preparedArguments);
                 _logger("Done running with " + exitCode.ToString());
                 retries++;
                 // Seems to happen on linux when a file is beeing executed while being modified (locked)
@@ -123,7 +131,8 @@ namespace CoreExtensions
         private static int query(this Process proc, string command, string arguments,
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
-                                 IEnumerable<KeyValuePair<string,string>> replacements) {
+                                 IEnumerable<KeyValuePair<string,string>> replacements,
+                                 Action<string> preparedArguments) {
             string tempFile = null;
             if (handleOiLnk(ref command, ref arguments, workingDir, onRecievedLine, replacements))
                 return 0;
@@ -140,6 +149,7 @@ namespace CoreExtensions
             }
 			
             prepareProcess(proc, command, arguments, visible, workingDir);
+            preparedArguments(proc.StartInfo.Arguments);
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
