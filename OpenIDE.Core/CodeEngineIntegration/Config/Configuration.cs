@@ -79,6 +79,9 @@ namespace OpenIDE.Core.Config
 				ConfigurationFile = GetConfigFile(_path);
 			if (ConfigurationFile == null)
 				return new ConfigurationSetting[] {};
+			if (!File.Exists(ConfigurationFile))
+				return new ConfigurationSetting[] {};
+
 			var settings = new List<ConfigurationSetting>();
 			foreach (var rawLine in File.ReadAllLines(ConfigurationFile)) {
 				var line = rawLine.Trim(new[] { ' ', '\t' });
@@ -97,6 +100,9 @@ namespace OpenIDE.Core.Config
 				ConfigurationFile = GetConfigFile(_path);
 			if (ConfigurationFile == null)
 				return null;
+			if (!File.Exists(ConfigurationFile))
+				return null;
+
 			ConfigurationSetting cfgSetting = null;
 			foreach (var rawLine in File.ReadAllLines(ConfigurationFile)) {
 				var line = rawLine.Trim(new[] { ' ', '\t' });
