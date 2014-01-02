@@ -1,0 +1,6 @@
+# Place this in .zshrc
+# Have it link to your bash completion script made from the
+# bash.txt file in this folder
+autoload bashcompinit
+bashcompinit
+source /etc/bash_completion.d/oi (or wherever you have got it, look at bash.txt)
