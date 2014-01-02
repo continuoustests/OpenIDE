@@ -11,6 +11,5 @@ _oi()
 		COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 		return 0
 	fi
-	COMPREPLY=( $(compgen -f "${cur}" ) )
 }
-complete -F _oi oi
+complete -F _oi -o default oi
