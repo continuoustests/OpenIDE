@@ -82,9 +82,9 @@ namespace OpenIDE.CodeEngine.Core.Tests.Caching
     {
         private List<FileFindResult> _list;
 
-        public ResultVerifier(List<FileFindResult> list)
+        public ResultVerifier(IEnumerable<FileFindResult> list)
         {
-            _list = list;
+            _list = list.ToList();
         }
 
         public void VerifyCount(int count)

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using OpenIDE.Core.CodeEngineIntegration;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -160,6 +161,11 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			_codeEngineFactory = codeEngineFactory;
 		}
+
+		protected override void usageAppender(BaseCommandHandlerParameter query)
+		{
+			query.Add("[LIMIT]", "Maximum records to return");
+		}
 	}
 	
 	abstract class CodeEngineQueryHandler : ICommandHandler
@@ -178,7 +184,8 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					_commandDescription);
-				usage.Add("[QUERY]", _queryDescription);
+				var query = usage.Add("[QUERY]", _queryDescription);
+				usageAppender(query);
 				return usage;
 			}
 		}
@@ -193,7 +200,13 @@ namespace OpenIDE.Arguments.Handlers
 			var args = "";
 			if (arguments.Length == 1)
 				args = arguments[0];
+			else
+				args = new CommandStringParser().GetArgumentString(arguments);
 			run(instance, args);
+		}
+
+		protected virtual void usageAppender(BaseCommandHandlerParameter query)
+		{
 		}
 	}
 }

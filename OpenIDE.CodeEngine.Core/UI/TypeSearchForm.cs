@@ -59,7 +59,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 			try
 			{
 	        	informationList.Items.Clear();
-				var items = _cache.Find(textBoxSearch.Text);
+				var items = _cache.Find(textBoxSearch.Text).Take(30).ToList();
 				if (items.Count > 30)
 					items = items.GetRange(0, 30);
 				items.ForEach(x => addItem(x));

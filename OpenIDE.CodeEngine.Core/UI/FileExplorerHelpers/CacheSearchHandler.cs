@@ -29,7 +29,7 @@ namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
 		
 		public void ListFromSearch(string expression)
 		{
-			var files = _cache.FindFiles(expression);
+			var files = _cache.FindFiles(expression).ToList();
             _list.Nodes.Clear();
             listResult(files, _list.Nodes, (result) => { return Path.GetFileName(result.File); });
 		}
@@ -66,7 +66,7 @@ namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
             if (result.Type == FileFindResultType.Directory)
 			{
                 addSubNodes(
-					_cache.GetFilesInDirectory(result.File + Path.DirectorySeparatorChar.ToString()),
+					_cache.GetFilesInDirectory(result.File + Path.DirectorySeparatorChar.ToString()).ToList(),
 					node.Nodes);
 			}
             if (result.Type == FileFindResultType.DirectoryInProject)
@@ -74,7 +74,7 @@ namespace OpenIDE.CodeEngine.Core.UI.FileExplorerHelpers
                 addSubNodes(
 					_cache.GetFilesInProject(
 						result.File + Path.DirectorySeparatorChar.ToString(),
-						result.ProjectPath),
+						result.ProjectPath).ToList(),
 					node.Nodes);
 			}
 		}

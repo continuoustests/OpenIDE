@@ -16,6 +16,7 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		IEnumerable<ISignatureReference> AllSignatures();
 
 		List<ICodeReference> Find(string name);
+        List<ICodeReference> Find(string name, int limit);
         List<FileFindResult> FindFiles(string searchString);
         List<FileFindResult> GetFilesInDirectory(string directory);
         List<FileFindResult> GetFilesInProject(string project);
