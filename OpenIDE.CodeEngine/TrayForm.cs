@@ -38,6 +38,16 @@ namespace OpenIDE.CodeEngine
 			setupForm();
         }
 
+		// Hide from alt+tab list
+		protected override CreateParams CreateParams {
+            get {
+                // Turn on WS_EX_TOOLWINDOW style bit
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x80; 
+                return cp;
+            }
+        }
+
 		private void setupTray()
 		{
 			// Create a simple tray menu with only one item.

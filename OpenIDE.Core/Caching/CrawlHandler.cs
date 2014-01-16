@@ -25,6 +25,7 @@ namespace OpenIDE.Core.Caching
 
 		public void Handle(string command)
 		{
+			_logWrite("Handling: " + command);
 			try {
 				var chunks = command.Trim()
 					.Split(new char[] { '|' }, StringSplitOptions.None);
@@ -77,8 +78,8 @@ namespace OpenIDE.Core.Caching
 				chunks[2],
                 chunks[3],
                 chunks[5],
-				int.Parse(chunks[6]),
-				int.Parse(chunks[7]),
+				tryParse(chunks[6]),
+				tryParse(chunks[7]),
                 chunks[8]);
 
 			var args = getArguments(chunks, 9);
@@ -93,8 +94,8 @@ namespace OpenIDE.Core.Caching
 			_builder.Add(new SignatureReference(
 				_currentFile,
 				chunks[1],
-				int.Parse(chunks[2]),
-				int.Parse(chunks[3])));
+				tryParse(chunks[2]),
+				tryParse(chunks[3])));
 		}
 
 		private List<string> getArguments(string[] args, int fixNumber)
@@ -103,6 +104,14 @@ namespace OpenIDE.Core.Caching
 			for (int i = fixNumber; i < args.Length; i++)
 				list.Add(args[i]);
 			return list;
+		}
+
+		private int tryParse(string number)
+		{
+			int intNumber;
+			if (int.TryParse(number, out intNumber))
+				return intNumber;
+			return 0;
 		}
 	}
 }
