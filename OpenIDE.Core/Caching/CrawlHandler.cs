@@ -25,7 +25,6 @@ namespace OpenIDE.Core.Caching
 
 		public void Handle(string command)
 		{
-			_logWrite("Handling: " + command);
 			try {
 				var chunks = command.Trim()
 					.Split(new char[] { '|' }, StringSplitOptions.None);
@@ -111,6 +110,7 @@ namespace OpenIDE.Core.Caching
 			int intNumber;
 			if (int.TryParse(number, out intNumber))
 				return intNumber;
+			_logWrite("Invalid number given: " + number);
 			return 0;
 		}
 	}
