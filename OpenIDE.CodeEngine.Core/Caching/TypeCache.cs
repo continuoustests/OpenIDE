@@ -56,48 +56,41 @@ namespace OpenIDE.CodeEngine.Core.Caching
 
 		private IEnumerable<ICodeReference> find(string name)
 		{
-			return _codeReferences
+			return
+				_codeReferences
 				.Where(x => x.TypeSearch &&
-					  	(
-					  		x.Signature.ToLower().Contains(name.ToLower()) ||
-							x.File.ToLower().Contains(name.ToLower())
-					  	)
-					  )
-				.OrderBy(x => nameSort(x.Name, x.Signature, x.File, name));
+				  	(
+				  		x.Signature.ToLower().Contains(name.ToLower()) ||
+						x.File.ToLower().Contains(name.ToLower())
+				  	)
+				  )
+			.OrderBy(x => nameSort(x.Name, x.Signature, x.File, name));
 		}
 
         public List<FileFindResult> FindFiles(string searchString)
         {
-        	lock (_files) {
-            	return new FileFinder(_files, _projects).Find(searchString).ToList();
-            }
+            return new FileFinder(_files, _projects).Find(searchString).ToList();
         }
 
         public List<FileFindResult> GetFilesInDirectory(string directory)
         {
-        	lock (_files) {
-            	return new HierarchyBuilder(_files, _projects).GetNextStep(directory).ToList();
-            }
+            return new HierarchyBuilder(_files, _projects).GetNextStep(directory).ToList();
         }
 
         public List<FileFindResult> GetFilesInProject(string project)
         {
-        	lock (_files) {
-	            var prj = GetProject(project);
-	            if (prj == null)
-	                return new List<FileFindResult>();
-	            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj).ToList();
-	        }
+            var prj = GetProject(project);
+            if (prj == null)
+                return new List<FileFindResult>();
+            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj).ToList();
         }
 
         public List<FileFindResult> GetFilesInProject(string project, string path)
         {
-        	lock (_files) {
-	            var prj = GetProject(project);
-	            if (prj == null)
-	                return new List<FileFindResult>();
-	            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj, path).ToList();
-	        }
+            var prj = GetProject(project);
+            if (prj == null)
+                return new List<FileFindResult>();
+            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj, path).ToList();
         }
 	
 		public bool ProjectExists(Project project)

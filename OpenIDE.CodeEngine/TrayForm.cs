@@ -14,6 +14,7 @@ using OpenIDE.CodeEngine.Core.Handlers;
 using OpenIDE.CodeEngine.Core.UI;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Windowing;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine
 {
@@ -115,17 +116,24 @@ namespace OpenIDE.CodeEngine
         private TypeSearchForm _gotoType = null;
         private void goToType(ITypeCache cache, Editor editor)
         {
+            Logger.Write("Preparing to open type search");
             _ctx.Post((s) =>
                 {
-					if (_gotoType == null || !_gotoType.Visible)
-					{
-						_gotoType = new TypeSearchForm(
-							cache,
-							(file, line, column) => { editor.GoTo(file, line, column); },
-							() => { new System.Threading.Thread(() => { System.Threading.Thread.Sleep(1000); editor.SetFocus(); }).Start(); });
-						_gotoType.Show(this);
-					}
-					setToForeground(_gotoType);
+                    Logger.Write("Opening type search");
+                    try {
+    					if (_gotoType == null || !_gotoType.Visible)
+    					{
+                            Logger.Write("Creating typesearch form");
+    						_gotoType = new TypeSearchForm(
+    							cache,
+    							(file, line, column) => { editor.GoTo(file, line, column); },
+    							() => { new System.Threading.Thread(() => { System.Threading.Thread.Sleep(1000); editor.SetFocus(); }).Start(); });
+    						_gotoType.Show(this);
+    					}
+    					setToForeground(_gotoType);
+                    } catch (Exception ex) {
+                        Logger.Write(ex);
+                    }
                 }, null);
         }
 
@@ -203,7 +211,16 @@ namespace OpenIDE.CodeEngine
 
 		private void setToForeground(Form form)
 		{
-			BringToForeGround.ByHWnd(form.Handle);
+            Logger.Write("Form a handle is " + form.Handle.ToString());
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
+                ThreadPool.QueueUserWorkItem((u) => {
+                    Thread.Sleep(50);
+                    BringToForeGround.ByProcAndName(System.Diagnostics.Process.GetCurrentProcess().ProcessName, form.Text);
+                }, null);
+            } else {
+                BringToForeGround.ByHWnd(form.Handle);
+            }
 		}
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Windowing;
 using CoreExtensions;
@@ -86,7 +87,8 @@ namespace OpenIDE.Arguments.Handlers
 				} else if (arguments[0] == "process") {
 					BringToForeGround.ByProcess(int.Parse(arguments[1]));
 				}
-			} catch {
+			} catch (Exception ex) {
+				Logger.Write(ex);
 				Console.WriteLine("Invalid command arguments");
 			}
 		}
