@@ -21,6 +21,10 @@ namespace OpenIDE.Core.Scripts
 		{
 			return 	scripts
 				.Where(x => {
+					if (Path.GetExtension(x).ToLower() == ".swp")
+						return false;
+					if (Path.GetExtension(x).ToLower() == ".swo")
+						return false;
 					if (Environment.OSVersion.Platform == PlatformID.Unix ||
 						Environment.OSVersion.Platform == PlatformID.MacOSX)
 					{
