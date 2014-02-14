@@ -20,6 +20,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 		private Action _cancelAction;
 		private DateTime _lastSearch = DateTime.Now;
 		private bool _delayedSearchTriggered = false;
+		private bool _isSearching = false;
 		
         public TypeSearchForm(ITypeCache cache, Action<string, int, int> action, Action cancelAction)
         {
@@ -50,7 +51,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 		
 		void HandleTextBoxSearchhandleTextChanged(object sender, System.EventArgs e)
         {
-        	if (DateTime.Now < _lastSearch.AddMilliseconds(500)) {
+        	if (_isSearching) {
         		_delayedSearchTriggered = true;
         		return;
         	}
@@ -61,6 +62,8 @@ namespace OpenIDE.CodeEngine.Core.UI
 
         private void performSearch() {
         	_lastSearch = DateTime.Now;
+        	_isSearching = true;
+        	var runSearch = false;
         	_syncContext.Post(message =>
             {
 	        	try
@@ -77,11 +80,16 @@ namespace OpenIDE.CodeEngine.Core.UI
 				{
 					Console.WriteLine(ex.ToString());
 				}
-				var runSearch = _delayedSearchTriggered;
-				_delayedSearchTriggered = false;
-				if (runSearch)
-					performSearch();
+				runSearch = _delayedSearchTriggered;
 			}, null);
+			_delayedSearchTriggered = false;
+			if (runSearch) {
+				var sleeptime = 500 - DateTime.Now.Subtract(_lastSearch).TotalMilliseconds;
+				if (sleeptime > 0)
+					System.Threading.Thread.Sleep(Convert.ToInt32(sleeptime));
+				performSearch();
+			}
+			_isSearching = false;
         }
 
 		void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)
