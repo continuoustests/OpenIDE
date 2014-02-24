@@ -20,11 +20,10 @@ namespace OpenIDE.Arguments.Handlers
 					"All",
 					CommandType.Run,
 					Command,
-					"Writes a configuration setting in the current path (configs " +
-					"are only read from root folder)");
+					"Writes a configuration setting in the current path (prints config if no arguments are specified)");
 				usage.Add("list", "List available configuration options (*.oicfgoptions)");
 				usage.Add("init", "Initializes a configuration point");
-				var read = usage.Add("read", "Prints closest configuration");
+				var read = usage.Add("read", "Prints closest configuration or global if specified");
 				read.Add("cfgfile", "Location of nearest configuration file");
 				read.Add("cfgpoint", "Location of nearest configuration point");
 				read.Add("rootpoint", "Location of current root location");
@@ -50,7 +49,7 @@ namespace OpenIDE.Arguments.Handlers
 		public void Execute(string[] arguments)
 		{
 			if (arguments.Length < 1)
-				arguments = new[] { "read" }; 
+				arguments = new[] { "readMerged" }; 
 			
 			var path = Environment.CurrentDirectory;
 
@@ -58,10 +57,22 @@ namespace OpenIDE.Arguments.Handlers
 				initializingConfiguration(path);
 			else if (arguments[0] == "list")
 				printConfigurationOptions(path);
+			else if (arguments[0] == "readMerged")
+				printMergedConfig(path);
 			else if (arguments[0] == "read")
 				printClosestConfiguration(path, arguments);
 			else
 				updateConfiguration(path, arguments);
+		}
+
+		private void printMergedConfig(string path)
+		{
+			Console.WriteLine("Configuration for: " + path);
+			Console.WriteLine();
+			var reader = new ConfigReader(path);
+			foreach (var key in reader.GetKeys()) {
+				Console.WriteLine("\t{0}={1}", key, reader.Get(key));
+			}
 		}
 
 		private void printConfigurationOptions(string path)
@@ -171,46 +182,12 @@ namespace OpenIDE.Arguments.Handlers
 				pattern = pattern.Substring(0, pattern.Length - 1);
 			}
 			if (wildcard) {
-				getSettingsStartingWithWildcard(File.ReadAllLines(file), pattern)
-					.ForEach(x => Console.WriteLine(x));
-			} else {
-				var value = getSetting(File.ReadAllLines(file), pattern);
-				if (value == null) {
-					var global = 
-						new Configuration(
-							Path.GetDirectoryName(
-								Assembly.GetExecutingAssembly().Location),
-							false)
-						.ConfigurationFile;
-					if (File.Exists(global)) {
-						value = getSetting(File.ReadAllLines(global), pattern);
-					}
+				foreach (var item in new ConfigReader(Path.GetDirectoryName(file)).GetStartingWith(pattern)) {
+					Console.WriteLine("{0}={1}", item.Key, item.Value);
 				}
-				Console.Write(value);
+			} else {
+				Console.WriteLine(new ConfigReader(Path.GetDirectoryName(file)).Get(pattern));
 			}
-		}
-
-		private List<string> getSettingsStartingWithWildcard(IEnumerable<string> lines, string pattern) {
-			return lines.ToList()
-				.Where(x => {
-						var s = x.Replace(" ", "").Replace("\t", "");
-						return s.StartsWith(pattern);
-					})
-				.Select(x => x.Trim(new[] { ' ', '\t' }))
-				.ToList();
-		}
-
-		private string getSetting(IEnumerable<string> lines, string pattern) {
-			var item = lines.ToList()
-				.FirstOrDefault(x => {
-						var s = x.Replace(" ", "").Replace("\t", "");
-						return s.StartsWith(pattern + "=");
-					});
-			if (item == null)
-				return null;
-
-			var equals = item.IndexOf("=") + 1;
-			return item.Substring(equals, item.Length - equals);
 		}
 		
 		private CommandArguments parseArguments(string[] arguments)

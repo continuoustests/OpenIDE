@@ -15,6 +15,32 @@ namespace OpenIDE.Core.Config
 			_locator = new ProfileLocator(_token);
 		}
 
+		public string[] GetKeys() {
+			var keys = new List<string>();
+			// Get from local profile
+			var localProfile = _locator.GetActiveLocalProfile();
+			var path = _locator.GetLocalProfilePath(localProfile);
+			keys = mergeKeys(path, keys);
+
+			// Get from local default profile
+			if (localProfile != "default") {
+				path = _locator.GetLocalProfilePath("default");
+				keys = mergeKeys(path, keys);
+			}
+
+			// Get from global profile
+			var globalProfile = _locator.GetActiveGlobalProfile();
+			path = _locator.GetGlobalProfilePath(globalProfile);
+			keys = mergeKeys(path, keys);
+
+			// Get from global default profile
+			if (globalProfile != "default") {
+				path = _locator.GetGlobalProfilePath("default");
+				keys = mergeKeys(path, keys);
+			}
+			return keys.ToArray();
+		}
+
 		public string Get(string settingName) {
 			// Get from local profile
 			var localProfile = _locator.GetActiveLocalProfile();
@@ -89,6 +115,15 @@ namespace OpenIDE.Core.Config
 						if (!results.Any(y => y.Key == x.Key))
 							results.Add(x);
 					});
+		}
+
+		private List<string> mergeKeys(string path, List<string> keys) {
+			var cfg = new Configuration(path, false);
+			foreach (var key in cfg.GetKeys()) {
+				if (!keys.Contains(key))
+					keys.Add(key);
+			}
+			return keys;
 		}
 	}
 }

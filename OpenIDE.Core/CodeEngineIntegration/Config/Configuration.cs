@@ -72,6 +72,23 @@ namespace OpenIDE.Core.Config
 		{
 			return getConfigPoint(path) != null;
 		}
+
+		public string[] GetKeys() {
+			var keys = new List<string>();
+			if (ConfigurationFile == null)
+				ConfigurationFile = GetConfigFile(_path);
+			if (ConfigurationFile == null)
+				return null;
+			if (!File.Exists(ConfigurationFile))
+				return null;
+
+			ConfigurationSetting cfgSetting = null;
+			foreach (var rawLine in File.ReadAllLines(ConfigurationFile)) {
+				var line = rawLine.Trim(new[] { ' ', '\t' });
+				keys.Add(getTag(line));
+			}
+			return keys.ToArray();
+		}
 		
 		public ConfigurationSetting[] GetSettingsStartingWith(string setting)
 		{
