@@ -109,6 +109,8 @@ namespace OpenIDE.Core.Environments
 			}
 			arg += "\"" + token + "\"";
 			Logger.Write ("Starting editor " + exe + " " + arg);
+			if (Logger.IsEnabled)
+				arg += " \"--logging=" + getLogFile(token) + "\"";
 			var proc = new Process();
 			proc.StartInfo = new ProcessStartInfo(exe, arg);
 			proc.StartInfo.CreateNoWindow = true;
@@ -200,6 +202,13 @@ namespace OpenIDE.Core.Environments
 						.Substring(0, enabledLanguages.Length - 1) + "\"";
 			}
 			return enabledLanguages;
+		}
+
+		private string getLogFile(string token)
+		{
+			var config = new ConfigReader(token);
+			var path = config.Get("oi.logpath");
+			return Path.Combine(path, "EditorEngine.log");
 		}
 	}
 }

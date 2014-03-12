@@ -267,66 +267,71 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		private bool cacheIsOutOfDate(string file, DefinitionCache cache) {
-			var dir = Path.GetDirectoryName(file);
-			var locations = cache.GetLocations(DefinitionCacheItemType.Script);
-			var scriptPath = Path.Combine(dir, "scripts");
-			var scripts = new ScriptFilter().GetScripts(scriptPath);
-			if (scripts.Any(x => !locations.Contains(x))) {
-				Logger.Write("New script has been added");
-				return true;
-			}
-			if (locations.Any(x => !scripts.Contains(x))) {
-				Logger.Write("New script has been added");
-				return true;
-			}
-			
-			foreach (var script in scripts) {
-				if (isUpdated(script, cache))
+			try {
+				var dir = Path.GetDirectoryName(file);
+				var locations = cache.GetLocations(DefinitionCacheItemType.Script);
+				var scriptPath = Path.Combine(dir, "scripts");
+				var scripts = new ScriptFilter().GetScripts(scriptPath);
+				if (scripts.Any(x => !locations.Contains(x))) {
+					Logger.Write("New script has been added");
 					return true;
-			}
-			
-			locations = cache.GetLocations(DefinitionCacheItemType.Language);
-			var languagePath = Path.Combine(dir, "languages");
-			var languages = _languages(languagePath);
-			if (languages.Any(x => !locations.Contains(x.FullPath))) {
-				Logger.Write("New language has been added");
-				if (Logger.IsEnabled) {
-					foreach (var newLanguage in languages.Where(x => !locations.Contains(x.FullPath)))
-						Logger.Write("\t" + newLanguage.FullPath);
 				}
-				return true;
-			}
-			if (locations.Any(x => !languages.Any(y => y.FullPath == x))) {
-				Logger.Write("Language has been removed");
-				return true;
-			}
-			
-			foreach (var language in languages) {
-				if (isUpdated(language.FullPath, cache))
+				if (locations.Any(x => !scripts.Contains(x))) {
+					Logger.Write("New script has been added");
 					return true;
-				var languageScriptPath = 
-					Path.Combine(
-						Path.Combine(languagePath, language.GetLanguage() + "-files"),
-						"scripts");
-				if (Directory.Exists(languageScriptPath)) {
-					locations = cache
-						.GetLocations(DefinitionCacheItemType.LanguageScript)
-						.Where(x => x.StartsWith(languageScriptPath))
-						.ToArray();
-					var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
-					if (languageScripts.Any(x => !locations.Contains(x))) {
-						Logger.Write("Language script has been added");
+				}
+				
+				foreach (var script in scripts) {
+					if (isUpdated(script, cache))
 						return true;
+				}
+				
+				locations = cache.GetLocations(DefinitionCacheItemType.Language);
+				var languagePath = Path.Combine(dir, "languages");
+				var languages = _languages(languagePath);
+				if (languages.Any(x => !locations.Contains(x.FullPath))) {
+					Logger.Write("New language has been added");
+					if (Logger.IsEnabled) {
+						foreach (var newLanguage in languages.Where(x => !locations.Contains(x.FullPath)))
+							Logger.Write("\t" + newLanguage.FullPath);
 					}
-					if (locations.Any(x => !languageScripts.Contains(x))) {
-						Logger.Write("Language script has been removed");
+					return true;
+				}
+				if (locations.Any(x => !languages.Any(y => y.FullPath == x))) {
+					Logger.Write("Language has been removed");
+					return true;
+				}
+				
+				foreach (var language in languages) {
+					if (isUpdated(language.FullPath, cache))
 						return true;
-					}
-					foreach (var script in languageScripts) {
-						if (isUpdated(script, cache))
+					var languageScriptPath = 
+						Path.Combine(
+							Path.Combine(languagePath, language.GetLanguage() + "-files"),
+							"scripts");
+					if (Directory.Exists(languageScriptPath)) {
+						locations = cache
+							.GetLocations(DefinitionCacheItemType.LanguageScript)
+							.Where(x => x.StartsWith(languageScriptPath))
+							.ToArray();
+						var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
+						if (languageScripts.Any(x => !locations.Contains(x))) {
+							Logger.Write("Language script has been added");
 							return true;
+						}
+						if (locations.Any(x => !languageScripts.Contains(x))) {
+							Logger.Write("Language script has been removed");
+							return true;
+						}
+						foreach (var script in languageScripts) {
+							if (isUpdated(script, cache))
+								return true;
+						}
 					}
 				}
+			} catch (Exception ex) {
+				Logger.Write(ex.ToString());
+				return true;
 			}
 			return false;
 		}

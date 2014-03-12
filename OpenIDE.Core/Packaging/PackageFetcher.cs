@@ -67,11 +67,17 @@ namespace OpenIDE.Core.Packaging
 					return true;
 				}
 				if (source.StartsWith("http://") || source.StartsWith("https://")) {
+					if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
+						ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => {
+							return true;
+					    };
+					}
 					var client = new WebClient();
 					client.DownloadFile(source, destination);
 					return true;
 				}
-			} catch {
+			} catch (Exception ex) {
+				Logger.Write(ex);
 			}
 			return false;
 		}
