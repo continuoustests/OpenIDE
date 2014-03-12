@@ -78,12 +78,11 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private string getBaseFromOrigin() {
-			var end = Origin.Length;
-			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-				end = Origin.LastIndexOf("/") + 1;
-			else
-				end = Origin.LastIndexOf("\\") + 1;
-			return Origin.Substring(0, end);
+			var end = -1;
+			end = Origin.LastIndexOf("/");
+			if (end == -1)
+				end = Origin.LastIndexOf("\\");
+			return Origin.Substring(0, end + 1);
 		}
 	}
 }
