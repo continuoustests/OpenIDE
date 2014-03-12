@@ -14,13 +14,11 @@ namespace oipckmngr
 			if (args.Length == 4 && args[1] == "create") {
 				var source = Path.GetFullPath(args[2]);
 				var origin = args[3];
-				var dir = Path.GetDirectoryName(source);
-				dir = source.Substring(0, dir.Length + 1);
 				if (File.Exists(source)) {
 					writeError("Source {0} already exists. Try using update instead", source);
 					return;
 				}
-				writeSource(source, origin, dir);
+				writeSource(source, origin);
 				Console.WriteLine("Created " + source);
 				return;
 			}
@@ -36,16 +34,14 @@ namespace oipckmngr
 					return;
 				}
 				var origin = src.Origin;
-				var basePath = src.Base; 
-				writeSource(source, origin, basePath);
+				writeSource(source, origin);
 				return;
 			}
 		}
 
-		private static void writeSource(string source, string origin, string basePath) {
+		private static void writeSource(string source, string origin) {
 			var json = new Source();
 			json.Origin = origin;
-			json.Base = basePath;
 			foreach (var package in Directory.GetFiles(Path.GetDirectoryName(source), "*.oipkg")) {
 				json.AddPackage(package);
 			}
@@ -63,7 +59,6 @@ namespace oipckmngr
 	class Source
 	{
 		public string Origin { get; set; }
-		public string Base { get; set; }
 		public List<PackageItem> Packages = new List<PackageItem>();
 
 		public void AddPackage(string packageFile) {

@@ -19,8 +19,7 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var json = _fileReader(file);
 				var data = JObject.Parse(json);
-				var baseLocation = data["base"].ToString();
-				var source = new Source(data["origin"].ToString(), file, baseLocation);
+				var source = new Source(data["origin"].ToString(), file);
 				data["packages"].Children().ToList()
 						.ForEach(x => 
 							source.AddPackage(
@@ -29,7 +28,7 @@ namespace OpenIDE.Core.Packaging
 									x["version"].ToString(),
 									x["name"].ToString(),
 									x["description"].ToString(),
-									baseLocation + x["package"].ToString())));
+									source.Base + x["package"].ToString())));
 				return source;
 			} catch {
 				Logger.Write("Failed to read source package " + file);
@@ -66,16 +65,25 @@ namespace OpenIDE.Core.Packaging
 		public string Base { get; private set; }
 		public List<SourcePackage> Packages { get { return _packages; } }
 
- 		public Source(string origin, string file, string baseLocation) {
+ 		public Source(string origin, string file) {
  			Path = file;
 			Name = System.IO.Path.GetFileNameWithoutExtension(file);
 			Origin = origin;
-			Base = baseLocation;
+			Base = getBaseFromOrigin();
 			_packages = new List<SourcePackage>();
 		}
 
 		public void AddPackage(SourcePackage package) {
 			_packages.Add(package);
+		}
+
+		private string getBaseFromOrigin() {
+			var end = Origin.Length;
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+				end = Origin.LastIndexOf("/") + 1;
+			else
+				end = Origin.LastIndexOf("\\") + 1;
+			return Origin.Substring(0, end);
 		}
 	}
 }
