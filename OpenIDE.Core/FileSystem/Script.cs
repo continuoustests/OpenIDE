@@ -62,21 +62,7 @@ namespace OpenIDE.Core.FileSystem
 			var commands = new List<BaseCommandHandlerParameter>();
 			var usage = getUsage();
 			usage = stripDescription(usage);
-			new UsageParser(usage)
-				.Parse().ToList()
-					.ForEach(y =>
-						{
-							var cmd = new BaseCommandHandlerParameter(
-								y.Name,
-								y.Description,
-								CommandType.FileCommand);
-							y.Parameters.ToList()
-								.ForEach(p => cmd.Add(p));
-							if (!y.Required)
-								cmd.IsOptional();
-							commands.Add(cmd);
-						});
-			return commands;
+			return new UsageParser(usage).Parse().ToList();
 		}
 
 		private string stripDescription(string usage)

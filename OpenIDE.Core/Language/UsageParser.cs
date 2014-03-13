@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Language
 {
@@ -33,15 +34,13 @@ namespace OpenIDE.Core.Language
 		{
 			bool isTerminated;
 			bool isRequired;
-			var command = getCommand(ref index, out isRequired);
+			var command = getCommand(ref index);
 			if (command == null)
-				return null;;
+				return null;
 			var description = getDescription(ref index, out isTerminated);
 			var cmd = new BaseCommandHandlerParameter(command, description);
 			if (!isTerminated)
 				getSubCommands(ref index).ForEach(x => cmd.Add(x));
-			if (!isRequired)
-				cmd.IsOptional();
 			return cmd;
 		}
 
@@ -60,18 +59,12 @@ namespace OpenIDE.Core.Language
 			return commands;
 		}
 
-		private string getCommand(ref int index, out bool required)
+		private string getCommand(ref int index)
 		{
-			required = true;
 			var end = _usage.IndexOf("|\"", index);
 			if (end == -1)
 				return null;
 			var command = _usage.Substring(index, end - index).Trim();
-			if (command.StartsWith("["))
-			{
-				required = false;
-				command = command.Replace("[", "").Replace("]", "");
-			}
 			index = end + "|\"".Length;
 			return command;
 		}

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Definitions
 {
@@ -21,7 +22,8 @@ namespace OpenIDE.Core.Definitions
 				foreach (var cmd in json["commands"].Children())
 					addItem(cache, cmd);
 				return cache;
-			} catch {
+			} catch (Exception ex) {
+				Logger.Write(ex);
 			}
 			return null;
 		}
@@ -33,6 +35,7 @@ namespace OpenIDE.Core.Definitions
 						getType(json["type"].ToString()),
 						json["location"].ToString(),
 						getTime(json["updated"].ToString()),
+						json["cmd"].ToString().StartsWith("[["),
 						!json["cmd"].ToString().StartsWith("["),
 						json["cmd"].ToString().Replace("[", "").Replace("]", ""),
 						json["description"].ToString());
@@ -47,6 +50,7 @@ namespace OpenIDE.Core.Definitions
 						getType(json["type"].ToString()),
 						json["location"].ToString(),
 						getTime(json["updated"].ToString()),
+						json["cmd"].ToString().StartsWith("[["),
 						!json["cmd"].ToString().StartsWith("["),
 						json["cmd"].ToString().Replace("[", "").Replace("]", ""),
 						json["description"].ToString());

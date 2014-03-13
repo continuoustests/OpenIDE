@@ -22,9 +22,9 @@ namespace OpenIDE.Core.Tests.Definitions
 			var time = new DateTime(2013,1,1,2,3,1);
 			var cache = new DefinitionCache();
 			cache
-				.Add(type, script, time, true, "mycmd", "My command does my stuff.")
-					.Append(type, script, time, true, "FILE", "another param")
-						.Append(type, script, time, false, "optional", "This one is optional");
+				.Add(type, script, time, false, true, "mycmd", "My command does my stuff.")
+					.Append(type, script, time, false, true, "FILE", "another param")
+						.Append(type, script, time, false, false, "optional", "This one is optional");
 			
 			writer.Write(cache);
 			Assert.That(actualJSON, Is.EqualTo(expectedJSON()));

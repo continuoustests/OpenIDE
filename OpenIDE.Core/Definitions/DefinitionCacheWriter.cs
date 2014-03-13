@@ -49,10 +49,14 @@ namespace OpenIDE.Core.Definitions
 
 		private DefinitionJson getDefinition(DefinitionCacheItem parameter) {
 			var json = new DefinitionJson();
-			if (parameter.Required)
-				json.Cmd = parameter.Name;
-			else
-				json.Cmd = "[" + parameter.Name + "]";
+			if (parameter.Override) {
+				json.Cmd = "[[" + parameter.Name + "]]";
+			} else {
+				if (parameter.Required)
+					json.Cmd = parameter.Name;
+				else
+					json.Cmd = "[" + parameter.Name + "]";
+			}
 			json.Type = parameter.Type.ToString().ToLower();
 			json.Location = parameter.Location;
 			json.Updated = 

@@ -166,14 +166,17 @@ namespace OpenIDE.Core.Language
 				.Parse().ToList()
 					.ForEach(y =>
 						{
+							var name = y.Name;
+							if (!y.Required)
+								name = "[" + name + "]";
+							if (y.Override)
+								name = "[[" + name + "]]";
 							var cmd = new BaseCommandHandlerParameter(
-								y.Name,
+								name,
 								y.Description,
 								CommandType.FileCommand);
 							y.Parameters.ToList()
 								.ForEach(p => cmd.Add(p));
-							if (!y.Required)
-								cmd.IsOptional();
 							commands.Add(cmd);
 						});
 			return commands;

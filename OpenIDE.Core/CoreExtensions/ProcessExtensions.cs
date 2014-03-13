@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.Logging;
 
 namespace CoreExtensions
 {
@@ -42,6 +43,7 @@ namespace CoreExtensions
             prepareInterpreter(ref command, ref arguments);
 			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareProcess(proc, command, arguments, visible, workingDir);
+            Logger.Write("Running: {0} {1}", proc.StartInfo.FileName, proc.StartInfo.Arguments);
             proc.Start();
 			proc.WaitForExit();
         }
@@ -59,6 +61,7 @@ namespace CoreExtensions
 			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
             prepareProcess(proc, command, arguments, visible, workingDir);
+            Logger.Write("Running: {0} {1}", proc.StartInfo.FileName, proc.StartInfo.Arguments);
             proc.Start();
         }
 
@@ -81,6 +84,7 @@ namespace CoreExtensions
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
+            Logger.Write("Running: {0} {1}", proc.StartInfo.FileName, proc.StartInfo.Arguments);
             proc.Start();
             var output = proc.StandardOutput.ReadToEnd();
             errors = 
@@ -168,6 +172,7 @@ namespace CoreExtensions
 
 			proc.OutputDataReceived += onOutputLine;
             proc.ErrorDataReceived += onErrorLine;
+            Logger.Write("Running: {0} {1}", proc.StartInfo.FileName, proc.StartInfo.Arguments);
             if (proc.Start())
             {
                 proc.BeginOutputReadLine();

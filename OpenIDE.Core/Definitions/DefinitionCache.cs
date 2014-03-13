@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Definitions
 {
@@ -16,12 +17,19 @@ namespace OpenIDE.Core.Definitions
 
 		public DefinitionCacheItem[] Definitions { get { return _definitions.ToArray();; } }
 
-		public DefinitionCacheItem Add(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
-			return add(type, location, updated, required, name, description);
+		public DefinitionCacheItem Add(DefinitionCacheItemType type, string location, DateTime updated, bool ovrride, bool required, string name, string description) {
+			return add(type, location, updated, ovrride, required, name, description);
 		}
 
 		public DefinitionCacheItem Get(string[] args) {
 			return get(args, 0, _definitions, null);
+		}
+
+		public DefinitionCacheItem GetOriginal(string[] args) {
+			var item = get(args, 0, _definitions, null);
+			if (item.Original != null)
+				return item.Original;
+			return item;
 		}
 
 		public DefinitionCacheItem GetBuiltIn(string[] args) {
@@ -41,8 +49,12 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		public void Merge(DefinitionCache cache) {
-			foreach (var definition in cache.Definitions)
-				add(definition);
+			foreach (var definition in cache.Definitions) {
+				if (definition.Override)
+					overrideItem(definition);
+				else
+					add(definition);
+			}
 		}
 
 		public DefinitionCacheItem GetOldestItem() {
@@ -89,26 +101,55 @@ namespace OpenIDE.Core.Definitions
 			}
 		}
 
-		private DefinitionCacheItem add(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
+		private DefinitionCacheItem add(DefinitionCacheItemType type, string location, DateTime updated, bool ovrride, bool required, string name, string description) {
 			var item =
 				new DefinitionCacheItem(parameterAppender) {
 						Type = type,
 						Location = location,
 						Updated = updated,
+						Override = ovrride,
 						Required = required,
 						Name = name,
 						Description = description
 					};
+			if (item.Override) {
+				_definitions.Add(item);
+				return item;
+			}
 			return add(item);
 		}
 
 		private DefinitionCacheItem add(DefinitionCacheItem item) {
-			
 			addRaw(item);
 			if (_definitions.Any(x => x.Name == item.Name))
 				_definitions.RemoveAll(x => x.Name == item.Name);
 			_definitions.Add(item);
 			return item;
+		}
+
+		private void overrideItem(DefinitionCacheItem item) {
+			if (item.Parameters.Length == 0)
+				return;
+			var existing = _definitions.FirstOrDefault(x => x.Name == item.Name);
+			if (existing == null)
+				return;
+			if (overrideItem(existing.Parameters[0], item.Parameters[0]))
+				existing.OverrideItem(item.Parameters[0]);
+		}
+
+		private bool overrideItem(DefinitionCacheItem existing, DefinitionCacheItem item) {
+			if (!item.Override)
+				return true;
+			
+			if (item.Parameters.Length == 0)
+				return false;
+			var childItem = item.Parameters[0];
+			var child = existing.Parameters.FirstOrDefault(x => x.Name == childItem.Name);
+			if (child == null)
+				return false;
+			if (overrideItem(child, childItem))
+				existing.OverrideItem(childItem);
+			return false;
 		}
 
 		private DefinitionCacheItem parameterAppender(List<DefinitionCacheItem> parameters, DefinitionCacheItem parameterToAdd) {
@@ -181,15 +222,18 @@ namespace OpenIDE.Core.Definitions
 		public string Location { get; set; }
 		public DateTime Updated { get; set; }
 		public bool Required { get; set; }
+		public bool Override { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
+		public DefinitionCacheItem Original { get; private set; }
 		public DefinitionCacheItem[] Parameters { get { return _parameters.ToArray(); } }
 
 		public DefinitionCacheItem(Func<List<DefinitionCacheItem>,DefinitionCacheItem,DefinitionCacheItem> parameterAppender) {
+			Original = null;
 			_parameterAppender = parameterAppender;
 		}
 
-		public DefinitionCacheItem Append(DefinitionCacheItemType type, string location, DateTime updated, bool required, string name, string description) {
+		public DefinitionCacheItem Append(DefinitionCacheItemType type, string location, DateTime updated, bool ovrride, bool required, string name, string description) {
 			return 
 				_parameterAppender(
 					_parameters,
@@ -205,6 +249,16 @@ namespace OpenIDE.Core.Definitions
 
 		public DefinitionCacheItem Append(DefinitionCacheItem parameter) {
 			return _parameterAppender(_parameters, parameter);
+		}
+
+		public void OverrideItem(DefinitionCacheItem item) {
+			for (int i = 0; i < _parameters.Count; i++) {
+				if (_parameters[i].Name == item.Name) {
+					item.Original = _parameters[i];
+					_parameters[i] = item;
+					return;
+				}
+			}
 		}
 	}
 }

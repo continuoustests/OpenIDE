@@ -26,13 +26,13 @@ namespace OpenIDE.Tests.CommandBuilding
 			commands.Add(new DefinitionCacheItem(_parameterAppender) {
 					Type = type, Location = "", Updated = DateTime.Now, Required = true, Name = "Option1", Description = "Opt1 desc"
 				});
-			commands[0].Append(type, "", DateTime.Now, true, "opt1sub1", "desc");
+			commands[0].Append(type, "", DateTime.Now, false, true, "opt1sub1", "desc");
 
 			commands.Add(new DefinitionCacheItem(_parameterAppender) {
 					Type = type, Location = "", Updated = DateTime.Now, Required = true, Name = "Option2", Description = "Opt2 desc"
 				});
-			commands[1].Append(type, "", DateTime.Now, true, "opt2sub1", "desc");
-			commands[1].Append(type, "", DateTime.Now, true, "opt2sub2", "desc");
+			commands[1].Append(type, "", DateTime.Now, false, true, "opt2sub1", "desc");
+			commands[1].Append(type, "", DateTime.Now, false, true, "opt2sub2", "desc");
 
 			_builder = new CommandBuilder(commands);
 			initialize();

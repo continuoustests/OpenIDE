@@ -166,22 +166,30 @@ namespace OpenIDE.Bootstrapping
 						var parser = new CommandStringParser();
 						var args = 
 							parser.Parse(
-								command.Substring(prefix.Length, command.Length - prefix.Length));
+								command.Substring(prefix.Length, command.Length - prefix.Length))
+								.ToArray();
+						if (args.Length == 0) {
+							Logger.Write("No commands specified for " + command);
+						}
 						DefinitionCacheItem cmd = null;
 						if (prefix == "command|")
-							cmd = GetDefinitionBuilder().Get(args.ToArray());
+							cmd = GetDefinitionBuilder().Get(args);
 						else if (prefix == "command-builtin|")
-							cmd = GetDefinitionBuilder().GetBuiltIn(args.ToArray());
+							cmd = GetDefinitionBuilder().GetBuiltIn(args);
 						else if (prefix == "command-language|")
-							cmd = GetDefinitionBuilder().GetLanguage(args.ToArray());
+							cmd = GetDefinitionBuilder().GetLanguage(args);
 						else if (prefix == "command-languagescript|")
-							cmd = GetDefinitionBuilder().GetLanguageScript(args.ToArray());
+							cmd = GetDefinitionBuilder().GetLanguageScript(args);
 						else if (prefix == "command-script|")
-							cmd = GetDefinitionBuilder().GetScript(args.ToArray());
+							cmd = GetDefinitionBuilder().GetScript(args);
+						else if (prefix == "command-original|")
+							cmd = GetDefinitionBuilder().GetOriginal(args);
 
 						if (cmd != null) {
 							new CommandRunner(EventDispatcher)
-								.Run(cmd, args.ToArray());
+								.Run(cmd, args);
+						} else {
+							Logger.Write("Could not find handler for " + command);
 						}
 						onCommandCompleted();
 					} else if (isEvent(command)) {
@@ -203,7 +211,8 @@ namespace OpenIDE.Bootstrapping
 			return command.StartsWith("command|") ||
 				   command.StartsWith("command-builtin|") ||
 				   command.StartsWith("command-language|") ||
-				   command.StartsWith("command-script|");
+				   command.StartsWith("command-script|") ||
+				   command.StartsWith("command-original|");
 		}
 
 		private string getCommandPrefix(string command) {

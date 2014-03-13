@@ -52,6 +52,10 @@ namespace OpenIDE.Core.Definitions
 			return _cache.Get(args);
 		}
 
+		public DefinitionCacheItem GetOriginal(string[] args) {
+			return _cache.GetOriginal(args);
+		}
+
 		public DefinitionCacheItem GetBuiltIn(string[] args) {
 			return _cache.GetBuiltIn(args);
 		}
@@ -75,8 +79,10 @@ namespace OpenIDE.Core.Definitions
 			mergeBuiltInCommands(profiles);
 			// Reverse paths to handle global first then local
 			var paths = profiles.GetPathsCurrentProfiles().Reverse().ToArray();
-			for (int i = paths.Length - 1; i >= 0; i--)
-				mergeExternalCommands(paths[i]);
+			//for (int i = paths.Length - 1; i >= 0; i--)
+			//	mergeExternalCommands(paths[i]);
+			foreach (var path in paths)
+				mergeExternalCommands(path);
 		}
 
 		private void mergeBuiltInCommands(ProfileLocator profiles) {
@@ -120,10 +126,11 @@ namespace OpenIDE.Core.Definitions
 						DefinitionCacheItemType.BuiltIn,
 						null,
 						DateTime.Now,
+						false,
 						true,
 						cmd.Name,
 						cmd.Usage.Description);
-				add(item, cmd.Usage.Parameters);
+				add(builtInCache, item, cmd.Usage.Parameters);
 			}
 			writeCache(profiles.AppRootPath, builtInCache);
 			return builtInCache;
@@ -161,10 +168,11 @@ namespace OpenIDE.Core.Definitions
 					DefinitionCacheItemType.Language,
 					language.FullPath,
 					DateTime.Now,
+					false,
 					true,
 					language.GetLanguage(),
 					"Commands for the " + language.GetLanguage() + " plugin");
-				add(item, language.GetUsages());
+				add(cache, item, language.GetUsages());
 
 				var languageScriptPath = 
 					Path.Combine(
@@ -181,10 +189,11 @@ namespace OpenIDE.Core.Definitions
 						DefinitionCacheItemType.LanguageScript,
 						scriptFile,
 						DateTime.Now,
+						false,
 						true,
 						script.Name,
 						script.Description);
-					add(scriptItem, usages);
+					add(cache, scriptItem, usages);
 				}
 
 				if (language.GetLanguage() == _defaultLanguage)
@@ -193,18 +202,21 @@ namespace OpenIDE.Core.Definitions
 
 			// Add scripts
 			var scriptPath = Path.Combine(dir, "scripts");
+			Logger.Write("Adding scripts from " + scriptPath);
 			var scripts = new ScriptFilter().GetScripts(scriptPath);
 			foreach (var scriptFile in scripts) {
+				Logger.Write("Adding script " + scriptPath);
 				var script  = new Script(_token, _workingDirectory, scriptFile);
 				var usages = script.Usages; // Description is built when fetching usages
 				var item = cache.Add(
 					DefinitionCacheItemType.Script,
 					scriptFile,
 					DateTime.Now,
+					false,
 					true,
 					script.Name,
 					script.Description);
-				add(item, usages);
+				add(cache, item, usages);
 			}
 
 			// Add default language
@@ -217,10 +229,11 @@ namespace OpenIDE.Core.Definitions
 							usage.Type,
 							usage.Location,
 							DateTime.Now,
+							false,
 							true,
 							usage.Name,
 							usage.Description);
-						add(item, usage.Parameters);
+						add(cache, item, usage.Parameters);
 					}
 				}
 			}
@@ -228,42 +241,61 @@ namespace OpenIDE.Core.Definitions
 			return cache;
 		}
 
-		private void add(DefinitionCacheItem item, IEnumerable<DefinitionCacheItem> parameters) {
+		private void add(DefinitionCache cache, DefinitionCacheItem item, IEnumerable<DefinitionCacheItem> parameters) {
 			foreach (var parameter in parameters)
-				add(item, parameter);
+				add(cache, item, parameter);
 		}
 
-		private void add(DefinitionCacheItem item, DefinitionCacheItem parameter) {
+		private void add(DefinitionCache cache, DefinitionCacheItem item, DefinitionCacheItem parameter) {
 			var name = parameter.Name;
 			var child =
 				item.Append(
 						item.Type,
 						item.Location,
 						item.Updated,
+						parameter.Override,
 						parameter.Required,
 						name,
 						parameter.Description);
 			foreach (var cmd in parameter.Parameters)
-				add(child, cmd);
+				add(cache, child, cmd);
 		}
 
-		private void add(DefinitionCacheItem item, IEnumerable<BaseCommandHandlerParameter> parameters) {
-			foreach (var parameter in parameters)
-				add(item, parameter);
+		private void add(DefinitionCache cache, DefinitionCacheItem item, IEnumerable<BaseCommandHandlerParameter> parameters) {
+			foreach (var parameter in parameters) {
+				if (parameter.Override)
+					overrideCommand(cache, item, parameter);
+				else
+					add(cache, item, parameter);
+			}
 		}
 
-		private void add(DefinitionCacheItem item, BaseCommandHandlerParameter parameter) {
+		private void add(DefinitionCache cache, DefinitionCacheItem item, BaseCommandHandlerParameter parameter) {
 			var name = parameter.Name;
 			var child =
 				item.Append(
 						item.Type,
 						item.Location,
 						item.Updated,
+						parameter.Override,
 						parameter.Required,
 						name,
 						parameter.Description);
 			foreach (var cmd in parameter.Parameters)
-				add(child, cmd);
+				add(cache, child, cmd);
+		}
+
+		private void overrideCommand(DefinitionCache cache, DefinitionCacheItem item, BaseCommandHandlerParameter parameter) {
+			var command = cache.Add(
+				item.Type,
+				item.Location,
+				item.Updated,
+				parameter.Override,
+				parameter.Required,
+				parameter.Name,
+				parameter.Description);
+			foreach (var cmd in parameter.Parameters)
+				add(cache, command, cmd);
 		}
 
 		private bool cacheIsOutOfDate(string file, DefinitionCache cache) {

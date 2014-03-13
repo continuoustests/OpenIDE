@@ -1,6 +1,6 @@
-
 using System;
 using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Language
 {
@@ -12,6 +12,7 @@ namespace OpenIDE.Core.Language
 		private string _description = "";
 		public string Description { get { return GetDescription(""); } }
 		public bool Required { get; private set; }
+		public bool Override { get; private set; }
 		public CommandType Type { get; private set; }
 		public IEnumerable<BaseCommandHandlerParameter> Parameters { get { return _parameters; } }
 
@@ -19,7 +20,7 @@ namespace OpenIDE.Core.Language
 		{
 			Name = name.Replace("[", "").Replace("]", "");
 			_description = description;
-			Required = !name.StartsWith("[");
+			setNameProperties(name);
 			Type = CommandType.SubParameter;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
@@ -28,22 +29,14 @@ namespace OpenIDE.Core.Language
 		{
 			Name = name.Replace("[", "").Replace("]", "");
 			_description = description;
-			Required = name.StartsWith("[");
+			setNameProperties(name);
 			Type = type;
 			_parameters = new List<BaseCommandHandlerParameter>();
 		}
 
-		public BaseCommandHandlerParameter IsOptional()
-		{
-			Required = false;
-			return this;
-		}
-
 		public BaseCommandHandlerParameter Add(string name, string description)
 		{
-			var parameter = new BaseCommandHandlerParameter(name.Replace("[", "").Replace("]", ""), description);
-			if (name.StartsWith("["))
-				parameter.IsOptional();
+			var parameter = new BaseCommandHandlerParameter(name, description);
 			_parameters.Add(parameter);
 			return parameter;
 		}
@@ -56,9 +49,7 @@ namespace OpenIDE.Core.Language
 
 		public BaseCommandHandlerParameter Insert(string name, string description)
 		{
-			var parameter = new BaseCommandHandlerParameter(name.Replace("[", "").Replace("]", ""), description);
-			if (name.StartsWith("["))
-				parameter.IsOptional();
+			var parameter = new BaseCommandHandlerParameter(name, description);
 			_parameters.Insert(0, parameter);
 			return parameter;
 		}
@@ -66,6 +57,23 @@ namespace OpenIDE.Core.Language
 		public string GetDescription(string newline)
 		{
 			return _description.Replace("||newline||", newline);
+		}
+
+		private void setNameProperties(string rawName)
+		{
+			setNameProperties(this, rawName);
+		}
+
+		private void setNameProperties(BaseCommandHandlerParameter parameter, string rawName)
+		{
+			Override = false;
+			Required = true;
+			if (rawName.StartsWith("[[")) {
+				Override = true;
+				return;
+			}
+			if (rawName.StartsWith("["))
+				Required = false;
 		}
 	}
 
