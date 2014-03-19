@@ -119,7 +119,10 @@ namespace OpenIDE.Core.Config
 
 		private List<string> mergeKeys(string path, List<string> keys) {
 			var cfg = new Configuration(path, false);
-			foreach (var key in cfg.GetKeys()) {
+            var configKeys = cfg.GetKeys();
+            if (configKeys == null)
+                return keys;
+			foreach (var key in configKeys) {
 				if (!keys.Contains(key))
 					keys.Add(key);
 			}
