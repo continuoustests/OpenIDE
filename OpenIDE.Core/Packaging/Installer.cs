@@ -113,7 +113,7 @@ namespace OpenIDE.Core.Packaging
 				_dispatch(string.Format("error|There is no package {0} to remove", source));
 				return;
 			}
-			removePackage(source, Path.GetDirectoryName(Path.GetDirectoryName(package.File)));
+			removePackage(package.Command, Path.GetDirectoryName(Path.GetDirectoryName(package.File)));
 			_dispatch(string.Format("Removed package {0}", package.Signature));
 		}
 		
@@ -229,12 +229,12 @@ namespace OpenIDE.Core.Packaging
 					args.Package.Signature));
 		}
 
-		private void removePackage(string name, string path) {
+		private void removePackage(string command, string path) {
 			Directory.Delete(
-				Path.Combine(path, name + "-files"), true);
+				Path.Combine(path, command + "-files"), true);
 			Directory
 				.GetFiles(path)
-				.Where(x => Path.GetFileNameWithoutExtension(x) == name)
+				.Where(x => Path.GetFileNameWithoutExtension(x) == command)
 				.ToList()
 				.ForEach(x => File.Delete(x));
 		}
