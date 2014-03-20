@@ -36,9 +36,6 @@ namespace CSharp.Projects.Removers
 				return;
 			}
 			
-			if (!_fs.FileExists(file.Fullpath))
-				return;
-			
 			var relativePath = PathExtensions.GetRelativePath(project.File, file.Fullpath).Replace("/", "\\");
 			var node = getNode(document, relativePath);
 			if (node == null)

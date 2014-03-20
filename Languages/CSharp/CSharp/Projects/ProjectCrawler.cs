@@ -19,8 +19,12 @@ namespace CSharp.Projects
 			extensions.Add(VB_PROJECT_EXTENTION);
 			if (File.Exists(path) && extensions.Contains(Path.GetExtension(path)))
 				return directory;
-			if (!Directory.Exists(path))
-                return null;
+
+			if (!Directory.Exists(path)) {
+                if (!Directory.Exists(Path.GetDirectoryName(path)))
+                    return null;
+                path = Path.GetDirectoryName(path);
+            }
             return locateNearestProjectFile(path, extensions);
         }
 

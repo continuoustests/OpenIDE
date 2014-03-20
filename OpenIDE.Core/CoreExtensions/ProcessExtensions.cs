@@ -36,7 +36,7 @@ namespace CoreExtensions
         
         public static void Run(this Process proc, string command, string arguments,
                                bool visible, string workingDir,
-                               IEnumerable<KeyValuePair<string,string>> replacements) {
+                               KeyValuePair<string,string>[] replacements) {
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return;
 			arguments = replaceArgumentPlaceholders(arguments, replacements);
@@ -55,7 +55,7 @@ namespace CoreExtensions
 
         public static void Spawn(this Process proc, string command, string arguments,
                                  bool visible, string workingDir,
-                                 IEnumerable<KeyValuePair<string,string>> replacements) {
+                                 KeyValuePair<string,string>[] replacements) {
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return;
 			arguments = replaceArgumentPlaceholders(arguments, replacements);
@@ -73,11 +73,12 @@ namespace CoreExtensions
 
         public static IEnumerable<string> QueryAll(this Process proc, string command, string arguments,
                                                    bool visible, string workingDir,
-                                                   IEnumerable<KeyValuePair<string,string>> replacements,
+                                                   KeyValuePair<string,string>[] replacements,
                                                    out string[] errors) {
             errors = new string[] {};
             if (handleOiLnk(ref command, ref arguments, workingDir, (e,l) => {}, replacements))
                 return new string[] {};
+            _logger("Replacing text in " + arguments);
 			arguments = replaceArgumentPlaceholders(arguments, replacements);
             prepareInterpreter(ref command, ref arguments);
             prepareProcess(proc, command, arguments, visible, workingDir);
@@ -103,14 +104,14 @@ namespace CoreExtensions
         public static void Query(this Process proc, string command, string arguments,
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
-                                 IEnumerable<KeyValuePair<string,string>> replacements) {
-            Query(proc, command, arguments, visible, workingDir, onRecievedLine, new KeyValuePair<string,string>[] {}, (args) => {});
+                                 KeyValuePair<string,string>[] replacements) {
+            Query(proc, command, arguments, visible, workingDir, onRecievedLine, replacements, (args) => {});
         }
 
         public static void Query(this Process proc, string command, string arguments,
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
-                                 IEnumerable<KeyValuePair<string,string>> replacements,
+                                 KeyValuePair<string,string>[] replacements,
                                  Action<string> preparedArguments) {
             _logger("Running process");
             var process = proc;
@@ -135,7 +136,7 @@ namespace CoreExtensions
         private static int query(this Process proc, string command, string arguments,
                                  bool visible, string workingDir,
                                  Action<bool, string> onRecievedLine,
-                                 IEnumerable<KeyValuePair<string,string>> replacements,
+                                 KeyValuePair<string,string>[] replacements,
                                  Action<string> preparedArguments) {
             string tempFile = null;
             if (handleOiLnk(ref command, ref arguments, workingDir, onRecievedLine, replacements))
@@ -194,7 +195,7 @@ namespace CoreExtensions
         private static bool handleOiLnk(ref string command, ref string arguments,
                                         string workingDir,
                                         Action<bool, string> onRecievedLine,
-                                        IEnumerable<KeyValuePair<string,string>> replacements) {
+                                        KeyValuePair<string,string>[] replacements) {
             if (Path.GetExtension(command) != ".oilnk")
                 return false;
             var args = new CommandStringParser(' ').Parse(arguments);
@@ -260,10 +261,14 @@ namespace CoreExtensions
             return text;
         }
 
-		private static string replaceArgumentPlaceholders(string arg,  IEnumerable<KeyValuePair<string,string>> replacements)
+		private static string replaceArgumentPlaceholders(string arg,  KeyValuePair<string,string>[] replacements)
 		{
-			foreach (var replacement in replacements)
+            _logger("Replacing text in " + arg);
+			foreach (var replacement in replacements) {
+                _logger("Replacing " + replacement.Key + " with " + replacement.Value);
 				arg = arg.Replace(replacement.Key, replacement.Value);
+            }
+            _logger("After replace " + arg);
 			return arg;
 		}
         

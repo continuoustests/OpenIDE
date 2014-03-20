@@ -66,11 +66,12 @@ namespace OpenIDE.Core.RScripts
 			}
 			var originalMessage = message;
             message = "{event} {global-profile} {local-profile}";
-			var process = new Process();
             Logger.Write("Running: " + _file + " " + message);
             ThreadPool.QueueUserWorkItem((task) => {
 	            try
 	            {
+					var process = new Process();
+					process.SetLogger((logMsg) => Logger.Write(logMsg));
 	            	var msg = task.ToString();
 	            	process.Query(
 	            		_file,

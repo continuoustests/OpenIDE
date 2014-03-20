@@ -124,7 +124,7 @@ namespace OpenIDE.Core.FileSystem
 							} else
 								onLine(line);
 						},
-					finalReplacements,
+					finalReplacements.ToArray(),
 					(args) => realArguments = args);
 			onLine(string.Format("event|builtin command ran \"{0}\" {1}", Name, realArguments));
 			_writer = (msg) => {};
