@@ -37,8 +37,9 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 			lock (_scripts)
 			{
 				var touchState = _touchHandler.Handle(message);
-				if (touchState != ScriptTouchEvents.None)
+				if (touchState != ScriptTouchEvents.None) {
 					handleScriptTouched(message, touchState);
+                }
 				_scripts
 					.Where(x => 
 						!_pausedScripts.Contains(x.Name) &&
@@ -60,13 +61,17 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		private void handleScriptTouched(string message, ScriptTouchEvents type) {
 			var path = _touchHandler.GetPath(message);
 			if (type == ScriptTouchEvents.Removed) {
+                Logger.Write("Removing touched rscript");
 				_scripts.RemoveAll(x => x.File.Equals(path));
 				return;
 			}
 			var script = _reader.ReadScript(path);
-			if (script == null)
+			if (script == null) {
+                Logger.Write("No rscript found. Exiting");
 				return;
-			if (type == ScriptTouchEvents.Changed) {
+            }
+			if (type == ScriptTouchEvents.Changed || type == ScriptTouchEvents.Added) {
+                Logger.Write("Reloading / adding existing rscript");
 				_scripts.RemoveAll(x => x.File.Equals(path));
 				_scripts.Add(script);
 			}

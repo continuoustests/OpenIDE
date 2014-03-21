@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 {
