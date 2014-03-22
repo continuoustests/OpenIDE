@@ -66,7 +66,7 @@ xcopy /S /I /E %ROOT%\oi\tests %DEPLOYDIR%\tests
 copy %BINARYDIR%\oipckmngr.exe %DEPLOYDIR%\Packaging
 copy %BINARYDIR%\OpenIDE.Core.dll %DEPLOYDIR%\Packaging
 copy %BINARYDIR%\Newtonsoft.Json.dll %DEPLOYDIR%\Packaging
-copy %BINARYDIR%\SharpCompress.3.5.dll %DEPLOYDIR%\Packaging
+copy %BINARYDIR%\ICSharpCode.SharpZipLib.dll %DEPLOYDIR%\Packaging
 
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates
