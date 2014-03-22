@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using System.Linq;
 using System.Diagnostics;
 using ICSharpCode.SharpZipLib.GZip;
@@ -10,6 +11,23 @@ namespace oipckmngr
 	class Compression
 	{
 		public static void Decompress(string directory, string archiveFile) {
+			if (Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix) {
+            	var tarfile = 
+                   	Path.Combine(
+                       	directory,
+                       	Path.GetFileName(archiveFile) + ".tar.gz");
+               	if (File.Exists(tarfile))
+                   	File.Delete(tarfile);
+               	File.Copy(archiveFile, tarfile);
+               	run(directory, "gunzip", string.Format("-q \"{0}\"", tarfile));
+               	tarfile = 
+                   	Path.Combine(
+                       	Path.GetDirectoryName(tarfile),
+                       	Path.GetFileNameWithoutExtension(tarfile));
+               	run(directory, "tar", string.Format("--warning=none -xvf \"{0}\"", tarfile));
+               	File.Delete(tarfile);
+               	return;
+           	}
 			var inStream = File.OpenRead(archiveFile);
 		    var gzipStream = new GZipInputStream(inStream);
 
@@ -30,6 +48,7 @@ namespace oipckmngr
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
             proc.Start();
             proc.WaitForExit();
 		}
@@ -46,13 +65,26 @@ namespace oipckmngr
 		public static void Compress(string directory, string command, string destination) {
 			if (!Directory.Exists(directory))
 				return;
+
+			var filesDirectory = Path.Combine(directory, command + "-files");
+			var file = destination + ".oipkg";
+
+			if (Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix) {
+				var args = new StringBuilder();
+				args.Append("\"" + file + "\" ");
+				Directory
+					.GetFiles(directory, command + ".*")
+					.ToList()
+					.ForEach(x => args.Append("\"" + toRelative(x, directory) + "\" "));
+				args.Append("\"" + toRelative(filesDirectory, directory) + "\"");
+				run(directory, "tar", "-czf " + args.ToString());
+				return;
+			}
+
 			var currentDirectory = Directory.GetCurrentDirectory();
 			Directory.SetCurrentDirectory(directory);
 			try
 			{
-				var filesDirectory = Path.Combine(directory, command + "-files");
-				var file = destination + ".oipkg";
-
 				var outStream = File.Create(file);
 			    var gzoStream = new GZipOutputStream(outStream);
 			    var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream);
@@ -100,6 +132,10 @@ namespace oipckmngr
 		private static void addFile(TarArchive tarArchive, string filename) {
 			var tarEntry = TarEntry.CreateEntryFromFile(filename);
 		    tarArchive.WriteEntry(tarEntry, true);
+		}
+
+		private static string toRelative(string file, string basepath) {
+			return file.Substring(basepath.Length + 1, file.Length - (basepath.Length + 1));
 		}
 	}
 }

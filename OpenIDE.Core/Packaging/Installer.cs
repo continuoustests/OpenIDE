@@ -120,10 +120,7 @@ namespace OpenIDE.Core.Packaging
 		private bool prepareForAction(string source, Func<ActionParameters,bool> actionHandler) {
 			var profiles = new ProfileLocator(_token);
 			string activeProfile;
-			if (_useGlobal)
-				activeProfile = profiles.GetActiveGlobalProfile();
-			else
-				activeProfile = profiles.GetActiveLocalProfile();
+			
 
 			var actionSucceeded = false;
 			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
@@ -131,6 +128,12 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
+					// Force language to global as that is the only thing workin atm
+					if (_useGlobal || package.Target == "language")
+						activeProfile = profiles.GetActiveGlobalProfile();
+					else
+						activeProfile = profiles.GetActiveLocalProfile();
+
 					var installPath = getInstallPath(package, profiles, activeProfile);
 					if (installPath == null) {
 						_dispatch("error|Config point is not initialized");
