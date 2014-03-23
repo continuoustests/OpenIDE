@@ -88,11 +88,15 @@ namespace OpenIDE.Arguments.Handlers
 						.Select(x => "--" + x.Key + "=" + x.Value));
 
 				if (!_environment.HasEditorEngine(_rootPath)) {
-					if (!_environment.StartEditorEngine(args, _rootPath))
+					if (!_environment.StartEditorEngine(args, _rootPath)) {
+						Console.WriteLine("Could not launch editor " + args[0]);
 						return;
+					}
 				}
-				if (!_environment.HasEditorEngine(_rootPath))
+				if (!_environment.HasEditorEngine(_rootPath)) {
+					Console.WriteLine("Could not launch editor " + args[0]);
 					return;
+				}
 				if (!_environment.IsRunning(_rootPath))
 					_environment.Start(_rootPath);
 			}
