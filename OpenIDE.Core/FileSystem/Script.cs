@@ -59,7 +59,6 @@ namespace OpenIDE.Core.FileSystem
 
 		private IEnumerable<BaseCommandHandlerParameter> getUsages()
 		{
-			var commands = new List<BaseCommandHandlerParameter>();
 			var usage = getUsage();
 			usage = stripDescription(usage);
 			return new UsageParser(usage).Parse().ToList();

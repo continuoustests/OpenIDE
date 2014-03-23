@@ -76,7 +76,9 @@ namespace OpenIDE.Arguments.Handlers
 			var definitions = 
 				Bootstrapper.GetDefinitionBuilder()
 					.Definitions
-					.Where(x => x.Type == DefinitionCacheItemType.Script);
+					.Where(x => 
+						x.Type == DefinitionCacheItemType.Script ||
+						x.Type == DefinitionCacheItemType.LanguageScript);
 			Console.WriteLine("Available commands:");
 			foreach (var definition in definitions)
 				UsagePrinter.PrintDefinition(definition);

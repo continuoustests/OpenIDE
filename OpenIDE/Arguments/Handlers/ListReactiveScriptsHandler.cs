@@ -40,7 +40,7 @@ namespace OpenIDE.Arguments.Handlers
 					_token,
 					_pluginLocator,
 					(m) => {})
-					.ReadNonLanguageScripts();
+					.Read();
 			var instance = _codeEngineLocator.GetInstance(_token);
 			foreach (var script in scripts) {
 				var status = "unavailable";

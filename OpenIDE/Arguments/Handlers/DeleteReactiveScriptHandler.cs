@@ -38,7 +38,7 @@ namespace OpenIDE.Arguments.Handlers
 				_keyPath,
 				_pluginLocator,
 				(m) => {})
-				.ReadNonLanguageScripts();
+				.Read();
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
 			if (script == null || arguments.Length < 1)
 				return;

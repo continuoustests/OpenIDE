@@ -36,7 +36,8 @@ namespace OpenIDE.Core.RScripts
 
 		public List<ReactiveScript> Read()
 		{
-			readScripts();
+			if (_scripts.Count == 0)
+				readScripts();
 			return _scripts;
 		}
 
