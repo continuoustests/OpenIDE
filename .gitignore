@@ -21,6 +21,7 @@ SolutionVersion.cs
 lib/MoMA/Reports/submit.xml
 build_output
 ReleaseBinaries
+Packages
 code_drop
 TestResult.xml
 openlocal.sh

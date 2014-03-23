@@ -63,14 +63,14 @@ namespace OpenIDE.Core.Environments
 			runInitScript(token, profilePath);
 		}
 
-		public void StartEditorEngine(IEnumerable<string> editorAndArguments, string token)
+		public bool StartEditorEngine(IEnumerable<string> editorAndArguments, string token)
 		{
 			Logger.Write ("Starting instance");
 			writeStartArguments(editorAndArguments);
 			var instance = startInstance(token);
 			if (instance == null)
-				return;
-			instance.Start(editorAndArguments.ToArray());
+				return false;
+			return instance.Start(editorAndArguments.ToArray()) != "";
 		}
 
 		public void Shutdown(string token)
@@ -110,7 +110,7 @@ namespace OpenIDE.Core.Environments
 			arg += "\"" + token + "\"";
 			Logger.Write ("Starting editor " + exe + " " + arg);
 			if (Logger.IsEnabled)
-				arg += " \"--logging=" + getLogFile(token) + "\"";
+				arg += getLogFileArgument(token);
 			var proc = new Process();
 			proc.StartInfo = new ProcessStartInfo(exe, arg);
 			proc.StartInfo.CreateNoWindow = true;
@@ -118,13 +118,16 @@ namespace OpenIDE.Core.Environments
 			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			proc.StartInfo.WorkingDirectory = token;
 			proc.Start();
+            Logger.Write("Waiting for editor to initialize");
 			var timeout = DateTime.Now.AddSeconds(5);
 			while (DateTime.Now < timeout)
 			{
 				if (_editorLocator.GetInstance(token) != null)
 					break;
-				Thread.Sleep(50);
+				Thread.Sleep(10);
 			}
+            if (DateTime.Now > timeout)
+                return null;
 			return _editorLocator.GetInstance(token);
 		}
 		
@@ -204,11 +207,13 @@ namespace OpenIDE.Core.Environments
 			return enabledLanguages;
 		}
 
-		private string getLogFile(string token)
+		private string getLogFileArgument(string token)
 		{
 			var config = new ConfigReader(token);
 			var path = config.Get("oi.logpath");
-			return Path.Combine(path, "EditorEngine.log");
+            if (path == null)
+                return "";
+            return " \"--logging=" + Path.Combine(path, "EditorEngine.log") + "\"";
 		}
 	}
 }

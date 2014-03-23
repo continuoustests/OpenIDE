@@ -129,7 +129,9 @@ namespace OpenIDE.Core.Packaging
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
 					// Force language to global as that is the only thing workin atm
-					if (_useGlobal || package.Target == "language")
+					if (package.Target == "language")
+						_useGlobal = true;
+					if (_useGlobal)
 						activeProfile = profiles.GetActiveGlobalProfile();
 					else
 						activeProfile = profiles.GetActiveLocalProfile();

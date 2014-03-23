@@ -87,7 +87,10 @@ namespace OpenIDE.Arguments.Handlers
 						.GetStartingWith("editor." + editorName)
 						.Select(x => "--" + x.Key + "=" + x.Value));
 
-				_environment.StartEditorEngine(args, _rootPath);
+				if (!_environment.HasEditorEngine(_rootPath)) {
+					if (!_environment.StartEditorEngine(args, _rootPath))
+						return;
+				}
 				if (!_environment.HasEditorEngine(_rootPath))
 					return;
 				if (!_environment.IsRunning(_rootPath))
