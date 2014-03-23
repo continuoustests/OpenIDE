@@ -62,8 +62,6 @@ mkdir $DEPLOYDIR/.OpenIDE/test/templates
 chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
 chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
 
-echo $BINARYDIR
-
 xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 xbuild PackageManager/oipckmngr/oipckmngr.csproj /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
@@ -91,6 +89,8 @@ cp $BINARYDIR/OpenIDE.EventListener.exe $DEPLOYDIR/EventListener/
 
 # Tests
 cp -r $ROOT/oi/tests/* $DEPLOYDIR/tests
+
+# Reactive scripts
 cp -r $ROOT/oi/rscripts/* $DEPLOYDIR/.OpenIDE/rscripts
 
 # Package manager
