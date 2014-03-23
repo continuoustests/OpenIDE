@@ -25,7 +25,7 @@ namespace CSharp.Crawlers
 			}
 		}
 
-		public string ToString() {
+		public override string ToString() {
 			if (File == null)
 				return Directory;
 			else

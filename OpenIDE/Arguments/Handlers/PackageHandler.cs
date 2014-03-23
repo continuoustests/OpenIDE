@@ -196,6 +196,11 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private string getPackageDescription(string dir, string name) {
+			var os = "linux";
+			if (OS.IsOSX)
+				os = "osx";
+			if (OS.IsWindows)
+				os = "windows";
 			var NL = Environment.NewLine;
 			var type = getType(dir);
 			var language = getLanguage(type, dir);
@@ -205,7 +210,9 @@ namespace OpenIDE.Arguments.Handlers
 			var package = 
 					"{" + NL +
 					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
+					"\t\"#Comment\": \"supported os options are linux, osx and windows\"," + NL +
 					"\t\"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
+					"\t\"os\": [\"" + os + "\"]," + NL +
 					"\t\"target\": \"{1}\"," + NL +
 					languageText +
 					"\t\"id\": \"{0}\"," + NL +
@@ -271,19 +278,27 @@ namespace OpenIDE.Arguments.Handlers
 			var package = 
 				getPackages()
 					.FirstOrDefault(x => x.ID == source);
-			if (package != null) {
-				name = package.ID;
-				command = package.Command;
-				dir = Path.GetDirectoryName(Path.GetDirectoryName(package.File));
-				packageFile = package.File;
-			} else {
-				source = Path.GetFullPath(source);
-				name = Path.GetFileNameWithoutExtension(source);
-				command = name;
-				dir = Path.GetDirectoryName(source);
-				packageFile = source;
+			if (package == null) {
+				var packageDefinition = "";
+				if (File.Exists(source) && Path.GetFileName(source) == "package.json") {
+					packageDefinition = source;
+				} else {
+					source = Path.GetFullPath(source);
+					dir = Path.GetDirectoryName(source);
+					name = Path.GetFileNameWithoutExtension(source);
+					packageDefinition = Path.Combine(Path.Combine(dir, name + "-files"), "package.json");
+					if (!File.Exists(packageDefinition)) {
+						_dispatch("error|Cannot find package.json. Run package init to create one");
+						return;
+					}
+				}
+				package = Package.Read(packageDefinition);
 			}
 
+			name = package.ID;
+			command = package.Command;
+			dir = Path.GetDirectoryName(Path.GetDirectoryName(package.File));
+			packageFile = package.File;
 			destination = Path.GetFullPath(destination);
 			
 			var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

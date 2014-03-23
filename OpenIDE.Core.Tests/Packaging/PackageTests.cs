@@ -16,7 +16,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_read_package_file() {
 			var package = Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "name", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write(),
 				"myfile");
@@ -26,7 +26,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_read_package_signature() {
 			var package = Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "name", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write(),
 				"myfile");
@@ -36,7 +36,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void When_parsing_minimum_valid_options_parsing_validates() {
 			var package = Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "name", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.Write(),
 				"myfile");
@@ -44,7 +44,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "name", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "name", "MyDescription")
 					.AddPostInstallAction("action")
 					.Write(),
 				"myfile");
@@ -52,14 +52,14 @@ namespace OpenIDE.Core.Packaging.Tests
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "name", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "name", "MyDescription")
 					.Write(),
 				"myfile");
 			Assert.That(package, Is.Not.Null);
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language-script", "id", "cmd", "v1.1", "name", "MyDescription") {
+				new Package(new[] { "linux" }, "language-script", "id", "cmd", "v1.1", "name", "MyDescription") {
 						Language = "C#"
 					}
 					.Write(),
@@ -68,7 +68,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			Assert.That(package.IsValid(), Is.True);
 
 			package = Package.Read(
-				new Package("language-rscript", "id", "cmd", "v1.1", "name", "MyDescription") {
+				new Package(new[] { "linux" }, "language-rscript", "id", "cmd", "v1.1", "name", "MyDescription") {
 						Language = "C#"
 					}
 					.Write(),
@@ -80,7 +80,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_parse_dependencies() {
 			var package = Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "name", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "name", "MyDescription")
 					.AddPreInstallAction("action")
 					.AddDependency("dependency", new[] { "v1.0", "v1.1", "v1.2" })
 					.Write(),
@@ -92,7 +92,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		public void When_parsing_package_without_minimum_nessesary_options_parsing_fails() {
 			Assert.That(
 				Package.Read(
-					new Package("language", "", "v1.1", "cmd", "name", "MyDescription")
+					new Package(new[] { "linux" }, "language", "", "v1.1", "cmd", "name", "MyDescription")
 						.AddPreInstallAction("action1")
 						.Write(),
 				"myfile"),
@@ -100,7 +100,7 @@ namespace OpenIDE.Core.Packaging.Tests
 			
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "v1.1", "cmd", "name", "")
+					new Package(new[] { "linux" }, "language", "MyPackage", "v1.1", "cmd", "name", "")
 						.AddPreInstallAction("action1")
 						.Write(),
 					"myfile"),
@@ -108,7 +108,7 @@ namespace OpenIDE.Core.Packaging.Tests
 
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "", "cmd", "name", "MyDescription")
+					new Package(new[] { "linux" }, "language", "MyPackage", "", "cmd", "name", "MyDescription")
 						.AddPreInstallAction("action1")
 						.Write(),
 					"myfile"),
@@ -116,21 +116,21 @@ namespace OpenIDE.Core.Packaging.Tests
 
 			Assert.That(
 				Package.Read(
-					new Package("not-valid", "MyPackage", "v1.1", "cmd", "name", "MyDescription")
+					new Package(new[] { "linux" }, "not-valid", "MyPackage", "v1.1", "cmd", "name", "MyDescription")
 						.Write(),
 					"myfile"),
 				Is.Null);
 
 			Assert.That(
 				Package.Read(
-					new Package("language-rscript", "id", "v1.1", "cmd", "name", "MyDescription")
+					new Package(new[] { "linux" }, "language-rscript", "id", "v1.1", "cmd", "name", "MyDescription")
 					.Write(),
 				"myfile"),
 			Is.Null);
 
 			Assert.That(
 				Package.Read(
-					new Package("language", "MyPackage", "v1.1", "", "name", "MyDescription")
+					new Package(new[] { "linux" }, "language", "MyPackage", "v1.1", "", "name", "MyDescription")
 					.AddPreInstallAction("action1")
 					.Write(),
 				"myfile"),
@@ -138,7 +138,7 @@ namespace OpenIDE.Core.Packaging.Tests
 
 			Assert.That(
 				Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "", "MyDescription")
 					.AddPreInstallAction("action")
 					.AddDependency("dependency", new[] { "v1.0", "v1.1", "v1.2" })
 					.Write(),
@@ -147,7 +147,7 @@ namespace OpenIDE.Core.Packaging.Tests
 
 			Assert.That(
 				Package.Read(
-				new Package("language", "id", "v1.1", "cmd", "This name is more than 50 chars. And that's too long", "MyDescription")
+				new Package(new[] { "linux" }, "language", "id", "v1.1", "cmd", "This name is more than 50 chars. And that's too long", "MyDescription")
 					.Write(),
 				"myfile"),
 			Is.Null);
@@ -156,7 +156,7 @@ namespace OpenIDE.Core.Packaging.Tests
 		[Test]
 		public void Can_write_package() {
 			var package = 
-				new Package("language", "MyPackage", "v1.1", "cmd", "My package", "My Description")
+				new Package(new[] { "linux" }, "language", "MyPackage", "v1.1", "cmd", "My package", "My Description")
 					.AddPreInstallAction("action1")
 					.AddPreInstallAction("action2")
 					.AddDependency("Dep1", new[] {"v1","v2"})

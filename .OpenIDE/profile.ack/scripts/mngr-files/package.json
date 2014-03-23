@@ -1,5 +1,6 @@
 {
 	"#Comment": "# is used here to comment out optional fields",
+	"os": ["linux"],
 	"target": "script",
 	"id": "mngr",
 	"version": "v1.0",

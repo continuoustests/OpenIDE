@@ -21,7 +21,7 @@ namespace CSharp.Projects
             ID = id;
         }
 
-        public string ToString() {
+        public override string ToString() {
             return File;
         }
 	}

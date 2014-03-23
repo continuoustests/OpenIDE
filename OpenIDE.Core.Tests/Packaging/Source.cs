@@ -25,11 +25,16 @@ namespace OpenIDE.Core.Tests.Packaging
 			Assert.That(source.Origin, Is.EqualTo("/origin/list.source"));
 			Assert.That(source.Packages.Count, Is.EqualTo(2));
 			Assert.That(source.Packages[0].ID, Is.EqualTo("package1"));
+			Assert.That(source.Packages[0].OS.Length, Is.EqualTo(2));
+			Assert.That(source.Packages[0].OS[0], Is.EqualTo("linux"));
+			Assert.That(source.Packages[0].OS[1], Is.EqualTo("osx"));
 			Assert.That(source.Packages[0].Version, Is.EqualTo("v1.0"));
 			Assert.That(source.Packages[0].Name, Is.EqualTo("Package 1"));
 			Assert.That(source.Packages[0].Description, Is.EqualTo("Package descr"));
 			Assert.That(source.Packages[0].Package, Is.EqualTo("/origin/package1-v1.0.oipkg"));
 			Assert.That(source.Packages[1].ID, Is.EqualTo("package2"));
+			Assert.That(source.Packages[1].OS.Length, Is.EqualTo(1));
+			Assert.That(source.Packages[1].OS[0], Is.EqualTo("windows"));
 			Assert.That(source.Packages[1].Version, Is.EqualTo("v1.1"));
 			Assert.That(source.Packages[1].Name, Is.EqualTo("Package 2"));
 			Assert.That(source.Packages[1].Description, Is.EqualTo("Package descr2"));
@@ -44,6 +49,7 @@ namespace OpenIDE.Core.Tests.Packaging
 			sb.AppendLine("\t\"packages\": [");
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\t\"id\": \"package1\",");
+			sb.AppendLine("\t\t\t\"os\": [\"linux\",\"osx\"],");
 			sb.AppendLine("\t\t\t\"version\": \"v1.0\",");
 			sb.AppendLine("\t\t\t\"name\": \"Package 1\",");
 			sb.AppendLine("\t\t\t\"description\": \"Package descr\",");
@@ -51,6 +57,7 @@ namespace OpenIDE.Core.Tests.Packaging
 			sb.AppendLine("\t\t},");
 			sb.AppendLine("\t\t{");
 			sb.AppendLine("\t\t\t\"id\": \"package2\",");
+			sb.AppendLine("\t\t\t\"os\": [\"windows\"],");
 			sb.AppendLine("\t\t\t\"version\": \"v1.1\",");
 			sb.AppendLine("\t\t\t\"name\": \"Package 2\",");
 			sb.AppendLine("\t\t\t\"description\": \"Package descr2\",");

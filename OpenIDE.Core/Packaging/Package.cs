@@ -20,8 +20,12 @@ namespace OpenIDE.Core.Packaging
 		private static Package read(string file, string json) {
 			try {
 				var data = JObject.Parse(json);
+				var os = new List<string>();
+				data["os"].Children().ToList()
+						.ForEach(x => os.Add(x.ToString()));
 				var package = 
 					new Package(
+						os.ToArray(),
 						data["target"].ToString(),
 						data["id"].ToString(), 
 						data["version"].ToString(), 
@@ -73,7 +77,10 @@ namespace OpenIDE.Core.Packaging
 			}
 		}
 
+		private List<string> _os = new List<string>();
+
 		public string File { get; set; }
+		public string[] OS { get { return _os.ToArray(); } }
 		public string Target { get; set; }
 		public string Language { get; set; }
 		public string Signature { get{ return ID + "-" + Version; } }
@@ -86,7 +93,8 @@ namespace OpenIDE.Core.Packaging
 		public List<Dependency> Dependencies = new List<Dependency>();
 		public List<string> PostInstallActions = new List<string>();
 
-		public Package(string target, string id, string version, string command, string name, string description) {
+		public Package(string[] os, string target, string id, string version, string command, string name, string description) {
+			_os.AddRange(os);
 			Target = target;
 			ID = id;
 			Version = version;
@@ -121,6 +129,13 @@ namespace OpenIDE.Core.Packaging
 				Description.Length > 0;
 			if (!basicValid)
 				return false;
+			if (_os.Count == 0)
+				return false;
+			foreach (var os in _os) {
+				if (new[] { "windows", "linux", "osx" }.Contains(os))
+					continue;
+				return false;
+			}
 			if ((Target == "language-script" || Target == "language-rscript") && (Language == null || Language.Length == 0))
 				return false;
 			return true;
@@ -129,6 +144,12 @@ namespace OpenIDE.Core.Packaging
 		public string Write() {
 			var sb = new StringBuilder();
 			sb.AppendLine("{");
+			sb.AppendLine("\t\"os\":");
+			sb.AppendLine(
+				getArrayOf(
+					_os.OfType<object>(),
+					(itm,tabs) => string.Format("\"{0}\"", itm.ToString()),
+					2) + ",");
 			sb.AppendLine(string.Format("\t\"target\": \"{0}\",", Target));
 			if (Language != null)
 				sb.AppendLine(string.Format("\t\"language\": \"{0}\",", Language));

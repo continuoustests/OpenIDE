@@ -33,7 +33,6 @@ namespace OpenIDE.Core.Language
 		private BaseCommandHandlerParameter parse(ref int index)
 		{
 			bool isTerminated;
-			bool isRequired;
 			var command = getCommand(ref index);
 			if (command == null)
 				return null;

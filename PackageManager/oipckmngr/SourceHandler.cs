@@ -68,6 +68,7 @@ namespace oipckmngr
 			Packages.Add(
 				new PackageItem() {
 						ID = package.ID,
+						OS = package.OS,
 						Version = package.Version,
 						Name = package.Name,
 						Description = package.Description,
@@ -108,6 +109,7 @@ namespace oipckmngr
 	class PackageItem
 	{
 		public string ID { get; set; }
+		public string[] OS { get; set; }
 		public string Version { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }

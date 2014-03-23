@@ -25,6 +25,7 @@ namespace OpenIDE.Core.Packaging
 							source.AddPackage(
 								new SourcePackage(
 									x["id"].ToString(),
+									x["os"].Children().Select(y => y.ToString()).ToArray(),
 									x["version"].ToString(),
 									x["name"].ToString(),
 									x["description"].ToString(),
@@ -39,13 +40,15 @@ namespace OpenIDE.Core.Packaging
 		public class SourcePackage
 		{
 			public string ID { get; private set; }
+			public string[] OS { get; private set; }
 			public string Version { get; private set; }
 			public string Name { get; private set; }
 			public string Description{ get; private set; }
 			public string Package { get; private set; }
 
-			public SourcePackage(string id, string version, string name, string description, string package) {
+			public SourcePackage(string id, string[] os, string version, string name, string description, string package) {
 				ID = id;
+				OS = os;
 				Version = version;
 				Name = name;
 				Description = description;

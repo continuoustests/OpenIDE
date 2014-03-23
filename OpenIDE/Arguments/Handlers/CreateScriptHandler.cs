@@ -15,7 +15,6 @@ namespace OpenIDE.Arguments.Handlers
 	{
 		private string _token;
 		private Action<string> _dispatch;
-		private Func<PluginLocator> _pluginLocator;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -37,7 +36,6 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			_dispatch = dispatch;
 			_token = token;
-			_pluginLocator = pluginLocator;
 		}
 
 		public void Execute(string[] arguments)

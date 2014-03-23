@@ -1,6 +1,7 @@
 {
 	"#Comment": "# is used here to comment out optional fields",
 	"#Comment": "pre and post install actions accepts only OpenIDE non edior commands",
+	"os": ["linux"],
 	"target": "language",
 	"id": "go",
 	"version": "v1.0",
