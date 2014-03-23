@@ -5,12 +5,15 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
+using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Packaging;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Logging;
+using OpenIDE.Core.RScripts;
+using OpenIDE.Core.Definitions;
 using CoreExtensions;
 
 namespace OpenIDE.Arguments.Handlers
@@ -30,8 +33,8 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Package management - no arguments lists installed packages");
-				usage.Add("init", "Initialize package for script, rscript or language")
-					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript");
+				usage.Add("init", "Initialize package for script or rscript")
+					.Add("NAME", "Name of the script/rscript to create package for");
 				usage.Add("read", "reads package contents")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript, name or package.json");
 				usage.Add("build", "Builds package")
@@ -106,11 +109,34 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void init(string source) {
-			source = Path.GetFullPath(source);
-			var name = Path.GetFileNameWithoutExtension(source);
-			var dir = Path.GetDirectoryName(source);
-			if (!Directory.Exists(dir))
-				return;
+			var dir = "";
+			var name = "";
+			var definition = 
+				Bootstrapper.GetDefinitionBuilder()
+					.Definitions
+					.FirstOrDefault(x => 
+						x.Name == source &&
+						(x.Type == DefinitionCacheItemType.Script || x.Type == DefinitionCacheItemType.LanguageScript));
+			if (definition != null) {
+				dir = Path.GetDirectoryName(definition.Location);
+				name = source;
+			} else {
+				var rscript = 
+					new ReactiveScriptReader(
+						_token,
+						_locator,
+						(m) => {}
+					).Read()
+					.FirstOrDefault(x => x.Name == source);
+				if (rscript != null) {
+					dir = Path.GetDirectoryName(rscript.File);
+					name = source;
+				} else {
+					_dispatch("error|Cannot find command to create package for");
+					return;
+				}
+			}
+			//}
 			var files = Path.Combine(dir, name + "-files");
 			if (!Directory.Exists(files))
 				Directory.CreateDirectory(files);
