@@ -31,7 +31,6 @@ mkdir %DEPLOYDIR%\Packaging
 
 mkdir %DEPLOYDIR%\.OpenIDE
 
-mkdir %PACKAGEDIR%
 mkdir %PACKAGEDIR%\oipkg
 mkdir %PACKAGEDIR%\C#-files
 mkdir %PACKAGEDIR%\C#-files\bin
@@ -114,4 +113,4 @@ xcopy /S /I /E %LANGUAGES%\php %DEPLOYDIR%\.OpenIDE\languages
 REM Building packages
 ECHO Building packages
 
-%DEPLOYDIR%\oi package build Packages/C\# %PACKAGEDIR%/oipkg
+%DEPLOYDIR%\oi package build "Packages\C#" %PACKAGEDIR%/oipkg
