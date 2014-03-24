@@ -7,25 +7,25 @@ PACKAGEDIR=$(cd $(dirname "$0"); pwd)/Packages
 LIB=$(cd $(dirname "$0"); pwd)/lib
 CSHARP_BIN=$(cd $(dirname "$0"); pwd)/Languages/CSharp/lib
 
-if [ ! -d $BINARYDIR ]; then
+if [ -d $BINARYDIR ]; then
 {
-	mkdir $BINARYDIR
+    rm -r $BINARYDIR/
 }
 fi
-if [ ! -d $DEPLOYDIR ]; then
+if [ -d $DEPLOYDIR ]; then
 {
-	mkdir $DEPLOYDIR
+    rm -r $DEPLOYDIR/
 }
 fi
-if [ ! -d $PACKAGEDIR ]; then
+if [ -d $PACKAGEDIR ]; then
 {
-    mkdir $PACKAGEDIR
+    rm -r $PACKAGEDIR/
 }
 fi
 
-rm -r $BINARYDIR/*
-rm -r $DEPLOYDIR/*
-rm -r $PACKAGEDIR/*
+mkdir $BINARYDIR
+mkdir $DEPLOYDIR
+mkdir $PACKAGEDIR
 mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
 mkdir $DEPLOYDIR/EventListener
@@ -34,7 +34,6 @@ mkdir $DEPLOYDIR/Packaging
 
 mkdir $DEPLOYDIR/.OpenIDE
 
-mkdir $PACKAGEDIR
 mkdir $PACKAGEDIR/oipkg
 mkdir $PACKAGEDIR/C#-files
 mkdir $PACKAGEDIR/C#-files/bin
@@ -143,3 +142,4 @@ $DEPLOYDIR/oi package build Packages/go $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/python $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/js $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/php $PACKAGEDIR/oipkg
+rm $DEPLOYDIR/.OpenIDE/oi-definitions.json

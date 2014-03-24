@@ -114,3 +114,4 @@ REM Building packages
 ECHO Building packages
 
 %DEPLOYDIR%\oi package build "Packages\C#" %PACKAGEDIR%/oipkg
+del %DEPLOYDIR%\.OpenIDE\oi-definitions.json
