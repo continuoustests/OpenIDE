@@ -68,6 +68,7 @@ xbuild PackageManager/oipckmngr/oipckmngr.csproj /target:rebuild /property:OutDi
 
 # oi
 cp $ROOT/oi/oi $DEPLOYDIR/oi
+cp $ROOT/oi/oi.bat $DEPLOYDIR/oi.bat
 cp $BINARYDIR/oi.exe $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.dll $DEPLOYDIR/
 cp $BINARYDIR/OpenIDE.Core.dll $DEPLOYDIR/
@@ -143,3 +144,4 @@ $DEPLOYDIR/oi package build Packages/python $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/js $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/php $PACKAGEDIR/oipkg
 rm $DEPLOYDIR/.OpenIDE/oi-definitions.json
+rm $DEPLOYDIR/oi-definitions.json

@@ -13,6 +13,7 @@ namespace OpenIDE.Core.Language
 		private string[] _enabledLanguages;
 		private ProfileLocator _profiles;
 		private Action<string> _dispatchMessage;
+		private List<LanguagePlugin> _pluginsAll = null; 
 		private List<LanguagePlugin> _plugins = null; 
 		private object _padlock = new object();
 
@@ -23,13 +24,26 @@ namespace OpenIDE.Core.Language
 			_dispatchMessage = dispatchMessage;
 		}
 
+		public LanguagePlugin[] LocateAll()
+		{
+			if (_pluginsAll == null) {
+				lock (_padlock) {
+					_pluginsAll = new List<LanguagePlugin>();
+					foreach (var file in getPlugins()) {
+						var plugin = new LanguagePlugin(file, _dispatchMessage);
+						_pluginsAll.Add(plugin);
+					}
+				}
+			}
+			return _pluginsAll.ToArray();
+		}
+
 		public LanguagePlugin[] Locate()
 		{
 			if (_plugins == null) {
 				lock (_padlock) {
 					_plugins = new List<LanguagePlugin>();
-					foreach (var file in getPlugins()) {
-						var plugin = new LanguagePlugin(file, _dispatchMessage);
+					foreach (var plugin in LocateAll()) {
 						if (isEnabledPlugin(plugin))
 							_plugins.Add(plugin);
 					}

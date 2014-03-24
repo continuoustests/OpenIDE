@@ -137,36 +137,40 @@ namespace OpenIDE.Arguments.Handlers
 					new Thread(() => {
 							log("Starting test process");
 							var testProc = new Process();
-							testProc
-								.Query(
-									testFile,
-									_testRunLocation,
-									false,
-									Environment.CurrentDirectory,
-									(error, line) => {
-											if (line == "initialized" || line.StartsWith("initialized|")) {
-												log("Test file initialized");
-			        							proc = testProc;
-												var chunks = line.Split(new[] {'|'});
-												if (chunks.Length > 1 && chunks[1] == "editor") {
-													while (!eventListenerStarted)
-														Thread.Sleep(10);
-													log("Starting editor");
-													new Process().Run("oi", "editor test", false, _testRunLocation);
-													log("Editor launched");
-													useEditor = true;
-												} else {
-													log("System started");
-													systemStarted = true;
-												}
-			        							return;
-			        						}
-											if (line == "end-of-conversation") {
-			        							isQuerying = false;
-			        							return;
-			        						}
-											handleFeedback(proc, error, line);
-										});
+							try {
+								testProc
+									.Query(
+										testFile,
+										_testRunLocation,
+										false,
+										Environment.CurrentDirectory,
+										(error, line) => {
+												if (line == "initialized" || line.StartsWith("initialized|")) {
+													log("Test file initialized");
+				        							proc = testProc;
+													var chunks = line.Split(new[] {'|'});
+													if (chunks.Length > 1 && chunks[1] == "editor") {
+														while (!eventListenerStarted)
+															Thread.Sleep(10);
+														log("Starting editor");
+														new Process().Run("oi", "editor test", false, _testRunLocation);
+														log("Editor launched");
+														useEditor = true;
+													} else {
+														log("System started");
+														systemStarted = true;
+													}
+				        							return;
+				        						}
+												if (line == "end-of-conversation") {
+				        							isQuerying = false;
+				        							return;
+				        						}
+												handleFeedback(proc, error, line);
+											});
+							} catch (Exception ex) {
+								handleFeedback(testProc, true, "A fatal error occured while running " + testFile + Environment.NewLine + ex.Message);
+							}
 							isQuerying = false;
 							runCompleted = true;
 						}).Start();
@@ -365,12 +369,12 @@ namespace OpenIDE.Arguments.Handlers
 			var summary = _summary.ToString();
 			if (summary.Replace(Environment.NewLine, "").Length > 0) {
 				Console.WriteLine(summary);
-				//if (!summary.EndsWith(Environment.NewLine))
-				//	Console.WriteLine();
 			}
 		}
 
 		private IEnumerable<string> getTests(string path) {
+			if (path == null || !Directory.Exists(path))
+				return new string[] {};
 			return Directory
 				.GetFiles(path, "*.oi-pkg-tests.*", SearchOption.AllDirectories)
 				.Where(x => Path.GetExtension(x) != ".swp");

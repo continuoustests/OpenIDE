@@ -3,7 +3,7 @@
 	"#Comment": "pre and post install actions accepts only OpenIDE non edior commands",
 	"os": ["linux","windows","osx"],
 	"target": "language",
-	"id": "C#",
+	"id": "C-Sharp",
 	"version": "v1.0",
 	"command": "C#",
 	"name": "C# language plugin",

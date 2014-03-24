@@ -27,6 +27,7 @@ namespace OpenIDE.Arguments.Handlers
 						CommandType.FileCommand,
 						Command,
 						"Administer laungage plugins");
+				usage.Add("available", "List available language plugins");
 				var scripts = usage.Add("script", "List all language scripts");
 				scripts.Add("LANGUAGE_NAME", "Language to list scripts for");
 				scripts
@@ -80,6 +81,8 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			if (args.Length == 0)
 				listLanguages();
+			else if (args.Length > 0 && args[0] == "available")
+				listAllLanguages();
 			else if (args.Length > 0 && args[0] == "script")
 				handleScript(args);
 			else if (args.Length > 0 && args[0] == "rscript")
@@ -87,8 +90,15 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void listLanguages() {
-			Console.WriteLine("Available language plugins:");
+			Console.WriteLine("Enabled language plugins:");
 			foreach (var language in _locator().Locate()) {
+				Console.WriteLine("\t" + language.GetLanguage());
+			}
+		}
+
+		private void listAllLanguages() {
+			Console.WriteLine("Available language plugins:");
+			foreach (var language in _locator().LocateAll()) {
 				Console.WriteLine("\t" + language.GetLanguage());
 			}
 		}

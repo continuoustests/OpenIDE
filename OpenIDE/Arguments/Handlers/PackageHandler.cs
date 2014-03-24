@@ -200,6 +200,10 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private IEnumerable<Package> getPackages() {
+			return getPackages(true);
+		}
+
+		private IEnumerable<Package> getPackages(bool all) {
 			var profiles = new ProfileLocator(_token);
 			var packages = new List<Package>();
 			profiles.GetFilesCurrentProfiles("package.json").ToList()
@@ -213,6 +217,14 @@ namespace OpenIDE.Arguments.Handlers
 						}
 					});
 			return packages;
+		}
+
+		private string getOS() {
+			if (OS.IsWindows)
+				return "windows";
+			else if (OS.IsUnix)
+				return "linux";
+			return "osx";
 		}
 
 		private void printPackages(IEnumerable<Package> packages) {
@@ -461,6 +473,7 @@ namespace OpenIDE.Arguments.Handlers
 				return;
 			}
 			if (args.Length > 1 && args[1] == "list") {
+				var os = getOS();
 				string name = null;
 				if (args.Length > 2)
 					name = args[2];
@@ -470,7 +483,8 @@ namespace OpenIDE.Arguments.Handlers
 						.Where(x => name == null || x.Name == name);
 				foreach (var source in sources) {
 					_dispatch("Packages in " +  source.Name);
-					foreach (var package in source.Packages.OrderBy(x => x.Name))
+					var sourcePackages = source.Packages.Where(x => x.OS.Contains(os)).OrderBy(x => x.Name);
+					foreach (var package in sourcePackages)
 						_dispatch("\t" + package.ToString());
 				}
 			}
