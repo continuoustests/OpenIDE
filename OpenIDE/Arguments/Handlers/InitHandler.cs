@@ -18,7 +18,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Initializes and sets up a configuration point for OpenIDE");
-				usage.Add("[LANGUAGES]", "Enabled languages for this config point using the first language as default language (C#,py)");
+				usage.Add("[LANGUAGES]", "Enabled languages for this config point using the first language as default language (C#,python)");
 				usage.Add("[all]", "Initialize with all languages");
 				return usage;
 			}
