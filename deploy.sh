@@ -117,6 +117,7 @@ cp $BINARYDIR/ICSharpCode.NRefactory.dll $PACKAGEDIR/C#-files/ICSharpCode.NRefac
 cp $BINARYDIR/Mono.Cecil.dll $PACKAGEDIR/C#-files/Mono.Cecil.dll
 cp -r $ROOT/Languages/CSharp/templates/* $PACKAGEDIR/C#-files
 cp $ROOT/Languages/CSharp/initialize.sh $PACKAGEDIR/C#-files
+cp $ROOT/Languages/CSharp/initialize.bat $PACKAGEDIR/C#-files
 cp -r $CSHARP_BIN/AutoTest.Net/* $PACKAGEDIR/C#-files/bin/AutoTest.Net
 cp -r $CSHARP_BIN/ContinuousTests/* $PACKAGEDIR/C#-files/bin/ContinuousTests
 

@@ -104,7 +104,12 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 			{
 				foreach (var file in Directory.GetFiles(dir, "*.pid"))
 				{
-					var instance = Instance.Get(file, File.ReadAllLines(file));
+					Instance instance;
+					try {
+						instance = Instance.Get(file, File.ReadAllLines(file));
+					} catch {
+						instance = null;
+					}
 					if (instance != null)
 						yield return instance;
 				}

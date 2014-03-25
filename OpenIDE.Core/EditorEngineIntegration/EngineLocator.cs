@@ -37,7 +37,12 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			{
 				foreach (var file in _fs.GetFiles(dir, "*.pid"))
 				{
-					var instance = Instance.Get(ClientFactory, file, _fs.ReadLines(file));
+					Instance instance;
+					try {
+						instance = Instance.Get(ClientFactory, file, _fs.ReadLines(file));
+					} catch {
+						instance = null;
+					}
 					if (instance != null)
 						yield return instance;
 				}
