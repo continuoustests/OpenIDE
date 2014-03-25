@@ -129,46 +129,54 @@ namespace OpenIDE.Core.Windowing
 
         public static void BringToFront(int pid)
         {
-            string windowId = null;
-            new System.Diagnostics.Process().Query(
-                "/usr/bin/wmctrl",
-                "-lp",
-                false,
-                Environment.CurrentDirectory,
-                (err, msg) => {
-                    if (err) {
-                        Logger.Write(msg);
-                        return;
+            try {
+                string windowId = null;
+                new System.Diagnostics.Process().Query(
+                    "/usr/bin/wmctrl",
+                    "-lp",
+                    false,
+                    Environment.CurrentDirectory,
+                    (err, msg) => {
+                        if (err) {
+                            Logger.Write(msg);
+                            return;
+                        }
+                        var chunks = msg.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                        if (chunks.Length >= 4 && chunks[2] == pid.ToString())
+                            windowId = chunks[0];
                     }
-                    var chunks = msg.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-                    if (chunks.Length >= 4 && chunks[2] == pid.ToString())
-                        windowId = chunks[0];
-                }
-            );
-            if (windowId == null)
-                return;
+                );
+                if (windowId == null)
+                    return;
 
-            var args = "-i -a \"" + windowId + "\"";
-            Logger.Write("Running wmctrl " + args);
-            new System.Diagnostics.Process().Query(
-                "/usr/bin/wmctrl",
-                args,
-                false,
-                Environment.CurrentDirectory,
-                (err, msg) => Logger.Write(msg));
+                var args = "-i -a \"" + windowId + "\"";
+                Logger.Write("Running wmctrl " + args);
+                new System.Diagnostics.Process().Query(
+                    "/usr/bin/wmctrl",
+                    args,
+                    false,
+                    Environment.CurrentDirectory,
+                    (err, msg) => Logger.Write(msg));
+            } catch {
+                Logger.Write("For better window focus handling on linux and osx consider installing wmctrl");
+            }
         }
 
         public static void BringToFront(string windowTitle)
         {
-            var args = "-a \"" + windowTitle + "\"";
-            Logger.Write("Running wmctrl " + args);
+            try {
+                var args = "-a \"" + windowTitle + "\"";
+                Logger.Write("Running wmctrl " + args);
 
-            new System.Diagnostics.Process().Query(
-                "/usr/bin/wmctrl",
-                args,
-                false,
-                Environment.CurrentDirectory,
-                (err, msg) => Logger.Write(msg));
+                new System.Diagnostics.Process().Query(
+                    "/usr/bin/wmctrl",
+                    args,
+                    false,
+                    Environment.CurrentDirectory,
+                    (err, msg) => Logger.Write(msg));
+            } catch {
+                Logger.Write("For better window focus handling on linux and osx consider installing wmctrl");
+            }
         }
     }
 }
