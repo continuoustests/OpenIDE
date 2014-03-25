@@ -58,6 +58,7 @@ mkdir %DEPLOYDIR%\.OpenIDE\test\templates
 REM %SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %ROOT%.OpenIDE\languages\CSharp\CSharp.sln /property:OutDir=%BINARYDIR%\;Configuration=Release /target:rebuild
 
 REM oi
+copy %ROOT%\oi\oi %DEPLOYDIR%\oi
 copy %ROOT%\oi\oi.bat %DEPLOYDIR%\oi.bat
 copy %BINARYDIR%\oi.exe %DEPLOYDIR%\oi.exe
 copy %BINARYDIR%\OpenIDE.dll %DEPLOYDIR%\OpenIDE.dll
@@ -104,6 +105,7 @@ copy %BINARYDIR%\ICSharpCode.NRefactory.dll %PACKAGEDIR%\C#-files\ICSharpCode.NR
 copy %BINARYDIR%\Mono.Cecil.dll %PACKAGEDIR%\C#-files\Mono.Cecil.dll
 xcopy /S /I /E %ROOT%\Languages\CSharp\templates %PACKAGEDIR%\C#-files
 copy %ROOT%\Languages\CSharp\initialize.bat %PACKAGEDIR%\C#-files
+copy %ROOT%\Languages\CSharp\initialize.sh %PACKAGEDIR%\C#-files
 xcopy /S /I /E %CSHARP_BIN%\AutoTest.Net %PACKAGEDIR%\C#-files\bin\AutoTest.Net
 xcopy /S /I /E %CSHARP_BIN%\ContinuousTests %PACKAGEDIR%\C#-files\bin\ContinuousTests
 
@@ -115,3 +117,4 @@ ECHO Building packages
 
 %DEPLOYDIR%\oi package build "Packages\C#" %PACKAGEDIR%/oipkg
 del %DEPLOYDIR%\.OpenIDE\oi-definitions.json
+del %DEPLOYDIR%\oi-definitions.json

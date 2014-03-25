@@ -1,66 +1,16 @@
 OpenIDE
 
-OpenIDE EditorEngine is an open source project maintained by the ContinuousTests
-team www.continuoustests.com. The purpose of this tool is to provide a basic set of
-IDE type features around you favorite editor like type search, project file management
-and more.
+OpenIDE is an easily extensible tool for developers. It ties together the terminal, text editor and the ability to build and optionally share your extensions. You can write scripts reacting to editor events, file system changes and more.
 
-As the project is in it's early stages but should run on Linux, MacOSX and windows.
-Although it has only been tested on Linux and Windows yet. It currently supports type
-search and basic project management.
-To connect to the editors OpenIDENet uses EditorEngine, another open source project
-maintained by ContinuousTests. Builds and tests are handled by AutoTest.Net or
-ContinuousTests which are also maintained by ContinuousTests.
+Extensions for OpenIDE can be written in any language. As long as the language understands stdin and stdout it's all good. There are three different types of extensions:
 
-Getting started
-Intro: http://www.continuoustests.com/OpenIDENet-intro.ogv
-To deploy use deploy.sh/deploy.bat depending on the platform you are on. After
-deployment the binaries end up in your ReleaseBinaries folder. First thing to
-note is the oi and environment.rb files. oi is a shortcut for using oi.exe.
-What we usually do is to add our oi folder to PATH so we can use the oi script
-from any location. The environment.rb script will be what starts up with oi.
-In there you can choose to start either ContinuousTests or AutoTest.Net for
-handling automatic builds and test runs.
+* Scripts (commands you can run from the terminal)
+* Reactive scripts (scripts reacting to events)
+* Language plugins (plugins handling language spesific issues)
 
-Below you will read about commands using templates. Templates are any executable
-file or script that conforms to a set of rules like what they write to the console
-or what arguments they support. To add a new command for commands supporting templates
-just drop an executable script in there where the name of the script will become the
-command.
+Any of these can run other commands and publish it's own events. Scripts are created in a way that they are self documenting and prepared for auto completion.
 
-To start navigate to the source folder you want to work with and execute the following
-command (replace vim with any editor supported by EditorEngine):
-oi editor vim
+The OpenIDE configuration points are kind of like your usual .git folder. A .OpenIDE folder will be placed on the root level of your workspace. This gives the ability use your extensions as a DSL for your workspaces. You can even commit your .OpenIDE folder to the git repository and check your development environment out with your source code. By using the profile support in OpenIDE several developers can work while all having their OpenIDE environment committed with the source code.
+The structure of OpenIDE let's developers choose which extensions should be shared with the rest of the team and which extensions should be private to you.
 
-Now inside gvim it has hooked F8 to deal with keys:
-	<F8>-t => Opens type search
-		map <C-S-t> :nbkey t<cr>
-		imap <C-S-t> <Esc>:nbkey t<cr>
-	<F8>-j => Opens AutoTest.Net\ContinuousTests
-		map <C-S-j> :nbkey j<cr>
-		imap <C-S-j> <Esc>:nbkey j<cr>
-
-There are also several commands for handling projects. These can be executed without
-first hooking up to the editor through "oi editor vim".
-
-Create (uses any template under templates/default/)
-Create a c# project at the specified location
-oi create library SomeProject/SomeProject.csproj
-
-Add existing file
-oi addfile SomeProject/NotYetAddedFile.cs
-
-Remove file from project
-oi removefile SomeProject/SomeFile.cs
-
-Delete file and remove from project
-oi deletefile SomeProject/SomeFile.cs
-
-New (uses any template under templates/{type}/new)
-oi new interface SomeProject/IANewClass
-oi new class SomeProject/ANewClass
-oi new fixture SomeProject/ANewClassTests
-
-Reference\Dereference adds or removes project and assembly references to and from projects
-oi reference lib/NUnit/nunit.framework.dll SomeProject/SomeProject.csproj
-oi dereference lib/NUnit/nunit.framework.dll SomeProject/SomeProject.csproj
+To get started go here https://github.com/continuoustests/OpenIDE/wiki
