@@ -271,27 +271,6 @@ namespace OpenIDE.UI
                         }
                         Console.WriteLine(line);
                     });
-
-            /*if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-                proc.StartInfo = new ProcessStartInfo("oi", arguments);
-            else
-			{
-                proc.StartInfo = 
-					new ProcessStartInfo(
-						"cmd.exe", "/c oi \"" +
-						arguments.Replace("\"", "^\"") + "\"");
-			}
-			Console.WriteLine("Running: " + proc.StartInfo.FileName + " " + proc.StartInfo.Arguments);
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.WorkingDirectory = _directory;
-            proc.Start();
-            var output = proc.StandardOutput.ReadToEnd();
-            if (output.Length > Environment.NewLine.Length)
-                output = output.Substring(0, output.Length - Environment.NewLine.Length);
-            Console.WriteLine(output);*/
         }
 
         private void buttonRun_Click(object sender, EventArgs e)

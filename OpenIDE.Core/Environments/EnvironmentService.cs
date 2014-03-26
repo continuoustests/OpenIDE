@@ -99,25 +99,13 @@ namespace OpenIDE.Core.Environments
 			var assembly = 
 				Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 					Path.Combine("EditorEngine", "EditorEngine.exe"));
-			var exe = "mono";
-			var arg = assembly + " ";
-			if (Environment.OSVersion.Platform != PlatformID.Unix &&
-				Environment.OSVersion.Platform != PlatformID.MacOSX)
-			{
-				exe = assembly;
-				arg = "";
-			}
-			arg += "\"" + token + "\"";
+			var exe = assembly;
+			var arg = "\"" + token + "\"";
 			Logger.Write ("Starting editor " + exe + " " + arg);
 			if (Logger.IsEnabled)
 				arg += getLogFileArgument(token);
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(exe, arg);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = token;
-			proc.Start();
+			proc.Spawn(exe, arg, false, token);
             Logger.Write("Waiting for editor to initialize");
 			var timeout = DateTime.Now.AddSeconds(5);
 			while (DateTime.Now < timeout)
@@ -140,24 +128,12 @@ namespace OpenIDE.Core.Environments
 			if (enabledLanguages == null)
 				enabledLanguages = "none-enabled-language";
 
-			var cmd = "mono";
-			var arg = "./CodeEngine/OpenIDE.CodeEngine.exe ";
-			if (Environment.OSVersion.Platform != PlatformID.Unix &&
-				Environment.OSVersion.Platform != PlatformID.MacOSX)
-			{
-				cmd = Path.Combine("CodeEngine", "OpenIDE.CodeEngine.exe");
-				arg = "";
-			}
-			
+			var cmd = Path.Combine("CodeEngine", "OpenIDE.CodeEngine.exe");
+			var arg = "";
 			arg = arg + "\"" + token + "\"" + defaultLanguage + enabledLanguages;
 			Logger.Write("Starting code engine: " + cmd + " " + arg + " at " + folder);
 			var proc = new Process();
-			proc.StartInfo = new ProcessStartInfo(cmd, arg);
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = true;
-			proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			proc.StartInfo.WorkingDirectory = folder;
-			proc.Start();
+			proc.Spawn(cmd, arg, false, folder);
 		}
 	
 		private void runInitScript(string token, string folder)
