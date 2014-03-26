@@ -1,0 +1,18 @@
+{
+	"#Comment": "# is used here to comment out optional fields",
+	"#Comment": "pre and post install actions accepts only OpenIDE non edior commands",
+	"os": ["linux","windows","osx"],
+	"target": "language",
+	"id": "C-Sharp-AT",
+	"version": "v1.0",
+	"command": "C#",
+	"name": "C# language plugin",
+	"description": "C# language plugin bundling AutoTest.Net and ContinuousTests",
+	"#config-prefix": "C#.",
+	"#pre-install-actions": [],
+	"#post-install-actions": [],
+	"#dependencies": [
+			{"id": "id", "version": "v1.0"}
+		]
+}
+

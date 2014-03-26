@@ -108,7 +108,7 @@ cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
 # C#
 cp $ROOT/Languages/CSharp/C#.oilnk $PACKAGEDIR/C#.oilnk
 cp $ROOT/Languages/CSharp/language.oicfgoptions $PACKAGEDIR/C#-files/language.oicfgoptions
-cp $ROOT/Languages/CSharp/package.json $PACKAGEDIR/C#-files/package.json
+cp $ROOT/Languages/CSharp/package.json.CT $PACKAGEDIR/C#-files/package.json
 cp $BINARYDIR/C#.exe $PACKAGEDIR/C#-files/C#.exe
 cp $BINARYDIR/OpenIDE.Core.dll $PACKAGEDIR/C#-files/OpenIDE.Core.dll
 cp $BINARYDIR/Newtonsoft.Json.dll $PACKAGEDIR/C#-files/
@@ -140,6 +140,12 @@ cp -r $ROOT/Languages/php/* $PACKAGEDIR
 # Building packages
 echo "Building packages.."
 $DEPLOYDIR/oi package build Packages/C\# $PACKAGEDIR/oipkg
+rm -r $PACKAGEDIR/C\#-files/bin
+rm $PACKAGEDIR/C\#-files/initialize.*
+rm $PACKAGEDIR/C\#-files/package.json
+cp $ROOT/Languages/CSharp/package.json $PACKAGEDIR/C#-files/package.json
+$DEPLOYDIR/oi package build Packages/C\# $PACKAGEDIR/oipkg
+
 $DEPLOYDIR/oi package build Packages/go $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/python $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/js $PACKAGEDIR/oipkg

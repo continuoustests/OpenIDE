@@ -96,7 +96,7 @@ REM Packages
 REM C#
 copy %ROOT%\Languages\CSharp\C#.oilnk %PACKAGEDIR%\C#.oilnk
 copy %ROOT%\Languages\CSharp\language.oicfgoptions %PACKAGEDIR%\C#-files\language.oicfgoptions
-copy %ROOT%\Languages\CSharp\package.json %PACKAGEDIR%\C#-files\package.json
+copy %ROOT%\Languages\CSharp\package.json.CT %PACKAGEDIR%\C#-files\package.json
 copy %BINARYDIR%\C#.exe %PACKAGEDIR%\C#-files\C#.exe
 copy %BINARYDIR%\OpenIDE.Core.dll %PACKAGEDIR%\C#-files\OpenIDE.Core.dll
 copy %BINARYDIR%\Newtonsoft.Json.dll %PACKAGEDIR%\C#-files\Newtonsoft.Json.dll
@@ -116,5 +116,11 @@ REM Building packages
 ECHO Building packages
 
 %DEPLOYDIR%\oi package build "Packages\C#" %PACKAGEDIR%/oipkg
+rmdir /Q /S %PACKAGEDIR%\C#-files\bin
+del %PACKAGEDIR%\C#-files\initialize.*
+del %PACKAGEDIR%\C#-files\package.json
+copy %ROOT%\Languages\CSharp\package.json %PACKAGEDIR%\C#-files\package.json
+%DEPLOYDIR%\oi package build "Packages\C#" %PACKAGEDIR%/oipkg
+
 del %DEPLOYDIR%\.OpenIDE\oi-definitions.json
 del %DEPLOYDIR%\oi-definitions.json
