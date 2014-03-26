@@ -20,7 +20,7 @@ namespace CSharp.Commands
 				return
 					Command + "|\"Adds a reference to a project file\"" +
 						"REFERENCE|\"The path to the project or assembly to be referenced\"" +
-							"PROJECT|\"The path to the project to add the reference to\" end " +
+							"[PROJECT]|\"The path to the project to add the reference to\" end " +
 						"end " +
 					"end ";
 			}
@@ -36,13 +36,14 @@ namespace CSharp.Commands
 
 		public void Execute(IResponseWriter writer, string[] arguments)
 		{
-			if (arguments.Length != 2)
+			if (arguments.Length < 1)
 			{
 				writer.Write("error|The handler needs the full path to the reference. " +
-								  "Usage: reference {assembly/project} {project to add reference to");
+								  "Usage: reference REFERENCE [PROJECT]");
 				return;
 			}
 			
+			Need to get file relative to project file
 			var fullpath = getFile(arguments[0]);
 			IFile file;
 
@@ -50,20 +51,29 @@ namespace CSharp.Commands
 				file = new VSProjectFile().New(fullpath);
 			else
 				file = new AssemblyFile().New(fullpath);
-			var projectFile = getFile(arguments[1]);
-			if (!File.Exists(projectFile))
-			{
-				writer.Write("error|The project to add this reference to does not exist. " +
-								  "Usage: reference {assembly/project} {project to add reference to");
-				return;
+			if (arguments.Length > 1) {
+				var projectFile = getFile(arguments[1]);
+				if (!File.Exists(projectFile)) {
+
+
+					writer.Write("error|The project to add this reference to does not exist. " +
+									  "Usage: reference REFERENCE [PROJECT]");
+					return;
+				}
+				if (!_project.Read(projectFile, _provider))
+					return;
+			} else {
+				if (!_project.Read(Environment.CurrentDirectory, _provider)) {
+					writer.Write("error|Could not locate project within " + Environment.CurrentDirectory + ". " +
+								 "Usage: reference REFERENCE [PROJECT]");
+					return;
+				}
 			}
 			
-			if (!_project.Read(projectFile, _provider))
-				return;
 			_project.Reference(file);
 			_project.Write();
 
-			writer.Write("Added reference {0} to {1}", file, projectFile);
+			writer.Write("Added reference {0} to {1}", file, _project.Fullpath);
 		}
 
 		private string getFile(string argument)

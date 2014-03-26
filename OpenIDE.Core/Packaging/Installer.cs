@@ -156,7 +156,7 @@ namespace OpenIDE.Core.Packaging
 						});
 				}
 			} catch (Exception ex) {
-				Console.WriteLine(ex.ToString());
+				_dispatch("error|" + ex.ToString());
 			} finally {
 				Directory.Delete(tempPath, true);
 			}
@@ -209,6 +209,10 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private void update(string source, ActionParameters args) {
+			if (args.Match == null) {
+				_dispatch("error|The requested package is not installed. Try install instead.");
+				return;
+			}
 			var existingPackage = getPackage(Path.GetFileNameWithoutExtension(args.Match));
 			if (!runInstallVerify(args.TempPath, args.InstallPath)) {
 				printUpdateFailed(args.Package.Signature);
