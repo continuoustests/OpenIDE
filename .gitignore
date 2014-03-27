@@ -33,3 +33,4 @@ Release/
 *.sublime-workspace
 .OpenIDE/active.profile
 oi-definitions.json
+local-deploy.sh

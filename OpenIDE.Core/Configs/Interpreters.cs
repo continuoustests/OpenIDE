@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenIDE.Core.Config;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Configs
 {
@@ -13,14 +14,10 @@ namespace OpenIDE.Core.Configs
 		private Dictionary<string,string> _interpreters = new Dictionary<string,string>();
 
 		public Interpreters(string token) {
+            Logger.Write("Initializing interpreters");
 			_token = token;
-			var local = new Configuration(_token, false);
-			var global = 
-				new Configuration(
-					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-					, false);
-			readInterpreters(local);
-			readInterpreters(global);
+			var reader = new ConfigReader(_token);
+			readInterpreters(reader);
 		}
 
 		public string GetInterpreterFor(string extension) {
@@ -30,9 +27,9 @@ namespace OpenIDE.Core.Configs
 			return null;
 		}
 
-		private void readInterpreters(Configuration config) {
+		private void readInterpreters(ConfigReader config) {
 			var prefix = "interpreter.";
-			foreach (var interpreter in config.GetSettingsStartingWith(prefix)) {
+			foreach (var interpreter in config.GetStartingWith(prefix)) {
 				if (interpreter.Key.Length <= prefix.Length)
 					continue;
 				
@@ -51,16 +48,18 @@ namespace OpenIDE.Core.Configs
 					path.Replace("/", "\\");
 				}
 				if (!File.Exists(path)) {
-					path = 
+					var modifiedPath = 
 						System.IO.Path.Combine(
 							System.IO.Path.GetDirectoryName(
 								Assembly.GetExecutingAssembly().Location),
 							path);
-					if (!File.Exists(path))
-						continue;
+					if (File.Exists(path))
+						path = modifiedPath;
 				}
-				if (!_interpreters.ContainsKey(extension))
+				if (!_interpreters.ContainsKey(extension)) {
+                    Logger.Write("Adding interpreter: " + path + " for " + extension);
 					_interpreters.Add(extension, path);
+                }
 			}
 		}
 	}

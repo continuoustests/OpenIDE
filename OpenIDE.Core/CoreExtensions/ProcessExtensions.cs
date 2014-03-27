@@ -229,8 +229,8 @@ namespace CoreExtensions
         private static bool prepareInterpreter(ref string command, ref string arguments) {
             var interpreter = GetInterpreter(command);
             if (interpreter != null) {
-                command = interpreter;
                 arguments = "\"" + command + "\" " + arguments;
+                command = interpreter;
                 return true;
             }
             return false;
