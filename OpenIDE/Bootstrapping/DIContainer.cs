@@ -36,6 +36,7 @@ namespace OpenIDE.Bootstrapping
 		public DIContainer(AppSettings settings)
 		{
 			_settings = settings;
+			CoreExtensions.ProcessExtensions.SetDispatcher(dispatchMessage);
 		}
 
 		public DefinitionBuilder GetDefinitionBuilder() {
