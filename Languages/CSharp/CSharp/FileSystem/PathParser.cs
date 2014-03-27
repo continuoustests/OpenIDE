@@ -38,6 +38,53 @@ namespace CSharp.FileSystem
             return _path;
         }
 
+        public string RelativeTo(string rootPath)
+        {
+            if (Environment.OSVersion.Platform != PlatformID.Unix) 
+                rootPath = rootPath.ToLower();
+            var pathChunks = _path.Split(new[] {Path.DirectorySeparatorChar});
+            var rootPathChunks = rootPath.Split(new[] {Path.DirectorySeparatorChar});
+            if (_path.Length == 0)
+                return "";
+            if (rootPath.Length == 0)
+                return _path;
+            if (!_path.StartsWith(Path.DirectorySeparatorChar.ToString())) {
+                if (pathChunks[0] != rootPathChunks[0])
+                    return _path;
+            }
+            var relativePath = "";
+            var max = pathChunks.Length > rootPathChunks.Length ? pathChunks.Length : rootPathChunks.Length;
+            var isInPath = true;
+            var paralellPath = "";
+            for (int i = 0; max > i; i++) {
+                if (i >= pathChunks.Length) {
+                    relativePath = Path.Combine("..", relativePath);
+                    continue;
+                }
+                if (i >= rootPathChunks.Length) {
+
+                    if (isInPath)
+                        relativePath = Path.Combine(relativePath, pathChunks[i]);
+                    else
+                        paralellPath = Path.Combine(paralellPath, pathChunks[i]);
+                    continue;
+                }
+                if (isInPath && pathChunks[i] != rootPathChunks[i]) {
+                    relativePath = Path.Combine(relativePath, pathChunks[i]);
+                    isInPath = false;
+                    continue;
+                }
+                if (!isInPath) {
+                    relativePath = Path.Combine("..", relativePath);
+                    paralellPath = Path.Combine(paralellPath, pathChunks[i]);
+                    continue;
+                }
+            }
+            if (paralellPath != "")
+                relativePath = Path.Combine(relativePath, paralellPath);
+            return relativePath;
+        }
+
         private List<string> makeAbsolute(string[] chunks)
         {
             List<string> folders = new List<string>();

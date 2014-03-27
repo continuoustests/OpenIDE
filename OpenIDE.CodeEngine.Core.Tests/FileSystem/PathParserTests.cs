@@ -23,6 +23,23 @@ namespace OpenIDE.CodeEngine.Core.Tests.FileSystem
             else
                 Assert.That(new PathParser("..\\.ignorefile").ToAbsolute("C:\\some\\reference\\path"), Is.EqualTo("C:\\some\\reference\\.ignorefile"));
 		}
+
+        [Test]
+        [TestCase("/some/path/file1.txt", "/some/path/file2.txt", "file1.txt")]
+        [TestCase("", "/some/path/file2.txt", "")]
+        [TestCase("/some/path/file1.txt", "", "/some/path/file1.txt")]
+        [TestCase("D:/some/path/file1.txt", "C:/some/path/file2.txt", "D:/some/path/file1.txt")]
+        [TestCase("/some/file1.txt", "/some/path/file2.txt", "../file1.txt")]
+        [TestCase("/file1.txt", "/some/path/file2.txt", "../../file1.txt")]
+        [TestCase("/some/path/file1.txt", "/some/file2.txt", "path/file1.txt")]
+        [TestCase("/some/another/path/file1.txt", "/some/other/path/file2.txt", "../../another/path/file1.txt")]
+        [TestCase("/some/another/path/file1.txt", "/some/other/file2.txt", "../another/path/file1.txt")]
+        public void When_getting_a_path_at_the_same_level_it_will_return_name(string path, string rootPath, string result)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
+                Assert.That(new PathParser(path).RelativeTo(rootPath),Is.EqualTo(result));
+            }
+        }
 	}
 }
 

@@ -20,7 +20,7 @@ namespace CSharp.Commands
 				return 
 					Command + "|\"Dereferences a project/assembly from given project\"" +
 						"REFERENCE|\"Path to the reference to remove\"" +
-							"PROJECT|\"Project to remove the reference from\" end " +
+							"[PROJECT]|\"Project to remove the reference from\" end " +
 						"end " +
 					"end ";
 			}
@@ -36,33 +36,44 @@ namespace CSharp.Commands
 
 		public void Execute(IResponseWriter writer, string[] arguments)
 		{
-			if (arguments.Length != 2)
+			if (arguments.Length < 1)
 			{
 				writer.Write("error|The handler needs the full path to the reference. " +
-								  "Usage: dereference {assembly/project} {project to remove reference from}");
+								  "Usage: dereference REFERENCE [PROJECT");
 				return;
 			}
 			
+			if (arguments.Length > 1) {
+				var projectFile = getFile(arguments[1]);
+				if (!File.Exists(projectFile))
+				{
+					writer.Write("error|The project to remove this reference for does not exist. " +
+									  "Usage: dereference REFERENCE [PROJECT");
+					return;
+				}
+				
+				if (!_project.Read(projectFile, _getTypesProviderByLocation))
+					return;
+			} else {
+				if (!_project.Read(Environment.CurrentDirectory, _getTypesProviderByLocation)) {
+					writer.Write("error|Could not locate project within " + Environment.CurrentDirectory + ". " +
+								 "Usage: dereference REFERENCE [PROJECT]");
+					return;
+				}
+			}
+
 			var fullpath = getFile(arguments[0]);
 			IFile file;
+
 			if (new VSProjectFile().SupportsExtension(fullpath))
 				file = new VSProjectFile().New(fullpath);
 			else
 				file = new AssemblyFile().New(fullpath);
-			var projectFile = getFile(arguments[1]);
-			if (!File.Exists(projectFile))
-			{
-				writer.Write("error|The project to remove this reference for does not exist. " +
-								  "Usage: dereference {assembly/project} {project to remove reference from}");
-				return;
-			}
-			
-			if (!_project.Read(projectFile, _getTypesProviderByLocation))
-				return;
+
 			_project.Dereference(file);
 			_project.Write();
 
-			writer.Write("Rereferenced {0} from {1}", file, projectFile);
+			writer.Write("Rereferenced {0} from {1}", fullpath, _project.Fullpath);
 		}
 
 		private string getFile(string argument)

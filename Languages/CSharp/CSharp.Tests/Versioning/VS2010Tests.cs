@@ -20,7 +20,7 @@ namespace CSharp.Tests.Versioning
 		[Test]
 		public void Should_not_recognize_non_existent_file()
 		{
-			var file = Path.GetTempFileName();
+			var file = Path.GetTempFileName() + ".doesnot.exist";
 			var ver = new VS2010();
 			Assert.That(ver.IsValid(file), Is.False);
 		}
