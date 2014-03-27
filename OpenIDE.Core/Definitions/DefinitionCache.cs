@@ -252,13 +252,17 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		public void OverrideItem(DefinitionCacheItem item) {
+			var wasOverridden = false;
 			for (int i = 0; i < _parameters.Count; i++) {
 				if (_parameters[i].Name == item.Name) {
 					item.Original = _parameters[i];
 					_parameters[i] = item;
-					return;
+					wasOverridden = true;
+					break;
 				}
 			}
+			if (!wasOverridden)
+				Append(item);
 		}
 	}
 }
