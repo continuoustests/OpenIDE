@@ -43,19 +43,9 @@ namespace CSharp.Commands
 				return;
 			}
 			
-			Need to get file relative to project file
-			var fullpath = getFile(arguments[0]);
-			IFile file;
-
-			if (new VSProjectFile().SupportsExtension(fullpath))
-				file = new VSProjectFile().New(fullpath);
-			else
-				file = new AssemblyFile().New(fullpath);
 			if (arguments.Length > 1) {
 				var projectFile = getFile(arguments[1]);
 				if (!File.Exists(projectFile)) {
-
-
 					writer.Write("error|The project to add this reference to does not exist. " +
 									  "Usage: reference REFERENCE [PROJECT]");
 					return;
@@ -69,11 +59,19 @@ namespace CSharp.Commands
 					return;
 				}
 			}
+
+			var fullpath = new PathParser(arguments[0]).ToAbsolute(Environment.CurrentDirectory);
+			IFile file;
+
+			if (new VSProjectFile().SupportsExtension(fullpath))
+				file = new VSProjectFile().New(fullpath);
+			else
+				file = new AssemblyFile().New(fullpath);
 			
 			_project.Reference(file);
 			_project.Write();
 
-			writer.Write("Added reference {0} to {1}", file, _project.Fullpath);
+			writer.Write("Added reference {0} to {1}", fullpath, _project.Fullpath);
 		}
 
 		private string getFile(string argument)

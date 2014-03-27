@@ -39,9 +39,10 @@ namespace CSharp.Projects.Referencers
 			if (!tryOpen(project.Content.ToString()))
 				return;
 			
-			var relativePath = PathExtensions.GetRelativePath(
-				project.File,
-				file.Fullpath).Replace("/", "\\");
+			var relativePath =
+				new PathParser(file.Fullpath)
+					.RelativeTo(project.File)
+					.Replace("/", "\\");
 
 			if (alreadyReferenced(relativePath))
 				return;
@@ -65,9 +66,10 @@ namespace CSharp.Projects.Referencers
 			if (!tryOpen(project.Content.ToString()))
 				return;
 			
-			var relativePath = PathExtensions.GetRelativePath(
-				project.File,
-				file.Fullpath).Replace("/", "\\");
+			var relativePath =
+				new PathParser(file.Fullpath)
+					.RelativeTo(project.File)
+					.Replace("/", "\\");
 			
 			removeReferences(relativePath);
 			project.SetContent(_document.OuterXml);
