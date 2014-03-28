@@ -4,7 +4,7 @@
 	"os": ["linux","windows","osx"],
 	"target": "language",
 	"id": "C-Sharp",
-	"version": "v1.0",
+	"version": "v1.1",
 	"command": "C#",
 	"name": "C# language plugin",
 	"description": "C# language plugin",
