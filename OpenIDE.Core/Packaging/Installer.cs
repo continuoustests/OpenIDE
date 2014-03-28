@@ -18,7 +18,6 @@ namespace OpenIDE.Core.Packaging
 			public Package Package { get; set; }
 			public string TempPath { get; set; }
 			public string InstallPath { get; set; }
-			public string ProfileName { get; set; }
 			public string Match { get; set; }
 		}
 
@@ -54,8 +53,17 @@ namespace OpenIDE.Core.Packaging
 				return false;
 			}
 
+			string activeProfile = null;
 			var actionSucceeded = prepareForAction(
 				source.Package,
+				(package) => {
+					var profiles = new ProfileLocator(_token);
+					if (_useGlobal)
+						activeProfile = profiles.GetActiveGlobalProfile();
+					else
+						activeProfile = profiles.GetActiveLocalProfile();
+					return getInstallPath(package, profiles, activeProfile);
+				},
 				(args) => {
 						if (args.Match != null) {
 							Logger.Write("Found matching package " + args.Match);
@@ -82,7 +90,7 @@ namespace OpenIDE.Core.Packaging
 							_dispatch(string.Format("error|dependency {0} of version {1} is not a valid. Accepted versions are {2}", args.Package.ID, args.Package.Version, versions));
 							return false;
 						} else
-							installPackage(source.Package, args.Package, args.TempPath, args.InstallPath, args.ProfileName);
+							installPackage(source.Package, args.Package, args.TempPath, args.InstallPath, activeProfile);
 						return true;
 					});
 			if (source.IsTemporaryPackage)
@@ -94,13 +102,21 @@ namespace OpenIDE.Core.Packaging
 			var source = _packageFetcher.Fetch(packageToken);
 			if (!File.Exists(source.Package))
 				return;
+			Package packageToUpdate = null;
 			prepareForAction(
 				source.Package,
+				(package) => {
+					packageToUpdate = getPackages(true)
+						.FirstOrDefault(x => x.ID == package.ID);
+					if (packageToUpdate == null)
+						return null;
+					return Path.GetDirectoryName(Path.GetDirectoryName(packageToUpdate.File));
+				},
 				(args) => {
 						if (args.Match == null)
 							printUnexistingUpdate(args.Package.ID, args.Package);
 						else
-							update(source.Package, args);
+							update(source.Package, packageToUpdate, args);
 						return true;
 					});
 			if (source.IsTemporaryPackage)
@@ -117,11 +133,7 @@ namespace OpenIDE.Core.Packaging
 			_dispatch(string.Format("Removed package {0}", package.Signature));
 		}
 		
-		private bool prepareForAction(string source, Func<ActionParameters,bool> actionHandler) {
-			var profiles = new ProfileLocator(_token);
-			string activeProfile;
-			
-
+		private bool prepareForAction(string source, Func<Package,string> destinatinoPathLocator, Func<ActionParameters,bool> actionHandler) {
 			var actionSucceeded = false;
 			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
 			Directory.CreateDirectory(tempPath);
@@ -131,12 +143,7 @@ namespace OpenIDE.Core.Packaging
 					// Force language to global as that is the only thing workin atm
 					if (package.Target == "language")
 						_useGlobal = true;
-					if (_useGlobal)
-						activeProfile = profiles.GetActiveGlobalProfile();
-					else
-						activeProfile = profiles.GetActiveLocalProfile();
-
-					var installPath = getInstallPath(package, profiles, activeProfile);
+					var installPath = destinatinoPathLocator(package);
 					if (installPath == null) {
 						_dispatch("error|Config point is not initialized");
 						return false;
@@ -151,7 +158,6 @@ namespace OpenIDE.Core.Packaging
 							Package = package,
 							TempPath = tempPath,
 							InstallPath = installPath,
-							ProfileName = activeProfile,
 							Match = match
 						});
 				}
@@ -161,6 +167,22 @@ namespace OpenIDE.Core.Packaging
 				Directory.Delete(tempPath, true);
 			}
 			return actionSucceeded;
+		}
+
+		private IEnumerable<Package> getPackages(bool all) {
+			var profiles = new ProfileLocator(_token);
+			var packages = new List<Package>();
+			profiles.GetFilesCurrentProfiles("package.json").ToList()
+				.ForEach(x => {
+						try {
+							Logger.Write("Reading package " + x);
+							var package = Package.Read(x);
+							if (package != null)
+								packages.Add(package);
+						} catch {
+						}
+					});
+			return packages;
 		}
 
 		private Package getPackage(string name) {
@@ -208,12 +230,11 @@ namespace OpenIDE.Core.Packaging
 					package.Target.Replace("language-", "") + "s");
 		}
 
-		private void update(string source, ActionParameters args) {
-			if (args.Match == null) {
+		private void update(string source, Package existingPackage, ActionParameters args) {
+			if (existingPackage == null) {
 				_dispatch("error|The requested package is not installed. Try install instead.");
 				return;
 			}
-			var existingPackage = getPackage(Path.GetFileNameWithoutExtension(args.Match));
 			if (!runInstallVerify(args.TempPath, args.InstallPath)) {
 				printUpdateFailed(args.Package.Signature);
 				return;
