@@ -102,6 +102,9 @@ namespace OpenIDE.Core.Profiles
 		}
 
 		public IEnumerable<string> GetPathsCurrentProfiles() {
+			// PS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			// Always populate list in the following order. Others depend on it!!!!!:
+			// Local active, local default, global active, global default
 			var paths = new List<string>();
 			// Get from local profile
 			var localProfile = GetActiveLocalProfile();
