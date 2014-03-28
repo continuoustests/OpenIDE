@@ -46,7 +46,7 @@ namespace OpenIDE.Core.Packaging
 			var installType = "package";
 			if (acceptedVersions != null)
 				installType = "dependency";
-			_dispatch("Installing " + installType + " " + packageToken);
+			_dispatch("installing " + installType + " " + packageToken);
 			var source = _packageFetcher.Fetch(packageToken);
 			if (source == null || !File.Exists(source.Package)) {
 				_dispatch("error|could not find package " + packageToken);
@@ -62,25 +62,33 @@ namespace OpenIDE.Core.Packaging
 						activeProfile = profiles.GetActiveGlobalProfile();
 					else
 						activeProfile = profiles.GetActiveLocalProfile();
-					return getInstallPath(package, profiles, activeProfile);
+					var installPath = getInstallPath(package, profiles, activeProfile);
+					if (installPath == null)
+						_dispatch("error|the current location does not have an initialized config point");
+					return installPath;
 				},
 				(args) => {
 						if (args.Match != null) {
-							Logger.Write("Found matching package " + args.Match);
-							var package = getPackage(Path.GetFileNameWithoutExtension(args.Match));
-							Logger.Write("Loaded package " + package.ID);
-							if (acceptedVersions != null) {
-								if (acceptedVersions.Length > 0 && !acceptedVersions.Any(x => x == package.Version)) {
-									var versions = "";
-									foreach (var version in acceptedVersions) {
-										versions += version + ",";
+							Logger.Write("found matching package " + args.Match);
+							var command = Path.GetFileNameWithoutExtension(args.Match);
+							var package = getPackage(command);
+							if (package != null) {
+								Logger.Write("loaded package " + package.ID);
+								if (acceptedVersions != null) {
+									if (acceptedVersions.Length > 0 && !acceptedVersions.Any(x => x == package.Version)) {
+										var versions = "";
+										foreach (var version in acceptedVersions) {
+											versions += version + ",";
+										}
+										versions = versions.Trim(new[] {','});
+										_dispatch(string.Format("error|dependency {0} ({1}) is installed. Accepted versions are {2}", args.Package.ID, package.Version, versions));
+										return false;
 									}
-									versions = versions.Trim(new[] {','});
-									_dispatch(string.Format("error|dependency {0} ({1}) is installed. Accepted versions are {2}", args.Package.ID, package.Version, versions));
-									return false;
 								}
+								_dispatch(string.Format("package {0} ({1}) is already installed", package.ID, package.Version));
+							} else {
+								_dispatch(string.Format("error|the package with the command {0} conflicts with the package you are trying to install", command));
 							}
-							_dispatch(string.Format("package {0} ({1}) is already installed", package.ID, package.Version));
 						} else if (acceptedVersions != null && !acceptedVersions.Any(x => x == args.Package.Version)) {
 							var versions = "";
 							foreach (var version in acceptedVersions) {
@@ -100,16 +108,24 @@ namespace OpenIDE.Core.Packaging
 
 		public void Update(string packageToken) {
 			var source = _packageFetcher.Fetch(packageToken);
-			if (!File.Exists(source.Package))
+			if (source == null) {
+				_dispatch("error|cannot find the package you are trying to update to");
 				return;
+			}
+			if (!File.Exists(source.Package)) {
+				_dispatch("error|cannot find the package you are trying to update to");
+				return;
+			}
 			Package packageToUpdate = null;
 			prepareForAction(
 				source.Package,
 				(package) => {
 					packageToUpdate = getPackages(true)
 						.FirstOrDefault(x => x.ID == package.ID);
-					if (packageToUpdate == null)
+					if (packageToUpdate == null) {
+						_dispatch("error|the package you are trying to update is not installed");
 						return null;
+					}
 					return Path.GetDirectoryName(Path.GetDirectoryName(packageToUpdate.File));
 				},
 				(args) => {
@@ -126,7 +142,7 @@ namespace OpenIDE.Core.Packaging
 		public void Remove(string source) {
 			var package = getPackage(source);
 			if (package == null) {
-				_dispatch(string.Format("error|There is no package {0} to remove", source));
+				_dispatch(string.Format("error|there is no package {0} to remove", source));
 				return;
 			}
 			removePackage(package.Command, Path.GetDirectoryName(Path.GetDirectoryName(package.File)));
@@ -144,10 +160,8 @@ namespace OpenIDE.Core.Packaging
 					if (package.Target == "language")
 						_useGlobal = true;
 					var installPath = destinatinoPathLocator(package);
-					if (installPath == null) {
-						_dispatch("error|Config point is not initialized");
+					if (installPath == null)
 						return false;
-					}
 					if (!Directory.Exists(installPath))
 						Directory.CreateDirectory(installPath);
 					var match =  
@@ -195,7 +209,7 @@ namespace OpenIDE.Core.Packaging
 							Logger.Write("Reading package " + x);
 							var package = Package.Read(x);
 							if (package != null) {
-								Logger.Write("Adding package {0} ({1})", package.ID, package.Version);
+								Logger.Write("adding package {0} ({1})", package.ID, package.Version);
 								packages.Add(package);
 							}
 						} catch (Exception ex) {
@@ -232,7 +246,7 @@ namespace OpenIDE.Core.Packaging
 
 		private void update(string source, Package existingPackage, ActionParameters args) {
 			if (existingPackage == null) {
-				_dispatch("error|The requested package is not installed. Try install instead.");
+				_dispatch("error|the requested package is not installed. Try install instead.");
 				return;
 			}
 			if (!runInstallVerify(args.TempPath, args.InstallPath)) {
@@ -254,7 +268,7 @@ namespace OpenIDE.Core.Packaging
 			
 			_dispatch(
 				string.Format(
-					"Package updated from {0} to {1}",
+					"package updated from {0} to {1}",
 					existingPackage.Signature,
 					args.Package.Signature));
 		}
@@ -271,17 +285,17 @@ namespace OpenIDE.Core.Packaging
 
 		private void printUpdateFailed(string id) {
 			_dispatch("");
-			_dispatch(string.Format("error|Failed to update package {0}", id));
+			_dispatch(string.Format("error|failed to update package {0}", id));
 		}
 
 		private void printUnexistingUpdate(string name, Package package) {
-			_dispatch(string.Format("error|There is no installed {1} package {0} to update", name, package.Target));
+			_dispatch(string.Format("error|there is no installed {1} package {0} to update", name, package.Target));
 		}
 
 		private void installPackage(string source, Package package, string tempPath, string installPath, string activeProfile) {
 			if (!runInstallVerify(tempPath, installPath)) {
 				_dispatch("");
-				_dispatch(string.Format("error|Failed to install package {0}", package.Signature));
+				_dispatch(string.Format("error|failed to install package {0}", package.Signature));
 				return;
 			}
 
@@ -295,7 +309,7 @@ namespace OpenIDE.Core.Packaging
 			foreach (var action in package.PostInstallActions)
 				_dispatch(action);
 
-			_dispatch(string.Format("Installed {1} package {0} in profile {2}",
+			_dispatch(string.Format("installed {1} package {0} in profile {2}",
 				package.Signature,
 				package.Target,
 				activeProfile));
@@ -357,7 +371,7 @@ namespace OpenIDE.Core.Packaging
 								}
 							});
 			} catch (Exception ex) {
-				_dispatch("error|Failed running package verify. Make sure that environment supports script/executable type " + Path.GetExtension(command));
+				_dispatch("error|failed running package verify. Make sure that environment supports script/executable type " + Path.GetExtension(command));
 				_dispatch("warning|Exception:");
 				_dispatch("warning|" + ex.ToString());
 				succeeded = false;
@@ -388,20 +402,19 @@ namespace OpenIDE.Core.Packaging
 			var existingPackage = getPackage(matches.First());
 			if (existingPackage != null)
 				pkgInfo = string.Format(" ({0})", existingPackage.Signature);
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(
-				"There is already an installed {2} package called {0}{1}",
-				name,
-				pkgInfo,
-				package.Target);
-			Console.ResetColor();
+			_dispatch(
+				string.Format(
+					"error|there is already an installed {2} package called {0}{1}",
+					name,
+					pkgInfo,
+					package.Target));
 			if (existingPackage != null) {
 				_dispatch("");
 				_dispatch(existingPackage.ToVerboseString());
 			}
 			_dispatch("");
 			_dispatch(
-				"warning|To replace/update the installed package use the update command");
+				"warning|to replace/update the installed package use the update command");
 		}
 	}
 }

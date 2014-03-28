@@ -357,10 +357,6 @@ namespace OpenIDE.Arguments.Handlers
 			installer.Install(args[1]);
 			_dispatch("event|builtin package installed \"" + args[1] + "\"");
 		}
-
-		private void install(string package, bool isGlobal) {
-			
-		}
 		
 		private void update(string[] args) {
 			var useGlobal = globalSpecified(ref args);
