@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
 # Script parameters
-#	Param 1: Script run location
-#	Param 2: global profile name
-#	Param 3: local profile name
-#	Param 4-: Any passed argument
+#   Param 1: Script run location
+#   Param 2: global profile name
+#   Param 3: local profile name
+#   Param 4-: Any passed argument
 #
 # When calling oi use the --profile=PROFILE_NAME and 
 # --global-profile=PROFILE_NAME argument to ensure calling scripts
@@ -15,16 +15,16 @@
 # To post an error print to std output prefixed by error|
 
 if ARGV[1] == "get-command-definitions"
-	# Definition format usually represented as a single line:
+    # Definition format usually represented as a single line:
 
-	# Script description|
-	# command1|"Command1 description"
-	# 	param|"Param description" end
-	# end
-	# command2|"Command2 description"
-	# 	param|"Param description" end
-	# end
+    # Script description|
+    # command1|"Command1 description"
+    #   param|"Param description" end
+    # end
+    # command2|"Command2 description"
+    #   param|"Param description" end
+    # end
 
-	puts "Script description"
-	exit
+    puts "Script description"
+    exit
 end

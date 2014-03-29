@@ -24,7 +24,7 @@ namespace oipckmngr
                    	Path.Combine(
                        	Path.GetDirectoryName(tarfile),
                        	Path.GetFileNameWithoutExtension(tarfile));
-               	run(directory, "tar", string.Format("--warning=none -xvf \"{0}\"", tarfile));
+               	run(directory, "tar", string.Format("-xvf \"{0}\"", tarfile));
                	File.Delete(tarfile);
                	return;
            	}

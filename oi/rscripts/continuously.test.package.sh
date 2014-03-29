@@ -1,15 +1,15 @@
 #!/bin/bash 
 
 if [ "$1" = "reactive-script-reacts-to" ]; then
-	# Write one event pr line that this script will react to
-	echo "codemodel raw-filesystem-change-*.oi-pkg-tests.*\""
-	exit
+    # Write one event pr line that this script will react to
+    echo "codemodel raw-filesystem-change-*.oi-pkg-tests.*\""
+    exit
 fi
 
 # Write scirpt code here.
-#	Param 1: event
-#	Param 2: global profile name
-#	Param 3: local profile name
+#   Param 1: event
+#   Param 2: global profile name
+#   Param 3: local profile name
 #
 # When calling other commands use the --profile=PROFILE_NAME and 
 # --global-profile=PROFILE_NAME argument to ensure calling scripts
@@ -26,14 +26,14 @@ file=$(echo "$1"|cut -d' ' -f 3)
 result=`oi packagetest "$file" --only-errors -o -e|sed 's/ *$//g'`
 failed=false
 if [[ "$result" == *FAILED* ]]; then
-	failed=true
+    failed=true
 fi
 if [[ "$result" == *\?\?\?\?\?\?* ]]; then
-	failed=true
+    failed=true
 fi
 
 if [[ $failed == false ]] ; then
-	notify-send --icon="$iconOK" "Tests passed"
+    notify-send --icon="$iconOK" "Tests passed"
 else
-	notify-send --icon="$iconFAIL" "Tests FAILED" "$result"
+    notify-send --icon="$iconFAIL" "Tests FAILED" "$result"
 fi

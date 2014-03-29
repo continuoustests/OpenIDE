@@ -47,13 +47,14 @@ namespace OpenIDE.Core.FileSystem
 		{
 			Logger.Write("Running script {0} with {1}", _file, arguments);
 			arguments = "{global-profile} {local-profile} " + arguments;
-			run(
+			var commandLine = run(
 				arguments,
 				onLine,
 				new[] {
 						new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
 						new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
 					});
+			onLine("event|builtin command ran " + commandLine);
 			Logger.Write("Running script completed {0}", _file);
 		}
 
@@ -87,12 +88,12 @@ namespace OpenIDE.Core.FileSystem
 		{
 			var sb = new StringBuilder();
 			run(arguments,
-				(line) => sb.Append(line.Replace(Environment.NewLine, "")),
+				(line) => sb.Append(line.Replace(Environment.NewLine, " ")),
 				new KeyValuePair<string,string>[] {});
 			return sb.ToString();
 		}
 
-		private void run(string arguments, Action<string> onLine,
+		private string run(string arguments, Action<string> onLine,
 						 IEnumerable<KeyValuePair<string,string>> replacements)
 		{
 			var cmd = _file;
@@ -125,8 +126,8 @@ namespace OpenIDE.Core.FileSystem
 						},
 					finalReplacements.ToArray(),
 					(args) => realArguments = args);
-			onLine(string.Format("event|builtin command ran \"{0}\" {1}", Name, realArguments));
 			_writer = (msg) => {};
+			return string.Format("\"{0}\" {1}", Name, realArguments);
 		}
 	}
 }

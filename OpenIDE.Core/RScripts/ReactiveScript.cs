@@ -13,6 +13,7 @@ namespace OpenIDE.Core.RScripts
 {
 	public class ReactiveScript
 	{
+		private bool _isFaulted;
 		private string _name;
 		private string _file;
 		private string _keyPath;
@@ -29,6 +30,8 @@ namespace OpenIDE.Core.RScripts
 			}
 		}
 
+		public bool IsFaulted { get { return _isFaulted; } }
+
 		public string File { get { return _file; } }
 
 		public ReactiveScript(string file, string keyPath, Action<string> dispatch)
@@ -44,6 +47,8 @@ namespace OpenIDE.Core.RScripts
 
 		public bool ReactsTo(string @event)
 		{
+			if (_isFaulted)
+				return false;
 			foreach (var reactEvent in _events) {
 				if (wildcardmatch(@event, reactEvent))
 					return true;
@@ -53,6 +58,8 @@ namespace OpenIDE.Core.RScripts
 
 		public void Run(string message)
 		{
+			if (_isFaulted)
+				return;
 			if (Environment.OSVersion.Platform != PlatformID.Unix &&
 				Environment.OSVersion.Platform != PlatformID.MacOSX)
 			{
@@ -112,27 +119,36 @@ namespace OpenIDE.Core.RScripts
 
 		private void getEvents()
 		{
+			_isFaulted = false;
 			_events.Clear();
-			new Process()
-				.Query(
-					_file,
-					"reactive-script-reacts-to",
-					false,
-					_keyPath,
-					(error, m) => {
-						if (error) {
-							Logger.Write(
-								"Failed running reactive script with reactive-script-reacts-to: " +
-								_file);
-							Logger.Write(m);
-							return;
-						}
-						if (m.Length > 0) {
-							var expression = m; //m.Trim(new[] {'\"'});
-							_events.Add(expression);
-							Logger.Write(_file + " reacts to: " + expression);
-						}
-					});
+			try {
+				new Process()
+					.Query(
+						_file,
+						"reactive-script-reacts-to",
+						false,
+						_keyPath,
+						(error, m) => {
+							if (error) {
+								_isFaulted = true;
+		            			_dispatch("rscript-" + Name + " error|" + m);
+								Logger.Write(
+									"Failed running reactive script with reactive-script-reacts-to: " +
+									_file);
+								Logger.Write(m);
+								return;
+							}
+							if (m.Length > 0) {
+								var expression = m; //m.Trim(new[] {'\"'});
+								_events.Add(expression);
+								Logger.Write(_file + " reacts to: " + expression);
+							}
+						});
+			} catch (Exception ex) {
+				_isFaulted = true;
+				_dispatch("rscript-" + Name + " error|Could not read reacts to information");
+				Logger.Write(ex);
+			}
 		}
 		
 		private bool wildcardmatch(string str, string pattern)

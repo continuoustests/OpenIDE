@@ -1,22 +1,16 @@
 {
-	"#Comment" : "Handlers are command arguments and stdout writelines",
-	"handlers" :
-	[
-		{
-			"handler" :
-			{
-				"arguments" : [ "|ANY|", "get-command-definitions" ],
-				"responses" : [ "My script" ]
-			}
-		}
-	],
-	"link" :
-	{
-		"executable" : "path/to/my/application",
-		"params" : "{args}",
-		"#Comment" :
-			"Valid: {run-location} {global-profile} {local-profile} {args}",
-		"#Comment" :
-			"Paths uses / on all platforms"
-	}
+    "#Comment": "Handlers are command arguments and stdout writelines",
+    "handlers": [ {
+            "handler": {
+                "arguments": [ "|ANY|", "get-command-definitions" ],
+                "responses": [ "Script description" ]
+            }
+        }
+    ],
+    "link": {
+        "executable": "path/to/my/application",
+        "params": "{args}",
+        "#Comment": "Valid: {run-location} {global-profile} {local-profile} {args}",
+        "#Comment": "Paths uses / on all platforms"
+    }
 }

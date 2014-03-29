@@ -1,7 +1,6 @@
 {
-	"link" :
-	{
-		"executable" : "C#-files/C#.exe",
-		"params" : "{args}",
-	}
+    "link": {
+        "executable": "C#-files/C#.exe",
+        "params": "{args}",
+    }
 }

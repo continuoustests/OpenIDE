@@ -66,7 +66,10 @@ namespace OpenIDE.Core.RScripts
 		public ReactiveScript ReadScript(string path)
 		{
             try {
-			    return new ReactiveScript(path, _keyPath, _dispatch);
+			    var script = new ReactiveScript(path, _keyPath, _dispatch);
+			    if (script.IsFaulted)
+			    	return null;
+			    return script;
             } catch (Exception ex) {
                 Logger.Write(ex);
             }
