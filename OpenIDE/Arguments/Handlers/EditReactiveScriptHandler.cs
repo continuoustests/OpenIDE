@@ -36,13 +36,15 @@ namespace OpenIDE.Arguments.Handlers
 	
 		public void Execute(string[] arguments)
 		{
+			if (arguments.Length < 1)
+				return;
 			var scripts = new ReactiveScriptReader(
 				_keyPath,
 				_pluginLocator,
 				(m) => {})
 				.Read();
 			var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));
-			if (script == null || arguments.Length < 1)
+			if (script == null)
 				return;
 			_dispatch(string.Format("command|editor goto \"{0}|0|0\"", script.File));
 		}

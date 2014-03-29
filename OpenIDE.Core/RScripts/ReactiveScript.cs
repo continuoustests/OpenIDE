@@ -84,6 +84,7 @@ namespace OpenIDE.Core.RScripts
 	            			var cmdText = "command|";
 	            			var eventText = "event|";
 	            			if (error) {
+	            				_dispatch("rscript-" + Name + " error|" + m);
 	            				Logger.Write("rscript-" + Name + " produced an error:");
 	            				Logger.Write("rscript-" + Name + "-" + m);
 	            			} else {
@@ -103,6 +104,7 @@ namespace OpenIDE.Core.RScripts
 	            }
 				catch (Exception ex)
 				{
+					_dispatch("rscript-" + Name + " " + ex.ToString());
 					Logger.Write(ex.ToString());
 				}
 			}, message);

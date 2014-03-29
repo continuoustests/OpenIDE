@@ -162,7 +162,9 @@ namespace OpenIDE.Bootstrapping
 					_commandsInProcessing++;
 				}
 				ThreadPool.QueueUserWorkItem((m) => {
+					Logger.Write("Handling command in background thread");
 					if (isCommand(command)) {
+						Logger.Write("Handling as command");
 						var prefix = getCommandPrefix(command);
 						var parser = new CommandStringParser();
 						var args = 
@@ -194,6 +196,7 @@ namespace OpenIDE.Bootstrapping
 						}
 						onCommandCompleted();
 					} else if (isEvent(command)) {
+						Logger.Write("Handling as event");
 						var prefix = "event|";
 						EventDispatcher()
 							.Forward(command.Substring(prefix.Length, command.Length - prefix.Length));
@@ -232,6 +235,10 @@ namespace OpenIDE.Bootstrapping
 
 		private void printError(string command)
 		{
+			if (_settings.RawOutput) {
+				Console.WriteLine(command);
+				return;
+			}
 			var commentTag = "error|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
 			Console.ForegroundColor = ConsoleColor.Red;
@@ -246,6 +253,10 @@ namespace OpenIDE.Bootstrapping
 
 		private void printWarning(string command)
 		{
+			if (_settings.RawOutput) {
+				Console.WriteLine(command);
+				return;
+			}
 			var commentTag = "warning|";
 			var start = command.IndexOf(commentTag) + commentTag.Length;
 			Console.ForegroundColor = ConsoleColor.Yellow;
@@ -260,7 +271,7 @@ namespace OpenIDE.Bootstrapping
 
 		public EventIntegration.IEventDispatcher EventDispatcher()
 		{
-			return new EventIntegration.EventDispatcher(_settings.Path);
+			return new EventIntegration.EventDispatcher(_settings.RootPath);
 		}
 
 		public ICodeEngineLocator ICodeEngineLocator()

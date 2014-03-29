@@ -36,6 +36,10 @@ namespace OpenIDE.Arguments.Handlers
 					usage
 						.Add("cat", "Prints the script to the terminal")
 							.Add("SCRIPT-NAME", "Script name with optional file extension.");
+					usage
+						.Add("test", "Continuously tests the specified script when saved")
+                        	.Add("SCRIPT-NAME", "Script name")
+                            	.Add("PARAMS", "Either script arguments or full command like: oi help mycommand");
 				return usage;
 			}
 		}
@@ -50,6 +54,7 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new EditScriptHandler(_dispatch));
 			_handlers.Add(new DeleteScriptHandler());
 			_handlers.Add(new CatScriptHandler());
+			_handlers.Add(new TestScriptHandler(_dispatch, _token));
 		}
 
 		public void Execute(string[] arguments)

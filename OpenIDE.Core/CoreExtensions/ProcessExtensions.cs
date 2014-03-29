@@ -106,9 +106,9 @@ namespace CoreExtensions
                 Logger.Write("Running: {0} {1}", proc.StartInfo.FileName, proc.StartInfo.Arguments);
                 proc.Start();
                 var output = proc.StandardOutput.ReadToEnd();
-                errors = 
-                    proc.StandardError.ReadToEnd()
-                        .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                var errorText = proc.StandardError.ReadToEnd();
+                errors = errorText
+                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 proc.WaitForExit();
                 return output.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             } catch (Exception ex) {

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE.EventIntegration
@@ -32,6 +33,7 @@ namespace OpenIDE.EventIntegration
 
 		public void Forward(string message)
 		{
+			Logger.Write("Forwarding event: " + message + " using token " + _path);
 			var instances = getInstances(_path);
 			instances
 				.Where(x => _path.StartsWith(x.Key))
@@ -47,8 +49,10 @@ namespace OpenIDE.EventIntegration
 				foreach (var file in Directory.GetFiles(dir, "*.pid"))
 				{
 					var instance = Instance.Get(file, File.ReadAllLines(file));
-					if (instance != null)
+					if (instance != null) {
+						Logger.Write("Found event endpoint instance for: " + instance.Key);
 						yield return instance;
+					}
 				}
 			}
 		}
@@ -58,8 +62,12 @@ namespace OpenIDE.EventIntegration
 			var client = new OpenIDE.Core.EditorEngineIntegration.Client();
 			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
-			if (connected)
+			if (connected) {
+				Logger.Write("Dispatching event");
 				client.SendAndWait(message);
+			} else {
+				Logger.Write("Could not connect to event endpoint");
+			}
 			client.Disconnect();
 			if (!connected)
 				File.Delete(info.File);

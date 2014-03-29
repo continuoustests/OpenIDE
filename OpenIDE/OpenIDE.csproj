@@ -125,6 +125,8 @@
     <Compile Include="Arguments\Handlers\HandleLanguageHandler.cs" />
     <Compile Include="Arguments\Handlers\EnvironmentHandler.cs" />
     <Compile Include="Arguments\Handlers\ShutdownHandler.cs" />
+    <Compile Include="Arguments\Handlers\TestScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\TestReactiveScriptHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

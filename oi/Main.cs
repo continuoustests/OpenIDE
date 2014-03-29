@@ -109,6 +109,7 @@ namespace oi
 				Console.WriteLine("\t[--default.language=NAME] : Force command to run using specified default language");
 				Console.WriteLine("\t[--enabled.languages=LANGUAGE_LIST] : Force command to run using specified languages");
 				Console.WriteLine("\t[--logging] : Enables logging to console");
+				Console.WriteLine("\t[--raw] : Prints raw output");
 				Console.WriteLine();
 			}
 			definitions
