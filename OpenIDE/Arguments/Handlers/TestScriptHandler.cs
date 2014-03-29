@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Diagnostics;
+using System.Collections.Generic;
 using CoreExtensions;
 using OpenIDE.Bootstrapping;
 using OpenIDE.Core.Language;
@@ -94,11 +95,14 @@ namespace OpenIDE.Arguments.Handlers
                     args += " ";
                 args += "\"" + arguments[i] + "\"";
             }
+            var output = new List<string>();
             var proc = new Process();
             try {
                 string[] errors;
-                foreach (var line in proc.QueryAll(command, args, false, _token, out errors))
+                foreach (var line in proc.QueryAll(command, args + " --raw", false, _token, out errors)) {
+                    Logger.Write("line is " + line);
                     _dispatch(line);
+                }
                 if (errors.Length > 0 && errors[0].Trim() != "") {
                     foreach (var line in errors)
                         _dispatch("error|" + line);

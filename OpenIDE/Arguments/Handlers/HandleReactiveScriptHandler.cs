@@ -37,7 +37,9 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
 
 				usage
-					.Add("status", "Displays script status");
+					.Add("test", "Continuously tests the specified script")
+					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global")
+					.Add("EVENT", "Event to test the script with");
 				return usage;
 			}
 		}
@@ -53,6 +55,7 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new CreateReactiveScriptHandler(_token, _dispatch));
 			_handlers.Add(new EditReactiveScriptHandler(_dispatch, _locator, _token));
 			_handlers.Add(new DeleteReactiveScriptHandler(_locator, _token));
+			_handlers.Add(new TestReactiveScriptHandler(_dispatch, _locator, _token));
 		}
 
 		public void Execute(string[] arguments)

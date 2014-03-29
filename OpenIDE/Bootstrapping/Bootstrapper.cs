@@ -65,6 +65,7 @@ namespace OpenIDE.Bootstrapping
 		private const string DEFAULT_LANGUAGE = "--default.language=";
 		private const string ENABLED_LANGUAGES = "--enabled.languages";
 		private const string ENABLE_LOGGING = "--logging";
+		private const string RAW_OUTPUT = "--raw";
 
 		private string _path;
 
@@ -75,6 +76,7 @@ namespace OpenIDE.Bootstrapping
 		public string[] EnabledLanguages { get; private set; }
 		public string Plugin = "";
 		public bool LoggingEnabled = false;
+		public bool RawOutput = false;
 
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
@@ -122,6 +124,9 @@ namespace OpenIDE.Bootstrapping
 					continue;
 				} else if (arg == ENABLE_LOGGING) {
 					LoggingEnabled = true;
+					continue;
+				} else if (arg == RAW_OUTPUT) {
+					RawOutput = true;
 					continue;
 				}
 
