@@ -1,9 +1,0 @@
-namespace ANamespace
-{
-	class AClass
-	{
-		public void GetInt()
-		{
-		}
-	}
-}

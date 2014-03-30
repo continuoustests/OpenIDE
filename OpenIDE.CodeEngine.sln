@@ -11,12 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.CodeEngine.Core", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Languages", "Languages", "{A7AA8190-4BA1-4672-BB81-7BE1BF7BE334}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{FE03DF8F-F922-469C-9B35-9F566DB8179E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp", "Languages\CSharp\CSharp\CSharp.csproj", "{FFE638AF-5B7F-4C54-8255-2011DE5560D1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Tests", "Languages\CSharp\CSharp.Tests\CSharp.Tests.csproj", "{511CFF8B-FA25-4C07-9B7C-A18E9B1BFE46}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDE.Core", "OpenIDE.Core\OpenIDE.Core.csproj", "{FB9BD7EA-F1F8-4F9C-8B82-17E703C0C766}"
 EndProject
 Global

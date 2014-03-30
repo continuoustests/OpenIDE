@@ -5,7 +5,6 @@ BINARYDIR=$(cd $(dirname "$0"); pwd)/build_output
 DEPLOYDIR=$(cd $(dirname "$0"); pwd)/ReleaseBinaries
 PACKAGEDIR=$(cd $(dirname "$0"); pwd)/Packages
 LIB=$(cd $(dirname "$0"); pwd)/lib
-CSHARP_BIN=$(cd $(dirname "$0"); pwd)/Languages/CSharp/lib
 
 if [ -d $BINARYDIR ]; then
 {
@@ -35,10 +34,6 @@ mkdir $DEPLOYDIR/Packaging
 mkdir $DEPLOYDIR/.OpenIDE
 
 mkdir $PACKAGEDIR/oipkg
-mkdir $PACKAGEDIR/C#-files
-mkdir $PACKAGEDIR/C#-files/bin
-mkdir $PACKAGEDIR/C#-files/bin/AutoTest.Net
-mkdir $PACKAGEDIR/C#-files/bin/ContinuousTests
 mkdir $PACKAGEDIR/go-files
 mkdir $PACKAGEDIR/go-files/rscripts
 mkdir $PACKAGEDIR/go-files/graphics
@@ -58,13 +53,9 @@ mkdir $DEPLOYDIR/.OpenIDE/rscripts/templates
 mkdir $DEPLOYDIR/.OpenIDE/test
 mkdir $DEPLOYDIR/.OpenIDE/test/templates
 
-chmod +x $CSHARP_BIN/ContinuousTests/AutoTest.*.exe
-chmod +x $CSHARP_BIN/ContinuousTests/ContinuousTests.exe
-
 xbuild OpenIDE.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 xbuild OpenIDE.CodeEngine.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 xbuild PackageManager/oipckmngr/oipckmngr.csproj /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
-#xbuild .OpenIDE/languages/CSharp/CSharp.sln /target:rebuild /property:OutDir=$BINARYDIR/ /p:Configuration=Release;
 
 # oi
 cp $ROOT/oi/oi $DEPLOYDIR/oi
@@ -105,21 +96,6 @@ cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates
 cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
 
 # Packages
-# C#
-cp $ROOT/Languages/CSharp/C#.oilnk $PACKAGEDIR/C#.oilnk
-cp $ROOT/Languages/CSharp/language.oicfgoptions $PACKAGEDIR/C#-files/language.oicfgoptions
-cp $ROOT/Languages/CSharp/package.json.CT $PACKAGEDIR/C#-files/package.json
-cp $BINARYDIR/C#.exe $PACKAGEDIR/C#-files/C#.exe
-cp $BINARYDIR/OpenIDE.Core.dll $PACKAGEDIR/C#-files/OpenIDE.Core.dll
-cp $BINARYDIR/Newtonsoft.Json.dll $PACKAGEDIR/C#-files/
-cp $BINARYDIR/ICSharpCode.NRefactory.CSharp.dll $PACKAGEDIR/C#-files/ICSharpCode.NRefactory.CSharp.dll
-cp $BINARYDIR/ICSharpCode.NRefactory.dll $PACKAGEDIR/C#-files/ICSharpCode.NRefactory.dll
-cp $BINARYDIR/Mono.Cecil.dll $PACKAGEDIR/C#-files/Mono.Cecil.dll
-cp -r $ROOT/Languages/CSharp/templates/* $PACKAGEDIR/C#-files
-cp $ROOT/Languages/CSharp/initialize.sh $PACKAGEDIR/C#-files
-cp $ROOT/Languages/CSharp/initialize.bat $PACKAGEDIR/C#-files
-cp -r $CSHARP_BIN/AutoTest.Net/* $PACKAGEDIR/C#-files/bin/AutoTest.Net
-cp -r $CSHARP_BIN/ContinuousTests/* $PACKAGEDIR/C#-files/bin/ContinuousTests
 
 # go
 cp $ROOT/Languages/go/bin/go $PACKAGEDIR/go
@@ -139,13 +115,6 @@ cp -r $ROOT/Languages/php/* $PACKAGEDIR
 
 # Building packages
 echo "Building packages.."
-$DEPLOYDIR/oi package build Packages/C\# $PACKAGEDIR/oipkg
-rm -r $PACKAGEDIR/C\#-files/bin
-rm $PACKAGEDIR/C\#-files/initialize.*
-rm $PACKAGEDIR/C\#-files/package.json
-cp $ROOT/Languages/CSharp/package.json $PACKAGEDIR/C#-files/package.json
-$DEPLOYDIR/oi package build Packages/C\# $PACKAGEDIR/oipkg
-
 $DEPLOYDIR/oi package build Packages/go $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/python $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/js $PACKAGEDIR/oipkg
