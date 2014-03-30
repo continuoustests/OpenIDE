@@ -34,9 +34,6 @@ mkdir $DEPLOYDIR/Packaging
 mkdir $DEPLOYDIR/.OpenIDE
 
 mkdir $PACKAGEDIR/oipkg
-mkdir $PACKAGEDIR/go-files
-mkdir $PACKAGEDIR/go-files/rscripts
-mkdir $PACKAGEDIR/go-files/graphics
 mkdir $PACKAGEDIR/python-files
 mkdir $PACKAGEDIR/python-files/rscripts
 mkdir $PACKAGEDIR/python-files/graphics
@@ -97,12 +94,6 @@ cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
 
 # Packages
 
-# go
-cp $ROOT/Languages/go/bin/go $PACKAGEDIR/go
-cp $ROOT/Languages/go/package.json $PACKAGEDIR/go-files/package.json
-cp $ROOT/Languages/go/rscripts/go-build.sh $PACKAGEDIR/go-files/rscripts/go-build.sh
-cp $ROOT/Languages/go/graphics/* $PACKAGEDIR/go-files/graphics/
-
 # python
 cp -r $ROOT/Languages/python/* $PACKAGEDIR
 
@@ -115,7 +106,6 @@ cp -r $ROOT/Languages/php/* $PACKAGEDIR
 
 # Building packages
 echo "Building packages.."
-$DEPLOYDIR/oi package build Packages/go $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/python $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/js $PACKAGEDIR/oipkg
 $DEPLOYDIR/oi package build Packages/php $PACKAGEDIR/oipkg
