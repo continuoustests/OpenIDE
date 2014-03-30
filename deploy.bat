@@ -3,9 +3,7 @@
 SET ROOT=%~d0%~p0%
 SET BINARYDIR="%ROOT%build_output"
 SET DEPLOYDIR="%ROOT%ReleaseBinaries"
-SET PACKAGEDIR="%ROOT%Packages"
 SET LIB="%ROOT%lib"
-SET LANGUAGES="%ROOT%Languages\"
 
 IF EXIST %BINARYDIR% (
   rmdir /Q /S %BINARYDIR%
@@ -17,26 +15,12 @@ IF EXIST %DEPLOYDIR% (
 )
 mkdir %DEPLOYDIR%
 
-IF EXIST %PACKAGEDIR% (
-  rmdir /Q /S %PACKAGEDIR%
-)
-mkdir %PACKAGEDIR%
-
 mkdir %DEPLOYDIR%\CodeEngine
 mkdir %DEPLOYDIR%\EditorEngine
 mkdir %DEPLOYDIR%\EventListener
 mkdir %DEPLOYDIR%\tests
-mkdir %DEPLOYDIR%\Packaging
 
 mkdir %DEPLOYDIR%\.OpenIDE
-
-mkdir %PACKAGEDIR%\oipkg
-mkdir %PACKAGEDIR%\python-files
-mkdir %PACKAGEDIR%\python-files\rscripts
-mkdir %PACKAGEDIR%\python-files\graphics
-mkdir %PACKAGEDIR%\js-files
-mkdir %PACKAGEDIR%\js-files\lib
-mkdir %PACKAGEDIR%\php-files
 
 mkdir %DEPLOYDIR%\.OpenIDE\scripts
 mkdir %DEPLOYDIR%\.OpenIDE\scripts\templates
@@ -85,8 +69,3 @@ REM Templates
 xcopy /S /I /E %ROOT%\oi\script-templates %DEPLOYDIR%\.OpenIDE\scripts\templates
 xcopy /S /I /E %ROOT%\oi\rscript-templates %DEPLOYDIR%\.OpenIDE\rscripts\templates
 xcopy /S /I /E %ROOT%\oi\test-templates %DEPLOYDIR%\.OpenIDE\test\templates
-
-REM Packages
-
-REM php
-xcopy /S /I /E %LANGUAGES%\php %DEPLOYDIR%\.OpenIDE\languages

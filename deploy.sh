@@ -3,7 +3,6 @@
 ROOT=$(cd $(dirname "$0"); pwd)
 BINARYDIR=$(cd $(dirname "$0"); pwd)/build_output
 DEPLOYDIR=$(cd $(dirname "$0"); pwd)/ReleaseBinaries
-PACKAGEDIR=$(cd $(dirname "$0"); pwd)/Packages
 LIB=$(cd $(dirname "$0"); pwd)/lib
 
 if [ -d $BINARYDIR ]; then
@@ -16,11 +15,6 @@ if [ -d $DEPLOYDIR ]; then
     rm -r $DEPLOYDIR/
 }
 fi
-if [ -d $PACKAGEDIR ]; then
-{
-    rm -r $PACKAGEDIR/
-}
-fi
 
 mkdir $BINARYDIR
 mkdir $DEPLOYDIR
@@ -29,17 +23,8 @@ mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
 mkdir $DEPLOYDIR/EventListener
 mkdir $DEPLOYDIR/tests
-mkdir $DEPLOYDIR/Packaging
 
 mkdir $DEPLOYDIR/.OpenIDE
-
-mkdir $PACKAGEDIR/oipkg
-mkdir $PACKAGEDIR/python-files
-mkdir $PACKAGEDIR/python-files/rscripts
-mkdir $PACKAGEDIR/python-files/graphics
-mkdir $PACKAGEDIR/js-files
-mkdir $PACKAGEDIR/js-files/lib
-mkdir $PACKAGEDIR/php-files
 
 mkdir $DEPLOYDIR/.OpenIDE/scripts
 mkdir $DEPLOYDIR/.OpenIDE/scripts/templates
@@ -91,23 +76,3 @@ cp $BINARYDIR/ICSharpCode.SharpZipLib.dll $DEPLOYDIR/Packaging
 cp -r $ROOT/oi/script-templates/* $DEPLOYDIR/.OpenIDE/scripts/templates
 cp -r $ROOT/oi/rscript-templates/* $DEPLOYDIR/.OpenIDE/rscripts/templates
 cp -r $ROOT/oi/test-templates/* $DEPLOYDIR/.OpenIDE/test/templates
-
-# Packages
-
-# python
-cp -r $ROOT/Languages/python/* $PACKAGEDIR
-
-# Javascript
-cp $ROOT/Languages/js/js.js $PACKAGEDIR/js
-cp -r $ROOT/Languages/js/js-files/* $PACKAGEDIR/js-files
-
-# Php
-cp -r $ROOT/Languages/php/* $PACKAGEDIR
-
-# Building packages
-echo "Building packages.."
-$DEPLOYDIR/oi package build Packages/python $PACKAGEDIR/oipkg
-$DEPLOYDIR/oi package build Packages/js $PACKAGEDIR/oipkg
-$DEPLOYDIR/oi package build Packages/php $PACKAGEDIR/oipkg
-rm $DEPLOYDIR/.OpenIDE/oi-definitions.json
-rm $DEPLOYDIR/oi-definitions.json
