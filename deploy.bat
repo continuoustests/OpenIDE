@@ -19,6 +19,7 @@ mkdir %DEPLOYDIR%\CodeEngine
 mkdir %DEPLOYDIR%\EditorEngine
 mkdir %DEPLOYDIR%\EventListener
 mkdir %DEPLOYDIR%\tests
+mkdir %DEPLOYDIR%\Packaging
 
 mkdir %DEPLOYDIR%\.OpenIDE
 

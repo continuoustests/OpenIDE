@@ -23,6 +23,7 @@ mkdir $DEPLOYDIR/EditorEngine
 mkdir $DEPLOYDIR/CodeEngine
 mkdir $DEPLOYDIR/EventListener
 mkdir $DEPLOYDIR/tests
+mkdir $DEPLOYDIR/Packaging
 
 mkdir $DEPLOYDIR/.OpenIDE
 
