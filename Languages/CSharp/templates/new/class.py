@@ -5,7 +5,7 @@ if __name__ == "__main__":
     if sys.argv[1] == 'get_file_extension':
         print(".cs")
     elif sys.argv[1] == 'get_position':
-        print("6|6")
+        print("7|6")
     elif sys.argv[1] == 'get_definition':
         print("Creates an empty C# class")
     else:
