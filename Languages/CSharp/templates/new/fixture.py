@@ -5,7 +5,7 @@ if __name__ == "__main__":
     if sys.argv[1] == 'get_file_extension':
         print(".cs")
     elif sys.argv[1] == 'get_position':
-        print("11|4")
+        print("11|10")
     elif sys.argv[1] == 'get_definition':
         print("Creates an empty NUnit test fixture for C#")
     else:
@@ -17,12 +17,12 @@ if __name__ == "__main__":
         print("")
         print("namespace " + namespace)
         print("{")
-        print(" [TestFixture]")
-        print(" public class " + classname)
-        print(" {")
-        print("     [Test]")
-        print("     public void Test()")
-        print("     {")
-        print("     }")
-        print(" }")
+        print("    [TestFixture]")
+        print("    public class " + classname)
+        print("    {")
+        print("        [Test]")
+        print("        public void Test()")
+        print("        {")
+        print("        }")
+        print("    }")
         print("}")

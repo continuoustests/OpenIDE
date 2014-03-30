@@ -5,7 +5,7 @@ if __name__ == "__main__":
     if sys.argv[1] == 'get_file_extension':
         print(".cs")
     elif sys.argv[1] == 'get_position':
-        print("6|3")
+        print("6|6")
     elif sys.argv[1] == 'get_definition':
         print("Creates an new C# interface")
     else:
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         print("")
         print("namespace " + namespace)
         print("{")
-        print(" interface " + classname)
-        print(" {")
-        print(" }")
+        print("    interface " + classname)
+        print("    {")
+        print("    }")
         print("}")
