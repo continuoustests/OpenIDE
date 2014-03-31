@@ -23,10 +23,12 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private string _token;
+		private string[] _sourcePrioritization;
 		private Action<string> _dispatch;
 
-		public PackageFetcher(string token, Action<string> dispatch) {
+		public PackageFetcher(string token, string[] sourcePrioritization, Action<string> dispatch) {
 			_token = token;
+			_sourcePrioritization = sourcePrioritization;
 			_dispatch = dispatch;
 		}
 
@@ -34,7 +36,7 @@ namespace OpenIDE.Core.Packaging
 			try {
 				if (File.Exists(Path.GetFullPath(source)))
 					return new FetchedPackage(Path.GetFullPath(source), false);
-				var package = new SourceLocator(_token).GetPackage(source);
+				var package = new SourceLocator(_token, _sourcePrioritization).GetPackage(source);
 				if (package != null) {
 					source = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString() + ".oipkg");
 					if (download(package.Package, source))

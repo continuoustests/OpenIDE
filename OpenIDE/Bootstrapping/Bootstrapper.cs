@@ -74,6 +74,7 @@ namespace OpenIDE.Bootstrapping
 		public string Path { get { return _path; } }
 		public string DefaultLanguage { get; private set; }
 		public string[] EnabledLanguages { get; private set; }
+		public string[] SourcePrioritization { get; private set; }
 		public string Plugin = "";
 		public bool LoggingEnabled = false;
 		public bool RawOutput = false;
@@ -81,25 +82,34 @@ namespace OpenIDE.Bootstrapping
 		public AppSettings(string path, Func<IEnumerable<ICommandHandler>> handlers, Func<IEnumerable<ICommandHandler>> pluginHandlers)
 		{
 			_path = path;
+			SourcePrioritization = new string[] {};
 			var locator = new ProfileLocator(Environment.CurrentDirectory);
 			RootPath = locator.GetLocalProfilePath("default");
 			if (RootPath == null)
 				RootPath = Directory.GetCurrentDirectory();
 			else
 				RootPath = System.IO.Path.GetDirectoryName(RootPath);
-			
-			var local = new Configuration(Directory.GetCurrentDirectory(), false);
-			var global = new Configuration(_path, false);
+			var reader = new ConfigReader(RootPath);
 
-			if (local.DefaultLanguage != null)
-				DefaultLanguage = local.DefaultLanguage;
-			else if (global.DefaultLanguage != null)
-				DefaultLanguage = global.DefaultLanguage;
+			var defaultLanguage = reader.Get("default.language");
+			if (defaultLanguage != null)
+				DefaultLanguage = defaultLanguage;
 
-			if (local.EnabledLanguages != null)
-				EnabledLanguages = local.EnabledLanguages;
-			else if (global.EnabledLanguages != null)
-				EnabledLanguages = global.EnabledLanguages;
+			var enabledLanguages = reader.Get("enabled.languages");
+			if (enabledLanguages != null)
+				EnabledLanguages = splitValue(enabledLanguages);
+
+			var prioritizedSources = reader.Get("oi.source.prioritization");
+			if (prioritizedSources != null)
+				SourcePrioritization = splitValue(prioritizedSources);
+		}
+
+		private string[] splitValue(string value)
+		{
+			return value
+				.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => x.Trim())
+				.ToArray();
 		}
 
 		public string[] Parse(string[] args)

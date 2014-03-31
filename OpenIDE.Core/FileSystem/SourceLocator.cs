@@ -10,10 +10,12 @@ namespace OpenIDE.Core.FileSystem
 	public class SourceLocator
 	{
 		private string _token;
+		private string[] _sourcePrioritization;
 		private ProfileLocator _locator;
 
-		public SourceLocator(string token) {
+		public SourceLocator(string token, string[] sourcePrioritization) {
 			_token = token;
+			_sourcePrioritization = sourcePrioritization;
 			_locator = new ProfileLocator(_token);
 		}
 
@@ -23,27 +25,27 @@ namespace OpenIDE.Core.FileSystem
 			addSources(sources, getLocalPath(_locator.GetActiveLocalProfile()));
 			addSources(sources, getGlobalPath("default"));
 			addSources(sources, getGlobalPath(_locator.GetActiveGlobalProfile()));
-			return sources.ToArray();
+			return prioritizeList(sources);
 		}
 
 		public Source[] GetLocalSources() {
 			var sources = new List<Source>();
 			addSources(sources, getLocalPath("default"));
 			addSources(sources, getLocalPath(_locator.GetActiveLocalProfile()));
-			return sources.ToArray();
+			return prioritizeList(sources);
 		}
 
 		public Source[] GetGlobalSources() {
 			var sources = new List<Source>();
 			addSources(sources, getGlobalPath("default"));
 			addSources(sources, getGlobalPath(_locator.GetActiveGlobalProfile()));
-			return sources.ToArray();
+			return prioritizeList(sources);
 		}
 
 		public Source[] GetSourcesFrom(string dir) {
 			var sources = new List<Source>();
 			addSources(sources, dir);
-			return sources.ToArray();
+			return prioritizeList(sources);
 		}
 
 		public string GetLocalDir() {
@@ -113,6 +115,19 @@ namespace OpenIDE.Core.FileSystem
 			} catch {
 				return "";
 			}
+		}
+
+		private Source[] prioritizeList(IEnumerable<Source> packageSources) {
+			var list = _sourcePrioritization;
+			var sources = new List<Source>(packageSources);
+            for (int i = list.Length - 1; i >= 0; i--) {
+                var itm = sources.FirstOrDefault(x => x.Name == list[i]);
+                if (itm == null)
+                	continue;
+                sources.Remove(itm);
+                sources.Insert(0, itm);
+            }
+            return sources.ToArray();;
 		}
 	}
 }

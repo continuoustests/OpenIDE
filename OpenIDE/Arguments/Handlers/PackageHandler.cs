@@ -21,6 +21,7 @@ namespace OpenIDE.Arguments.Handlers
 	class PackageHandler : ICommandHandler
 	{
 		private string _token;
+		private string[] _sourcePrioritization;
 		private Action<string> _dispatch;
 		private Func<PluginLocator> _locator;
 		private PackageFetcher _packageFetcher;
@@ -75,11 +76,12 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "package"; } }
 
-		public PackageHandler(string token, Action<string> dispatch, Func<PluginLocator> locator) {
+		public PackageHandler(string token, string[] sourcePrioritization, Action<string> dispatch, Func<PluginLocator> locator) {
 			_token = token;
+			_sourcePrioritization = sourcePrioritization;
 			_dispatch = dispatch;
 			_locator = locator;
-			_packageFetcher = new PackageFetcher(_token, _dispatch);
+			_packageFetcher = new PackageFetcher(_token, _sourcePrioritization, _dispatch);
 			_testHandler = new PkgTestHandler(token);
 		}
 
@@ -352,7 +354,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void install(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var installer = new Installer(_token, _dispatch, _locator());
+			var installer = new Installer(_token, _sourcePrioritization, _dispatch, _locator());
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Install(args[1]);
 			_dispatch("event|builtin package installed \"" + args[1] + "\"");
@@ -360,7 +362,7 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private void update(string[] args) {
 			var useGlobal = globalSpecified(ref args);
-			var installer = new Installer(_token, _dispatch, _locator());
+			var installer = new Installer(_token, _sourcePrioritization, _dispatch, _locator());
 			installer.UseGlobalProfiles(useGlobal);
 			installer.Update(args[1]);
 			_dispatch("event|builtin package updated \"" + args[1] + "\"");
@@ -386,7 +388,7 @@ namespace OpenIDE.Arguments.Handlers
 		
 		private void remove(string[] args) {
 			var source = args[1];
-			var installer = new Installer(_token, _dispatch, _locator());
+			var installer = new Installer(_token, _sourcePrioritization, _dispatch, _locator());
 			installer.Remove(source);
 			_dispatch("event|builtin package removed \"" + source + "\"");
 		}
@@ -402,7 +404,7 @@ namespace OpenIDE.Arguments.Handlers
 		}
 		
 		private void sourceCommands(string[] args) {
-			var locator = new SourceLocator(_token);
+			var locator = new SourceLocator(_token, _sourcePrioritization);
 			if (args.Length == 1) {
 				locator
 					.GetSources().ToList()

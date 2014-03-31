@@ -92,7 +92,7 @@ namespace OpenIDE.Bootstrapping
 
 					new EventListener(_settings.RootPath),
 
-					new PackageHandler(_settings.RootPath, dispatchMessage, PluginLocator),
+					new PackageHandler(_settings.RootPath, _settings.SourcePrioritization, dispatchMessage, PluginLocator),
 
 					new EnvironmentHandler(dispatchMessage, ICodeEngineLocator(), ILocateEditorEngine(), environment),
 					new ShutdownHandler(_settings.RootPath, dispatchMessage, environment),

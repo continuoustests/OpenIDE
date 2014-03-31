@@ -27,11 +27,11 @@ namespace OpenIDE.Core.Packaging
 		private PluginLocator _locator;
 		private PackageFetcher _packageFetcher;
 
-		public Installer(string token, Action<string> dispatch, PluginLocator locator) {
+		public Installer(string token, string[] sourcePrioritization, Action<string> dispatch, PluginLocator locator) {
 			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
-			_packageFetcher = new PackageFetcher(_token, _dispatch);
+			_packageFetcher = new PackageFetcher(_token, sourcePrioritization, _dispatch);
 		}
 
 		public void UseGlobalProfiles(bool useGlobal) {

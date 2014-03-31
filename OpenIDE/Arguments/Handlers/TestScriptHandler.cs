@@ -95,7 +95,6 @@ namespace OpenIDE.Arguments.Handlers
                     args += " ";
                 args += "\"" + arguments[i] + "\"";
             }
-            var output = new List<string>();
             var proc = new Process();
             try {
                 string[] errors;
