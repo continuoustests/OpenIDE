@@ -63,7 +63,7 @@ namespace OpenIDE.Bootstrapping
 		public IEnumerable<ICommandHandler> GetDefaultHandlers()
 		{
 			var handlers = new List<ICommandHandler>();
-			var configHandler = new ConfigurationHandler(PluginLocator(), EventDispatcher);
+			var configHandler = new ConfigurationHandler(_settings.RootPath, PluginLocator(), EventDispatcher);
 			var environment
 				= new EnvironmentService(
 					_settings.DefaultLanguage,

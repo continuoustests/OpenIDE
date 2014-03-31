@@ -3,6 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Definitions;
+using OpenIDE.Core.RScripts;
 using OpenIDE.Core.Config;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Profiles;
@@ -11,6 +14,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class ConfigurationHandler : ICommandHandler
 	{
+		private string _token;
 		private PluginLocator _pluginLocator;
 		private Action<string> _eventDispatcher;
 
@@ -41,7 +45,8 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "conf"; } }
 
-		public ConfigurationHandler(PluginLocator locator, Action<string> eventDispatcher) {
+		public ConfigurationHandler(string token, PluginLocator locator, Action<string> eventDispatcher) {
+			_token = token;
 			_pluginLocator = locator;
 			_eventDispatcher = eventDispatcher;
 		}
@@ -77,15 +82,42 @@ namespace OpenIDE.Arguments.Handlers
 
 		private void printConfigurationOptions(string path)
 		{
-			var file = new Configuration(path, true).ConfigurationFile;
+			//var file = new Configuration(path, true).ConfigurationFile;
 			var paths = new List<string>();
+			// Editor engine
 			paths.Add(
 				Path.Combine(
 					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 					"EditorEngine"));
-			paths.Add(Path.GetDirectoryName(file));
+			//paths.Add(Path.GetDirectoryName(file));
+			// Languages
 			foreach (var plugin in _pluginLocator.Locate())
 				paths.Add(plugin.GetPluginDir());
+			// Scripts
+			var definitions = 
+				Bootstrapper.GetDefinitionBuilder()
+					.Definitions
+					.Where(x => 
+						x.Type == DefinitionCacheItemType.Script ||
+						x.Type == DefinitionCacheItemType.LanguageScript);
+			foreach (var script in definitions) {
+				var dir = Path.GetDirectoryName(script.Location);
+				var name = Path.GetFileNameWithoutExtension(script.Location);
+				paths.Add(Path.Combine(dir, name + "-files"));
+			}
+			// Reactive scripts
+			var rscripts = 
+				new ReactiveScriptReader(
+					_token,
+					() => _pluginLocator,
+					(m) => {})
+					.Read();	
+			foreach (var rscript in rscripts) {
+				var dir = Path.GetDirectoryName(rscript.File);
+				var name = Path.GetFileNameWithoutExtension(rscript.File);
+				paths.Add(Path.Combine(dir, name + "-files"));
+			}
+
 			var reader = new ConfigOptionsReader(paths.ToArray());
 			reader.Parse();
 			foreach (var line in reader.Options.OrderBy(x => x))

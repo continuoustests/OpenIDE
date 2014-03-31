@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.Core.Config
 {
@@ -23,6 +24,9 @@ namespace OpenIDE.Core.Config
 			addOption("interpreter.FILE-EXTENSION=PATH", "Setup interpreters for handling scripts");
 			addOption("oi.logpath", "Enables and specifies where to place logs");
 			foreach (var path in _paths) {
+				if (!Directory.Exists(path))
+					continue;
+				Logger.Write("Checking for .oicfgoptions in " + path);
 				var files = Directory.GetFiles(path, "*.oicfgoptions");
 				foreach (var file in files) {
 					var lines = File.ReadAllLines(file);
