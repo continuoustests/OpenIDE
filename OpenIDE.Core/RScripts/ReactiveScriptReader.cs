@@ -65,8 +65,13 @@ namespace OpenIDE.Core.RScripts
 
 		public ReactiveScript ReadScript(string path)
 		{
+			return ReadScript(path, false);
+		}
+
+		public ReactiveScript ReadScript(string path, bool dispatchErrors)
+		{
             try {
-			    var script = new ReactiveScript(path, _keyPath, _dispatch);
+			    var script = new ReactiveScript(path, _keyPath, _dispatch, dispatchErrors);
 			    if (script.IsFaulted)
 			    	return null;
 			    return script;

@@ -65,7 +65,8 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 				_scripts.RemoveAll(x => x.File.Equals(path));
 				return;
 			}
-			var script = _reader.ReadScript(path);
+			// Read script and dispatch errors
+			var script = _reader.ReadScript(path, true);
 			if (script == null) {
                 Logger.Write("No rscript found. Exiting");
 				return;

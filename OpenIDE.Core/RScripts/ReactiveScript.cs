@@ -17,6 +17,7 @@ namespace OpenIDE.Core.RScripts
 		private string _name;
 		private string _file;
 		private string _keyPath;
+		private bool _dispatchErrors = false;
 		private List<string> _events = new List<string>();
 		private string _localProfileName;
 		private string _globalProfileName;
@@ -36,9 +37,20 @@ namespace OpenIDE.Core.RScripts
 
 		public ReactiveScript(string file, string keyPath, Action<string> dispatch)
 		{
+			construct(file, keyPath, dispatch, false);
+		}
+
+		public ReactiveScript(string file, string keyPath, Action<string> dispatch, bool dispatchErrors)
+		{
+			construct(file, keyPath, dispatch, dispatchErrors);
+		}
+
+		private void construct(string file, string keyPath, Action<string> dispatch, bool dispatchErrors)
+		{
 			_file = file;
 			_keyPath = keyPath;
 			_dispatch = dispatch;
+			_dispatchErrors = dispatchErrors;
 			var profiles = new ProfileLocator(_keyPath);
 			_globalProfileName = profiles.GetActiveGlobalProfile();
 			_localProfileName = profiles.GetActiveLocalProfile();
@@ -91,16 +103,17 @@ namespace OpenIDE.Core.RScripts
 	            			var cmdText = "command|";
 	            			var eventText = "event|";
 	            			if (error) {
-	            				_dispatch("rscript-" + Name + " error|" + m);
+	            				if (_dispatchErrors)
+	            					internalDispatch("rscript-" + Name + " error|" + m);
 	            				Logger.Write("rscript-" + Name + " produced an error:");
 	            				Logger.Write("rscript-" + Name + "-" + m);
 	            			} else {
 	            				if (m.StartsWith(cmdText))
-	            					_dispatch(m.Substring(cmdText.Length, m.Length - cmdText.Length));
+	            					internalDispatch(m.Substring(cmdText.Length, m.Length - cmdText.Length));
 	            				else if (m.StartsWith(eventText))
-	            					_dispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
+	            					internalDispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
 	            				else
-	            					_dispatch("rscript-" + Name + " " + m);
+	            					internalDispatch("rscript-" + Name + " " + m);
 	            			}
 	            		},
 	            		new[] {
@@ -111,7 +124,7 @@ namespace OpenIDE.Core.RScripts
 	            }
 				catch (Exception ex)
 				{
-					_dispatch("rscript-" + Name + " " + ex.ToString());
+					internalDispatch("rscript-" + Name + " " + ex.ToString());
 					Logger.Write(ex.ToString());
 				}
 			}, message);
@@ -131,7 +144,8 @@ namespace OpenIDE.Core.RScripts
 						(error, m) => {
 							if (error) {
 								_isFaulted = true;
-		            			_dispatch("rscript-" + Name + " error|" + m);
+								if (_dispatchErrors)
+		            				internalDispatch("rscript-" + Name + " error|" + m);
 								Logger.Write(
 									"Failed running reactive script with reactive-script-reacts-to: " +
 									_file);
@@ -146,7 +160,7 @@ namespace OpenIDE.Core.RScripts
 						});
 			} catch (Exception ex) {
 				_isFaulted = true;
-				_dispatch("rscript-" + Name + " error|Could not read reacts to information");
+				internalDispatch("rscript-" + Name + " error|Could not read reacts to information");
 				Logger.Write(ex);
 			}
 		}
@@ -154,6 +168,14 @@ namespace OpenIDE.Core.RScripts
 		private bool wildcardmatch(string str, string pattern)
 		{
             return new RScriptMatcher(pattern).Match(str);
+		}
+
+		private void internalDispatch(string message)
+		{
+			// Do this in a separate thread so we don't get deadlocks on _scripts
+			ThreadPool.QueueUserWorkItem((m) => {
+				_dispatch(m.ToString());
+			}, message);
 		}
 	}
 
