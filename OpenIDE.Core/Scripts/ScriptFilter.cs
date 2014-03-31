@@ -19,25 +19,32 @@ namespace OpenIDE.Core.Scripts
 
 		public IEnumerable<string> FilterScripts(IEnumerable<string> scripts)
 		{
-			return 	scripts
-				.Where(x => {
-					if (Path.GetExtension(x).ToLower() == ".swp")
-						return false;
-					if (Path.GetExtension(x).ToLower() == ".swo")
-						return false;
-					if (Environment.OSVersion.Platform == PlatformID.Unix ||
-						Environment.OSVersion.Platform == PlatformID.MacOSX)
-					{
-						if (Path.GetExtension(x).ToLower() == ".bat")
-							return false;
-					}
-					else
-					{
-						if (Path.GetExtension(x).ToLower() == ".sh")
-							return false;
-					}
-					return true;
-				});
+			return 	scripts.Where(x => IsValid(x));
 		}
+
+        public bool IsValid(string filepath)
+        {
+            var x = filepath;
+            if (Path.GetFileName(x).StartsWith("."))
+                return false;
+            if (Path.GetExtension(x).ToLower() == ".swp")
+                return false;
+            if (Path.GetExtension(x).EndsWith("~"))
+                return false;
+            if (Path.GetExtension(x).ToLower() == ".swo")
+                return false;
+            if (Environment.OSVersion.Platform == PlatformID.Unix ||
+                Environment.OSVersion.Platform == PlatformID.MacOSX)
+            {
+                if (Path.GetExtension(x).ToLower() == ".bat")
+                    return false;
+            }
+            else
+            {
+                if (Path.GetExtension(x).ToLower() == ".sh")
+                    return false;
+            }
+            return true;
+        }
 	}
 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using OpenIDE.Core.Scripts;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.RScripts;
 using OpenIDE.Core.Language;
@@ -60,6 +61,8 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 
 		private void handleScriptTouched(string message, ScriptTouchEvents type) {
 			var path = _touchHandler.GetPath(message);
+            if (new ScriptFilter().IsValid(path) == false)
+                return;
 			if (type == ScriptTouchEvents.Removed) {
                 Logger.Write("Removing touched rscript");
 				_scripts.RemoveAll(x => x.File.Equals(path));
