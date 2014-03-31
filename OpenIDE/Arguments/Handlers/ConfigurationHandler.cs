@@ -75,21 +75,19 @@ namespace OpenIDE.Arguments.Handlers
 			Console.WriteLine("Configuration for: " + path);
 			Console.WriteLine();
 			var reader = new ConfigReader(path);
-			foreach (var key in reader.GetKeys()) {
+			foreach (var key in reader.GetKeys().OrderBy(x => x)) {
 				Console.WriteLine("\t{0}={1}", key, reader.Get(key));
 			}
 		}
 
 		private void printConfigurationOptions(string path)
 		{
-			//var file = new Configuration(path, true).ConfigurationFile;
 			var paths = new List<string>();
 			// Editor engine
 			paths.Add(
 				Path.Combine(
 					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
 					"EditorEngine"));
-			//paths.Add(Path.GetDirectoryName(file));
 			// Languages
 			foreach (var plugin in _pluginLocator.Locate())
 				paths.Add(plugin.GetPluginDir());
@@ -191,7 +189,7 @@ namespace OpenIDE.Arguments.Handlers
 			if (pattern == null) {
 				Console.WriteLine("Configuration file: {0}", file);
 				Console.WriteLine("");
-				File.ReadAllLines(file).ToList()
+				File.ReadAllLines(file).OrderBy(x => x).ToList()
 					.ForEach(x => {
 							Console.WriteLine("\t" + x);
 						});
@@ -214,7 +212,7 @@ namespace OpenIDE.Arguments.Handlers
 				pattern = pattern.Substring(0, pattern.Length - 1);
 			}
 			if (wildcard) {
-				foreach (var item in new ConfigReader(Path.GetDirectoryName(file)).GetStartingWith(pattern)) {
+				foreach (var item in new ConfigReader(Path.GetDirectoryName(file)).GetStartingWith(pattern).OrderBy(x => x.Key)) {
 					Console.WriteLine("{0}={1}", item.Key, item.Value);
 				}
 			} else {
