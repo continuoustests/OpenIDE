@@ -108,9 +108,10 @@ namespace OpenIDE.Core.RScripts
 	            				Logger.Write("rscript-" + Name + " produced an error:");
 	            				Logger.Write("rscript-" + Name + "-" + m);
 	            			} else {
-	            				if (m.StartsWith(cmdText))
-	            					internalDispatch(m.Substring(cmdText.Length, m.Length - cmdText.Length));
-	            				else if (m.StartsWith(eventText))
+	            				if (m.StartsWith(cmdText)) {
+	            					if (_dispatchErrors)
+	            						internalDispatch("rscript-" + Name + " error|Dispatching commands directly from a rscript is not supported");
+	            				} else if (m.StartsWith(eventText))
 	            					internalDispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
 	            				else
 	            					internalDispatch("rscript-" + Name + " " + m);
