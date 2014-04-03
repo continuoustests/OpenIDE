@@ -106,6 +106,28 @@ namespace OpenIDE.Core.Tests.Language
 			Assert.That(cmd.Length, Is.EqualTo(7));
 		}
 
+
+		[Test]
+		public void Can_parse_overridden_items()
+		{
+			var cmd = parse("[[create]]|\"\" [[subitem]]|\"\" thisone|\"this one\" end  end end ").ToArray();
+
+			Assert.That(cmd.Length, Is.EqualTo(1));
+			Assert.That(cmd[0].Name, Is.EqualTo("create"));
+			Assert.True(cmd[0].Override);
+			Assert.That(cmd[0].Description, Is.EqualTo(""));
+
+			var subItem = cmd[0].Parameters.ToArray();
+			Assert.That(subItem[0].Name, Is.EqualTo("subitem"));
+			Assert.True(subItem[0].Override);
+			Assert.That(subItem[0].Description, Is.EqualTo(""));
+
+			var lastOne = subItem[0].Parameters.ToArray();
+			Assert.That(lastOne[0].Name, Is.EqualTo("thisone"));
+			Assert.False(lastOne[0].Override);
+			Assert.That(lastOne[0].Description, Is.EqualTo("this one"));
+		}
+
 		private BaseCommandHandlerParameter[] parse(string usage)
 		{
 			return new UsageParser(usage).Parse();

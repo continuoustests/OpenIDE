@@ -82,7 +82,6 @@ namespace OpenIDE.Core.Config
 			if (!File.Exists(ConfigurationFile))
 				return null;
 
-			ConfigurationSetting cfgSetting = null;
 			foreach (var rawLine in File.ReadAllLines(ConfigurationFile)) {
 				var line = rawLine.Trim(new[] { ' ', '\t' });
 				keys.Add(getTag(line));

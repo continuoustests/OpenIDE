@@ -38,9 +38,8 @@ namespace OpenIDE.Core.Tests.Config
 			_config.Write("default.language=C#");
 			_config.Delete("enabled.languages=C#");
 			var configs = _config.GetKeys();
-			Assert.That(2, Is.EqualTo(configs.Length));
+			Assert.That(1, Is.EqualTo(configs.Length));
 			Assert.That("default.language", Is.EqualTo(configs[0]));
-			Assert.That("enabled.languages", Is.EqualTo(configs[1]));
 		}
 
 		[Test]

@@ -79,10 +79,27 @@ namespace OpenIDE.Core.Definitions
 			mergeBuiltInCommands(profiles);
 			// Reverse paths to handle global first then local
 			var paths = profiles.GetPathsCurrentProfiles().Reverse().ToArray();
-			//for (int i = paths.Length - 1; i >= 0; i--)
-			//	mergeExternalCommands(paths[i]);
 			foreach (var path in paths)
 				mergeExternalCommands(path);
+
+			// Add default language
+			if (_defaultLanguage != null) {
+				var parameters = _cache.Get(new[] { _defaultLanguage }).Parameters;
+				foreach (var usage in parameters) {
+					// Don't override existing commands with default language
+					if (_cache.Get(new[] { usage.Name }) == null) {
+						var item = _cache.Add(
+							usage.Type,
+							usage.Location,
+							DateTime.Now,
+							false,
+							true,
+							usage.Name,
+							usage.Description);
+						add(_cache, item, usage.Parameters);
+					}
+				}
+			}
 		}
 
 		private void mergeBuiltInCommands(ProfileLocator profiles) {
@@ -195,9 +212,6 @@ namespace OpenIDE.Core.Definitions
 						script.Description);
 					add(cache, scriptItem, usages);
 				}
-
-				if (language.GetLanguage() == _defaultLanguage)
-					defaultLanguage = language;
 			}
 
 			// Add scripts
@@ -219,24 +233,6 @@ namespace OpenIDE.Core.Definitions
 				add(cache, item, usages);
 			}
 
-			// Add default language
-			if (defaultLanguage != null) {
-				var parameters = cache.Get(new[] { defaultLanguage.GetLanguage() }).Parameters;
-				foreach (var usage in parameters) {
-					// Don't override existing commands with default language
-					if (cache.Get(new[] { usage.Name }) == null) {
-						var item = cache.Add(
-							usage.Type,
-							usage.Location,
-							DateTime.Now,
-							false,
-							true,
-							usage.Name,
-							usage.Description);
-						add(cache, item, usage.Parameters);
-					}
-				}
-			}
 			writeCache(dir, cache);
 			return cache;
 		}

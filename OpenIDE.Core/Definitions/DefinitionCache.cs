@@ -133,23 +133,21 @@ namespace OpenIDE.Core.Definitions
 			var existing = _definitions.FirstOrDefault(x => x.Name == item.Name);
 			if (existing == null)
 				return;
-			if (overrideItem(existing.Parameters[0], item.Parameters[0]))
-				existing.OverrideItem(item.Parameters[0]);
+			overrideItem(existing, item);
 		}
 
-		private bool overrideItem(DefinitionCacheItem existing, DefinitionCacheItem item) {
-			if (!item.Override)
-				return true;
-			
+		private void overrideItem(DefinitionCacheItem existing, DefinitionCacheItem item) {
 			if (item.Parameters.Length == 0)
-				return false;
+				return;
 			var childItem = item.Parameters[0];
+			if (!childItem.Override) {
+				existing.OverrideItem(childItem);
+				return;
+			}
 			var child = existing.Parameters.FirstOrDefault(x => x.Name == childItem.Name);
 			if (child == null)
-				return false;
-			if (overrideItem(child, childItem))
-				existing.OverrideItem(childItem);
-			return false;
+				return;
+			overrideItem(child, childItem);
 		}
 
 		private DefinitionCacheItem parameterAppender(List<DefinitionCacheItem> parameters, DefinitionCacheItem parameterToAdd) {
@@ -242,6 +240,7 @@ namespace OpenIDE.Core.Definitions
 							Location = location,
 							Updated = updated, 
 							Required = required,
+							Override = ovrride,
 							Name = name,
 							Description = description
 						});
