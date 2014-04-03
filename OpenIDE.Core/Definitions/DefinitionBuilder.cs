@@ -88,15 +88,7 @@ namespace OpenIDE.Core.Definitions
 				foreach (var usage in parameters) {
 					// Don't override existing commands with default language
 					if (_cache.Get(new[] { usage.Name }) == null) {
-						var item = _cache.Add(
-							usage.Type,
-							usage.Location,
-							DateTime.Now,
-							false,
-							true,
-							usage.Name,
-							usage.Description);
-						add(_cache, item, usage.Parameters);
+						_cache.Add(usage);
 					}
 				}
 			}

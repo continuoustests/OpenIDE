@@ -20,6 +20,9 @@ namespace OpenIDE.Core.Definitions
 		public DefinitionCacheItem Add(DefinitionCacheItemType type, string location, DateTime updated, bool ovrride, bool required, string name, string description) {
 			return add(type, location, updated, ovrride, required, name, description);
 		}
+		public void Add(DefinitionCacheItem item) {
+			_definitions.Add(item);
+		}
 
 		public DefinitionCacheItem Get(string[] args) {
 			return get(args, 0, _definitions, null);
