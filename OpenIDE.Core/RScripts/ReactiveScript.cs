@@ -89,6 +89,14 @@ namespace OpenIDE.Core.RScripts
             ThreadPool.QueueUserWorkItem((task) => {
 	            try
 	            {
+	            	OpenIDE.Core.EditorEngineIntegration.Instance editorClient = null;
+	            	Func<OpenIDE.Core.EditorEngineIntegration.Instance> editorFactory = () => {
+	            		if (editorClient == null) {
+	            			var locator = new OpenIDE.Core.EditorEngineIntegration.EngineLocator(new OpenIDE.Core.FileSystem.FS());
+	            			editorClient = locator.GetInstance(_keyPath);
+	            		}
+	            		return editorClient;
+	            	};
 					var process = new Process();
 					process.SetLogger((logMsg) => Logger.Write(logMsg));
 	            	var msg = task.ToString();
@@ -102,6 +110,7 @@ namespace OpenIDE.Core.RScripts
 	            				return;
 	            			var cmdText = "command|";
 	            			var eventText = "event|";
+	            			var editorRequest = "request-editor|";
 	            			if (error) {
 	            				if (_dispatchErrors)
 	            					internalDispatch("rscript-" + Name + " error|" + m);
@@ -111,10 +120,27 @@ namespace OpenIDE.Core.RScripts
 	            				if (m.StartsWith(cmdText)) {
 	            					if (_dispatchErrors)
 	            						internalDispatch("rscript-" + Name + " error|Dispatching commands directly from a rscript is not supported");
-	            				} else if (m.StartsWith(eventText))
+	            				} else if (m.StartsWith(eventText)) {
 	            					internalDispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
-	            				else
+	            				} else if (m.StartsWith(editorRequest)) {
+	            					var editor = editorFactory();
+	            					if (editor == null)
+	            						return;
+	            					Func<string> request = null;
+	            					var editorCommand = m.Substring(editorRequest.Length, m.Length - editorRequest.Length);
+	            					if (editorCommand.StartsWith("get-dirty-files"))
+	            						request = () => editor.GetDirtyFiles(editorCommand.Replace("get-dirty-files", "").Trim());
+	            					else if (editorCommand == "get-caret")
+	            						request = () => editor.GetCaret();
+
+	            					if (request != null) {
+	            						var content = request();
+	            						process.Write(content);
+            							process.Write("end-of-conversation");
+	            					}
+	            				} else {
 	            					internalDispatch("rscript-" + Name + " " + m);
+	            				}
 	            			}
 	            		},
 	            		new[] {
