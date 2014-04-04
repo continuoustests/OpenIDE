@@ -47,6 +47,7 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("get-dirty-files", "Queries the editor for all modified files and their content")
 					.Add("[FILE]", "If passed it will only respond with the file specified");
 				usage.Add("command", "Custom editor commands");
+				usage.Add("get-caret", "Gets the caret from editor");
 				return usage;
 			}
 		}
@@ -108,6 +109,10 @@ namespace OpenIDE.Arguments.Handlers
 				if (arguments.Length > 1)
 					file = arguments[1];
 				Console.WriteLine(instance.GetDirtyFiles(file));
+			}
+			else if (arguments[0] == "get-caret")
+			{
+				Console.WriteLine(instance.GetCaret());
 			}
 			else
 			{

@@ -168,6 +168,10 @@ namespace OpenIDE.Core.Packaging.Tests
 				package.Write(),
 				Is.EqualTo(
 					"{" + NL +
+					"\t\"os\":" + NL +
+					"\t\t[" + NL +
+					"\t\t\t\"linux\"" + NL +
+					"\t\t]," + NL +
 					"\t\"target\": \"language\"," + NL +
 					"\t\"id\": \"MyPackage\"," + NL +
 					"\t\"version\": \"v1.1\"," + NL +
