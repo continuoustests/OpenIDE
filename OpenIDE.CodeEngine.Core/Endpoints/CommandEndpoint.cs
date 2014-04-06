@@ -26,6 +26,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		
 		public bool IsAlive { get { return _editor.IsConnected; } }
 		public Editor Editor { get { return _editor; } }
+		public string Token { get { return _keyPath; } }
 		
 		public CommandEndpoint(string editorKey, ITypeCache cache, EventEndpoint eventEndpoint)
 		{
@@ -64,6 +65,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
+			Logger.Write("Handling incoming message: " + command.Message);
 			_eventEndpoint.Send(command.Message);
 			ThreadPool.QueueUserWorkItem((cmd) =>
 				{
@@ -75,6 +77,11 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void AddHandler(Action<MessageArgs,ITypeCache,Editor> handler)
 		{
 			_handlers.Add(handler);
+		}
+
+		public void PublishEvent(string body)
+		{
+			_eventEndpoint.Send(body);
 		}
 		
 		public void Send(string message)

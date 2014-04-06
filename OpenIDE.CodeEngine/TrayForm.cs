@@ -12,6 +12,7 @@ using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Handlers;
 using OpenIDE.CodeEngine.Core.UI;
+using OpenIDE.Core.Config;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Windowing;
 using OpenIDE.Core.Logging;
@@ -34,9 +35,9 @@ namespace OpenIDE.CodeEngine
 			_cacheBuilder = builder;
             _ctx = SynchronizationContext.Current;
 			_defaultLanguage = defaultLanguage;
+            setupForm();
             new Thread(startEngine).Start();
 			setupTray();
-			setupForm();
         }
 
 		// Hide from alt+tab list
@@ -69,6 +70,7 @@ namespace OpenIDE.CodeEngine
 
 		private void setupForm()
 		{
+            WindowState = FormWindowState.Minimized;
 			Height = 0;
 			Width = 0;
 			ShowInTaskbar = false;
@@ -109,6 +111,8 @@ namespace OpenIDE.CodeEngine
 				snippetCreate(message, editor);
 			if (message.Message.StartsWith("member-lookup "))
 				memberLookup(message, editor);
+            if (message.Message.StartsWith("user-select \"unsupported\" "))
+                userSelect(message, editor);
 			if (message.Message == "shutdown")
 				_terminateApplication = true;
         }
@@ -196,6 +200,27 @@ namespace OpenIDE.CodeEngine
                     setToForeground(_memberLookup);
 				}, null);
 		}
+
+        private void userSelect(MessageArgs message, Editor editor)
+        {
+            var state = new ConfigReader(_endpoint.Token).Get("oi.userselect.ui.fallback");
+            if (state == "disabled")
+                return;
+            _ctx.Post((s) =>
+                {
+                    try {
+                        var args = new CommandStringParser().Parse(message.Message).ToArray();
+                        var form = new UserSelectForm(args[3].Split(new[] {','}), (item) => {
+                            if (item != null)
+                                _endpoint.PublishEvent("user-selected \"" + args[2] + "\" \""  + item + "\"");
+                            editor.SetFocus();
+                        });
+                        form.Show(this);
+                        setToForeground(form);
+                    } catch {
+                    }
+                }, null);
+        }
 
         private void OnExit(object sender, EventArgs e)
         {

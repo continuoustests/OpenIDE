@@ -108,7 +108,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 					_cache.Invalidate(x.Path);
 					handle(x);
 				});
-			_plugins.ForEach(x => x.Handle(cacheHandler));
+			foreach (var plugin in _plugins)
+				plugin.Handle(cacheHandler);
 		}
 		
 		private List<Change> getChanges(Stack<Change> buffer)

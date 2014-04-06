@@ -6,6 +6,7 @@ namespace OpenIDE.Core.Caching
 	public class CrawlHandler
 	{
 		private string _language;
+		private bool _addAllToTypeSearch = false;
 		private string _currentProject = null;
 		private string _currentFile = null;
 		private Action<string> _logWrite;
@@ -21,6 +22,10 @@ namespace OpenIDE.Core.Caching
 		public void SetLanguage(string language)
 		{
 			_language = language;
+		}
+
+		public void TypeSearchAllTheThings() {
+			_addAllToTypeSearch = true;
 		}
 
 		public void Handle(string command)
@@ -82,7 +87,7 @@ namespace OpenIDE.Core.Caching
                 chunks[8]);
 
 			var args = getArguments(chunks, 9);
-			if (args.Contains("typesearch"))
+			if (_addAllToTypeSearch || args.Contains("typesearch"))
 				reference.SetTypeSearch();
 
 			_builder.Add(reference);

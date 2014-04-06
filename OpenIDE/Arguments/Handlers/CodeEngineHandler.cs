@@ -47,10 +47,18 @@ namespace OpenIDE.Arguments.Handlers
 			var result = instance.FindTypes(search);
 			var searchResult = new SearchResult();
 			var handler = new CrawlHandler(searchResult, (s) => {});
+			handler.TypeSearchAllTheThings();
 			result
 				.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
 				.ToList()
-				.ForEach(x => handler.Handle(x));
+				.ForEach(x => {
+					var line = x;
+					var signatureStart = line.IndexOf("|signature|");
+					if (signatureStart > 0) {
+						line = line.Substring(signatureStart + 1, line.Length - (signatureStart + 1));
+					}
+					handler.Handle(line);
+				});
 			for (int i = 0; i < searchResult.Signatures.Count; i++)
 				Console.WriteLine("{0} - {1}",
 					i + 1,

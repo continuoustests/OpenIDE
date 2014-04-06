@@ -31,7 +31,6 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		private static EventEndpoint _eventEndpoint;
 		private static TypeCache _cache;
         private static PluginLocator _pluginLocator;
-        private static CrawlHandler _crawlHandler;
 		private static Interpreters _interpreters;
 
 		public static CommandEndpoint GetEndpoint(string path, string[] enabledLanguages)
@@ -45,12 +44,11 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 						return interpreters;
 					};
             _cache = new TypeCache();
-			_crawlHandler = new CrawlHandler(_cache, (s) => Logger.Write(s));
 			_pluginLocator = new PluginLocator(
 				enabledLanguages,
 				new ProfileLocator(_path),
 				(msg) => {});
-			initPlugins(_pluginLocator, _crawlHandler);
+			initPlugins(_pluginLocator);
 
 			_eventEndpoint = new EventEndpoint(_path, _pluginLocator);
 			_eventEndpoint.Start();
@@ -95,7 +93,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 
 		public static void Shutdown()
 		{
-            shutdownPlugins(_pluginLocator, _crawlHandler);
+            shutdownPlugins(_pluginLocator);
 			_tracker.Dispose();
 			_eventEndpoint.Stop();
 		}
@@ -108,7 +106,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 				.ForEach(x => x.Handle(message.ClientID, msg));
 		}
 
-        private static void shutdownPlugins(PluginLocator locator, CrawlHandler handler)
+        private static void shutdownPlugins(PluginLocator locator)
 		{
 			try {
 				var plugins = locator.Locate();
@@ -124,18 +122,19 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			}
 		}
 		
-		private static void initPlugins(PluginLocator locator, CrawlHandler handler)
+		private static void initPlugins(PluginLocator locator)
 		{
 			var plugins = locator.Locate();
 			foreach (var plugin in plugins) {
 				try {
-					handler.SetLanguage(plugin.GetLanguage());
                     plugin.Initialize(_path);
                     plugin.GetCrawlFileTypes();
                     ThreadPool.QueueUserWorkItem(
                     	(o) => {
                     		try {
                     			var currentPlugin = (LanguagePlugin)o;
+								var handler = new CrawlHandler(_cache, (s) => Logger.Write(s));
+                    			handler.SetLanguage(currentPlugin.GetLanguage());
 								currentPlugin.Crawl(new string[] { _path }, (line) => handler.Handle(line));
 							} catch (Exception ex) {
 								Logger.Write(ex.ToString());

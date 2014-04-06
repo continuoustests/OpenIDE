@@ -115,6 +115,7 @@
     <Compile Include="Packaging\PackageFetcher.cs" />
     <Compile Include="Environments\EnvironmentService.cs" />
     <Compile Include="OperatingSystems\OS.cs" />
+    <Compile Include="Requests\RequestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

@@ -8,6 +8,7 @@ using System.Threading;
 using CoreExtensions;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.Profiles;
+using OpenIDE.Core.Requests;
 
 namespace OpenIDE.Core.RScripts
 {
@@ -89,6 +90,7 @@ namespace OpenIDE.Core.RScripts
             ThreadPool.QueueUserWorkItem((task) => {
 	            try
 	            {
+	            	var requestRunner = new RequestRunner(_keyPath);
 	            	OpenIDE.Core.EditorEngineIntegration.Instance editorClient = null;
 	            	Func<OpenIDE.Core.EditorEngineIntegration.Instance> editorFactory = () => {
 	            		if (editorClient == null) {
@@ -108,9 +110,9 @@ namespace OpenIDE.Core.RScripts
 	            		(error, m) => {
 	            			if (m == null)
 	            				return;
+	            			Logger.Write("request doing " + m);
 	            			var cmdText = "command|";
 	            			var eventText = "event|";
-	            			var editorRequest = "request-editor|";
 	            			if (error) {
 	            				if (_dispatchErrors)
 	            					internalDispatch("rscript-" + Name + " error|" + m);
@@ -118,26 +120,22 @@ namespace OpenIDE.Core.RScripts
 	            				Logger.Write("rscript-" + Name + "-" + m);
 	            			} else {
 	            				if (m.StartsWith(cmdText)) {
-	            					if (_dispatchErrors)
-	            						internalDispatch("rscript-" + Name + " error|Dispatching commands directly from a rscript is not supported");
+	            					var toDispatch = m.Substring(cmdText.Length, m.Length - cmdText.Length);
+	            					var args = toDispatch.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+	            					if (args.Length > 1 && args[0] == "editor") {
+	            						var editor = editorFactory();
+		            					if (editor == null)
+		            						return;
+		            					editor.Send(toDispatch.Substring(6, toDispatch.Length - 7).Trim());
+	            					} else {
+	            						internalDispatch(toDispatch);
+	            					}
 	            				} else if (m.StartsWith(eventText)) {
 	            					internalDispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
-	            				} else if (m.StartsWith(editorRequest)) {
-	            					var editor = editorFactory();
-	            					if (editor == null)
-	            						return;
-	            					Func<string> request = null;
-	            					var editorCommand = m.Substring(editorRequest.Length, m.Length - editorRequest.Length);
-	            					if (editorCommand.StartsWith("get-dirty-files"))
-	            						request = () => editor.GetDirtyFiles(editorCommand.Replace("get-dirty-files", "").Trim());
-	            					else if (editorCommand == "get-caret")
-	            						request = () => editor.GetCaret();
-
-	            					if (request != null) {
-	            						var content = request();
+	            				} else if (requestRunner.IsRequest(m)) {
+	            					var response = requestRunner.Request(m);
+	            					foreach (var content in response)
 	            						process.Write(content);
-            							process.Write("end-of-conversation");
-	            					}
 	            				} else {
 	            					internalDispatch("rscript-" + Name + " " + m);
 	            				}

@@ -53,6 +53,11 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			client.Disconnect();
 			return reply;
 		}
+
+		public void Send(string command)
+		{
+			send(command);
+		}
 		
 		public void GoTo(string file, int line, int column)
 		{
@@ -68,8 +73,10 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		{
 			var client = _clientFactory.Invoke();
 			client.Connect(Port, (s) => {});
-			if (!client.IsConnected)
+			if (!client.IsConnected) {
+				Logger.Write("Editor is not connected.");
 				return "";
+			}
 			var query = "get-dirty-files";
 			if (file != null)
 				query += " " + file;
@@ -82,8 +89,10 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		{
 			var client = _clientFactory.Invoke();
 			client.Connect(Port, (s) => {});
-			if (!client.IsConnected)
+			if (!client.IsConnected) {
+				Logger.Write("Editor is not connected.");
 				return "";
+			}
 			var query = "get-caret";
 			var reply = client.Request(query);
 			client.Disconnect();

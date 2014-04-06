@@ -150,6 +150,9 @@ namespace OpenIDE.Core.EditorEngineIntegration
 					break;
                 Thread.Sleep(10);
 			}
+            if (DateTime.Now.Subtract(timeout).TotalMilliseconds >= 8000) {
+                Logger.Write("Timed out while waiting for response to " + messageToSend);
+            }
 			_messageReceived -= msgHandler;
 			return recieved;
 		}

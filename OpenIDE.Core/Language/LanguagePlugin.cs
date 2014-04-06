@@ -98,11 +98,7 @@ namespace OpenIDE.Core.Language
 		public string GetCrawlFileTypes()
 		{
 			if (_crawlFileTypes == null) {
-				// Go figure, one of those cross platform quirks I guess
-				//if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
-				//	_crawlFileTypes = ToSingleLine("crawl-file-types", new Process());
-				//else
-					_crawlFileTypes = ToSingleLine("crawl-file-types");
+				_crawlFileTypes = ToSingleLine("crawl-file-types");
 			}
 			return _crawlFileTypes;
 		}

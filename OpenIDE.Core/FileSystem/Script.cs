@@ -2,11 +2,13 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Logging;
+using OpenIDE.Core.Requests;
 using CoreExtensions;
 
 namespace OpenIDE.Core.FileSystem
@@ -45,15 +47,29 @@ namespace OpenIDE.Core.FileSystem
 
 		public void Run(string arguments, Action<string> onLine)
 		{
+			var process = new Process();
 			Logger.Write("Running script {0} with {1}", _file, arguments);
 			arguments = "{global-profile} {local-profile} " + arguments;
 			var commandLine = run(
 				arguments,
-				onLine,
+				(m) => {
+					var requestRunner = new RequestRunner(_token);
+					if (requestRunner.IsRequest(m)) {
+						ThreadPool.QueueUserWorkItem((msg) => {
+							var response = requestRunner.Request(msg.ToString());
+	    					foreach (var content in response)
+	    						process.Write(content);
+	    				},
+	    				m);
+					} else {
+						onLine(m);
+					}
+				},
 				new[] {
 						new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
 						new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
-					});
+				},
+				process);
 			onLine("event|builtin command ran " + commandLine);
 			Logger.Write("Running script completed {0}", _file);
 		}
@@ -96,12 +112,19 @@ namespace OpenIDE.Core.FileSystem
 		private string run(string arguments, Action<string> onLine,
 						 IEnumerable<KeyValuePair<string,string>> replacements)
 		{
+			return run(arguments, onLine, replacements, null);
+		}
+		private string run(string arguments, Action<string> onLine,
+						 IEnumerable<KeyValuePair<string,string>> replacements,
+						 Process proc)
+		{
 			var cmd = _file;
 			var finalReplacements = new List<KeyValuePair<string,string>>();
 			finalReplacements.Add(new KeyValuePair<string,string>("{run-location}", "\"" + _workingDirectory + "\""));
 			finalReplacements.AddRange(replacements);
             arguments = "{run-location} " + arguments;
-			var proc = new Process();
+            if (proc == null)
+				proc = new Process();
 			_writer = (msg) => { 
 				try {
 					Logger.Write("Writing to the process " + msg);
