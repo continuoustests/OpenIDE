@@ -37,7 +37,7 @@ namespace OpenIDE.Arguments.Handlers
 						.Add("cat", "Prints the script to the terminal")
 							.Add("SCRIPT-NAME", "Script name with optional file extension.");
 					usage
-						.Add("test", "Continuously tests the specified script when saved")
+						.Add("repl", "Continuously tests the specified script when saved")
                         	.Add("SCRIPT-NAME", "Script name")
                             	.Add("PARAMS", "Either script arguments or full command like: oi help mycommand");
 				return usage;

@@ -37,9 +37,9 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
 
 				usage
-					.Add("test", "Continuously tests the specified script")
-					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global")
-					.Add("EVENT", "Event to test the script with");
+					.Add("repl", "Continuously tests the specified script")
+						.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global")
+							.Add("EVENT", "Event to test the script with");
 				return usage;
 			}
 		}

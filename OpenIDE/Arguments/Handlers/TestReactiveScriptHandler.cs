@@ -29,7 +29,7 @@ namespace OpenIDE.Arguments.Handlers
             }
         }
 
-        public string Command { get { return "test"; } }
+        public string Command { get { return "repl"; } }
 
         public TestReactiveScriptHandler(Action<string> dispatch, Func<PluginLocator> locator, string token)
         {

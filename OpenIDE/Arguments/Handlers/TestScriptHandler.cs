@@ -32,7 +32,7 @@ namespace OpenIDE.Arguments.Handlers
             }
         }
 
-        public string Command { get { return "test"; } }
+        public string Command { get { return "repl"; } }
 
         public TestScriptHandler(Action<string> dispatcher, string token) {
             _token = token;
