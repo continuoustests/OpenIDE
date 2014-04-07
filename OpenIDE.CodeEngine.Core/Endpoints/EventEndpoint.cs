@@ -33,6 +33,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		}
 
 		private void dispatch(string message) {
+			message = message.Replace("\"", "'");
 			Logger.Write("Event dispatching: " + message);
 			_dispatch(message);
 		}
@@ -44,12 +45,14 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
-			Logger.Write("Event handle: " + command.Message);
-            _reactiveEngine.Handle(command.Message);
+			var message = command.Message.Replace("\"", "'");
+			Logger.Write("Event handle: " + message);
+            _reactiveEngine.Handle(message);
 		}
 		
 		public void Send(string message)
 		{
+			message = message.Replace("\"", "'");
 			Logger.Write("Event send: " + message);
 			_server.Send(message);
 			_reactiveEngine.Handle(message);

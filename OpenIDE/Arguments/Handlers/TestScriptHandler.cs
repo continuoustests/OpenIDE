@@ -53,8 +53,8 @@ namespace OpenIDE.Arguments.Handlers
                 return;
 
             var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var match1 = "codemodel raw-filesystem-change-filecreated \"" + script.Location + "\"";
-            var match2 = "codemodel raw-filesystem-change-filechanged \"" + script.Location + "\"";
+            var match1 = "codemodel raw-filesystem-change-filecreated '" + script.Location + "'";
+            var match2 = "codemodel raw-filesystem-change-filechanged '" + script.Location + "'";
             Logger.Write("Looking for: " + match1);
             Logger.Write("Looking for: " + match2);
             var hash = 0;

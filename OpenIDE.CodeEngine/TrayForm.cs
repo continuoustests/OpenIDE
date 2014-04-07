@@ -212,7 +212,7 @@ namespace OpenIDE.CodeEngine
                         var args = new CommandStringParser().Parse(message.Message).ToArray();
                         var form = new UserSelectForm(args[3].Split(new[] {','}), (item) => {
                             if (item != null)
-                                _endpoint.PublishEvent("user-selected \"" + args[2] + "\" \""  + item + "\"");
+                                _endpoint.PublishEvent("user-selected '" + args[2] + "' '"  + item + "'");
                             editor.SetFocus();
                         });
                         form.Show(this);

@@ -2,7 +2,7 @@
 
 if [ "$1" = "reactive-script-reacts-to" ]; then
     # Write one event pr line that this script will react to
-    echo "codemodel raw-filesystem-change-*.oi-pkg-tests.*\""
+    echo "codemodel raw-filesystem-change-*.oi-pkg-tests.*'"
     exit
 fi
 
