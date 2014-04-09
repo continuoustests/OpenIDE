@@ -20,6 +20,13 @@ namespace OpenIDE.Core.Caching
 			FileSearch = true;
 			return this;
 		}
+
+		public ProjectFile Update(string project, bool fileSearch)
+		{
+			Project = project;
+			FileSearch = fileSearch;
+			return this;
+		}
 	}
 
 	public class Project
@@ -40,6 +47,12 @@ namespace OpenIDE.Core.Caching
 		{
 			FileSearch = true;
 			return this;
+		}
+
+		public void Update(string json, bool fileSearch)
+		{
+			JSON = json;
+			FileSearch = fileSearch;
 		}
 	}
 }

@@ -104,7 +104,12 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		{
 			lock (_projects)
 			{
-				_projects.Add(project);
+				var existing = _projects.FirstOrDefault(x => x.File == project.File);
+				if (existing == null) {
+					_projects.Add(project);
+					return;
+				}
+				existing.Update(project.JSON, project.FileSearch);
 			}
 		}
 		
@@ -142,8 +147,14 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		
 		public void Add(ProjectFile file)
 		{
-			lock (_files)
-				_files.Add(file);
+			lock (_files) {
+				var existing = _files.FirstOrDefault(x => x.File == file.File);
+				if (existing != null) {
+					_files.Add(file);
+					return;
+				}
+				existing.Update(file.Project, file.FileSearch);
+			}
 		}
 		
 		public void Add(ICodeReference reference)
