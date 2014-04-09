@@ -149,7 +149,7 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		{
 			lock (_files) {
 				var existing = _files.FirstOrDefault(x => x.File == file.File);
-				if (existing != null) {
+				if (existing == null) {
 					_files.Add(file);
 					return;
 				}
