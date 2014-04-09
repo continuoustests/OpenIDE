@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <editor>
 	<launch>
-		<executable>sublime_text</executable>
+		<executable>subl</executable>
 		<parameters></parameters>
 	</launch>
 	<server_port>9998</server_port>
