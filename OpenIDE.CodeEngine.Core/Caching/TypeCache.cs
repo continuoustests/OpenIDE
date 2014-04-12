@@ -22,22 +22,22 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		
 		public IEnumerable<Project> AllProjects()
 		{
-			return _projects;
+			return _projects.ToList();
 		}
 
 		public IEnumerable<ProjectFile> AllFiles()
 		{
-			return _files;
+			return _files.ToList();
 		}
 
 		public IEnumerable<ICodeReference> AllReferences()
 		{
-			return _codeReferences;
+			return _codeReferences.ToList();
 		}
 
 		public IEnumerable<ISignatureReference> AllSignatures()
 		{
-			return _signatureReferences;
+			return _signatureReferences.ToList();
 		}
 
 		public List<ICodeReference> Find(string name)
@@ -57,7 +57,7 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		private IEnumerable<ICodeReference> find(string name)
 		{
 			return
-				_codeReferences
+				_codeReferences.ToList()
 				.Where(x => x.TypeSearch &&
 				  	(
 				  		x.Signature.ToLower().Contains(name.ToLower()) ||
@@ -69,12 +69,14 @@ namespace OpenIDE.CodeEngine.Core.Caching
 
         public List<FileFindResult> FindFiles(string searchString)
         {
-            return new FileFinder(_files, _projects).Find(searchString).ToList();
+            return new FileFinder(_files.ToList(), _projects.ToList())
+            	.Find(searchString).ToList();
         }
 
         public List<FileFindResult> GetFilesInDirectory(string directory)
         {
-            return new HierarchyBuilder(_files, _projects).GetNextStep(directory).ToList();
+            return new HierarchyBuilder(_files.ToList(), _projects.ToList())
+            	.GetNextStep(directory).ToList();
         }
 
         public List<FileFindResult> GetFilesInProject(string project)
@@ -82,7 +84,8 @@ namespace OpenIDE.CodeEngine.Core.Caching
             var prj = GetProject(project);
             if (prj == null)
                 return new List<FileFindResult>();
-            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj).ToList();
+            return new HierarchyBuilder(_files.ToList(), _projects.ToList())
+            	.GetNextStepInProject(prj).ToList();
         }
 
         public List<FileFindResult> GetFilesInProject(string project, string path)
@@ -90,13 +93,15 @@ namespace OpenIDE.CodeEngine.Core.Caching
             var prj = GetProject(project);
             if (prj == null)
                 return new List<FileFindResult>();
-            return new HierarchyBuilder(_files, _projects).GetNextStepInProject(prj, path).ToList();
+            return new HierarchyBuilder(_files.ToList(), _projects.ToList())
+            	.GetNextStepInProject(prj, path).ToList();
         }
 	
 		public bool ProjectExists(Project project)
 		{
 			lock (_projects) {
-				return _projects.Exists(x => x.File.Equals(project.File));
+				return _projects
+					.Exists(x => x.File.Equals(project.File));
 			}
 		}
 		
@@ -123,7 +128,7 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		
 		public bool FileExists(string file)
 		{
-			return _files.Count(x => x.File.Equals(file)) != 0;
+			return _files.ToList().Count(x => x.File.Equals(file)) != 0;
 		}
 		
 		public void Invalidate(string file)
@@ -159,20 +164,23 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		
 		public void Add(ICodeReference reference)
 		{
-			lock (_codeReferences)
+			lock (_codeReferences) {
 				_codeReferences.Add(reference);
+			}
 		}
 
 		public void Add(IEnumerable<ICodeReference> references)
 		{
-			lock (_codeReferences)
+			lock (_codeReferences) {
 				_codeReferences.AddRange(references);
+			}
 		}
 
 		public void Add(ISignatureReference reference)
 		{
-			lock (_signatureReferences)
+			lock (_signatureReferences) {
 				_signatureReferences.Add(reference);
+			}
 		}
 		
 		private int nameSort(string name, string signature, string filename, string compareString)

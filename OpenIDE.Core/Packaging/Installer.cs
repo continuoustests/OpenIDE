@@ -258,8 +258,15 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 
+			var backupLocation = "";
+			if (existingPackage.Target == "language")
+				backupLocation = backupScripts(args.Package.Command, args.InstallPath);
+			
 			removePackage(args.Package.Command, args.InstallPath);
 			new PackageExtractor().Extract(source, args.InstallPath);
+
+			if (existingPackage.Target == "language")
+				restoreScripts(args.Package.Command, args.InstallPath, backupLocation);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {
 				printUpdateFailed(args.Package.Signature);
@@ -271,6 +278,44 @@ namespace OpenIDE.Core.Packaging
 					"package updated from {0} to {1}",
 					existingPackage.Signature,
 					args.Package.Signature));
+		}
+
+		private string backupScripts(string command, string source) {
+			var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			var sourcePath = Path.Combine(source, command + "-files");
+			copyPluginDirectories(sourcePath, path);
+			return path;
+		}
+
+		private void restoreScripts(string command, string source, string backupLocation) {
+			var sourcePath = Path.Combine(source, command + "-files");
+			copyPluginDirectories(backupLocation, sourcePath);
+		}
+
+		private void copyPluginDirectories(string source, string destination) {
+			backupDirectoryTo(Path.Combine(source, "rscripts"), destination);
+			backupDirectoryTo(Path.Combine(source, "scripts"), destination);
+			backupDirectoryTo(Path.Combine(source, "snippets"), destination);
+		}
+
+		private void backupDirectoryTo(string source, string destinationRoot) {
+			if (!Directory.Exists(source))
+				return;
+			var name = Path.GetFileName(source);
+			var destination = Path.Combine(destinationRoot, name);
+			if (!Directory.Exists(destination))
+				Directory.CreateDirectory(destination);
+			Action<string,string> copyAll = (src, dest) => {
+				foreach (var dir in Directory.GetDirectories(src)) {
+					var destDir = Path.Combine(dest, Path.GetFileName(source));
+					if (!Directory.Exists(destDir))
+						Directory.CreateDirectory(destDir);
+					copyAll(dir, destDir);
+				}
+				foreach (var file in Directory.GetFiles(source))
+					File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), true);
+			};
+			copyAll(source, destination);
 		}
 
 		private void removePackage(string command, string path) {
