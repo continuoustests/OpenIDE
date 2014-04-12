@@ -48,6 +48,9 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("[FILE]", "If passed it will only respond with the file specified");
 				usage.Add("command", "Custom editor commands");
 				usage.Add("get-caret", "Gets the caret from editor");
+				usage.Add("user-select", "Presents the user with a list of options to select from")
+					.Add("ID", "Identifier string to look for in the responding user-selected event")
+						.Add("LIST", "A comma separated list of options for the user");
 				return usage;
 			}
 		}
@@ -113,6 +116,12 @@ namespace OpenIDE.Arguments.Handlers
 			else if (arguments[0] == "get-caret")
 			{
 				Console.WriteLine(instance.GetCaret());
+			}
+			else if (arguments[0] == "user-select")
+			{
+				if (arguments.Length < 3)
+					return;
+				instance.UserSelect(arguments[1], arguments[2]);
 			}
 			else
 			{

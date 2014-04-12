@@ -108,6 +108,11 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			send(sb.ToString().Trim());
 		}
 
+		public void UserSelect(string id, string itemlist)
+		{
+			send("user-select \"" + id + "\" \"" + itemlist + "\"");
+		}
+
 		private string getEditor()
 		{
 			var client = _clientFactory.Invoke();

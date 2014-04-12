@@ -258,15 +258,10 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 
-			var backupLocation = "";
-			if (existingPackage.Target == "language")
-				backupLocation = backupScripts(args.Package.Command, args.InstallPath);
-			
+			var backupLocation = backupScripts(args.Package.Command, args.InstallPath);
 			removePackage(args.Package.Command, args.InstallPath);
 			new PackageExtractor().Extract(source, args.InstallPath);
-
-			if (existingPackage.Target == "language")
-				restoreScripts(args.Package.Command, args.InstallPath, backupLocation);
+			restoreScripts(args.Package.Command, args.InstallPath, backupLocation);
 
 			if (!runUpgrade(args.InstallPath, args.InstallPath, "after-update")) {
 				printUpdateFailed(args.Package.Signature);
@@ -296,6 +291,7 @@ namespace OpenIDE.Core.Packaging
 			backupDirectoryTo(Path.Combine(source, "rscripts"), destination);
 			backupDirectoryTo(Path.Combine(source, "scripts"), destination);
 			backupDirectoryTo(Path.Combine(source, "snippets"), destination);
+			backupDirectoryTo(Path.Combine(source, "preserved-data"), destination);
 		}
 
 		private void backupDirectoryTo(string source, string destinationRoot) {
