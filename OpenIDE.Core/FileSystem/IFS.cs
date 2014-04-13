@@ -1,6 +1,6 @@
 using System;
 namespace OpenIDE.Core.FileSystem
-{
+{	
 	public interface IFS
 	{
 		string[] GetFiles(string path, string searchPattern);

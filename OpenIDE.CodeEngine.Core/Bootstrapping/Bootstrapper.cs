@@ -78,6 +78,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 					new SnippetEditHandler(_endpoint, _cache, _path),
 					new SnippetDeleteHandler(_cache, _path),
 					new GetRScriptStateHandler(_endpoint, _eventEndpoint),
+					new CompleteSnippetHandler(_cache, _path, _endpoint),
 
                     // Make sure this handler is the last one since the command can be file extension or language name
                     new LanguageCommandHandler(_endpoint, _cache, _pluginLocator)

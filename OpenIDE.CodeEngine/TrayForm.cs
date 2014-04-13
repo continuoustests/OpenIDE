@@ -101,6 +101,7 @@ namespace OpenIDE.CodeEngine
 
         private void handleMessage(MessageArgs message, ITypeCache cache, Editor editor)
         {
+            Logger.Write("Message trayform args: " + message.Message);
             if (message.Message == "gototype")
                 goToType(cache, editor);
             if (message.Message == "explore")
@@ -165,7 +166,7 @@ namespace OpenIDE.CodeEngine
 				{
 					var command = "snippet-complete ";
 					var msg = message.Message.Substring(command.Length, message.Message.Length - command.Length);
-					new CompleteSnippetHandler(editor, _cacheBuilder, Environment.CurrentDirectory)
+					new CompleteSnippetHandler(_cacheBuilder, _endpoint.Token, _endpoint)
 						.Handle(
 							new CommandStringParser()
 								.Parse(msg).ToArray());
@@ -177,7 +178,7 @@ namespace OpenIDE.CodeEngine
 			var command = "snippet-create ";
 					var msg = message.Message
 						.Substring(command.Length, message.Message.Length - command.Length);
-					new CreateSnippetHandler(editor, _cacheBuilder, Environment.CurrentDirectory)
+					new CreateSnippetHandler(editor, _cacheBuilder, _endpoint.Token)
 						.Handle(
 							new CommandStringParser()
 								.Parse(msg).ToArray());

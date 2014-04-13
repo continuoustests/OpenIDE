@@ -52,15 +52,20 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void Handle_editorRecievedMessage(object sender, MessageArgs e)
 		{
-			var msg = CommandMessage.New(e.Message);
-			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
-			var fullCommand = msg.Command + " " + command;
-			handle(new MessageArgs(Guid.Empty, fullCommand.Trim()));
+			handle(e.Message);
 		}
 		 
 		void Handle_serverIncomingMessage (object sender, MessageArgs e)
 		{
 			handle(e);
+		}
+
+		void handle(string commandMessage)
+		{
+			var msg = CommandMessage.New(commandMessage);
+			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
+			var fullCommand = msg.Command + " " + command;
+			handle(new MessageArgs(Guid.Empty, fullCommand.Trim()));
 		}
 
 		void handle(MessageArgs command)
@@ -77,6 +82,11 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void AddHandler(Action<MessageArgs,ITypeCache,Editor> handler)
 		{
 			_handlers.Add(handler);
+		}
+
+		public void Handle(string command)
+		{
+			handle(command);
 		}
 
 		public void PublishEvent(string body)
