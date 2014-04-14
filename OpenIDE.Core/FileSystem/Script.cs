@@ -20,6 +20,7 @@ namespace OpenIDE.Core.FileSystem
 		private string _workingDirectory;
 		private string _localProfileName;
 		private string _globalProfileName;
+		private bool _isRunning;
 		private Action<string> _writer = (msg) => {};
 
 		public IEnumerable<BaseCommandHandlerParameter> Usages { get { return getUsages(); } }
@@ -48,6 +49,18 @@ namespace OpenIDE.Core.FileSystem
 		public void Run(string arguments, Action<string> onLine)
 		{
 			var process = new Process();
+			_isRunning = true;
+			var stdinForwarder = new Thread(() => {
+				try {
+					while (_isRunning) {
+						var line = Console.ReadLine();
+						process.Write(line);
+					}
+				} catch {
+				}
+			});
+			stdinForwarder.Start();
+
 			Logger.Write("Running script {0} with {1}", _file, arguments);
 			arguments = "{global-profile} {local-profile} " + arguments;
 			var commandLine = run(
@@ -70,6 +83,8 @@ namespace OpenIDE.Core.FileSystem
 						new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
 				},
 				process);
+			_isRunning = false;
+			stdinForwarder.Abort();
 			onLine("event|builtin command ran " + commandLine);
 			Logger.Write("Running script completed {0}", _file);
 		}
@@ -114,6 +129,7 @@ namespace OpenIDE.Core.FileSystem
 		{
 			return run(arguments, onLine, replacements, null);
 		}
+
 		private string run(string arguments, Action<string> onLine,
 						 IEnumerable<KeyValuePair<string,string>> replacements,
 						 Process proc)
@@ -133,6 +149,7 @@ namespace OpenIDE.Core.FileSystem
 					Logger.Write(ex);
 				}
 			};
+			
 			var realArguments = arguments;
 			proc
 				.Query(

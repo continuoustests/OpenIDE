@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Commands;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using OpenIDE.CodeEngine.Core.Caching;
@@ -29,6 +30,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 
 		public void Handle(Guid clientID, CommandMessage message)
 		{
+			Logger.Write("Handling go to definition");
 			if (message.Arguments.Count != 1)
 				return;
 			var position = new OpenIDE.Core.CommandBuilding.FilePosition(message.Arguments[0]);
