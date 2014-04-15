@@ -23,21 +23,21 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		public ScriptTouchEvents Handle(string message) {
 			var result = parseMessage(
 				message,
-				"codemodel raw-filesystem-change-filecreated '",
+				"'codemodel' 'raw-filesystem-change-filecreated' '",
 				ScriptTouchEvents.Added);
 			if (result != ScriptTouchEvents.None)
 				return result;
 			
 			result = parseMessage(
 				message,
-				"codemodel raw-filesystem-change-filechanged '",
+				"'codemodel' 'raw-filesystem-change-filechanged' '",
 				ScriptTouchEvents.Changed);
 			if (result != ScriptTouchEvents.None)
 				return result;
 			
 			result = parseMessage(
 				message,
-				"codemodel raw-filesystem-change-filedeleted '",
+				"'codemodel' 'raw-filesystem-change-filedeleted' '",
 				ScriptTouchEvents.Removed);
 			if (result != ScriptTouchEvents.None)
 				return result;

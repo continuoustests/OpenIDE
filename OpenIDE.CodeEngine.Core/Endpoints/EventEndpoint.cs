@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.CommandBuilding;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.ReactiveScripts;
 
@@ -16,6 +17,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private string _instanceFile;
 		private ReactiveScriptEngine _reactiveEngine;
 		private Action<string> _dispatch = (m) => {};
+		private CommandStringParser _commandParser = new CommandStringParser();
 
 		public int Port { get { return _server.Port; } }
 		
@@ -33,7 +35,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		}
 
 		private void dispatch(string message) {
-			message = message.Replace("\"", "'");
+			message = _commandParser.GetArgumentString(_commandParser.Parse(message), "'");
 			Logger.Write("Event dispatching: " + message);
 			_dispatch(message);
 		}
@@ -45,14 +47,14 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
-			var message = command.Message.Replace("\"", "'");
+			var message = _commandParser.GetArgumentString(_commandParser.Parse(command.Message), "'");
 			Logger.Write("Event handle: " + message);
             _reactiveEngine.Handle(message);
 		}
 		
 		public void Send(string message)
 		{
-			message = message.Replace("\"", "'");
+			message = _commandParser.GetArgumentString(_commandParser.Parse(message), "'");
 			Logger.Write("Event send: " + message);
 			_server.Send(message);
 			_reactiveEngine.Handle(message);

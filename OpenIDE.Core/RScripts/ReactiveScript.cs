@@ -8,7 +8,7 @@ using System.Threading;
 using CoreExtensions;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.Profiles;
-using OpenIDE.Core.Requests;
+using OpenIDE.Core.Integration;
 
 namespace OpenIDE.Core.RScripts
 {
@@ -90,16 +90,14 @@ namespace OpenIDE.Core.RScripts
             ThreadPool.QueueUserWorkItem((task) => {
 	            try
 	            {
-	            	var requestRunner = new RequestRunner(_keyPath);
-	            	OpenIDE.Core.EditorEngineIntegration.Instance editorClient = null;
-	            	Func<OpenIDE.Core.EditorEngineIntegration.Instance> editorFactory = () => {
-	            		if (editorClient == null) {
-	            			var locator = new OpenIDE.Core.EditorEngineIntegration.EngineLocator(new OpenIDE.Core.FileSystem.FS());
-	            			editorClient = locator.GetInstance(_keyPath);
-	            		}
-	            		return editorClient;
-	            	};
 					var process = new Process();
+					var responseDispatcher = new ResponseDispatcher(
+						_keyPath, 
+						_dispatchErrors,
+						"rscript-" + Name + " ",
+						internalDispatch,
+						(response) => process.Write(response)
+					);
 					process.SetLogger((logMsg) => Logger.Write(logMsg));
 	            	var msg = task.ToString();
 	            	process.Query(
@@ -111,35 +109,11 @@ namespace OpenIDE.Core.RScripts
 	            			if (m == null)
 	            				return;
 	            			Logger.Write("request doing " + m);
-	            			var cmdText = "command|";
-	            			var eventText = "event|";
 	            			if (error) {
-	            				if (_dispatchErrors)
-	            					internalDispatch("rscript-" + Name + " error|" + m);
 	            				Logger.Write("rscript-" + Name + " produced an error:");
 	            				Logger.Write("rscript-" + Name + "-" + m);
-	            			} else {
-	            				if (m.StartsWith(cmdText)) {
-	            					var toDispatch = m.Substring(cmdText.Length, m.Length - cmdText.Length);
-	            					var args = toDispatch.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-	            					if (args.Length > 1 && args[0] == "editor") {
-	            						var editor = editorFactory();
-		            					if (editor == null)
-		            						return;
-		            					editor.Send(toDispatch.Substring(6, toDispatch.Length - 7).Trim());
-	            					} else {
-	            						internalDispatch(toDispatch);
-	            					}
-	            				} else if (m.StartsWith(eventText)) {
-	            					internalDispatch(m.Substring(eventText.Length, m.Length - eventText.Length));
-	            				} else if (requestRunner.IsRequest(m)) {
-	            					var response = requestRunner.Request(m);
-	            					foreach (var content in response)
-	            						process.Write(content);
-	            				} else {
-	            					internalDispatch("rscript-" + Name + " " + m);
-	            				}
 	            			}
+	            			responseDispatcher.Handle(error, m);
 	            		},
 	            		new[] {
 							new KeyValuePair<string,string>("{event}", "\"" + originalMessage + "\""),

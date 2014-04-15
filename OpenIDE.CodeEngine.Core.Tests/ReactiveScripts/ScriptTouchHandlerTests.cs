@@ -17,7 +17,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.ReactiveScripts
 		public void When_processing_a_file_added_message_inside_a_rscript_folder_it_reports_add()
 		{
 			eventProduces(
-				"codemodel raw-filesystem-change-filecreated '/this/is/rscript/myNewScript.sh'",
+				"'codemodel' 'raw-filesystem-change-filecreated' '/this/is/rscript/myNewScript.sh'",
 				ScriptTouchEvents.Added);
 		}
 		
@@ -25,7 +25,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.ReactiveScripts
 		public void When_processing_a_file_updated_message_inside_a_rscript_folder_it_reports_update()
 		{
 			eventProduces(
-				"codemodel raw-filesystem-change-filechanged '/this/is/rscript/myExistingScript.sh'",
+				"'codemodel' 'raw-filesystem-change-filechanged' '/this/is/rscript/myExistingScript.sh'",
 				ScriptTouchEvents.Changed);
 		}
 		
@@ -33,7 +33,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.ReactiveScripts
 		public void When_processing_a_file_delete_message_inside_a_rscript_folder_it_reports_removed()
 		{
 			eventProduces(
-				"codemodel raw-filesystem-change-filedeleted '/this/is/rscript/myExistingScript.sh'",
+				"'codemodel' 'raw-filesystem-change-filedeleted' '/this/is/rscript/myExistingScript.sh'",
 				ScriptTouchEvents.Removed);
 		}
 
@@ -41,7 +41,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.ReactiveScripts
 		public void When_processing_a_file_updated_message_outside_a_rscript_folder_it_reports_none()
 		{
 			eventProduces(
-				"codemodel raw-filesystem-change-filechanged '/this/is/myExistingScript.sh'",
+				"'codemodel' 'raw-filesystem-change-filechanged' '/this/is/myExistingScript.sh'",
 				ScriptTouchEvents.None);
 		}
 
@@ -51,7 +51,7 @@ namespace OpenIDE.CodeEngine.Core.Tests.ReactiveScripts
 			Assert.That(
 				new ScriptTouchHandler(
 						new System.Collections.Generic.List<string>(new[] {"/this/is/rscript"}))
-					.GetPath("codemodel raw-filesystem-change-filedeleted '/this/is/rscript/myExistingScript.sh'"),
+					.GetPath("'codemodel' 'raw-filesystem-change-filedeleted' '/this/is/rscript/myExistingScript.sh'"),
 				Is.EqualTo("/this/is/rscript/myExistingScript.sh"));
 		}
 

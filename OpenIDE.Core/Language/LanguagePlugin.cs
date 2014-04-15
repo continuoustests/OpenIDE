@@ -7,6 +7,7 @@ using System.Threading;
 using System.Collections.Generic;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Logging;
+using OpenIDE.Core.Integration;
 using CoreExtensions;
 
 namespace OpenIDE.Core.Language
@@ -62,7 +63,7 @@ namespace OpenIDE.Core.Language
         							_isQuerying = false;
         							return;
         						}
-								_dispatch("event|Language-plugin-outout " + line);
+								_dispatch("event|language-plugin-outout " + line);
         						_responseDispatcher(line);
 	        					_dispatch(line);
 	        				});

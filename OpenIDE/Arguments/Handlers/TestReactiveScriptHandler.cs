@@ -52,8 +52,8 @@ namespace OpenIDE.Arguments.Handlers
                 return;
 
             var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var match1 = "codemodel raw-filesystem-change-filecreated '" + script.File + "'";
-            var match2 = "codemodel raw-filesystem-change-filechanged '" + script.File + "'";
+            var match1 = "'codemodel' 'raw-filesystem-change-filecreated' '" + script.File + "'";
+            var match2 = "'codemodel' 'raw-filesystem-change-filechanged' '" + script.File + "'";
             Logger.Write("Looking for: " + match1);
             Logger.Write("Looking for: " + match2);
             var name = "rscript-" + Path.GetFileNameWithoutExtension(script.File) + " ";

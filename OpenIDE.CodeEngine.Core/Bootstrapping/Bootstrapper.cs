@@ -16,6 +16,7 @@ using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.Core.Caching;
 using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Integration;
 using OpenIDE.Core.Windowing;
 using CoreExtensions;
 
@@ -44,10 +45,21 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 						return interpreters;
 					};
             _cache = new TypeCache();
+            var responseDispatcher = new ResponseDispatcher(
+            	_path,
+            	false,
+            	"language-output ",
+            	(m) => _endpoint.Handle(m),
+            	(m) => {}
+            );
+            responseDispatcher.OnlyCommands();
 			_pluginLocator = new PluginLocator(
 				enabledLanguages,
 				new ProfileLocator(_path),
-				(msg) => {});
+				(msg) => {
+					responseDispatcher.Handle(false, msg);
+				}
+			);
 			initPlugins(_pluginLocator);
 
 			_eventEndpoint = new EventEndpoint(_path, _pluginLocator);

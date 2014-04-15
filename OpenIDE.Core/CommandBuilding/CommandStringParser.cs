@@ -9,6 +9,7 @@ namespace OpenIDE.Core.CommandBuilding
 	{
         private List<string> _words;
         private char _separator;
+        private char _previousChar;
         private string _word;
 		private char _delimiter = ' ';
 		private bool _addEmptyWords = false;
@@ -27,16 +28,21 @@ namespace OpenIDE.Core.CommandBuilding
 			return args.ElementAt(0);
 		}
 
-		public string GetArgumentString(IEnumerable<string> args)
+        public string GetArgumentString(IEnumerable<string> args)
+        {
+            return GetArgumentString(args, "\"");
+        }
+
+		public string GetArgumentString(IEnumerable<string> args, string stringGroupCharacter)
 		{
 			var arguments = args.ToArray();
 			var sb = new StringBuilder();
 			for (int i = 0; i < arguments.Length; i++)
 			{
 				if (i == 0)
-					sb.Append("\"" + arguments[i] + "\"");
+					sb.Append(stringGroupCharacter + arguments[i] + stringGroupCharacter);
 				else
-					sb.Append(" \"" + arguments[i] + "\"");
+					sb.Append(" " + stringGroupCharacter + arguments[i] + stringGroupCharacter);
 			}
 			return sb.ToString();
 
@@ -58,8 +64,10 @@ namespace OpenIDE.Core.CommandBuilding
             _words = new List<string>();
             _separator = _delimiter;
             _word = "";
-            for (int i = 0; i < arguments.Length; i++)
+            for (int i = 0; i < arguments.Length; i++) {
                 processCharacter(arguments[i]);
+                _previousChar = arguments[i];
+            }
             addWord();
             return _words;
         }
@@ -92,8 +100,10 @@ namespace OpenIDE.Core.CommandBuilding
 
         private bool isArgumentSeparator(char argument)
         {
-            return (_word.Length == 0 && argument == _delimiter) ||
-                   (_word.Length == 0 && argument == '"');
+            return
+                (_word.Length == 0 && argument == _delimiter) ||
+                (_word.Length == 0 && argument == '"') ||
+                (_word.Length == 0 && argument == '\'');
         }
 
         private bool argumentIsTerminatedWithSpace(char arguments)
@@ -103,7 +113,9 @@ namespace OpenIDE.Core.CommandBuilding
 
         private bool argumentIsTerminatedWithQuote(char arguments)
         {
-            return (arguments == '"' && _separator == '"');
+            return
+                (arguments == '"' && _separator == '"' && _previousChar != '\\') ||
+                (arguments == '\'' && _separator == '\'' && _previousChar != '\\');
         }
 	}
 }

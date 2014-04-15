@@ -72,6 +72,36 @@ namespace OpenIDE.Tests.Core.CommandBuilding
 				"one", "after", "the", "other", "and with space inside them");
 		}
 
+
+        [Test]
+        public void Can_parse_separating_arguments_using_single_quotes()
+        {
+            assertArguments(
+                new CommandStringParser()
+                    .Parse("this thing 'is separated \"by\" single quotes'").ToArray(),
+                "this", "thing", "is separated \"by\" single quotes");
+        }
+
+
+        [Test]
+        public void Can_parse_separating_arguments_using_mixed_types_of_quotes()
+        {
+            assertArguments(
+                new CommandStringParser()
+                    .Parse("this thing 'is separated \"by\" single quotes' \"and this' by double\"").ToArray(),
+                "this", "thing", "is separated \"by\" single quotes", "and this' by double");
+        }
+
+
+        [Test]
+        public void Can_parse_arguments_using_escaped_quotes_inside()
+        {
+            assertArguments(
+                new CommandStringParser()
+                    .Parse("this thing 'has a \\' in it' \"and this has\\\" in it\" yo").ToArray(),
+                "this", "thing", "has a \\' in it", "and this has\\\" in it", "yo");
+        }
+
         private void assertArguments(string[] args, params string[] argList)
         {
             Assert.That(args.Length, Is.EqualTo(argList.Length));
