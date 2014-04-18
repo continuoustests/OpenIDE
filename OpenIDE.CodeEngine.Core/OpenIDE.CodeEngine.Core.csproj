@@ -116,7 +116,9 @@
     <Compile Include="ChangeTrackers\Change.cs" />
     <Compile Include="ReactiveScripts\ScriptTouchHandler.cs" />
     <Compile Include="Handlers\GetRScriptStateHandler.cs" />
-    <Compile Include="UI\UserSelectForm.cs" />
+    <Compile Include="UI\UserSelectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

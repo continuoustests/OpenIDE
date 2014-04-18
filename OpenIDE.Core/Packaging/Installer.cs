@@ -301,7 +301,8 @@ namespace OpenIDE.Core.Packaging
 			var destination = Path.Combine(destinationRoot, name);
 			if (!Directory.Exists(destination))
 				Directory.CreateDirectory(destination);
-			Action<string,string> copyAll = (src, dest) => {
+			Action<string,string> copyAll = (src, dest) => {};
+			copyAll = (src, dest) => {
 				foreach (var dir in Directory.GetDirectories(src)) {
 					var destDir = Path.Combine(dest, Path.GetFileName(source));
 					if (!Directory.Exists(destDir))
