@@ -84,11 +84,14 @@ namespace OpenIDE.Core.Definitions
 
 			// Add default language
 			if (_defaultLanguage != null) {
-				var parameters = _cache.Get(new[] { _defaultLanguage }).Parameters;
-				foreach (var usage in parameters) {
-					// Don't override existing commands with default language
-					if (_cache.Get(new[] { usage.Name }) == null) {
-						_cache.Add(usage);
+				var lang = _cache.Get(new[] { _defaultLanguage });
+				if (lang != null) {
+					var parameters = lang.Parameters;
+					foreach (var usage in parameters) {
+						// Don't override existing commands with default language
+						if (_cache.Get(new[] { usage.Name }) == null) {
+							_cache.Add(usage);
+						}
 					}
 				}
 			}
