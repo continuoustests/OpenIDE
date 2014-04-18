@@ -5,59 +5,59 @@ using System.Collections.Generic;
 
 namespace OpenIDE.Core.CommandBuilding
 {
-	public class CommandStringParser
-	{
+    public class CommandStringParser
+    {
         private List<string> _words;
         private char _separator;
         private char _previousChar;
         private string _word;
-		private char _delimiter = ' ';
-		private bool _addEmptyWords = false;
+        private char _delimiter = ' ';
+        private bool _addEmptyWords = false;
 
-		public CommandStringParser()
-		{
-		}
+        public CommandStringParser()
+        {
+        }
 
-		public CommandStringParser(char delimiter)
-		{
-			_delimiter = delimiter;
-		}
+        public CommandStringParser(char delimiter)
+        {
+            _delimiter = delimiter;
+        }
 
-		public string GetCommand(IEnumerable<string> args)
-		{
-			return args.ElementAt(0);
-		}
+        public string GetCommand(IEnumerable<string> args)
+        {
+            return args.ElementAt(0);
+        }
 
         public string GetArgumentString(IEnumerable<string> args)
         {
             return GetArgumentString(args, "\"");
         }
 
-		public string GetArgumentString(IEnumerable<string> args, string stringGroupCharacter)
-		{
-			var arguments = args.ToArray();
-			var sb = new StringBuilder();
-			for (int i = 0; i < arguments.Length; i++)
-			{
-				if (i == 0)
-					sb.Append(stringGroupCharacter + arguments[i] + stringGroupCharacter);
-				else
-					sb.Append(" " + stringGroupCharacter + arguments[i] + stringGroupCharacter);
-			}
-			return sb.ToString();
+        public string GetArgumentString(IEnumerable<string> args, string stringGroupCharacter)
+        {
+            var arguments = args.ToArray();
+            var sb = new StringBuilder();
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                if (i == 0)
+                    sb.Append(stringGroupCharacter + arguments[i] + stringGroupCharacter);
+                else
+                    sb.Append(" " + stringGroupCharacter + arguments[i] + stringGroupCharacter);
+            }
+            return sb.ToString();
 
-		}
+        }
 
-		public string[] GetArguments(IEnumerable<string> commandArgs)
-		{
-			var args = commandArgs.ToArray();
-			if (args.Length == 1)
-				return new string[] {};
-			string[] newArgs = new string[args.Length - 1];
-			for (int i = 1; i < args.Length; i++)
-				newArgs[i - 1] = args[i];
-			return newArgs;
-		}
+        public string[] GetArguments(IEnumerable<string> commandArgs)
+        {
+            var args = commandArgs.ToArray();
+            if (args.Length == 1)
+                return new string[] {};
+            string[] newArgs = new string[args.Length - 1];
+            for (int i = 1; i < args.Length; i++)
+                newArgs[i - 1] = args[i];
+            return newArgs;
+        }
 
         public IEnumerable<string> Parse(string arguments)
         {
@@ -117,5 +117,5 @@ namespace OpenIDE.Core.CommandBuilding
                 (arguments == '"' && _separator == '"' && _previousChar != '\\') ||
                 (arguments == '\'' && _separator == '\'' && _previousChar != '\\');
         }
-	}
+    }
 }

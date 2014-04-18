@@ -56,7 +56,7 @@ namespace OpenIDE.Core.Integration
                         var _editor = _editorFactory();
                         if (_editor == null)
                             return;
-                        _editor.Send(toDispatch.Substring(6, toDispatch.Length - 7).Trim());
+                        _editor.Send(toDispatch.Substring(6, toDispatch.Length - 6).Trim());
                     } else {
                         _dispatcher(toDispatch);
                     }

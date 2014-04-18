@@ -54,6 +54,8 @@ namespace OpenIDE.Core.Caching
 		
 		private void handleProject(string[] chunks)
 		{
+			if (chunks.Length < 3)
+				return;
 			_currentProject = chunks[1];
 			var project = new Project(_currentProject, chunks[2]);
 			var args = getArguments(chunks, 3);
@@ -64,6 +66,8 @@ namespace OpenIDE.Core.Caching
 
 		private void handleFile(string[] chunks)
 		{
+			if (chunks.Length < 2)
+				return;
 			_currentFile = chunks[1];
 			var file = new ProjectFile(_currentFile, _currentProject);
 			var args = getArguments(chunks, 2);
@@ -74,6 +78,8 @@ namespace OpenIDE.Core.Caching
 		
 		private void handleSignature(string[] chunks)
 		{
+			if (chunks.Length < 9)
+				return;
 			var reference = new CodeReference(
 				_language,
 				chunks[4],
@@ -95,6 +101,8 @@ namespace OpenIDE.Core.Caching
 
 		private void handleReference(string[] chunks)
 		{
+			if (chunks.Length < 4)
+				return;
 			_builder.Add(new SignatureReference(
 				_currentFile,
 				chunks[1],
