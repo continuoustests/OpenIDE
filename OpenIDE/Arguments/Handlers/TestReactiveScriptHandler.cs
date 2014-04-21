@@ -56,7 +56,7 @@ namespace OpenIDE.Arguments.Handlers
             var match2 = "'codemodel' 'raw-filesystem-change-filechanged' '" + script.File + "'";
             Logger.Write("Looking for: " + match1);
             Logger.Write("Looking for: " + match2);
-            var name = "rscript-" + Path.GetFileNameWithoutExtension(script.File) + " ";
+            var name = "'rscript-" + Path.GetFileNameWithoutExtension(script.File) + "' ";
             var hash = 0;
             try {
                 var proc = new Process();

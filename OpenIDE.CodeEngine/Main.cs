@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Bootstrapping;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using OpenIDE.Core.Config;

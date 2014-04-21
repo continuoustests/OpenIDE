@@ -258,6 +258,7 @@ namespace OpenIDE.Core.Language
 		private bool queryEngine(string arguments, Action<string> onLineReceived) {
 			Logger.Write("About to query {0} {1}", _path, arguments);
 			if (_process != null && !_process.HasExited) {
+				// TODO: Instad of locking use correlationID to be able to run requests in parallel
 				Logger.Write("Querying {0} {1}", _path, arguments);
 				lock (_processLock) {
 					_isQuerying = true;
