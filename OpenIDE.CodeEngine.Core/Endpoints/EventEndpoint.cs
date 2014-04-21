@@ -70,6 +70,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		{
 			if (File.Exists(_instanceFile))
 				File.Delete(_instanceFile);
+			_reactiveEngine.Shutdown();
 		}
 
 		public string GetScriptState(string name)

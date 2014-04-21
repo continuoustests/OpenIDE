@@ -1,12 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
-using OpenIDE.Core.Scripts;
+using OpenIDE.Core.Language;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.RScripts;
-using OpenIDE.Core.Language;
+using OpenIDE.Core.Scripts;
 
 namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 {
@@ -31,6 +31,10 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 					(m) => _dispatch(m));
 			_touchHandler = new ScriptTouchHandler(_reader.GetPaths());
 			_scripts = _reader.Read();
+			foreach (var script in _scripts) {
+				if (script.IsService)
+					script.StartService();
+			}
 		}
 
 		public void Handle(string message)
@@ -59,13 +63,18 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 				return "ready";
 		}
 
+		public void Shutdown() {
+			foreach (var script in _scripts)
+				script.Shutdown();
+		}
+
 		private void handleScriptTouched(string message, ScriptTouchEvents type) {
 			var path = _touchHandler.GetPath(message);
             if (new ScriptFilter().IsValid(path) == false)
                 return;
 			if (type == ScriptTouchEvents.Removed) {
                 Logger.Write("Removing touched rscript");
-				_scripts.RemoveAll(x => x.File.Equals(path));
+				removeScript(path);
 				return;
 			}
 			// Read script and dispatch errors
@@ -76,9 +85,19 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
             }
 			if (type == ScriptTouchEvents.Changed || type == ScriptTouchEvents.Added) {
                 Logger.Write("Reloading / adding existing rscript");
-				_scripts.RemoveAll(x => x.File.Equals(path));
+				removeScript(path);
 				_scripts.Add(script);
+				if (script.IsService)
+					script.StartService();
 			}
+		}
+
+		private void removeScript(string file) {
+			var script = _scripts.FirstOrDefault(x => x.File == file);
+			if (script == null)
+				return;
+			script.Shutdown();
+			_scripts.Remove(script);
 		}
 	}
 }

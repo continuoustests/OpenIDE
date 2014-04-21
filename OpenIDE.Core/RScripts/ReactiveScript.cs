@@ -1,14 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using CoreExtensions;
+using OpenIDE.Core.Integration;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.Profiles;
-using OpenIDE.Core.Integration;
 
 namespace OpenIDE.Core.RScripts
 {
@@ -18,11 +18,14 @@ namespace OpenIDE.Core.RScripts
 		private string _name;
 		private string _file;
 		private string _keyPath;
+		private bool _keepAlive;
 		private bool _dispatchErrors = false;
 		private List<string> _events = new List<string>();
 		private string _localProfileName;
 		private string _globalProfileName;
 		private Action<string> _dispatch;
+		private Process _service;
+		private Thread _serviceThread;
 
 		public string Name {
 			get {
@@ -33,6 +36,8 @@ namespace OpenIDE.Core.RScripts
 		}
 
 		public bool IsFaulted { get { return _isFaulted; } }
+
+		public bool IsService { get { return _keepAlive; } }
 
 		public string File { get { return _file; } }
 
@@ -58,6 +63,12 @@ namespace OpenIDE.Core.RScripts
 			getEvents();
 		}
 
+		public void StartService()
+		{
+			_serviceThread = new Thread(startService);
+			_serviceThread.Start();
+		}
+
 		public bool ReactsTo(string @event)
 		{
 			if (_isFaulted)
@@ -70,6 +81,18 @@ namespace OpenIDE.Core.RScripts
 		}
 
 		public void Run(string message)
+		{
+			if (_keepAlive) {
+				if (_service != null && !_service.HasExited) {
+					Logger.Write("Writing to service: " + message);
+					_service.Write(message);
+				}
+				return;
+			}
+			runScript(message);
+		}
+
+		private void runScript(string message)
 		{
 			if (_isFaulted)
 				return;
@@ -129,6 +152,59 @@ namespace OpenIDE.Core.RScripts
 			}, message);
 		}
 
+		public void Shutdown()
+		{
+			if (_service != null) {
+				try {
+					_service.Write("shutdown");
+					_serviceThread.Join();
+				} catch (Exception ex) {
+					Logger.Write(ex);
+				}
+			}
+		}
+
+		private void startService()
+		{
+			_service = new Process();
+            try
+            {
+				var responseDispatcher = new ResponseDispatcher(
+					_keyPath, 
+					_dispatchErrors,
+					"rscript-" + Name + " ",
+					internalDispatch,
+					(response) => _service.Write(response)
+				);
+				_service.SetLogger((logMsg) => Logger.Write(logMsg));
+            	_service.Query(
+            		_file,
+            		"{global-profile} {local-profile}",
+            		false,
+            		_keyPath,
+            		(error, m) => {
+            			if (m == null)
+            				return;
+            			Logger.Write("request doing " + m);
+            			if (error) {
+            				Logger.Write("rscript-" + Name + " produced an error:");
+            				Logger.Write("rscript-" + Name + "-" + m);
+            			}
+            			responseDispatcher.Handle(error, m);
+            		},
+            		new[] {
+						new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
+						new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
+					});
+            	Logger.Write("Exiting service script");
+            }
+			catch (Exception ex)
+			{
+				internalDispatch("rscript-" + Name + " " + ex.ToString());
+				Logger.Write(ex.ToString());
+			}
+		}
+
 		private void getEvents()
 		{
 			_isFaulted = false;
@@ -153,8 +229,13 @@ namespace OpenIDE.Core.RScripts
 							}
 							if (m.Length > 0) {
 								var expression = m; //m.Trim(new[] {'\"'});
-								_events.Add(expression);
-								Logger.Write(_file + " reacts to: " + expression);
+								if (expression == "run-as-service") {
+									_keepAlive = true;
+									Logger.Write(_file + " run as service enabled");
+								} else {
+									_events.Add(expression);
+									Logger.Write(_file + " reacts to: " + expression);
+								}
 							}
 						});
 			} catch (Exception ex) {
