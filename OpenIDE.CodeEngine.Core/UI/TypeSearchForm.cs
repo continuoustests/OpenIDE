@@ -22,6 +22,8 @@ namespace OpenIDE.CodeEngine.Core.UI
         private bool _runSearch = false;
         private Queue<string> _searchTerms = new Queue<string>();
         private System.Threading.Thread _searchThread;
+        private string _lastText = "";
+        private DateTime _lastKeypress = DateTime.Now;
 		
         public TypeSearchForm(ITypeCache cache, Action<string, int, int> action, Action cancelAction)
         {
@@ -59,13 +61,12 @@ namespace OpenIDE.CodeEngine.Core.UI
             // The sprinkled thread sleeps is for mono 3.x
             // winforms stuff freaking out
             while (_runSearch) {
-                if (_searchTerms.Count == 0) {
+                if (_lastKeypress.AddMilliseconds(200) > DateTime.Now || _searchTerms.Count == 0) {
                     System.Threading.Thread.Sleep(50);
                     continue;
                 }
                 var searchText = "";
                 while (_searchTerms.Count > 0) {
-                    System.Threading.Thread.Sleep(10);
                     searchText = _searchTerms.Dequeue();
                 }
                 try
@@ -74,12 +75,9 @@ namespace OpenIDE.CodeEngine.Core.UI
                     if (items.Count > 30)
                         items = items.GetRange(0, 30);
                     _syncContext.Post(nothing => informationList.Items.Clear(), null);
-                    System.Threading.Thread.Sleep(10);
                     foreach (var item in items) {
-                        System.Threading.Thread.Sleep(10);
                         _syncContext.Post(nothing => addItem(item), null);
                     }
-                    System.Threading.Thread.Sleep(10);
                     _syncContext.Post(nothing => {
                         if (informationList.Items.Count > 0)
                             informationList.Items[0].Selected = true;
@@ -94,7 +92,11 @@ namespace OpenIDE.CodeEngine.Core.UI
 
         void HandleTextBoxSearchhandleKeyUp(object sender, KeyEventArgs e)
         {
-            _searchTerms.Enqueue(textBoxSearch.Text);
+            if (_lastText != textBoxSearch.Text) {
+                _searchTerms.Enqueue(textBoxSearch.Text);
+                _lastText = textBoxSearch.Text;
+                _lastKeypress = DateTime.Now;
+            }
         }
 
 		void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)
