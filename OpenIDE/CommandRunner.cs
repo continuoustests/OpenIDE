@@ -63,7 +63,6 @@ namespace OpenIDE
 				if (command == null)
 					return false;
 				command.Execute(arguments.ToArray());
-				_eventDispatcher(string.Format("builtin command ran \"{0}\" {1}", command.Command, new CommandStringParser().GetArgumentString(arguments)));
 			}
 			return true;
 		}	

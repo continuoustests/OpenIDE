@@ -57,8 +57,8 @@ namespace OpenIDE.CodeEngine.Core.UI
             this.textBoxSearch.Name = "textBoxSearch";
             this.textBoxSearch.Size = new System.Drawing.Size(770, 45);
             this.textBoxSearch.TabIndex = 1;
-			this.textBoxSearch.TextChanged += HandleTextBoxSearchhandleTextChanged;
 			this.textBoxSearch.KeyDown += HandleTextBoxSearchhandleKeyDown;
+            this.textBoxSearch.KeyUp += HandleTextBoxSearchhandleKeyUp;
             // 
             // informationList
             // 

@@ -19,8 +19,9 @@ namespace OpenIDE.CodeEngine.Core.UI
 		private Action<string, int, int> _action;
 		private Action _cancelAction;
 		private DateTime _lastSearch = DateTime.Now;
-		private bool _delayedSearchTriggered = false;
-		private bool _isSearching = false;
+        private bool _runSearch = false;
+        private Queue<string> _searchTerms = new Queue<string>();
+        private System.Threading.Thread _searchThread;
 		
         public TypeSearchForm(ITypeCache cache, Action<string, int, int> action, Action cancelAction)
         {
@@ -30,7 +31,10 @@ namespace OpenIDE.CodeEngine.Core.UI
 			_cache = cache;
 			_action = action;
 			_cancelAction = cancelAction;
+            _runSearch = true;
 			writeStatistics();
+            _searchThread = new System.Threading.Thread(continuousSearch);
+            _searchThread.Start();
         }
 		
 		void writeStatistics()
@@ -45,51 +49,52 @@ namespace OpenIDE.CodeEngine.Core.UI
 		
 		void HandleHandleFormClosing (object sender, FormClosingEventArgs e)
         {
+            _runSearch = false;
+            _searchThread.Join();
 			Visible = false;
 			Dispose();
         }
-		
-		void HandleTextBoxSearchhandleTextChanged(object sender, System.EventArgs e)
-        {
-        	if (_isSearching) {
-        		_delayedSearchTriggered = true;
-        		return;
-        	}
-        	System.Threading.ThreadPool.QueueUserWorkItem((o) => {
-				performSearch();
-			});
+
+        private void continuousSearch() {
+            // The sprinkled thread sleeps is for mono 3.x
+            // winforms stuff freaking out
+            while (_runSearch) {
+                if (_searchTerms.Count == 0) {
+                    System.Threading.Thread.Sleep(50);
+                    continue;
+                }
+                var searchText = "";
+                while (_searchTerms.Count > 0) {
+                    System.Threading.Thread.Sleep(10);
+                    searchText = _searchTerms.Dequeue();
+                }
+                try
+                {
+                    var items = _cache.Find(searchText).Take(30).ToList();
+                    if (items.Count > 30)
+                        items = items.GetRange(0, 30);
+                    _syncContext.Post(nothing => informationList.Items.Clear(), null);
+                    System.Threading.Thread.Sleep(10);
+                    foreach (var item in items) {
+                        System.Threading.Thread.Sleep(10);
+                        _syncContext.Post(nothing => addItem(item), null);
+                    }
+                    System.Threading.Thread.Sleep(10);
+                    _syncContext.Post(nothing => {
+                        if (informationList.Items.Count > 0)
+                            informationList.Items[0].Selected = true;
+                    }, items);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
         }
 
-        private void performSearch() {
-        	_lastSearch = DateTime.Now;
-        	_isSearching = true;
-        	var runSearch = false;
-        	_syncContext.Post(message =>
-            {
-	        	try
-				{
-		        	informationList.Items.Clear();
-					var items = _cache.Find(textBoxSearch.Text).Take(30).ToList();
-					if (items.Count > 30)
-						items = items.GetRange(0, 30);
-					items.ForEach(x => addItem(x));
-					if (informationList.Items.Count > 0)
-						informationList.Items[0].Selected = true;
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(ex.ToString());
-				}
-				runSearch = _delayedSearchTriggered;
-			}, null);
-			_delayedSearchTriggered = false;
-			if (runSearch) {
-				var sleeptime = 500 - DateTime.Now.Subtract(_lastSearch).TotalMilliseconds;
-				if (sleeptime > 0)
-					System.Threading.Thread.Sleep(Convert.ToInt32(sleeptime));
-				performSearch();
-			}
-			_isSearching = false;
+        void HandleTextBoxSearchhandleKeyUp(object sender, KeyEventArgs e)
+        {
+            _searchTerms.Enqueue(textBoxSearch.Text);
         }
 
 		void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)

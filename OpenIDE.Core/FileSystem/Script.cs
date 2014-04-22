@@ -85,7 +85,6 @@ namespace OpenIDE.Core.FileSystem
 				process);
 			_isRunning = false;
 			stdinForwarder.Abort();
-			onLine("event|builtin command ran " + commandLine);
 			Logger.Write("Running script completed {0}", _file);
 		}
 
