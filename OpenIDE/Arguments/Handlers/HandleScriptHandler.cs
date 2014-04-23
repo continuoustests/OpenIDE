@@ -21,6 +21,7 @@ namespace OpenIDE.Arguments.Handlers
 						CommandType.FileCommand,
 						Command,
 						"No arguments will list available scripts. Run scripts with 'oi x [script-name]'.");
+					usage.Add("[-l]", "Print script details when listing scripts");
 					var name = usage
 						.Add("new", "Creates a new script")
 							.Add("SCRIPT-NAME", "Script name with optional file extension.");
@@ -59,8 +60,8 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length == 0) {
-				printDefinitions();
+			if (arguments.Length == 0 || arguments[0] == "-l") {
+				printDefinitions(arguments.Length == 0);
 				return;
 			}
 			var handler = _handlers.FirstOrDefault(x => x.Command == arguments[0]);
@@ -77,7 +78,7 @@ namespace OpenIDE.Arguments.Handlers
 			return arguments.ToArray();
 		}
 
-		private void printDefinitions() {
+		private void printDefinitions(bool compactList) {
 			var definitions = 
 				Bootstrapper.GetDefinitionBuilder()
 					.Definitions
@@ -85,8 +86,12 @@ namespace OpenIDE.Arguments.Handlers
 						x.Type == DefinitionCacheItemType.Script ||
 						x.Type == DefinitionCacheItemType.LanguageScript);
 			Console.WriteLine("Available commands:");
-			foreach (var definition in definitions)
-				UsagePrinter.PrintDefinition(definition);
+			if (compactList) {
+				UsagePrinter.PrintDefinitionsAligned(definitions);
+			} else {
+				foreach (var definition in definitions)
+					UsagePrinter.PrintDefinition(definition);
+			}
 		}
 	}
 }

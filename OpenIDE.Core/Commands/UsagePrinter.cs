@@ -32,7 +32,7 @@ namespace OpenIDE.Core.Commands
 			var name = item.Name;
 			if (!item.Required)
 				name = "[" + name + "]";
-			Console.WriteLine("{0}{1} : {2}", "".PadLeft(level, '\t'), name, item.Description);
+			Console.WriteLine("{0}{1} - {2}", "".PadLeft(level, '\t'), name, item.Description);
 		}
 
 		public static void PrintDefinitionsAligned(IEnumerable<DefinitionCacheItem> items)
@@ -43,7 +43,7 @@ namespace OpenIDE.Core.Commands
 				if (!item.Required)
 					name = "[" + name + "]";
 				name = name.PadRight(maxLength, ' ');
-				Console.WriteLine("{0} : {1}", name, item.Description);
+				Console.WriteLine("{0} - {1}", name, item.Description);
 			}
 		}
 	}
