@@ -20,7 +20,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private Editor _editor;
 		private ITypeCache _cache;
 		private EventEndpoint _eventEndpoint;
-		private bool _isRunning = false;
 		private string _instanceFile;
 		private Thread _instanceWriter;
 		private List<Action<MessageArgs,ITypeCache,Editor>> _handlers =
@@ -110,16 +109,17 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void Start()
 		{
 			_server.Start();
-			_isRunning = true;
 			_instanceWriter.Start();
 			_eventEndpoint.Send("codeengine started");
 		}
 		
 		public void Stop()
 		{
+			Logger.Write("Sending codeeingen stopped");
 			_eventEndpoint.Send("codeengine stopped");
-			_isRunning = false;
+			Logger.Write("Waiting for instance writer to shut down");
 			_instanceWriter.Join();
+			Logger.Write("Removing instance file");
 			if (File.Exists(_instanceFile)) {
 				File.Delete(_instanceFile);
 			}
@@ -132,7 +132,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));
-			while (_isRunning) {
+			while (IsAlive) {
 				if (File.Exists(_instanceFile)) {
 					Thread.Sleep(100);
 					continue;

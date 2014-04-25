@@ -108,6 +108,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		{
             shutdownPlugins(_pluginLocator);
 			_tracker.Dispose();
+			_endpoint.Stop();
 			_eventEndpoint.Stop();
 		}
 
