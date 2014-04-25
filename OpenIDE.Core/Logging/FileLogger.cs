@@ -39,9 +39,12 @@ namespace OpenIDE.Core.Logging
 		private void write(string message)
 		{
 			lock (_padlock) {
-				using (var writer = new StreamWriter(_file, true))
-				{
-					writer.WriteLine(message);	
+				try {
+					using (var writer = new StreamWriter(_file, true))
+					{
+						writer.WriteLine(message);	
+					}
+				} catch {
 				}
 			}
 		}

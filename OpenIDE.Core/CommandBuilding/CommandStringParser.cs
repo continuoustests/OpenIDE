@@ -28,14 +28,13 @@ namespace OpenIDE.Core.CommandBuilding
             return args.ElementAt(0);
         }
 
-        public string GetArgumentString(IEnumerable<string> args)
+        public string GetArgumentString(string[] args)
         {
             return GetArgumentString(args, "\"");
         }
 
-        public string GetArgumentString(IEnumerable<string> args, string stringGroupCharacter)
+        public string GetArgumentString(string[] arguments, string stringGroupCharacter)
         {
-            var arguments = args.ToArray();
             var sb = new StringBuilder();
             for (int i = 0; i < arguments.Length; i++)
             {

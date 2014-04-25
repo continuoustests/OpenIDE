@@ -21,6 +21,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private ITypeCache _cache;
 		private EventEndpoint _eventEndpoint;
 		private string _instanceFile;
+		private FileStream _instanceLock;
 		private List<Action<MessageArgs,ITypeCache,Editor>> _handlers =
 			new List<Action<MessageArgs,ITypeCache,Editor>>();
 		
@@ -63,7 +64,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		void handle(string commandMessage)
 		{
 			var msg = CommandMessage.New(commandMessage);
-			var command = new CommandStringParser().GetArgumentString(msg.Arguments);
+			var command = new CommandStringParser().GetArgumentString(msg.Arguments.ToArray());
 			var fullCommand = msg.Command + " " + command;
 			handle(new MessageArgs(Guid.Empty, fullCommand.Trim()));
 		}
@@ -114,8 +115,10 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void Stop()
 		{
 			_eventEndpoint.Send("codeengine stopped");
-			if (File.Exists(_instanceFile))
+			if (File.Exists(_instanceFile)) {
+				_instanceLock.Close();
 				File.Delete(_instanceFile);
+			}
 		}
 		
 		private void writeInstanceInfo(string key)
@@ -128,6 +131,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			sb.AppendLine(key);
 			sb.AppendLine(_server.Port.ToString());
 			File.WriteAllText(_instanceFile, sb.ToString());
+			_instanceLock = new FileStream(_instanceFile, FileMode.Open, FileAccess.Read);
 		}
 	}
 }

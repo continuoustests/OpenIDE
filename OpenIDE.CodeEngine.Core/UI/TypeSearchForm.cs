@@ -61,7 +61,7 @@ namespace OpenIDE.CodeEngine.Core.UI
             // The sprinkled thread sleeps is for mono 3.x
             // winforms stuff freaking out
             while (_runSearch) {
-                if (_lastKeypress.AddMilliseconds(200) > DateTime.Now || _searchTerms.Count == 0) {
+                if (_lastKeypress.AddMilliseconds(400) > DateTime.Now || _searchTerms.Count == 0) {
                     System.Threading.Thread.Sleep(50);
                     continue;
                 }

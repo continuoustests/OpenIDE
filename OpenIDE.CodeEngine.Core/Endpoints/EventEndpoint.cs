@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using OpenIDE.Core.Logging;
@@ -35,7 +36,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		}
 
 		private void dispatch(string message) {
-			message = _commandParser.GetArgumentString(_commandParser.Parse(message), "'");
+			message = _commandParser.GetArgumentString(_commandParser.Parse(message).ToArray(), "'");
 			Logger.Write("Event dispatching: " + message);
 			_dispatch(message);
 		}
@@ -47,14 +48,14 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
 		void handle(MessageArgs command)
 		{
-			var message = _commandParser.GetArgumentString(_commandParser.Parse(command.Message), "'");
+			var message = _commandParser.GetArgumentString(_commandParser.Parse(command.Message).ToArray(), "'");
 			Logger.Write("Event handle: " + message);
             _reactiveEngine.Handle(message);
 		}
 		
 		public void Send(string message)
 		{
-			message = _commandParser.GetArgumentString(_commandParser.Parse(message), "'");
+			message = _commandParser.GetArgumentString(_commandParser.Parse(message).ToArray(), "'");
 			Logger.Write("Event send: " + message);
 			_server.Send(message);
 			_reactiveEngine.Handle(message);
