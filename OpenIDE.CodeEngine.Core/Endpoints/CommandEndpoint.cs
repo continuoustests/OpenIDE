@@ -20,8 +20,9 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private Editor _editor;
 		private ITypeCache _cache;
 		private EventEndpoint _eventEndpoint;
+		private bool _isRunning = false;
 		private string _instanceFile;
-		private FileStream _instanceLock;
+		private Thread _instanceWriter;
 		private List<Action<MessageArgs,ITypeCache,Editor>> _handlers =
 			new List<Action<MessageArgs,ITypeCache,Editor>>();
 		
@@ -34,6 +35,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			Logger.Write("Initializing command endpoint using editor key " + editorKey);
 			_keyPath = editorKey;
 			_cache = cache;
+			_instanceWriter = new Thread(writeInstanceInfo);
 			Logger.Write("Setting up event endpoint");
 			_eventEndpoint = eventEndpoint;
 			_eventEndpoint.DispatchThrough((m) => {
@@ -108,30 +110,43 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void Start()
 		{
 			_server.Start();
-			writeInstanceInfo(_keyPath);
+			_isRunning = true;
+			_instanceWriter.Start();
 			_eventEndpoint.Send("codeengine started");
 		}
 		
 		public void Stop()
 		{
 			_eventEndpoint.Send("codeengine stopped");
+			_isRunning = false;
+			_instanceWriter.Join();
 			if (File.Exists(_instanceFile)) {
-				_instanceLock.Close();
 				File.Delete(_instanceFile);
 			}
 		}
 		
-		private void writeInstanceInfo(string key)
+		private void writeInstanceInfo()
 		{
+			string key = _keyPath;
 			var path = Path.Combine(Path.GetTempPath(), "OpenIDE.CodeEngine");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));
-			var sb = new StringBuilder();
-			sb.AppendLine(key);
-			sb.AppendLine(_server.Port.ToString());
-			File.WriteAllText(_instanceFile, sb.ToString());
-			_instanceLock = new FileStream(_instanceFile, FileMode.Open, FileAccess.Read);
+			while (_isRunning) {
+				if (File.Exists(_instanceFile)) {
+					Thread.Sleep(100);
+					continue;
+				}
+				try {
+					var sb = new StringBuilder();
+					sb.AppendLine(key);
+					sb.AppendLine(_server.Port.ToString());
+					File.WriteAllText(_instanceFile, sb.ToString());
+				} catch (Exception ex) {
+					Logger.Write(ex);
+					Thread.Sleep(2000);
+				}
+			}
 		}
 	}
 }
