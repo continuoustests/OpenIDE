@@ -145,7 +145,8 @@ namespace OpenIDE.Core.Packaging
 				_dispatch(string.Format("error|there is no package {0} to remove", source));
 				return;
 			}
-			removePackage(package.Command, Path.GetDirectoryName(Path.GetDirectoryName(package.File)));
+			var isGlobal = package.File.StartsWith(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			removePackage(package, Path.GetDirectoryName(Path.GetDirectoryName(package.File)), isGlobal);
 			_dispatch(string.Format("Removed package {0}", package.Signature));
 		}
 		
@@ -259,7 +260,7 @@ namespace OpenIDE.Core.Packaging
 			}
 
 			var backupLocation = backupScripts(args.Package.Command, args.InstallPath);
-			removePackage(args.Package.Command, args.InstallPath);
+			removePackage(args.Package, args.InstallPath, _useGlobal);
 			new PackageExtractor().Extract(source, args.InstallPath);
 			restoreScripts(args.Package.Command, args.InstallPath, backupLocation);
 
@@ -315,14 +316,26 @@ namespace OpenIDE.Core.Packaging
 			copyAll(source, destination);
 		}
 
-		private void removePackage(string command, string path) {
+		private void removePackage(Package package, string path, bool isGlobal) {
+			foreach (var action in package.PreUninstallActions) {
+				if (isGlobal && action.Global != null)
+					_dispatch(action.Global);
+				else
+					_dispatch(action.Action);
+			}
 			Directory.Delete(
-				Path.Combine(path, command + "-files"), true);
+				Path.Combine(path, package.Command + "-files"), true);
 			Directory
 				.GetFiles(path)
-				.Where(x => Path.GetFileNameWithoutExtension(x) == command)
+				.Where(x => Path.GetFileNameWithoutExtension(x) == package.Command)
 				.ToList()
 				.ForEach(x => File.Delete(x));
+			foreach (var action in package.PostUninstallActions) {
+				if (isGlobal && action.Global != null)
+					_dispatch(action.Global);
+				else
+					_dispatch(action.Action);
+			}
 		}
 
 		private void printUpdateFailed(string id) {
@@ -341,15 +354,23 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 
-			foreach (var action in package.PreInstallActions)
-				_dispatch(action);
+			foreach (var action in package.PreInstallActions) {
+				if (_useGlobal && action.Global != null)
+					_dispatch(action.Global);
+				else
+					_dispatch(action.Action);
+			}
 
 			if (!installDependencies(package.Dependencies))
 				return;
 			new PackageExtractor().Extract(source, installPath);
 
-			foreach (var action in package.PostInstallActions)
-				_dispatch(action);
+			foreach (var action in package.PostInstallActions) {
+				if (_useGlobal && action.Global != null)
+					_dispatch(action.Global);
+				else
+					_dispatch(action.Action);
+			}
 
 			_dispatch(string.Format("installed {1} package {0} in profile {2}",
 				package.Signature,

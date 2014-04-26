@@ -263,6 +263,8 @@ namespace OpenIDE.Arguments.Handlers
 					"\t\"#config-prefix\": \"{0}.\"," + NL +
 					"\t\"#pre-install-actions\": []," + NL +
 					"\t\"#post-install-actions\": []," + NL +
+					"\t\"#pre-uninstall-actions\": []," + NL +
+					"\t\"#post-uninstall-actions\": []," + NL +
 					"\t\"#dependencies\": [" + NL +
 					"\t\t\t{" + NL +
 					"\t\t\t\t\"id\": \"package id\"," + NL +

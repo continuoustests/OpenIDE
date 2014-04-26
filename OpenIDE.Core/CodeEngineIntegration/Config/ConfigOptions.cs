@@ -25,6 +25,7 @@ namespace OpenIDE.Core.Config
 			addOption("oi.logpath", "Enables and specifies where to place logs");
 			addOption("oi.source.prioritization", "A comma separated list of source names");
 			addOption("oi.userselect.ui.fallback", "Whether the builtin user select window is enabled/disabled. Default enabled.");
+			addOption("oi.userinput.ui.fallback", "Whether the builtin user input window is enabled/disabled. Default enabled.");
 			foreach (var path in _paths) {
 				if (!Directory.Exists(path))
 					continue;

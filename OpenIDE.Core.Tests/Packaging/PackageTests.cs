@@ -159,10 +159,14 @@ namespace OpenIDE.Core.Packaging.Tests
 				new Package(new[] { "linux" }, "language", "MyPackage", "v1.1", "cmd", "My package", "My Description")
 					.AddPreInstallAction("action1")
 					.AddPreInstallAction("action2")
+					.AddPreInstallAction("local-action3", "global-action3")
 					.AddDependency("Dep1", new[] {"v1","v2"})
 					.AddDependency("Dep2", new[] {"v1"})
-					.AddPostInstallAction("action3")
-					.AddPostInstallAction("action4");
+					.AddPostInstallAction("action4")
+					.AddPostInstallAction("action5")
+					.AddPostInstallAction("local-action6", "global-action6")
+					.AddPreUninstallAction("uninstall-action1")
+					.AddPostUninstallAction("uninstall-action2");
 
 			Assert.That(
 				package.Write(),
@@ -199,12 +203,22 @@ namespace OpenIDE.Core.Packaging.Tests
 					"\t\"pre-install-actions\":" + NL +
 					"\t\t[" + NL +
 					"\t\t\t\"action1\"," + NL +
-					"\t\t\t\"action2\"" + NL +
+					"\t\t\t\"action2\"," + NL +
+					"\t\t\t{ \"local\": \"local-action3\", \"global\": \"global-action3\" }" + NL +
 					"\t\t]," + NL +
 					"\t\"post-install-actions\":" + NL +
 					"\t\t[" + NL +
-					"\t\t\t\"action3\"," + NL +
-					"\t\t\t\"action4\"" + NL +
+					"\t\t\t\"action4\"," + NL +
+					"\t\t\t\"action5\"," + NL +
+					"\t\t\t{ \"local\": \"local-action6\", \"global\": \"global-action6\" }" + NL +
+					"\t\t]," + NL +
+					"\t\"pre-uninstall-actions\":" + NL +
+					"\t\t[" + NL +
+					"\t\t\t\"uninstall-action1\"" + NL +
+					"\t\t]," + NL +
+					"\t\"post-uninstall-actions\":" + NL +
+					"\t\t[" + NL +
+					"\t\t\t\"uninstall-action2\"" + NL +
 					"\t\t]" + NL +
 					"}"));
 		}

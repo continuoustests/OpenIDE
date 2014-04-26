@@ -63,7 +63,7 @@ namespace OpenIDE.Core.FileSystem
 
 			Logger.Write("Running script {0} with {1}", _file, arguments);
 			arguments = "{global-profile} {local-profile} " + arguments;
-			var commandLine = run(
+			run(
 				arguments,
 				(m) => {
 					var requestRunner = new RequestRunner(_token);

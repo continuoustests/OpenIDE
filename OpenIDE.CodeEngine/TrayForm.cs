@@ -114,6 +114,8 @@ namespace OpenIDE.CodeEngine
 				memberLookup(message, editor);
             if (message.Message.StartsWith("user-select \"unsupported\" "))
                 userSelect(message, editor);
+            if (message.Message.StartsWith("user-input \"unsupported\" "))
+                userInput(message, editor);
 			if (message.Message == "shutdown")
 				_terminateApplication = true;
         }
@@ -214,6 +216,27 @@ namespace OpenIDE.CodeEngine
                         var form = new UserSelectForm(args[3].Split(new[] {','}), (item) => {
                             if (item != null)
                                 _endpoint.PublishEvent("user-selected '" + args[2] + "' '"  + item + "'");
+                            editor.SetFocus();
+                        });
+                        form.Show(this);
+                        setToForeground(form);
+                    } catch {
+                    }
+                }, null);
+        }
+
+        private void userInput(MessageArgs message, Editor editor)
+        {
+            var state = new ConfigReader(_endpoint.Token).Get("oi.userinput.ui.fallback");
+            if (state == "disabled")
+                return;
+            _ctx.Post((s) =>
+                {
+                    try {
+                        var args = new CommandStringParser().Parse(message.Message).ToArray();
+                        var form = new UserInputForm(args[3], (item) => {
+                            if (item != null)
+                                _endpoint.PublishEvent("user-input '" + args[2] + "' '"  + item + "'");
                             editor.SetFocus();
                         });
                         form.Show(this);

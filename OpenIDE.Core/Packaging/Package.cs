@@ -9,6 +9,19 @@ namespace OpenIDE.Core.Packaging
 {
 	public class Package
 	{
+		public class InstallAction
+		{
+			public string Action { get; set; }
+			public string Global { get; set; }
+
+			public override string ToString() {
+				if (Global != null) {
+					return "{ \"local\": \""+Action+"\", \"global\": \""+Global+"\" }";
+				}
+				return "\""+Action+"\"";
+			}
+		}
+
 		public static Package Read(string json, string file) {
 			return read(file, json);
 		}
@@ -38,7 +51,10 @@ namespace OpenIDE.Core.Packaging
 				package.File = file;
 				if (data["pre-install-actions"] != null) {
 					data["pre-install-actions"].Children().ToList()
-						.ForEach(x => package.AddPreInstallAction(x.ToString()));
+						.ForEach(x => {
+							var action = parseAction(x);
+							package.AddPreInstallAction(action.Action, action.Global);
+						});
 				}
 				if (data["dependencies"] != null) {
 					data["dependencies"].Children().ToList()
@@ -50,7 +66,24 @@ namespace OpenIDE.Core.Packaging
 				}
 				if (data["post-install-actions"] != null) {
 					data["post-install-actions"].Children().ToList()
-						.ForEach(x => package.AddPostInstallAction(x.ToString()));
+						.ForEach(x => {
+							var action = parseAction(x);
+							package.AddPostInstallAction(action.Action, action.Global);
+						});
+				}
+				if (data["pre-uninstall-actions"] != null) {
+					data["pre-uninstall-actions"].Children().ToList()
+						.ForEach(x => {
+							var action = parseAction(x);
+							package.AddPreUninstallAction(action.Action, action.Global);
+						});
+				}
+				if (data["post-uninstall-actions"] != null) {
+					data["post-uninstall-actions"].Children().ToList()
+						.ForEach(x => {
+							var action = parseAction(x);
+							package.AddPostUninstallAction(action.Action, action.Global);
+						});
 				}
 				if (package.IsValid())
 					return package;
@@ -58,6 +91,20 @@ namespace OpenIDE.Core.Packaging
 				Logger.Write(ex);
 			}
 			return null;
+		}
+
+		private static InstallAction parseAction(JToken x) {
+			var local = x["local"];
+			var global = x["global"];
+			if (local != null || global != null) {
+				return new InstallAction() {
+					Action = local.ToString(),
+					Global = global.ToString()
+				};
+			}
+			return new InstallAction() {
+				Action = x.ToString()
+			};
 		}
 
 		public class Dependency
@@ -89,9 +136,12 @@ namespace OpenIDE.Core.Packaging
 		public string Command { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public List<string> PreInstallActions = new List<string>();
+		public List<InstallAction> PreInstallActions = new List<InstallAction>();
 		public List<Dependency> Dependencies = new List<Dependency>();
-		public List<string> PostInstallActions = new List<string>();
+		public List<InstallAction> PostInstallActions = new List<InstallAction>();
+
+		public List<InstallAction> PreUninstallActions = new List<InstallAction>();
+		public List<InstallAction> PostUninstallActions = new List<InstallAction>();
 
 		public Package(string[] os, string target, string id, string version, string command, string name, string description) {
 			_os.AddRange(os);
@@ -104,7 +154,15 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public Package AddPreInstallAction(string item) {
-			PreInstallActions.Add(item);
+			return AddPreInstallAction(item, null);
+		}
+
+		public Package AddPreInstallAction(string item, string global) {
+			var action = new InstallAction() {
+				Action = item,
+				Global = global
+			};
+			PreInstallActions.Add(action);
 			return this;
 		}
 
@@ -114,7 +172,41 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public Package AddPostInstallAction(string item) {
-			PostInstallActions.Add(item);
+			return AddPostInstallAction(item, null);
+		}
+
+		public Package AddPostInstallAction(string item, string global) {
+			var action = new InstallAction() {
+				Action = item,
+				Global = global
+			};
+			PostInstallActions.Add(action);
+			return this;
+		}
+
+		public Package AddPreUninstallAction(string item) {
+			return AddPreUninstallAction(item, null);
+		}
+
+		public Package AddPreUninstallAction(string item, string global) {
+			var action = new InstallAction() {
+				Action = item,
+				Global = global
+			};
+			PreUninstallActions.Add(action);
+			return this;
+		}
+
+		public Package AddPostUninstallAction(string item) {
+			return AddPostUninstallAction(item, null);
+		}
+
+		public Package AddPostUninstallAction(string item, string global) {
+			var action = new InstallAction() {
+				Action = item,
+				Global = global
+			};
+			PostUninstallActions.Add(action);
 			return this;
 		}
 
@@ -183,13 +275,25 @@ namespace OpenIDE.Core.Packaging
 			sb.AppendLine(
 				getArrayOf(
 					PreInstallActions.OfType<object>(),
-					(itm,tabs) => string.Format("\"{0}\"", itm.ToString()),
+					(itm,tabs) => itm.ToString(),
 					2) + ",");
 			sb.AppendLine("\t\"post-install-actions\":");
 			sb.AppendLine(
 				getArrayOf(
 					PostInstallActions.OfType<object>(),
-					(itm,tabs) => string.Format("\"{0}\"", itm.ToString()),
+					(itm,tabs) => itm.ToString(),
+					2) + ",");
+			sb.AppendLine("\t\"pre-uninstall-actions\":");
+			sb.AppendLine(
+				getArrayOf(
+					PreUninstallActions.OfType<object>(),
+					(itm,tabs) => itm.ToString(),
+					2) + ",");
+			sb.AppendLine("\t\"post-uninstall-actions\":");
+			sb.AppendLine(
+				getArrayOf(
+					PostUninstallActions.OfType<object>(),
+					(itm,tabs) => itm.ToString(),
 					2));
 			sb.Append("}");
 			return sb.ToString();
