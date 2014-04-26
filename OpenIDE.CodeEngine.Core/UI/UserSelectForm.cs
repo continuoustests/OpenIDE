@@ -36,7 +36,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 
         void HandleTextBoxSearchhandleTextChanged(object sender, System.EventArgs e)
         {
-            populateList(_items.Where(x => x.Contains(textBoxSearch.Text.Trim())));
+            populateList(_items.Where(x => x.ToLower().Contains(textBoxSearch.Text.ToLower().Trim())));
         }
 
         void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)
