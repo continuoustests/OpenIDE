@@ -51,6 +51,9 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("user-select", "Presents the user with a list of options to select from")
 					.Add("ID", "Identifier string to look for in the responding user-selected event")
 						.Add("LIST", "A comma separated list of options for the user");
+				usage.Add("user-input", "Presents the user with an input dialog")
+					.Add("ID", "Identifier string to look for in the responding user-inputted event")
+						.Add("DEFAULT", "The default value for the user");
 				return usage;
 			}
 		}
@@ -122,6 +125,13 @@ namespace OpenIDE.Arguments.Handlers
 				if (arguments.Length < 3)
 					return;
 				instance.UserSelect(arguments[1], arguments[2]);
+			}
+			else if (arguments[0] == "user-input")
+			{
+				var defaultvalue = "";
+				if (arguments.Length > 2)
+					defaultvalue = arguments[2];
+				instance.UserInput(arguments[1], defaultvalue);
 			}
 			else
 			{
