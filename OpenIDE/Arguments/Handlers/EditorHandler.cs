@@ -53,7 +53,7 @@ namespace OpenIDE.Arguments.Handlers
 						.Add("LIST", "A comma separated list of options for the user");
 				usage.Add("user-input", "Presents the user with an input dialog")
 					.Add("ID", "Identifier string to look for in the responding user-inputted event")
-						.Add("DEFAULT", "The default value for the user");
+						.Add("[DEFAULT]", "The default value for the user");
 				return usage;
 			}
 		}
