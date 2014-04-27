@@ -10,6 +10,7 @@ using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.Core.Commands;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Logging;
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
@@ -128,7 +129,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private void writeInstanceInfo()
 		{
 			string key = _keyPath;
-			var path = Path.Combine(Path.GetTempPath(), "OpenIDE.CodeEngine");
+			var path = Path.Combine(FS.GetTempPath(), "OpenIDE.CodeEngine");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));

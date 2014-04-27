@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.Logging;
 using OpenIDE.Core.CommandBuilding;
@@ -43,7 +44,7 @@ namespace OpenIDE.EventIntegration
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			var dir = Path.Combine(Path.GetTempPath(), "OpenIDE.CodeEngine");
+			var dir = Path.Combine(FS.GetTempPath(), "OpenIDE.CodeEngine");
 			if (Directory.Exists(dir))
 			{
 				foreach (var file in Directory.GetFiles(dir, "*.pid"))
@@ -103,4 +104,92 @@ namespace OpenIDE.EventIntegration
 			}
 		}
 	}
+
+	class FS
+	{
+        public static string GetTempPath()
+        {
+            if (OS.IsOSX) {
+                return "/tmp";
+            }
+            return Path.GetTempPath();
+        }
+    }
+
+	static class OS
+    {
+        private static bool? _isWindows;
+        private static bool? _isUnix;
+        private static bool? _isOSX;
+
+        public static bool IsWindows {
+            get {
+                if (_isWindows == null) {
+                    _isWindows = 
+                        Environment.OSVersion.Platform == PlatformID.Win32S ||
+                        Environment.OSVersion.Platform == PlatformID.Win32NT ||
+                        Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+                        Environment.OSVersion.Platform == PlatformID.WinCE ||
+                        Environment.OSVersion.Platform == PlatformID.Xbox;
+                }
+                return (bool) _isWindows;
+            }
+        }
+
+        public static bool IsPosix {
+            get {
+                return IsUnix || IsOSX;
+            }
+        }
+
+        public static bool IsUnix {
+            get {
+                if (_isUnix == null)
+                    setUnixAndLinux();
+                return (bool) _isUnix;
+            }
+        }
+
+        public static bool IsOSX {
+            get {
+                if (_isOSX == null)
+                    setUnixAndLinux();
+                return (bool) _isOSX;
+            }
+        }
+
+        private static void setUnixAndLinux()
+        {
+            try
+            {
+                if (IsWindows) {
+                    _isOSX = false;
+                    _isUnix = false;
+                } else  {
+                    var process = new Process
+                                      {
+                                          StartInfo =
+                                              new ProcessStartInfo("uname", "-a")
+                                                  {
+                                                      RedirectStandardOutput = true,
+                                                      WindowStyle = ProcessWindowStyle.Hidden,
+                                                      UseShellExecute = false,
+                                                      CreateNoWindow = true
+                                                  }
+                                      };
+
+                    process.Start();
+                    var output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    _isOSX = output.Contains("Darwin Kernel");
+                    _isUnix = !_isOSX;
+                }
+            }
+            catch
+            {
+                _isOSX = false;
+                _isUnix = false;
+            }
+        }
+    }
 }

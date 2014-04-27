@@ -3,6 +3,7 @@ using OpenIDE.Core.FileSystem;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using OpenIDE.Core.FileSystem;
 namespace OpenIDE.Core.EditorEngineIntegration
 {
 	public class EngineLocator : ILocateEditorEngine
@@ -32,7 +33,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		
 		private IEnumerable<Instance> getInstances()
 		{
-			var dir = Path.Combine(Path.GetTempPath(), "EditorEngine");
+			var dir = Path.Combine(FS.GetTempPath(), "EditorEngine");
 			if (_fs.DirectoryExists(dir))
 			{
 				foreach (var file in _fs.GetFiles(dir, "*.pid"))

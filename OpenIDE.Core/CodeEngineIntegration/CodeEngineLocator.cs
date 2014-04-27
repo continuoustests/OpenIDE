@@ -39,7 +39,7 @@ namespace OpenIDE.Core.CodeEngineIntegration
 		
 		private IEnumerable<Instance> getInstances()
 		{
-			var dir = Path.Combine(Path.GetTempPath(), "OpenIDE.CodeEngine");
+			var dir = Path.Combine(FS.GetTempPath(), "OpenIDE.CodeEngine");
 			if (_fs.DirectoryExists(dir))
 			{
 				foreach (var file in _fs.GetFiles(dir, "*.pid"))

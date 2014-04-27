@@ -4,6 +4,14 @@ namespace OpenIDE.Core.FileSystem
 {
 	public class FS : IFS
 	{
+        public static string GetTempPath()
+        {
+            if (OS.IsOSX) {
+                return "/tmp";
+            }
+            return Path.GetTempPath();
+        }
+
 		public string[] GetFiles(string path, string searchPattern)
         {
             return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);

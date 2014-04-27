@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using OpenIDE.Core.FileSystem;
 namespace OpenIDE.CodeEngine.Core.EditorEngine
 {
 	public class Editor
@@ -99,7 +100,7 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			var dir = Path.Combine(Path.GetTempPath(), "EditorEngine");
+			var dir = Path.Combine(FS.GetTempPath(), "EditorEngine");
 			if (Directory.Exists(dir))
 			{
 				foreach (var file in Directory.GetFiles(dir, "*.pid"))
