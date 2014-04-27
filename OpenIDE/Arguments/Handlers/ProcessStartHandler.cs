@@ -1,11 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
-using OpenIDE.Core.Logging;
-using OpenIDE.Core.Language;
-using OpenIDE.Core.Windowing;
 using CoreExtensions;
+using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
+using OpenIDE.Core.Windowing;
 
 namespace OpenIDE.Arguments.Handlers
 {

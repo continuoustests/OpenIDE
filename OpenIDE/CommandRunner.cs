@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using OpenIDE.Bootstrapping;
+using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Definitions;
 using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Language;
 using OpenIDE.Core.Logging;
-using OpenIDE.Core.CommandBuilding;
 
 namespace OpenIDE
 {
