@@ -103,6 +103,8 @@ namespace OpenIDE.Core.Config
 		}
 
 		private string valueFromConfig(string path, string name) {
+			if (path == null)
+				return null;
 			var cfgfile = Path.Combine(path, "oi.config");
 			var cfg = new Configuration(cfgfile, false);
 			var setting = cfg.Get(name);
@@ -112,6 +114,8 @@ namespace OpenIDE.Core.Config
 		}
 
 		private void valuesFromConfig(string path, string name, List<ConfigurationSetting> results) {
+			if (path == null)
+				return;
 			var cfgfile = Path.Combine(path, "oi.config");
 			var cfg = new Configuration(cfgfile, false);
 			cfg.GetSettingsStartingWith(name).ToList()
@@ -122,6 +126,8 @@ namespace OpenIDE.Core.Config
 		}
 
 		private List<string> mergeKeys(string path, List<string> keys) {
+			if (path == null)
+				return keys;
 			var cfgfile = Path.Combine(path, "oi.config");
 			var cfg = new Configuration(cfgfile, false);
 			Logger.Write("Reading: " + cfg.ConfigurationFile);

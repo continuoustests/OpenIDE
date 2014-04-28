@@ -83,7 +83,7 @@ namespace OpenIDE.Bootstrapping
 					new TouchHandler(dispatchMessage),
 					new HandleScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator),
 					new HandleReactiveScriptHandler(_settings.RootPath, dispatchMessage, PluginLocator, ICodeEngineLocator()),
-					new HandleSnippetHandler(ICodeEngineLocator()),
+					new HandleSnippetHandler(_settings.RootPath, dispatchMessage, ICodeEngineLocator()),
 					new HandleLanguageHandler(_settings.RootPath, dispatchMessage, PluginLocator),
 
 					new CodeModelQueryHandler(ICodeEngineLocator(), ILocateEditorEngine()),

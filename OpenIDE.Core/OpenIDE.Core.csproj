@@ -117,6 +117,7 @@
     <Compile Include="OperatingSystems\OS.cs" />
     <Compile Include="Requests\RequestRunner.cs" />
     <Compile Include="Integration\ResponseDispatcher.cs" />
+    <Compile Include="Snippets\SnippetLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">
