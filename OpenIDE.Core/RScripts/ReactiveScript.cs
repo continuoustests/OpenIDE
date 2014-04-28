@@ -96,17 +96,6 @@ namespace OpenIDE.Core.RScripts
 		{
 			if (_isFaulted)
 				return;
-			//if (Environment.OSVersion.Platform != PlatformID.Unix &&
-			//	Environment.OSVersion.Platform != PlatformID.MacOSX)
-			//{
-			//	message = message
-			//				.Replace(" ", "^ ")
-			//				.Replace("|", "^|")
-			//				.Replace("%", "^&")
-			//				.Replace("&", "^&")
-			//				.Replace("<", "^<")
-			//				.Replace(">", "^>");
-			//}
 			var originalMessage = message;
             message = "{event} {global-profile} {local-profile}";
             Logger.Write("Running: " + _file + " " + message);
