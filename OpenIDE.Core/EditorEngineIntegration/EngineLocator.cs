@@ -3,7 +3,7 @@ using OpenIDE.Core.FileSystem;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using OpenIDE.Core.FileSystem;
+
 namespace OpenIDE.Core.EditorEngineIntegration
 {
 	public class EngineLocator : ILocateEditorEngine

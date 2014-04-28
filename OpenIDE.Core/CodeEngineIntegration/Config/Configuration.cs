@@ -45,9 +45,14 @@ namespace OpenIDE.Core.Config
 
 		public Configuration(string path, bool allowGlobal)
 		{
-			_path = path;
 			_allowGlobal = allowGlobal;
-			ConfigurationFile = GetConfigFile(_path);
+			if (File.Exists(path)) {
+				_path = Path.GetDirectoryName(path);
+				ConfigurationFile = path;
+			} else {
+				_path = path;
+				ConfigurationFile = GetConfigFile(_path);
+			}
 			if (!File.Exists(ConfigurationFile))
 				ConfigurationFile = null;
 			if (ConfigurationFile == null && _allowGlobal)

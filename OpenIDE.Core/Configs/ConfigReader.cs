@@ -1,6 +1,8 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.Config
@@ -101,7 +103,8 @@ namespace OpenIDE.Core.Config
 		}
 
 		private string valueFromConfig(string path, string name) {
-			var cfg = new Configuration(path, false);
+			var cfgfile = Path.Combine(path, "oi.config");
+			var cfg = new Configuration(cfgfile, false);
 			var setting = cfg.Get(name);
 			if (setting == null)
 				return null;
@@ -109,7 +112,8 @@ namespace OpenIDE.Core.Config
 		}
 
 		private void valuesFromConfig(string path, string name, List<ConfigurationSetting> results) {
-			var cfg = new Configuration(path, false);
+			var cfgfile = Path.Combine(path, "oi.config");
+			var cfg = new Configuration(cfgfile, false);
 			cfg.GetSettingsStartingWith(name).ToList()
 				.ForEach(x => {
 						if (!results.Any(y => y.Key == x.Key))
@@ -118,13 +122,17 @@ namespace OpenIDE.Core.Config
 		}
 
 		private List<string> mergeKeys(string path, List<string> keys) {
-			var cfg = new Configuration(path, false);
+			var cfgfile = Path.Combine(path, "oi.config");
+			var cfg = new Configuration(cfgfile, false);
+			Logger.Write("Reading: " + cfg.ConfigurationFile);
             var configKeys = cfg.GetKeys();
             if (configKeys == null)
                 return keys;
 			foreach (var key in configKeys) {
-				if (!keys.Contains(key))
+				if (!keys.Contains(key)) {
+					Logger.Write("Adding key: " + key);
 					keys.Add(key);
+				}
 			}
 			return keys;
 		}
