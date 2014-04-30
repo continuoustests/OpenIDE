@@ -133,21 +133,27 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));
+			writeInstanceFile();
 			while (IsAlive) {
 				if (File.Exists(_instanceFile)) {
 					Thread.Sleep(100);
 					continue;
 				}
 				try {
-					var sb = new StringBuilder();
-					sb.AppendLine(key);
-					sb.AppendLine(_server.Port.ToString());
-					File.WriteAllText(_instanceFile, sb.ToString());
+					writeInstanceFile();
 				} catch (Exception ex) {
 					Logger.Write(ex);
 					Thread.Sleep(2000);
 				}
 			}
+		}
+
+		private void writeInstanceFile()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine(_keyPath);
+			sb.AppendLine(_server.Port.ToString());
+			File.WriteAllText(_instanceFile, sb.ToString());
 		}
 	}
 }

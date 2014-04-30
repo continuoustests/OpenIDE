@@ -1,13 +1,14 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
-using OpenIDE.Core.Logging;
-using OpenIDE.Core.Language;
-using OpenIDE.Core.CommandBuilding;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.CodeEngine.Core.ReactiveScripts;
+using OpenIDE.Core.CommandBuilding;
+using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine.Core.Endpoints
 {
@@ -81,7 +82,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		
 		private void writeInstanceInfo(string key)
 		{
-			var path = Path.Combine(Path.GetTempPath(), "OpenIDE.Events");
+			var path = Path.Combine(FS.GetTempPath(), "OpenIDE.Events");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));
