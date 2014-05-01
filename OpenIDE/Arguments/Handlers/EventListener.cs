@@ -1,11 +1,11 @@
 using System;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Diagnostics;
-using OpenIDE.Core.Language;
-using OpenIDE.Core.FileSystem;
+using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using CoreExtensions;
+using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.Language;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -19,7 +19,7 @@ namespace OpenIDE.Arguments.Handlers
 					"All",
 					CommandType.FileCommand,
 					Command,
-					"Hooks in to OpenIDE and streams event messages to the console");
+					"Hooks into OpenIDE and streams event messages to the console");
 				usage.Add("[FILTER]", "Supports *something*");
 				return usage;
 			}

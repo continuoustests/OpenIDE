@@ -118,6 +118,7 @@
     <Compile Include="Requests\RequestRunner.cs" />
     <Compile Include="Integration\ResponseDispatcher.cs" />
     <Compile Include="Snippets\SnippetLocator.cs" />
+    <Compile Include="EventEndpointIntegrarion\EventEndpointLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

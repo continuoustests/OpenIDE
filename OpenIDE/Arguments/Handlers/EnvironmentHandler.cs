@@ -58,16 +58,20 @@ namespace OpenIDE.Arguments.Handlers
 			var instance = _locator.GetInstances().FirstOrDefault(x => matchPath(key, x.Key));
 			if (instance == null)
 				return;
-			_dispatch("Key:\t\t" + instance.Key);
-			_dispatch(string.Format("Endpoint:\tPid {0} @ 127.0.0.1:{1}", instance.ProcessID, instance.Port));
+			_dispatch("Key:    " + instance.Key);
+			_dispatch(string.Format("Engine: Pid {0} @ 127.0.0.1:{1}", instance.ProcessID, instance.Port));
+			var events = new OpenIDE.Core.EventEndpointIntegrarion.EventClient(key).GetInstance();
+			if (events != null) {
+				_dispatch(string.Format("Events: Pid {0} @ 127.0.0.1:{1}", events.ProcessID, events.Port));
+			}
 			var editor
 				= _editorLocator.GetInstances()
 					.FirstOrDefault(x => x.Key == instance.Key);
 			if (editor == null) {
-				_dispatch("Editor:\t\tNot running");
+				_dispatch("Editor: Not running");
 				return;
 			}
-			_dispatch(string.Format("Editor:\t\tPid {0} @ 127.0.0.1:{1}", editor.ProcessID, editor.Port));
+			_dispatch(string.Format("Editor: Pid {0} @ 127.0.0.1:{1}", editor.ProcessID, editor.Port));
 		}
 
 		private bool matchPath(string key, string path) {
