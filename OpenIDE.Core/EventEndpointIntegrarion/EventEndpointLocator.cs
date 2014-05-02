@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.FileSystem;
 
@@ -100,8 +101,13 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
             client.Connect(info.Port, (s) => {});
             var connected = client.IsConnected;
             client.Disconnect();
-            if (!connected)
-                File.Delete(info.File);
+            if (!connected) {
+                try {
+                    Process.GetProcessById(info.ProcessID);
+                } catch {
+                    File.Delete(info.File);
+                }
+            }
             return connected;
         }
     }

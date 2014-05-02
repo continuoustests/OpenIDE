@@ -1,8 +1,9 @@
 using System;
-using OpenIDE.Core.FileSystem;
-using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using OpenIDE.Core.FileSystem;
 
 namespace OpenIDE.Core.EditorEngineIntegration
 {
@@ -56,8 +57,13 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
 			client.Disconnect();
-			if (!connected)
-				_fs.DeleteFile(info.File);
+			if (!connected) {
+				try {
+					Process.GetProcessById(info.ProcessID);
+				} catch {
+					_fs.DeleteFile(info.File);
+				}
+			}
 			return connected;
 		}
 	}

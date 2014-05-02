@@ -111,8 +111,13 @@ namespace OpenIDE.EventListener
 			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
 			client.Disconnect();
-			if (!connected)
-				File.Delete(info.File);
+			if (!connected) {
+                try {
+                    Process.GetProcessById(info.ProcessID);
+                } catch {
+                    File.Delete(info.File);
+                }
+            }
 			return connected;
 		}
 	}

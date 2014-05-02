@@ -1,11 +1,13 @@
 using System;
-using OpenIDE.Core.Logging;
-using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
 using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.Logging;
+
 namespace OpenIDE.CodeEngine.Core.EditorEngine
 {
 	public class Editor
@@ -123,8 +125,13 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 			client.Connect(info.Port, (s) => {});
 			var connected = client.IsConnected;
 			client.Disconnect();
-			if (!connected)
-				File.Delete(info.File);
+			if (!connected) {
+				try {
+					Process.GetProcessById(info.ProcessID);
+				} catch {
+					File.Delete(info.File);
+				}
+			}
 			return connected;
 		}
 	}

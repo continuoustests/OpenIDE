@@ -22,7 +22,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private ITypeCache _cache;
 		private EventEndpoint _eventEndpoint;
 		private string _instanceFile;
-		private Thread _instanceWriter;
 		private List<Action<MessageArgs,ITypeCache,Editor>> _handlers =
 			new List<Action<MessageArgs,ITypeCache,Editor>>();
 		
@@ -35,7 +34,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			Logger.Write("Initializing command endpoint using editor key " + editorKey);
 			_keyPath = editorKey;
 			_cache = cache;
-			_instanceWriter = new Thread(writeInstanceInfo);
 			Logger.Write("Setting up event endpoint");
 			_eventEndpoint = eventEndpoint;
 			_eventEndpoint.DispatchThrough((m) => {
@@ -110,7 +108,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		public void Start()
 		{
 			_server.Start();
-			_instanceWriter.Start();
+			writeInstanceInfo();
 			_eventEndpoint.Send("codeengine started");
 		}
 		
@@ -118,8 +116,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		{
 			Logger.Write("Sending codeeingen stopped");
 			_eventEndpoint.Send("codeengine stopped");
-			Logger.Write("Waiting for instance writer to shut down");
-			_instanceWriter.Join();
 			Logger.Write("Removing instance file");
 			if (File.Exists(_instanceFile)) {
 				File.Delete(_instanceFile);
@@ -134,18 +130,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 				Directory.CreateDirectory(path);
 			_instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));
 			writeInstanceFile();
-			while (IsAlive) {
-				if (File.Exists(_instanceFile)) {
-					Thread.Sleep(100);
-					continue;
-				}
-				try {
-					writeInstanceFile();
-				} catch (Exception ex) {
-					Logger.Write(ex);
-					Thread.Sleep(2000);
-				}
-			}
 		}
 
 		private void writeInstanceFile()
