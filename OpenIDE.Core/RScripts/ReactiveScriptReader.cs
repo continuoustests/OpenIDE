@@ -90,7 +90,7 @@ namespace OpenIDE.Core.RScripts
 			_scripts.AddRange(
 				new ScriptFilter().GetScripts(path)
 					.Select(x => ReadScript(x))
-					.Where(x => x != null));
+					.Where(x => x != null && !_scripts.Any(y => x.Name == y.Name)));
 		}
 
 		private void readScripts()

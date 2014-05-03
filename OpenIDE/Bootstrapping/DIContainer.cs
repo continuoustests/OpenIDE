@@ -41,17 +41,21 @@ namespace OpenIDE.Bootstrapping
 
 		public DefinitionBuilder GetDefinitionBuilder() {
 			if (_definitionBuilder == null) {
+				var enabledLanguages = _settings.EnabledLanguages;
+				if (enabledLanguages == null)
+					enabledLanguages = new string[] {};
 				_definitionBuilder = 
 					new DefinitionBuilder(
 						_settings.RootPath,
 						Environment.CurrentDirectory,
 						_settings.DefaultLanguage,
+						enabledLanguages,
 						() => {
 							return GetDefaultHandlers()
 								.Select(x => 
 									new BuiltInCommand(x.Command, x.Usage));
 						},
-						(path) => PluginLocator().LocateFor(path));
+						(path) => PluginLocator().LocateAllFor(path));
 			}
 			return _definitionBuilder;
 		}
@@ -138,7 +142,7 @@ namespace OpenIDE.Bootstrapping
 				_pluginLocator =
 					new PluginLocator(
 						_settings.EnabledLanguages,
-						new ProfileLocator(_settings.Path),
+						new ProfileLocator(_settings.RootPath),
 						(command) => dispatchMessage(command));
 			}
 			return _pluginLocator;

@@ -63,7 +63,7 @@ namespace OpenIDE.Core.Tests.Definitions
 			another	
 				.Add(type, "", time, false, true, "cmdAnother", "")
 					.Append(type, "", time, false, true, "cmdAnother2", "");
-			cache.Merge(another);
+			cache.Merge(new string[] {}, another);
 			Assert.That(cache.Definitions.Length, Is.EqualTo(2));
 		}
 
@@ -81,7 +81,7 @@ namespace OpenIDE.Core.Tests.Definitions
 			another	
 				.Add(type, "", time, false, true, "cmd1", "")
 					.Append(type, "", time, false, true, "cmdAnother", "");
-			cache.Merge(another);
+			cache.Merge(new string[] {}, another);
 			Assert.That(cache.Definitions.Length, Is.EqualTo(1));
 		}
 
