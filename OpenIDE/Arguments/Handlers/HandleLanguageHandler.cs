@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
-using OpenIDE.Bootstrapping;
-using OpenIDE.Core.FileSystem;
-using OpenIDE.Core.RScripts;
-using OpenIDE.Core.Commands;
-using OpenIDE.Core.Language;
-using OpenIDE.Core.Definitions;
-using OpenIDE.Core.Config;
 using CoreExtensions;
+using OpenIDE.Bootstrapping;
+using OpenIDE.Core.Commands;
+using OpenIDE.Core.Config;
+using OpenIDE.Core.Definitions;
+using OpenIDE.Core.FileSystem;
+using OpenIDE.Core.Language;
+using OpenIDE.Core.Profiles;
+using OpenIDE.Core.RScripts;
 
 namespace OpenIDE.Arguments.Handlers
 {
@@ -33,7 +34,8 @@ namespace OpenIDE.Arguments.Handlers
 				scripts
 					.Add("new", "Create new script")
 						.Add("LANGUAGE_NAME", "Language containing script")
-							.Add("SCRIPT_NAME", "Script name with file extension.");
+							.Add("SCRIPT_NAME", "Script name with file extension.")
+								.Add("[-l]", "Adds the script to your local profile");
 				scripts
 					.Add("edit", "Open script in the editor")
 						.Add("LANGUAGE_NAME", "Language containing script")
@@ -52,7 +54,8 @@ namespace OpenIDE.Arguments.Handlers
 				rscripts
 					.Add("new", "Create new reactive script")
 						.Add("LANGUAGE_NAME", "Language containing reactive script")
-							.Add("SCRIPT_NAME", "Reactive script name with file extension");
+							.Add("SCRIPT_NAME", "Reactive script name with file extension")
+								.Add("[-l]", "Adds the script to your local profile");
 				rscripts
 					.Add("edit", "Open reactive script in the editor")
 						.Add("LANGUAGE_NAME", "Language containing reactive script")
@@ -106,13 +109,13 @@ namespace OpenIDE.Arguments.Handlers
 		private void handleScript(string[] args) {
 			if (args.Length == 1)
 				listScript();
-			else if (args.Length == 4 && args[1] == "new")
+			else if (args.Length >= 4 && args[1] == "new")
 				newScript(args);
 			else if (args.Length == 4 && args[1] == "edit")
 				editScript(args);
 			else if (args.Length == 4 && args[1] == "cat")
 				catScript(args);
-			else if (args.Length == 4 && args[1] == "rm")
+			else if (args.Length >= 4 && args[1] == "rm")
 				rmScript(args);
 			else if (args.Length == 2)
 				listScript(args[1]);
@@ -126,7 +129,8 @@ namespace OpenIDE.Arguments.Handlers
 			if (filename == null)
 				return;
 			var extension = getExtension(args[3]);
-			var path = getLanguagePath(language, "scripts");
+			var createLocal = args.Length == 5 && args[4] == "-l";
+			var path = getLanguagePath(createLocal, language, "scripts");
 			if (path == null)
 				return;
 			var file = Path.Combine(
@@ -249,7 +253,8 @@ namespace OpenIDE.Arguments.Handlers
 			if (filename == null)
 				return;
 			var extension = getExtension(args[3]);
-			var path = getLanguagePath(language, "rscripts");
+			var createLocal = args.Length == 5 && args[4] == "-l";
+			var path = getLanguagePath(createLocal, language, "rscripts");
 			if (path == null)
 				return;
 			var file = Path.Combine(
@@ -366,7 +371,7 @@ namespace OpenIDE.Arguments.Handlers
 			foreach (var language in _locator().Locate()) {
 				if (languageName != null && language.GetLanguage() != languageName)
 					continue;
-				var path = getLanguagePath(language, type);
+				var path = getLanguagePath(false, language, type);
 				var languageItems = 
 					items
 						.Where(x => pathExtractor(x).StartsWith(path)).ToArray();
@@ -378,7 +383,12 @@ namespace OpenIDE.Arguments.Handlers
 			}
 		}
 		
-		private string getLanguagePath(LanguagePlugin language, string dir) {
+		private string getLanguagePath(bool createLocal, LanguagePlugin language, string dir) {
+			if (createLocal) {
+				var profiles = new ProfileLocator(_token);
+				var path = profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile());
+				return Path.Combine(path, "languages", language.GetLanguage() + "-files", dir);
+			}
 			return
 				Path.Combine(
 					Path.GetDirectoryName(language.FullPath),

@@ -157,9 +157,6 @@ namespace OpenIDE.Core.Packaging
 			try {
 				var package = getInstallPackage(source, tempPath);
 				if (package != null) {
-					// Force language to global as that is the only thing workin atm
-					if (package.Target == "language")
-						_useGlobal = true;
 					var installPath = destinatinoPathLocator(package);
 					if (installPath == null)
 						return false;

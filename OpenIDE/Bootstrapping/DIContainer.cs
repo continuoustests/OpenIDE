@@ -138,7 +138,7 @@ namespace OpenIDE.Bootstrapping
 				_pluginLocator =
 					new PluginLocator(
 						_settings.EnabledLanguages,
-						new ProfileLocator(_settings.Path),
+						new ProfileLocator(_settings.RootPath),
 						(command) => dispatchMessage(command));
 			}
 			return _pluginLocator;

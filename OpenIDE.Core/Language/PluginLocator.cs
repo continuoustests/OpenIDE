@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Diagnostics;
-using System.Collections.Generic;
+using OpenIDE.Core.Logging;
 using OpenIDE.Core.Profiles;
 
 namespace OpenIDE.Core.Language
@@ -94,6 +95,7 @@ namespace OpenIDE.Core.Language
 				_profiles.GetGlobalProfilePath("default"));
 			
 			foreach (var dir in dirs) {
+				Logger.Write("Looking for languages in " + dir);
 				var list = getPlugins(dir);
 				plugins.AddRange(
 						list
