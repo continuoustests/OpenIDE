@@ -51,8 +51,11 @@ namespace OpenIDE.Core.Definitions
 			return get(args, 0, _scripts, null);
 		}
 
-		public void Merge(DefinitionCache cache) {
+		public void Merge(string[] enabledLanguages, DefinitionCache cache) {
 			foreach (var definition in cache.Definitions) {
+				// Skip not enabled languages
+				if (definition.Type == DefinitionCacheItemType.Language && !enabledLanguages.Contains(definition.Name))
+					continue;
 				if (definition.Override)
 					overrideItem(definition);
 				else

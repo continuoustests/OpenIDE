@@ -61,6 +61,14 @@ namespace OpenIDE.Core.Language
 					.ToArray();
 		}
 
+		public LanguagePlugin[] LocateAllFor(string path)
+		{
+			return
+				LocateAll()
+					.Where(x => x.FullPath.StartsWith(path)) 
+					.ToArray();
+		}
+
 		public IEnumerable<BaseCommandHandlerParameter> GetUsages()
 		{
 			var commands = new List<BaseCommandHandlerParameter>();

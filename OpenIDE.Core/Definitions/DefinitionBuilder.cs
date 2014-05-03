@@ -27,6 +27,7 @@ namespace OpenIDE.Core.Definitions
 		private string _token;
 		private string _workingDirectory;
 		private string _defaultLanguage;
+		private string[] _enabledLanguages;
 		private DefinitionCache _cache = new DefinitionCache();
 		private Func<IEnumerable<BuiltInCommand>> _builtIn;
 		private Func<string,IEnumerable<LanguagePlugin>> _languages;
@@ -37,6 +38,7 @@ namespace OpenIDE.Core.Definitions
 			string token,
 			string workingDirectory,
 			string defaultLanguage,
+			string[] enabledLanguages,
 			Func<IEnumerable<BuiltInCommand>> builtIn,
 			Func<string,IEnumerable<LanguagePlugin>> languages)
 
@@ -44,6 +46,7 @@ namespace OpenIDE.Core.Definitions
 			_token = token;
 			_workingDirectory = workingDirectory;
 			_defaultLanguage = defaultLanguage;
+			_enabledLanguages = enabledLanguages;
 			_builtIn = builtIn;
 			_languages = languages;
 		}
@@ -109,7 +112,7 @@ namespace OpenIDE.Core.Definitions
 				Logger.Write("Could not find definition file: " + builtInFile);
 				builtInCache = writeBuiltInCommands(builtInFile, profiles);
 			}
-			_cache.Merge(builtInCache);
+			_cache.Merge(_enabledLanguages, builtInCache);
 		}
 
 		private void mergeExternalCommands(string path) {
@@ -127,7 +130,7 @@ namespace OpenIDE.Core.Definitions
 				localCache = buildDefinitions(file);
 			}
 			
-			_cache.Merge(localCache);
+			_cache.Merge(_enabledLanguages, localCache);
 		}
 
 		private DefinitionCache writeBuiltInCommands(string file, ProfileLocator profiles) {
