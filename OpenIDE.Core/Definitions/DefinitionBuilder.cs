@@ -185,12 +185,59 @@ namespace OpenIDE.Core.Definitions
 					language.GetLanguage(),
 					"Commands for the " + language.GetLanguage() + " plugin");
 				add(cache, item, language.GetUsages());
+			}
 
+			// Add language scripts
+			var currentLanguages = cache
+				.Definitions
+				.Where(x => x.Type == DefinitionCacheItemType.Language)
+				.ToList();
+			var otherLocationLanguages = _cache
+				.Definitions
+				.Where(x => x.Type == DefinitionCacheItemType.Language && !currentLanguages.Any(y => y.Name == x.Name))
+				.ToList();
+			foreach (var item in currentLanguages) {
 				var languageScriptPath = 
 					Path.Combine(
 						Path.Combine(
-							languagePath, language.GetLanguage() + "-files"),
+							languagePath, item.Name + "-files"),
 							"scripts");
+				if (!Directory.Exists(languageScriptPath))
+					continue;
+				Logger.Write("Adding scripts from " + languageScriptPath);
+				var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
+				foreach (var scriptFile in languageScripts) {
+					Logger.Write("Script " + scriptFile);
+					var script  = new Script(_token, _workingDirectory, scriptFile);
+					var usages = script.Usages; // Description is built when fetching usages
+					var scriptItem = item.Append(
+						DefinitionCacheItemType.LanguageScript,
+						scriptFile,
+						DateTime.Now,
+						false,
+						true,
+						script.Name,
+						script.Description);
+					add(cache, scriptItem, usages);
+				}
+			}
+			foreach (var language in otherLocationLanguages) {
+				var languageScriptPath = 
+					Path.Combine(
+						Path.Combine(
+							languagePath, language.Name + "-files"),
+							"scripts");
+				if (!Directory.Exists(languageScriptPath))
+					continue;
+				var item = cache.Add(
+					DefinitionCacheItemType.Language,
+					"placehoder-for-language-in-different-location",
+					DateTime.Now,
+					false,
+					true,
+					language.Name,
+					"");
+				add(cache, item, new BaseCommandHandlerParameter[] {});
 				Logger.Write("Adding scripts from " + languageScriptPath);
 				var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
 				foreach (var scriptFile in languageScripts) {
@@ -310,27 +357,32 @@ namespace OpenIDE.Core.Definitions
 				}
 				
 				locations = cache.GetLocations(DefinitionCacheItemType.Language);
+				Logger.Write("We are looking for this:");
+				locations.ToList().ForEach(x => Logger.Write("\t"+x));
 				var languagePath = Path.Combine(dir, "languages");
-				var languages = _languages(languagePath);
-				if (languages.Any(x => !locations.Contains(x.FullPath))) {
+				var languages = _languages(languagePath).Select(x => x.FullPath).ToList();
+				languages = addPlaceholderLanguages(languagePath, languages);
+				Logger.Write("We found this:");
+				languages.ToList().ForEach(x => Logger.Write("\t"+x));
+				if (languages.Any(x => !locations.Contains(x))) {
 					Logger.Write("New language has been added");
 					if (Logger.IsEnabled) {
-						foreach (var newLanguage in languages.Where(x => !locations.Contains(x.FullPath)))
-							Logger.Write("\t" + newLanguage.FullPath);
+						foreach (var newLanguage in languages.Where(x => !locations.Contains(x)))
+							Logger.Write("\t" + newLanguage);
 					}
 					return true;
 				}
-				if (locations.Any(x => !languages.Any(y => y.FullPath == x))) {
+				if (locations.Any(x => !languages.Any(y => y == x))) {
 					Logger.Write("Language has been removed");
 					return true;
 				}
-				
+
 				foreach (var language in languages) {
-					if (isUpdated(language.FullPath, cache))
+					if (isUpdated(language, cache))
 						return true;
 					var languageScriptPath = 
 						Path.Combine(
-							Path.Combine(languagePath, language.GetLanguage() + "-files"),
+							Path.Combine(languagePath, Path.GetFileNameWithoutExtension(language) + "-files"),
 							"scripts");
 					if (Directory.Exists(languageScriptPath)) {
 						locations = cache
@@ -359,8 +411,30 @@ namespace OpenIDE.Core.Definitions
 			return false;
 		}
 
+		private List<string> addPlaceholderLanguages(string path, List<string> existing) {
+			if (!Directory.Exists(path))
+				return existing;
+			var existingShort = existing.Select(x => 
+				Path.Combine(
+					Path.GetDirectoryName(x),
+					Path.GetFileNameWithoutExtension(x) + "-files"));
+			foreach (var dir in Directory.GetDirectories(path)) {
+				if (!dir.EndsWith("-files"))
+					continue;
+				if (existingShort.Contains(dir))
+					continue;
+				existing.Add(dir.Substring(0, dir.Length - 6));
+			}
+			return existing;
+		}
+
 		private bool isUpdated(string file, DefinitionCache cache) {
 			var updated = cache.GetOldestItem(file).Updated;
+			// This is a hack to check placeholder languages naturally
+			// the language file for a placeholder language will not
+			// exist
+			if (!File.Exists(file))
+				return false;
 			var filetime = fileTime(file);
 			if (filetime > updated) {
 				Logger.Write("Oldest is {0} {1} for {2}", updated.ToShortDateString(), updated.ToLongTimeString(), file);

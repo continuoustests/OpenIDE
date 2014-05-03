@@ -124,8 +124,15 @@ namespace OpenIDE.Core.Definitions
 
 		private DefinitionCacheItem add(DefinitionCacheItem item) {
 			addRaw(item);
-			if (_definitions.Any(x => x.Name == item.Name))
+			if (_definitions.Any(x => x.Name == item.Name)) {
+				if (item.Location == "placehoder-for-language-in-different-location") {
+					var original = _definitions.FirstOrDefault(x => x.Name == item.Name && x.Type == DefinitionCacheItemType.Language);
+					overrideItem(item);
+					return original;
+				}
 				_definitions.RemoveAll(x => x.Name == item.Name);
+			}
+			Logger.Write("Adding command " + item.Name);
 			_definitions.Add(item);
 			return item;
 		}
