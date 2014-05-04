@@ -115,7 +115,7 @@ namespace OpenIDE.Arguments.Handlers
 				editScript(args);
 			else if (args.Length == 4 && args[1] == "cat")
 				catScript(args);
-			else if (args.Length >= 4 && args[1] == "rm")
+			else if (args.Length == 4 && args[1] == "rm")
 				rmScript(args);
 			else if (args.Length == 2)
 				listScript(args[1]);
@@ -233,7 +233,7 @@ namespace OpenIDE.Arguments.Handlers
 		private void handleRScript(string[] args) {
 			if (args.Length == 1)
 				listRScript();
-			else if (args.Length == 4 && args[1] == "new")
+			else if (args.Length >= 4 && args[1] == "new")
 				newRScript(args);
 			else if (args.Length == 4 && args[1] == "edit")
 				editRScript(args);

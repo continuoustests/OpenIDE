@@ -124,16 +124,33 @@ namespace OpenIDE.Core.RScripts
 		}
 
 		private List<string> getLanguagePaths() {
+			var orderedProfilePaths = new List<string>();
+			var profiles = new ProfileLocator(_keyPath);
+			orderedProfilePaths.Add(Path.Combine(profiles.GetGlobalProfilePath("default"), "languages"));
+			orderedProfilePaths.Add(Path.Combine(profiles.GetGlobalProfilePath(profiles.GetActiveGlobalProfile()), "languages"));
+			orderedProfilePaths.Add(Path.Combine(profiles.GetLocalProfilePath("default"), "languages"));
+			orderedProfilePaths.Add(Path.Combine(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile()), "languages"));
+
 			var paths = new List<string>();
-			foreach (var plugin in _pluginLocator().Locate()) {
-				paths.Add(
-					Path.Combine(
-						Path.GetDirectoryName(plugin.FullPath),
-						Path.Combine(
-							plugin.GetLanguage() + "-files",
-							"rscripts")));
-			}
+			foreach (var plugin in _pluginLocator().Locate())
+				addLanguagePath(plugin, orderedProfilePaths, ref paths);
 			return paths;
+		}
+
+		private void addLanguagePath(LanguagePlugin plugin, List<string> rootPaths, ref List<string> paths) {
+			var pluginRoot = Path.GetDirectoryName(plugin.FullPath);
+			var index = rootPaths.IndexOf(pluginRoot);
+			foreach (var root in rootPaths.Skip(index)) {
+				var path =
+						Path.Combine(
+							root,
+							Path.Combine(
+								plugin.GetLanguage() + "-files",
+								"rscripts"));
+				if (!Directory.Exists(path))
+					continue;
+				paths.Add(path);
+			}
 		}
 
 		private void addToList(List<string> list, string item)
