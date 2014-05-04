@@ -76,11 +76,12 @@ namespace OpenIDE.CodeEngine.Core.UI
                         items = items.GetRange(0, 30);
                     _syncContext.Post(nothing => informationList.Items.Clear(), null);
                     foreach (var item in items) {
-                        _syncContext.Post(nothing => addItem(item), null);
+                        _syncContext.Post(itm => addItem((ICodeReference)itm), item);
                     }
                     _syncContext.Post(nothing => {
                         if (informationList.Items.Count > 0)
                             informationList.Items[0].Selected = true;
+                        informationList.Refresh();
                     }, items);
                 }
                 catch (Exception ex)
