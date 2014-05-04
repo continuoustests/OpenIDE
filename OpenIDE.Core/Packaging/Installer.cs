@@ -126,6 +126,8 @@ namespace OpenIDE.Core.Packaging
 						_dispatch("error|the package you are trying to update is not installed");
 						return null;
 					}
+					var profiles = new ProfileLocator(_token);
+					_useGlobal = profiles.IsGlobal(packageToUpdate.File);
 					return Path.GetDirectoryName(Path.GetDirectoryName(packageToUpdate.File));
 				},
 				(args) => {
@@ -145,7 +147,8 @@ namespace OpenIDE.Core.Packaging
 				_dispatch(string.Format("error|there is no package {0} to remove", source));
 				return;
 			}
-			var isGlobal = package.File.StartsWith(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			var profiles = new ProfileLocator(_token);
+			var isGlobal = profiles.IsGlobal(package.File);
 			removePackage(package, Path.GetDirectoryName(Path.GetDirectoryName(package.File)), isGlobal);
 			_dispatch(string.Format("Removed package {0}", package.Signature));
 		}
@@ -219,8 +222,13 @@ namespace OpenIDE.Core.Packaging
 
 		private string getInstallPath(Package package, ProfileLocator profiles, string activeProfile) {
 			string installPath;
-			if (package.Target.StartsWith("language-"))
-				return getLanguageInstallPath(package);
+			if (package.Target.StartsWith("language-")) {
+				var path = getLanguageInstallPath(package);
+				if (path == null)
+					return null;
+				_useGlobal = profiles.IsGlobal(path);
+				return path;
+			}
 			if (_useGlobal)
 				installPath = profiles.GetGlobalProfilePath(activeProfile);
 			else

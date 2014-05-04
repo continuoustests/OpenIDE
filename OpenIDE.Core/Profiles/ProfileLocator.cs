@@ -29,6 +29,10 @@ namespace OpenIDE.Core.Profiles
 			return path;
 		}
 
+		public bool IsGlobal(string path) {
+			return path.StartsWith(GetGlobalProfilePath("default"));
+		}
+
 		public string GetGlobalProfilePath(string name) {
 			if (name == "default")
 				return GetGlobalProfilesRoot();
