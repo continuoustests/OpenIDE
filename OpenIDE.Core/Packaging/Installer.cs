@@ -234,6 +234,10 @@ namespace OpenIDE.Core.Packaging
 			var language = _locator
 				.Locate()
 				.FirstOrDefault(x => x.GetLanguage() == package.Language);
+			if (language == null) {
+				Logger.Write("Failed to locate language " + package.Language);
+				return null;
+			}
 			return
 				Path.Combine(
 					Path.Combine(
