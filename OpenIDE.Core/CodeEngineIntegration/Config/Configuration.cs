@@ -28,6 +28,8 @@ namespace OpenIDE.Core.Config
 
 	public class Configuration
 	{
+		private static object _configLock = new object();
+
 		private const string DEFAULT_EDITOR_SETTING = "default.editor";
 		private const string DEFAULT_LANGUAGE_SETTING = "default.language";
 		private const string ENABLED_LANGUAGES_SETTING = "enabled.languages";
@@ -137,37 +139,41 @@ namespace OpenIDE.Core.Config
 
 		public void Write(string setting)
 		{
-			setting = setting.Trim(new[] { '\t' });
-			if (ConfigurationFile == null)
-				ConfigurationFile = GetConfigFile(_path);
-			if (ConfigurationFile == null)
-			{
-				Console.WriteLine("Could not find valid configuration point for path " + _path);
-				return;
+			lock (_configLock) {
+				setting = setting.Trim(new[] { '\t' });
+				if (ConfigurationFile == null)
+					ConfigurationFile = GetConfigFile(_path);
+				if (ConfigurationFile == null)
+				{
+					Console.WriteLine("Could not find valid configuration point for path " + _path);
+					return;
+				}
+				if (!isSetting(setting))
+				{
+					Console.WriteLine("Invalid setting: " + setting);
+					return;
+				}
+				if (!Directory.Exists(Path.GetDirectoryName(ConfigurationFile)))
+					Directory.CreateDirectory(Path.GetDirectoryName(ConfigurationFile));
+				string[] lines = new string[] {};
+				if (File.Exists(ConfigurationFile))
+					lines = File.ReadAllLines(ConfigurationFile); write(ConfigurationFile, lines, setting);
 			}
-			if (!isSetting(setting))
-			{
-				Console.WriteLine("Invalid setting: " + setting);
-				return;
-			}
-			if (!Directory.Exists(Path.GetDirectoryName(ConfigurationFile)))
-				Directory.CreateDirectory(Path.GetDirectoryName(ConfigurationFile));
-			string[] lines = new string[] {};
-			if (File.Exists(ConfigurationFile))
-				lines = File.ReadAllLines(ConfigurationFile); write(ConfigurationFile, lines, setting);
 		}
 
 		public void Delete(string setting)
 		{
-			if (!File.Exists(ConfigurationFile))
-				ConfigurationFile = GetConfigFile(_path);
-			if (!File.Exists(ConfigurationFile))
-			{
-				Console.WriteLine("Could not find valid configuration point for path " + _path);
-				return;
+			lock (_configLock) {
+				if (!File.Exists(ConfigurationFile))
+					ConfigurationFile = GetConfigFile(_path);
+				if (!File.Exists(ConfigurationFile))
+				{
+					Console.WriteLine("Could not find valid configuration point for path " + _path);
+					return;
+				}
+				var lines = File.ReadAllLines(ConfigurationFile);
+				remove(ConfigurationFile, lines, setting);
 			}
-			var lines = File.ReadAllLines(ConfigurationFile);
-			remove(ConfigurationFile, lines, setting);
 		}
 
 		private void write(string file, string[] lines, string setting)

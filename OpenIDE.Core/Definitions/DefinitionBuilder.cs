@@ -342,7 +342,7 @@ namespace OpenIDE.Core.Definitions
 		private bool cacheIsOutOfDate(string file, DefinitionCache cache) {
 			try {
 				var dir = Path.GetDirectoryName(file);
-				var locations = cache.GetLocations(DefinitionCacheItemType.Script);
+				var locations = cache.GetLocations(DefinitionCacheItemType.Script).Select(x => x.Location);
 				var scriptPath = Path.Combine(dir, "scripts");
 				var scripts = new ScriptFilter().GetScripts(scriptPath);
 				if (scripts.Any(x => !locations.Contains(x))) {
@@ -359,14 +359,11 @@ namespace OpenIDE.Core.Definitions
 						return true;
 				}
 				
-				locations = cache.GetLocations(DefinitionCacheItemType.Language);
-				Logger.Write("We are looking for this:");
-				locations.ToList().ForEach(x => Logger.Write("\t"+x));
 				var languagePath = Path.Combine(dir, "languages");
+				var rawLocations = cache.GetLocations(DefinitionCacheItemType.Language);
+				locations = replacePlaceholderLanguages(languagePath, rawLocations);
 				var languages = _languages(languagePath).Select(x => x.FullPath).ToList();
 				languages = addPlaceholderLanguages(languagePath, languages);
-				Logger.Write("We found this:");
-				languages.ToList().ForEach(x => Logger.Write("\t"+x));
 				if (languages.Any(x => !locations.Contains(x))) {
 					Logger.Write("New language has been added");
 					if (Logger.IsEnabled) {
@@ -390,6 +387,7 @@ namespace OpenIDE.Core.Definitions
 					if (Directory.Exists(languageScriptPath)) {
 						locations = cache
 							.GetLocations(DefinitionCacheItemType.LanguageScript)
+							.Select(x => x.Location)
 							.Where(x => x.StartsWith(languageScriptPath))
 							.ToArray();
 						var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
@@ -414,6 +412,17 @@ namespace OpenIDE.Core.Definitions
 			return false;
 		}
 
+		private string[] replacePlaceholderLanguages(string path, DefinitionCache.DefinitionLocation[] locations) {
+			var result = new List<string>();
+			foreach (var location in locations) {
+				if (location.Location == "placehoder-for-language-in-different-location")
+					result.Add(Path.Combine(path, location.Name));
+				else
+					result.Add(location.Location);
+			}
+			return result.ToArray();
+		}
+
 		private List<string> addPlaceholderLanguages(string path, List<string> existing) {
 			if (!Directory.Exists(path))
 				return existing;
@@ -432,7 +441,11 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		private bool isUpdated(string file, DefinitionCache cache) {
-			var updated = cache.GetOldestItem(file).Updated;
+			var oldest = cache.GetOldestItem(file);
+			// This might be null on language placeholders
+			if (oldest == null)
+				return false;
+			var updated = oldest.Updated;
 			// This is a hack to check placeholder languages naturally
 			// the language file for a placeholder language will not
 			// exist

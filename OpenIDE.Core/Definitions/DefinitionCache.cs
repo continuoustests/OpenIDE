@@ -54,6 +54,10 @@ namespace OpenIDE.Core.Definitions
 		public void Merge(string[] enabledLanguages, DefinitionCache cache) {
 			foreach (var definition in cache.Definitions) {
 				// Skip not enabled languages
+				// We can handle this on merge as
+				// 1. Writing / updating definition files happens before merge
+				// 2. The first part being written to the cache is builtin 
+				//    which contains no languages
 				if (definition.Type == DefinitionCacheItemType.Language && !enabledLanguages.Contains(definition.Name))
 					continue;
 				if (definition.Override)
@@ -84,15 +88,24 @@ namespace OpenIDE.Core.Definitions
 			return oldest;
 		}
 
-		public string[] GetLocations(DefinitionCacheItemType type) {
-			var locations = new List<string>();
+		public class DefinitionLocation
+		{
+			public string Name { get; set; }
+			public string Location { get; set; }
+		}
+
+		public DefinitionLocation[] GetLocations(DefinitionCacheItemType type) {
+			var locations = new List<DefinitionLocation>();
 			visitAll(
 				(item) => {
 						if (item.Type != type)
 							return;
-						if (locations.Contains(item.Location))
+						if (locations.Any(x => x.Location == item.Location))
 							return;
-						locations.Add(item.Location);
+						locations.Add(new DefinitionLocation() {
+							Name = item.Name,
+							Location = item.Location
+						});
 					},
 				_definitions);
 			return locations.ToArray();
@@ -135,7 +148,6 @@ namespace OpenIDE.Core.Definitions
 				}
 				_definitions.RemoveAll(x => x.Name == item.Name);
 			}
-			Logger.Write("Adding command " + item.Name);
 			_definitions.Add(item);
 			return item;
 		}

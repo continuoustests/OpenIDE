@@ -26,12 +26,8 @@ namespace OpenIDE.Core.Definitions
 		public void Write(DefinitionCache cache) {
 			var file = Path.Combine(_path, "oi-definitions.json");
 			var json = new List<DefinitionJson>();
-			Logger.Write("Writing to: " + file);
 			cache.Definitions.OrderBy(x => x.Override).ToList()
-				.ForEach(x => {
-					Logger.Write("Writing: " + x.Name);
-					json.Add(get(x));
-				});
+				.ForEach(x => json.Add(get(x)));
 			_writer(
 				file,
 				LowercaseJsonSerializer
