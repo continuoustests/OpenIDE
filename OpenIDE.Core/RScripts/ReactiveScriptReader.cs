@@ -134,6 +134,7 @@ namespace OpenIDE.Core.RScripts
 			var paths = new List<string>();
 			foreach (var plugin in _pluginLocator().Locate())
 				addLanguagePath(plugin, orderedProfilePaths, ref paths);
+			paths.Reverse();
 			return paths;
 		}
 
