@@ -64,7 +64,7 @@ namespace OpenIDE.Core.Packaging
 						activeProfile = profiles.GetActiveLocalProfile();
 					var installPath = getInstallPath(package, profiles, activeProfile);
 					if (installPath == null)
-						_dispatch("error|the current location does not have an initialized config point");
+						return null;
 					Logger.Write("Installing the package in " + installPath);
 					return installPath;
 				},
@@ -225,10 +225,12 @@ namespace OpenIDE.Core.Packaging
 			string installPath;
 			if (package.Target.StartsWith("language-")) {
 				var path = getLanguageInstallPath(package, !_useGlobal);
-				if (path == null)
+				if (path == null) {
+					_dispatch("error|could not find language to install language dependent package in");
 					return null;
+				}
 				if (_useGlobal && !profiles.IsGlobal(path)) {
-					_dispatch("error|Cannot install language dependent package globally as language is installed locally.");
+					_dispatch("error|cannot install language dependent package globally as language is installed locally.");
 					return null;
 				}
 				return path;
@@ -237,8 +239,10 @@ namespace OpenIDE.Core.Packaging
 				installPath = profiles.GetGlobalProfilePath(activeProfile);
 			else
 				installPath = profiles.GetLocalProfilePath(activeProfile);
-			if (installPath == null)
+			if (installPath == null) {
+				_dispatch("error|the current location does not have an initialized config point");
 				return null;
+			}
 			return Path.Combine(installPath, package.Target + "s");
 		}
 
