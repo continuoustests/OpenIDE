@@ -65,6 +65,7 @@ namespace OpenIDE.Core.Packaging
 					var installPath = getInstallPath(package, profiles, activeProfile);
 					if (installPath == null)
 						_dispatch("error|the current location does not have an initialized config point");
+					Logger.Write("Installing the package in " + installPath);
 					return installPath;
 				},
 				(args) => {
@@ -223,10 +224,13 @@ namespace OpenIDE.Core.Packaging
 		private string getInstallPath(Package package, ProfileLocator profiles, string activeProfile) {
 			string installPath;
 			if (package.Target.StartsWith("language-")) {
-				var path = getLanguageInstallPath(package);
+				var path = getLanguageInstallPath(package, !_useGlobal);
 				if (path == null)
 					return null;
-				_useGlobal = profiles.IsGlobal(path);
+				if (_useGlobal && !profiles.IsGlobal(path)) {
+					_dispatch("error|Cannot install language dependent package globally as language is installed locally.");
+					return null;
+				}
 				return path;
 			}
 			if (_useGlobal)
@@ -239,6 +243,10 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		private string  getLanguageInstallPath(Package package) {
+			return getLanguageInstallPath(package, false);
+		}
+
+		private string  getLanguageInstallPath(Package package, bool forcelocal) {
 			var language = _locator
 				.Locate()
 				.FirstOrDefault(x => x.GetLanguage() == package.Language);
@@ -246,10 +254,15 @@ namespace OpenIDE.Core.Packaging
 				Logger.Write("Failed to locate language " + package.Language);
 				return null;
 			}
+			var basepath = Path.GetDirectoryName(language.FullPath);
+			if (forcelocal) {
+				var profiles = new ProfileLocator(_token);
+				basepath = Path.Combine(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile()), "languages");
+			}
 			return
 				Path.Combine(
 					Path.Combine(
-						Path.GetDirectoryName(language.FullPath),
+						basepath,
 						language.GetLanguage() + "-files"),
 					package.Target.Replace("language-", "") + "s");
 		}
