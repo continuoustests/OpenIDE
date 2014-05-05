@@ -67,7 +67,7 @@ namespace OpenIDE.Arguments.Handlers
                     _token,
                     (error, s) => {
                         if (s.StartsWith(name)) {
-                            _dispatch(s.Substring(name.Length, s.Length - name.Length));
+                            _dispatch(s.Substring(name.Length, s.Length - name.Length).Replace("'", ""));
                         }
                         if (s == match1 || s == match2) {
                             var newHas = File.ReadAllText(script.File).GetHashCode();

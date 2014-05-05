@@ -21,6 +21,9 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Hooks into OpenIDE and streams event messages to the console");
 				usage.Add("[FILTER]", "Supports *something*");
+				usage
+					.Add("rscript", "Filter output from rscript")
+						.Add("NAME", "Name of reactive script");
 				return usage;
 			}
 		}
@@ -33,18 +36,23 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
+			var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var eventListener = Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe"));
+			if (arguments.Length == 2 && arguments[0] == "rscript") {
+				var start = "'rscript-"+arguments[1]+"' *";
+				query(eventListener, "", start, (m) => {
+					Console.WriteLine(m.Substring(start.Length, m.Length - start.Length).Replace("'", ""));
+				});
+				return;
+			}
 			string filter = null;
 			if (arguments.Length == 1)
 				filter = arguments[0];
-			var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			query(
-				Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe")),
-				"",
-				filter);
+			query(eventListener, "", filter, (m) => Console.WriteLine(m));
 		}
 
 		private Regex _matcher;
-		private void query(string cmd, string arguments, string filter)
+		private void query(string cmd, string arguments, string filter, Action<string> onMatch)
 		{
 			if (filter != null) {
 				_matcher = new Regex(
@@ -61,7 +69,7 @@ namespace OpenIDE.Arguments.Handlers
                 	_path,
                 	(error, s) => {
                 			if (error || filter == null || match(s))
-                				Console.WriteLine(s);
+                				onMatch(s);
                 		});
 			} catch (Exception ex) {
 				Console.WriteLine(ex.ToString());
