@@ -1,13 +1,14 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Reflection;
-using System.Diagnostics;
 using CoreExtensions;
-using OpenIDE.Core.Logging;
 using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
+using OpenIDE.Core.OutputEndpointIntegration;
 using OpenIDE.Core.RScripts;
 
 namespace OpenIDE.Arguments.Handlers
@@ -57,9 +58,14 @@ namespace OpenIDE.Arguments.Handlers
             var match2 = "'codemodel' 'raw-filesystem-change-filechanged' '" + script.File + "'";
             Logger.Write("Looking for: " + match1);
             Logger.Write("Looking for: " + match2);
-            var name = "'rscript-" + Path.GetFileNameWithoutExtension(script.File) + "' ";
+            var name = "rscript-" + Path.GetFileNameWithoutExtension(script.File);
             var hash = 0;
             try {
+                var output = new OutputClient(_token, (publisher, msg) => {
+                    if (name == publisher)
+                        _dispatch(msg);
+                });
+                output.Connect();
                 var proc = new Process();
                 proc.Query(
                     Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe")),
@@ -67,9 +73,6 @@ namespace OpenIDE.Arguments.Handlers
                     false,
                     _token,
                     (error, s) => {
-                        if (s.StartsWith(name)) {
-                            _dispatch(s.Substring(name.Length, s.Length - name.Length).Replace("'", ""));
-                        }
                         if (s == match1 || s == match2) {
                             var newHas = File.ReadAllText(script.File).GetHashCode();
                             if (newHas != hash) {

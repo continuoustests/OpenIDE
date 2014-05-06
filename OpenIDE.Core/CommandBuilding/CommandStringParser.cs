@@ -64,6 +64,7 @@ namespace OpenIDE.Core.CommandBuilding
             _words = new List<string>();
             _separator = _delimiter;
             _word = "";
+            _insideQuotes = false;
             for (int i = 0; i < arguments.Length; i++) {
                 processCharacter(arguments[i]);
                 _previousChar = arguments[i];

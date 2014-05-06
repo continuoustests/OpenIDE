@@ -58,9 +58,9 @@ namespace OpenIDE.Arguments.Handlers
                 	false,
                 	_path,
                 	(error, s) => {
-                			if (error || filter == null || match(s))
-                				onMatch(s);
-                		});
+            			if (error || filter == null || match(s))
+            				onMatch(s);
+            		});
 			} catch (Exception ex) {
 				Console.WriteLine(ex.ToString());
 			}
