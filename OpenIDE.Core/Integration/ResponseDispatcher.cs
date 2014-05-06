@@ -73,7 +73,7 @@ namespace OpenIDE.Core.Integration
                 } else {
                     if (_onlyCommands)
                         return;
-                    _dispatcher(_eventPrefix + m);
+                    _dispatcher(_eventPrefix + "'" + m + "'");
                 }
             }
         }

@@ -58,7 +58,7 @@ namespace OpenIDE.Tests.UI
 				_controller.ModifiedSnippet,
 				Is.EqualTo(
 					getContent()
-						.Replace("{nr1}", "FirstWord")));
+						.Replace("{nr1}", "FirstWord ")));
 		}
 
 		[Test]

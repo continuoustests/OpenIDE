@@ -13,6 +13,7 @@ namespace OpenIDE.Core.CommandBuilding
         private string _word;
         private char _delimiter = ' ';
         private bool _addEmptyWords = false;
+        private bool _insideQuotes = false;
 
         public CommandStringParser()
         {
@@ -73,13 +74,19 @@ namespace OpenIDE.Core.CommandBuilding
 
         private void processCharacter(char argument)
         {
-            if (isArgumentSeparator(argument))
+            if (isArgumentSeparator(argument)) {
                 _separator = argument;
+                if (isQuote(argument)) {
+                    _insideQuotes = true;
+                    return;
+                }
+            }
 
             if (itTerminatesArgument(argument))
             {
                 addWord();
                 _word = "";
+                _insideQuotes = false;
                 return;
             }
             _word += argument.ToString();
@@ -87,8 +94,11 @@ namespace OpenIDE.Core.CommandBuilding
 
         private void addWord()
         {
-            if (_word.Length > 0 || _addEmptyWords)
-                _words.Add(_word.Trim());
+            if (_word.Length > 0 || _addEmptyWords) {
+                if (!_insideQuotes)
+                    _word = _word.Trim();
+                _words.Add(_word);
+            }
         }
 
         private bool itTerminatesArgument(char argument)
@@ -100,18 +110,27 @@ namespace OpenIDE.Core.CommandBuilding
         private bool isArgumentSeparator(char argument)
         {
             return
-                (_word.Length == 0 && argument == _delimiter) ||
+                (!_insideQuotes && _word.Length == 0 && argument == _delimiter) ||
                 (_word.Length == 0 && argument == '"') ||
                 (_word.Length == 0 && argument == '\'');
         }
 
+        private bool isQuote(char argument)
+        {
+            return argument == '"' || argument == '\'';
+        }
+
         private bool argumentIsTerminatedWithSpace(char arguments)
         {
+            if (_insideQuotes)
+                return false;
             return (arguments == _delimiter && _separator == _delimiter);
         }
 
         private bool argumentIsTerminatedWithQuote(char arguments)
         {
+            if (!_insideQuotes)
+                return false;
             return
                 (arguments == '"' && _separator == '"' && _previousChar != '\\') ||
                 (arguments == '\'' && _separator == '\'' && _previousChar != '\\');

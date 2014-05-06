@@ -88,8 +88,8 @@ namespace OpenIDE.Tests.Core.CommandBuilding
         {
             assertArguments(
                 new CommandStringParser()
-                    .Parse("this thing 'is separated \"by\" single quotes' \"and this' by double\"").ToArray(),
-                "this", "thing", "is separated \"by\" single quotes", "and this' by double");
+                    .Parse("this thing 'is separated \"by\" single quotes' \"  and this' by double\"").ToArray(),
+                "this", "thing", "is separated \"by\" single quotes", "  and this' by double");
         }
 
 
