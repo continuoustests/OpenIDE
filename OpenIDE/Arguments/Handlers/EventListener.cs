@@ -21,9 +21,6 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Hooks into OpenIDE and streams event messages to the console");
 				usage.Add("[FILTER]", "Supports *something*");
-				usage
-					.Add("rscript", "Filter output from rscript")
-						.Add("NAME", "Name of reactive script");
 				return usage;
 			}
 		}
@@ -38,13 +35,6 @@ namespace OpenIDE.Arguments.Handlers
 		{
 			var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			var eventListener = Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe"));
-			if (arguments.Length == 2 && arguments[0] == "rscript") {
-				var start = "'rscript-"+arguments[1]+"' *";
-				query(eventListener, "", start, (m) => {
-					Console.WriteLine(m.Substring(start.Length, m.Length - start.Length).Replace("'", ""));
-				});
-				return;
-			}
 			string filter = null;
 			if (arguments.Length == 1)
 				filter = arguments[0];

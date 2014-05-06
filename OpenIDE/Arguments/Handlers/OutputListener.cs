@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using OpenIDE.Arguments;
 using OpenIDE.Core.Language;
@@ -34,11 +35,15 @@ namespace OpenIDE.Arguments.Handlers
 
         public void Execute(string[] arguments) {
             Action<string,string> printer = (publisher, message) => {
-                    _dispatch(publisher+": "+message);
+                _dispatch(publisher+": "+message);
             };
             if (arguments.Length == 1) {
+                var matcher = new Regex(
+                    "^" + Regex.Escape(arguments[0])
+                        .Replace( "\\*", ".*" )
+                        .Replace( "\\?", "." ) + "$");
                 printer = (publisher, message) => {
-                    if (publisher != arguments[0])
+                    if (!matcher.IsMatch(publisher))
                         return;
                     _dispatch(message);
                 };
