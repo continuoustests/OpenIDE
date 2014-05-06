@@ -45,6 +45,7 @@ namespace OpenIDE.Arguments.Handlers
             var scripts = new ReactiveScriptReader(
                 _token,
                 _pluginLocator,
+                (p, m) => {},
                 (m) => {})
                 .Read();
             var script = scripts.FirstOrDefault(x => x.Name.Equals(arguments[0]));

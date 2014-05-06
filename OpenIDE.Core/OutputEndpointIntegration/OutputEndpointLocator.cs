@@ -6,23 +6,23 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using OpenIDE.Core.FileSystem;
 
-namespace OpenIDE.Core.EventEndpointIntegrarion
+namespace OpenIDE.Core.OutputEndpointIntegration
 {
-    public class EventClient
+    public class OutputClient
     {
-        private Action<string> _handler;
+        private Action<string,string> _handler;
         private string _path = null;
         private OpenIDE.Core.EditorEngineIntegration.Client _client = null;
 
         public bool IsConnected { get { return isConnected(); } }
         
-        public EventClient(string path)
+        public OutputClient(string path)
         {
             _path = path;
-            _handler = (m) => {};
+            _handler = (publisher, message) => {};
         }
 
-        public EventClient(string path, Action<string> onMessage)
+        public OutputClient(string path, Action<string,string> onMessage)
         {
             _path = path;
             _handler = onMessage;
@@ -30,7 +30,7 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
 
         public Instance GetInstance()
         {
-            return new EventEndpointLocator().GetInstance(_path);
+            return new OutputEndpointLocator().GetInstance(_path);
         }
 
         public void Connect()
@@ -41,13 +41,6 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
             isConnected();
         }
 
-        public void Send(string message)
-        {
-            if (!isConnected())
-                return;
-            _client.Send(message);
-        }
-        
         private bool isConnected()
         {
             try
@@ -58,7 +51,12 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
                 if (instance == null)
                     return false;
                 _client = new OpenIDE.Core.EditorEngineIntegration.Client();
-                _client.Connect(instance.Port, (m) => _handler(m));
+                _client.Connect(instance.Port, (m) => {
+                    var publisherStart = m.IndexOf("|");
+                    var publisher = m.Substring(0, publisherStart);
+                    var message = m.Substring(publisherStart + 1, m.Length - (publisherStart+1));
+                    _handler(publisher, message);
+                });
                 if (_client.IsConnected)
                     return true;
                 _client = null;
@@ -71,7 +69,7 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
         }
     }
     
-    class EventEndpointLocator
+    class OutputEndpointLocator
     {
         public Instance GetInstance(string path)
         {
@@ -83,7 +81,7 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
         
         private IEnumerable<Instance> getInstances(string path)
         {
-            var dir = Path.Combine(FS.GetTempPath(), "OpenIDE.Events");
+            var dir = Path.Combine(FS.GetTempPath(), "OpenIDE.Output");
             if (Directory.Exists(dir))
             {
                 foreach (var file in Directory.GetFiles(dir, "*.pid"))

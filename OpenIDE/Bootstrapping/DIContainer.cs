@@ -95,6 +95,7 @@ namespace OpenIDE.Bootstrapping
 					new ProcessStartHandler(),
 
 					new EventListener(_settings.RootPath),
+					new OutputListener(_settings.RootPath, dispatchMessage),
 
 					new PackageHandler(_settings.RootPath, _settings.SourcePrioritization, dispatchMessage, PluginLocator),
 
@@ -209,6 +210,9 @@ namespace OpenIDE.Bootstrapping
 						_commandsInProcessing--;
 					}
 				}, null);
+			} else if (command.StartsWith("raw|")) {
+				var msg = command.Substring(4, command.Length - 4);
+				Console.Write(msg);
 			} else {
 				Console.WriteLine(command);
 			}

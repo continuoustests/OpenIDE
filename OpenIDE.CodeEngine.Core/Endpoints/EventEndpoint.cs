@@ -20,16 +20,18 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		private ReactiveScriptEngine _reactiveEngine;
 		private Action<string> _dispatch = (m) => {};
 		private CommandStringParser _commandParser = new CommandStringParser();
+		private OpenIDE.CodeEngine.Core.Endpoints.OutputEndpoint _outputEndpoint;
 
 		public int Port { get { return _server.Port; } }
 		
-		public EventEndpoint(string keyPath, PluginLocator locator)
+		public EventEndpoint(string keyPath, PluginLocator locator, OpenIDE.CodeEngine.Core.Endpoints.OutputEndpoint outputEndpoint)
 		{
 			_keyPath = keyPath;
+			_outputEndpoint = outputEndpoint;
 			_server = new TcpServer();
 			_server.IncomingMessage += Handle_serverIncomingMessage;
 			_server.Start();
-			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator, dispatch);
+			_reactiveEngine = new ReactiveScriptEngine(_keyPath, locator, (publisher, msg) => _outputEndpoint.Send(publisher, msg), dispatch);
 		}
 
 		public void DispatchThrough(Action<string> dispatch) {

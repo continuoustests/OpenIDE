@@ -30,6 +30,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		private static List<IHandler> _handlers = new List<IHandler>();
 		private static CommandEndpoint _endpoint;
 		private static EventEndpoint _eventEndpoint;
+		private static OutputEndpoint _outputEndpoint;
 		private static TypeCache _cache;
         private static PluginLocator _pluginLocator;
 		private static Interpreters _interpreters;
@@ -45,10 +46,13 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 						return interpreters;
 					};
             _cache = new TypeCache();
+            _outputEndpoint = new OutputEndpoint(_path);
+			Logger.Write("Event endpoint serving on port: {0}", _outputEndpoint.Port);
             var responseDispatcher = new ResponseDispatcher(
             	_path,
             	false,
             	"language-output ",
+            	(p, m) => _outputEndpoint.Send(p, m),
             	(m) => _endpoint.Handle(m),
             	(m) => {}
             );
@@ -62,7 +66,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			);
 			initPlugins(_pluginLocator);
 
-			_eventEndpoint = new EventEndpoint(_path, _pluginLocator);
+			_eventEndpoint = new EventEndpoint(_path, _pluginLocator, _outputEndpoint);
 			_eventEndpoint.Start();
 			Logger.Write("Event endpoint listening on port: {0}", _eventEndpoint.Port);
 
@@ -110,6 +114,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			_tracker.Dispose();
 			_endpoint.Stop();
 			_eventEndpoint.Stop();
+			_outputEndpoint.Stop();
 		}
 
 		private static void messageHandler(MessageArgs message, ITypeCache cache, Editor editor)

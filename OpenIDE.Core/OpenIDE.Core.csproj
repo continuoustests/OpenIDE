@@ -119,6 +119,7 @@
     <Compile Include="Integration\ResponseDispatcher.cs" />
     <Compile Include="Snippets\SnippetLocator.cs" />
     <Compile Include="EventEndpointIntegrarion\EventEndpointLocator.cs" />
+    <Compile Include="OutputEndpointIntegration\OutputEndpointLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

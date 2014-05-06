@@ -64,6 +64,10 @@ namespace OpenIDE.Arguments.Handlers
 			if (events != null) {
 				_dispatch(string.Format("Events: Pid {0} @ 127.0.0.1:{1}", events.ProcessID, events.Port));
 			}
+			var output = new OpenIDE.Core.OutputEndpointIntegration.OutputClient(key).GetInstance();
+			if (output != null) {
+				_dispatch(string.Format("Output: Pid {0} @ 127.0.0.1:{1}", output.ProcessID, output.Port));
+			}
 			var editor
 				= _editorLocator.GetInstances()
 					.FirstOrDefault(x => x.Key == instance.Key);

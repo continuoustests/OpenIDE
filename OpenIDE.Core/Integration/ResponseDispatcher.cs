@@ -11,6 +11,7 @@ namespace OpenIDE.Core.Integration
         private bool _dispatchErrors;
         private string _eventPrefix;
         private Action<string> _dispatcher;
+        private Action<string,string> _outputDispatcher;
         private Action<string> _dispatchResponse;
 
         private bool _onlyCommands;
@@ -18,8 +19,9 @@ namespace OpenIDE.Core.Integration
         private OpenIDE.Core.EditorEngineIntegration.Instance _editor;
         private Func<OpenIDE.Core.EditorEngineIntegration.Instance> _editorFactory;
 
-        public ResponseDispatcher(string token, bool dispatchErrors, string eventPrefix, Action<string> dispatcher, Action<string> dispatchResponse) {
+        public ResponseDispatcher(string token, bool dispatchErrors, string eventPrefix, Action<string,string> outputDispatcher, Action<string> dispatcher, Action<string> dispatchResponse) {
             _token = token;
+            _outputDispatcher = outputDispatcher;
             _dispatchErrors = dispatchErrors;
             _eventPrefix = eventPrefix;
             _dispatcher = dispatcher;
@@ -47,7 +49,7 @@ namespace OpenIDE.Core.Integration
             var eventText = "event|";
             if (error) {
                 if (_dispatchErrors)
-                    _dispatcher(_eventPrefix + "error|" + m);
+                    _outputDispatcher(_eventPrefix, "error|" + m);
             } else {
                 if (m.StartsWith(cmdText)) {
                     var toDispatch = m.Substring(cmdText.Length, m.Length - cmdText.Length);
@@ -73,7 +75,7 @@ namespace OpenIDE.Core.Integration
                 } else {
                     if (_onlyCommands)
                         return;
-                    _dispatcher(_eventPrefix + "'" + m + "'");
+                    _outputDispatcher(_eventPrefix, m);
                 }
             }
         }

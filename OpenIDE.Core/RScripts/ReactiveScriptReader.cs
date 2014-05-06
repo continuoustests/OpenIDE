@@ -20,11 +20,13 @@ namespace OpenIDE.Core.RScripts
 		private string _globalScriptsPath;
 		private List<ReactiveScript> _scripts = new List<ReactiveScript>();
 		private Func<PluginLocator> _pluginLocator;
+		private Action<string,string> _outputDispatcher;
 		private Action<string> _dispatch;
 
-		public ReactiveScriptReader(string path, Func<PluginLocator> locator, Action<string> dispatch)
+		public ReactiveScriptReader(string path, Func<PluginLocator> locator, Action<string,string> outputDispatcher, Action<string> dispatch)
 		{
 			_keyPath = path;
+			_outputDispatcher = outputDispatcher;
 			_dispatch = dispatch;
 			var profiles = new ProfileLocator(_keyPath);
 			_localScriptsPathDefault = getPath(profiles.GetLocalProfilePath("default"));
@@ -71,7 +73,7 @@ namespace OpenIDE.Core.RScripts
 		public ReactiveScript ReadScript(string path, bool dispatchErrors)
 		{
             try {
-			    var script = new ReactiveScript(path, _keyPath, _dispatch, dispatchErrors);
+			    var script = new ReactiveScript(path, _keyPath, _outputDispatcher, _dispatch, dispatchErrors);
 			    if (script.IsFaulted)
 			    	return null;
 			    return script;

@@ -17,17 +17,20 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		private ReactiveScriptReader _reader;
 		private List<ReactiveScript> _scripts;	
 		private List<string> _pausedScripts;
+		private Action<string,string> _outputDispatcher;
 		private Action<string> _dispatch;
 
-		public ReactiveScriptEngine(string path, PluginLocator locator, Action<string> dispatch)
+		public ReactiveScriptEngine(string path, PluginLocator locator, Action<string,string> outputDispatcher, Action<string> dispatch)
 		{
 			_keyPath = path;
+			_outputDispatcher = outputDispatcher;
 			_dispatch = dispatch;
 			_pausedScripts = new List<string>();
 			_reader =
 				new ReactiveScriptReader(
 					_keyPath,
 					() => { return locator; },
+					_outputDispatcher,
 					(m) => _dispatch(m));
 			_touchHandler = new ScriptTouchHandler(_reader.GetPaths());
 			_scripts = _reader.Read();

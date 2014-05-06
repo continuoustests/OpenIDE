@@ -23,6 +23,7 @@ namespace OpenIDE.Core.RScripts
 		private List<string> _events = new List<string>();
 		private string _localProfileName;
 		private string _globalProfileName;
+		private Action<string,string> _outputDispatcher;
 		private Action<string> _dispatch;
 		private Process _service;
 		private Thread _serviceThread;
@@ -41,20 +42,21 @@ namespace OpenIDE.Core.RScripts
 
 		public string File { get { return _file; } }
 
-		public ReactiveScript(string file, string keyPath, Action<string> dispatch)
+		public ReactiveScript(string file, string keyPath, Action<string,string> outputDispatcher, Action<string> dispatch)
 		{
-			construct(file, keyPath, dispatch, false);
+			construct(file, keyPath, outputDispatcher, dispatch, false);
 		}
 
-		public ReactiveScript(string file, string keyPath, Action<string> dispatch, bool dispatchErrors)
+		public ReactiveScript(string file, string keyPath, Action<string,string> outputDispatcher, Action<string> dispatch, bool dispatchErrors)
 		{
-			construct(file, keyPath, dispatch, dispatchErrors);
+			construct(file, keyPath, outputDispatcher, dispatch, dispatchErrors);
 		}
 
-		private void construct(string file, string keyPath, Action<string> dispatch, bool dispatchErrors)
+		private void construct(string file, string keyPath, Action<string,string> outputDispatcher, Action<string> dispatch, bool dispatchErrors)
 		{
 			_file = file;
 			_keyPath = keyPath;
+			_outputDispatcher = outputDispatcher;
 			_dispatch = dispatch;
 			_dispatchErrors = dispatchErrors;
 			var profiles = new ProfileLocator(_keyPath);
@@ -107,6 +109,7 @@ namespace OpenIDE.Core.RScripts
 						_keyPath, 
 						_dispatchErrors,
 						"rscript-" + Name + " ",
+						_outputDispatcher,
 						internalDispatch,
 						(response) => process.Write(response)
 					);
@@ -162,6 +165,7 @@ namespace OpenIDE.Core.RScripts
 					_keyPath, 
 					_dispatchErrors,
 					"rscript-" + Name + " ",
+					_outputDispatcher,
 					internalDispatch,
 					(response) => _service.Write(response)
 				);

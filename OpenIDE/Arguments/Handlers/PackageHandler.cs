@@ -127,6 +127,7 @@ namespace OpenIDE.Arguments.Handlers
 					new ReactiveScriptReader(
 						_token,
 						_locator,
+						(p, m) => {},
 						(m) => {}
 					).Read()
 					.FirstOrDefault(x => x.Name == source);

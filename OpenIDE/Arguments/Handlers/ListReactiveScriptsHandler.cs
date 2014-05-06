@@ -39,6 +39,7 @@ namespace OpenIDE.Arguments.Handlers
 				new ReactiveScriptReader(
 					_token,
 					_pluginLocator,
+					(p, m) => {},
 					(m) => {})
 					.Read();
 			var instance = _codeEngineLocator.GetInstance(_token);

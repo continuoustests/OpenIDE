@@ -338,6 +338,7 @@ namespace OpenIDE.Arguments.Handlers
 				new ReactiveScriptReader(
 					_token,
 					_locator,
+					(p, m) => {},
 					(m) => {})
 					.ReadLanguageScripts();
 			itemsPrLanguage(
