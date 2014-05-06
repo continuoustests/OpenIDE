@@ -53,7 +53,7 @@ def handle_event(event, global_profile, local_profile, args):
         inputted = event[35+len(command):-1]
         if inputted == "user-cancelled":
             return 
-        for line in run_process["oi", "C#", "new", command, inputted]:
+        for line in run_process(["oi", "C#", "new", command, inputted]):
             pass
 
 if __name__ == "__main__":
