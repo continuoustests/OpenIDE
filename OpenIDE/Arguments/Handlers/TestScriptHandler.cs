@@ -98,7 +98,7 @@ namespace OpenIDE.Arguments.Handlers
             var proc = new Process();
             try {
                 string[] errors;
-                foreach (var line in proc.QueryAll(command, args + " --raw", false, _token, out errors)) {
+                foreach (var line in proc.QueryAll(command, args + " --raw", false, Environment.CurrentDirectory, out errors)) {
                     Logger.Write("line is " + line);
                     _dispatch(line);
                 }
