@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using OpenIDE.Core.Logging;
+
 namespace OpenIDE.Core.FileSystem
 {
 	public class FS : IFS
@@ -16,7 +18,7 @@ namespace OpenIDE.Core.FileSystem
         {
             var rnd = new Random();
             var path = Path.Combine(GetTempPath(), "tmp" + rnd.Next().ToString("x") + ".tmp");
-            while (!File.Exists(path)) {
+            while (File.Exists(path)) {
                 path = Path.Combine(GetTempPath(), "tmp" + rnd.Next().ToString("x") + ".tmp");
             }
             return path;

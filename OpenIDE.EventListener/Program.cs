@@ -361,7 +361,7 @@ namespace OpenIDE.EventListener
         {
             var rnd = new Random();
             var path = Path.Combine(GetTempDir(), "tmp" + rnd.Next().ToString("x") + ".tmp");
-            while (!File.Exists(path)) {
+            while (File.Exists(path)) {
                 path = Path.Combine(GetTempDir(), "tmp" + rnd.Next().ToString("x") + ".tmp");
             }
             return path;
