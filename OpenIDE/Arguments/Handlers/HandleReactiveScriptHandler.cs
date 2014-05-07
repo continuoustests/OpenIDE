@@ -23,6 +23,7 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Handles reactive scripts. No arguments will list available scripts");
 				
+				usage.Add("[-s]", "Lists scripts also showing state");
 				var newHandler = usage.Add("new", "Creates a script that is triggered by it's specified events");
 				var newName = newHandler.Add("SCRIPT-NAME", "Script name with optional file extension.");
 				newName.Add("[--global]", "Will create the new script in the main script folder")
@@ -58,14 +59,16 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new TestReactiveScriptHandler(_dispatch, _locator, _token));
 		}
 
-		public void Execute(string[] arguments)
+		public void Execute(string[] args)
 		{
-			if (arguments.Length == 0)
-				arguments = new[] { "list" };
+			var arguments = new List<string>();
+			arguments.AddRange(args);
+			if (arguments.Count == 0 || arguments.Any(x => x == "-s"))
+				arguments.Insert(0, "list");
 			var handler = _handlers.FirstOrDefault(x => x.Command == arguments[0]);
 			if (handler == null)
 				return;
-			handler.Execute(getArguments(arguments));
+			handler.Execute(getArguments(arguments.ToArray()));
 		}
 
 		private string[] getArguments(string[] args)

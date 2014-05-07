@@ -1,0 +1,27 @@
+{
+	"#Comment": "# is used here to comment out optional fields",
+	"#Comment": "supported os options are linux, osx and windows",
+	"#Comment": "pre and post install actions accepts only OpenIDE non edior commands",
+	"os": ["linux","osx","windows"],
+	"target": "language-rscript",
+	"language": "C#",
+	"id": "c-sharp-editor-create",
+	"version": "v1.0",
+	"command": "c-sharp-editor-create",
+	"name": "C# editor create",
+	"description": "Adds option to create files and projects from within the editor. Uses language event c-sharp-editor-create",
+	"#config-prefix": "c-sharp-create.",
+	"#pre-install-actions": [],
+	"#post-install-actions": [],
+	"#pre-uninstall-actions": [],
+	"#post-uninstall-actions": [],
+	"#dependencies": [
+			{
+				"id": "package id",
+				"versions":
+				[
+					"v1.0"
+				]
+			}
+		]
+}

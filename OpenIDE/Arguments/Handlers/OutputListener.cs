@@ -27,7 +27,6 @@ namespace OpenIDE.Arguments.Handlers
 
         public string Command { get { return "output-listener"; } }
 
-
         public OutputListener(string token, Action<string> dispatch) {
             _token = token;
             _dispatch = dispatch;

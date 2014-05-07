@@ -10,6 +10,13 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class HandleScriptHandler : ICommandHandler
 	{
+		enum PrintType
+		{
+			Names,
+			Simple,
+			Full
+		}
+
 		private string _token;
 		private Action<string> _dispatch;
 		private List<ICommandHandler> _handlers = new List<ICommandHandler>();
@@ -20,8 +27,9 @@ namespace OpenIDE.Arguments.Handlers
 						"All",
 						CommandType.FileCommand,
 						Command,
-						"No arguments will list available scripts. Run scripts with 'oi x [script-name]'.");
+						"No arguments will list available scripts.");
 					usage.Add("[-l]", "Print script details when listing scripts");
+					usage.Add("[-n]", "Will print only script names (overrides -l)");
 					var name = usage
 						.Add("new", "Creates a new script")
 							.Add("SCRIPT-NAME", "Script name with optional file extension.");
@@ -60,8 +68,14 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
-			if (arguments.Length == 0 || arguments[0] == "-l") {
-				printDefinitions(arguments.Length == 0);
+			if (arguments.Length == 0 || arguments.Any(x => x == "-n")) {
+				var type = arguments.Any(x => x == "-n") ? PrintType.Names : PrintType.Simple;
+				printDefinitions(type);
+				return;
+			}
+			if (arguments.Length == 0 || arguments.Any(x => x == "-l")) {
+				var type = arguments.Any(x => x == "-l") ? PrintType.Full : PrintType.Simple;
+				printDefinitions(type);
 				return;
 			}
 			var handler = _handlers.FirstOrDefault(x => x.Command == arguments[0]);
@@ -78,17 +92,20 @@ namespace OpenIDE.Arguments.Handlers
 			return arguments.ToArray();
 		}
 
-		private void printDefinitions(bool compactList) {
+		private void printDefinitions(PrintType type) {
 			var definitions = 
 				Bootstrapper.GetDefinitionBuilder()
 					.Definitions
 					.Where(x => 
 						x.Type == DefinitionCacheItemType.Script ||
 						x.Type == DefinitionCacheItemType.LanguageScript);
-			Console.WriteLine("Available commands:");
-			if (compactList) {
+			if (type == PrintType.Simple) {
+				Console.WriteLine("Available commands:");
 				UsagePrinter.PrintDefinitionsAligned(definitions);
+			} else if (type == PrintType.Names) {
+				UsagePrinter.PrintDefinitionNames(definitions);
 			} else {
+				Console.WriteLine("Available commands:");
 				foreach (var definition in definitions)
 					UsagePrinter.PrintDefinition(definition);
 			}

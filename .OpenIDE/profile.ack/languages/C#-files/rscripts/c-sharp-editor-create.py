@@ -2,10 +2,10 @@
 import os, sys, subprocess
 
 def print_react_patterns():
-    print("'.cs' 'command' 'c-sharp-create'")
-    print("'.csproj' 'command' 'c-sharp-create'")
-    print("'user-selected' 'c-sharp-create' '*")
-    print("'user-inputted' 'c-sharp-create-*")
+    print("'.cs' 'command' 'c-sharp-editor-create'")
+    print("'.csproj' 'command' 'c-sharp-editor-create'")
+    print("'user-selected' 'c-sharp-editor-create' '*")
+    print("'user-inputted' 'c-sharp-editor-create-*")
 
 def run_process(exe,working_dir=""):    
     if working_dir == "":
@@ -53,33 +53,34 @@ def get_suggested_path(main_command):
         closest_project = find_closest_project_root_position(filename)
         if closest_project == None:
             return ""
-        return os.path.dirname(os.path.dirname(closest_project))[len(os.getcwd())+1:]+os.sep
+        return os.path.dirname(os.path.dirname(closest_project))[len(os.getcwd())+1:]
     return os.path.dirname(filename)[len(os.getcwd())+1:]+os.sep
 
 def handle_event(event, global_profile, local_profile, args):
-    if event == "'.cs' 'command' 'c-sharp-create'":
+    if event == "'.cs' 'command' 'c-sharp-editor-create'":
         output_create = to_single_line(["oi", "get-commands", "C#", "create"]).strip().split(" ")
         output_new = to_single_line(["oi", "get-commands", "C#", "new"]).strip().split(" ")
         option_string_create = (''.join(map(lambda x: "Create "+x.title()+',', output_create))).strip(",")
         option_string_new = (''.join(map(lambda x: "New "+x.title()+',', output_new))).strip(",")
         option_string = option_string_create+","+option_string_new
-        print("command|editor user-select c-sharp-create \""+option_string+"\"")
-    elif event.startswith("'user-selected' 'c-sharp-create' '"):
-        selection = event[34:-1]
+        print("command|editor user-select c-sharp-editor-create \""+option_string+"\"")
+    elif event.startswith("'user-selected' 'c-sharp-editor-create' '"):
+        token = "'user-selected' 'c-sharp-editor-create' '"
+        selection = event[len(token):-1]
         if selection == "user-cancelled":
             return 
         identifier = selection.replace(" ", "|").lower()
         path = get_suggested_path(identifier.split("|")[0])
-        print("command|editor user-input c-sharp-create-"+identifier+" \""+path+"\"")
-    elif event.startswith("'user-inputted' 'c-sharp-create-"):
-        token = "'user-inputted' 'c-sharp-create-"
+        print("command|editor user-input c-sharp-editor-create-"+identifier+" \""+path+"\"")
+    elif event.startswith("'user-inputted' 'c-sharp-editor-create-"):
+        token = "'user-inputted' 'c-sharp-editor-create-"
         selection = event[len(token):event.index("'", len(token))]
         chunks = selection.split("|")
         main_command = chunks[0].lower() 
         command = chunks[1].lower() 
         inputted = event[len(token)+len(selection)+3:-1]
         if inputted == "user-cancelled":
-            return 
+            return
         for line in run_process(["oi", "C#", main_command, command, inputted]):
             pass
 
@@ -89,3 +90,4 @@ if __name__ == "__main__":
         print_react_patterns()
     else:
         handle_event(args[1], args[2], args[3], args[4:])
+

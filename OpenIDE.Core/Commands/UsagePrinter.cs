@@ -46,5 +46,15 @@ namespace OpenIDE.Core.Commands
 				Console.WriteLine("{0} - {1}", name, item.Description);
 			}
 		}
+
+		public static void PrintDefinitionNames(IEnumerable<DefinitionCacheItem> items)
+		{
+			foreach (var item in items) {
+				var name = item.Name;
+				if (!item.Required)
+					name = "[" + name + "]";
+				Console.WriteLine("{0}", name);
+			}
+		}
 	}
 }

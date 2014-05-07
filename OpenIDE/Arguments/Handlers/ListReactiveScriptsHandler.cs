@@ -35,6 +35,7 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
+			var showState = arguments.Any(x => x == "-s");
 			var scripts = 
 				new ReactiveScriptReader(
 					_token,
@@ -42,6 +43,11 @@ namespace OpenIDE.Arguments.Handlers
 					(p, m) => {},
 					(m) => {})
 					.Read();
+			if (!showState) {
+				foreach (var script in scripts)
+					Console.WriteLine(script.Name);
+				return;
+			}
 			var instance = _codeEngineLocator.GetInstance(_token);
 			foreach (var script in scripts) {
 				var status = "unavailable";
