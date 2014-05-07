@@ -344,7 +344,7 @@ namespace OpenIDE.EventListener
     {
         public static string GetTempFilePath()
         {
-            var tmpfile = Path.GetTempFileName();
+            var tmpfile = GetTempFileName();
             if (OS.IsOSX)
                 tmpfile = Path.Combine("/tmp", Path.GetFileName(tmpfile));
             return tmpfile;
@@ -355,6 +355,16 @@ namespace OpenIDE.EventListener
             if (OS.IsOSX)
                 return "/tmp";
             return Path.GetTempPath();
+        }
+
+        public static string GetTempFileName()
+        {
+            var rnd = new Random();
+            var path = Path.Combine(GetTempDir(), "tmp" + rnd.Next().ToString("x") + ".tmp");
+            while (!File.Exists(path)) {
+                path = Path.Combine(GetTempDir(), "tmp" + rnd.Next().ToString("x") + ".tmp");
+            }
+            return path;
         }
     }
 

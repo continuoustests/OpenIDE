@@ -199,7 +199,7 @@ namespace OpenIDE.CodeEngine.Core.Handlers
 						}
 
 						form = null;
-						var tempFile = Path.GetTempFileName();
+						var tempFile = FS.GetTempFileName();
 						File.WriteAllText(tempFile, sb.ToString());
 						var offset = new OpenIDE.Core.CommandBuilding.Position(offsetLine);
 						if (offset.Line == -1 && offset.Column == -1)

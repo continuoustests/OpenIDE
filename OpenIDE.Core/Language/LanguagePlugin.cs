@@ -7,6 +7,7 @@ using System.Threading;
 using System.Collections.Generic;
 using OpenIDE.Core.CommandBuilding;
 using OpenIDE.Core.Logging;
+using OpenIDE.Core.FileSystem;
 using OpenIDE.Core.Integration;
 using CoreExtensions;
 
@@ -106,7 +107,7 @@ namespace OpenIDE.Core.Language
 
 		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived)
 		{
-			var file = Path.GetTempFileName();
+			var file = FS.GetTempFileName();
 			File.WriteAllLines(file, filesAndFolders.ToArray());
 			run(string.Format("crawl-source \"{0}\"", file), onLineReceived);
 			File.Delete(file);

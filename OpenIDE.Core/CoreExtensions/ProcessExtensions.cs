@@ -273,7 +273,7 @@ namespace CoreExtensions
                 illagalChars.Any(x => arguments.Contains(x))) {
                 // Windows freaks when getting the | character
                 // Have it run a temporary bat file with command as contents
-                tempFile = Path.GetTempFileName() + ".bat";
+                tempFile = FS.GetTempFileName() + ".bat";
                 if (File.Exists(tempFile))
                     File.Delete(tempFile);
                 File.WriteAllText(tempFile, "\"" + command + "\" " + arguments);
