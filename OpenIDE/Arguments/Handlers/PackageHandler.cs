@@ -34,6 +34,7 @@ namespace OpenIDE.Arguments.Handlers
 					CommandType.FileCommand,
 					Command,
 					"Package management - no arguments lists installed packages");
+				usage.Add("[-n]", "Only print package id");
 				usage.Add("init", "Initialize package for script or rscript")
 					.Add("NAME", "Name of the script/rscript to create package for");
 				usage.Add("read", "reads package contents")
@@ -86,8 +87,8 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		public void Execute(string[] arguments) {
-			if (arguments.Length == 0) {
-				list();
+			if (arguments.Length == 0 || arguments.Any(x => x == "-n")) {
+				list(arguments.Any(x => x == "-n"));
 				return;
 			}
 			if (arguments.Length == 2 && arguments[0] == "init")
@@ -198,8 +199,8 @@ namespace OpenIDE.Arguments.Handlers
 			return Package.Read(pkgFile);
 		}
 
-		private void list() {
-			printPackages(getPackages());
+		private void list(bool printId) {
+			printPackages(getPackages(), printId);
 		}
 
 		private IEnumerable<Package> getPackages() {
@@ -230,10 +231,15 @@ namespace OpenIDE.Arguments.Handlers
 			return "osx";
 		}
 
-		private void printPackages(IEnumerable<Package> packages) {
+		private void printPackages(IEnumerable<Package> packages, bool printId) {
 			packages
 				.OrderBy(x => x.Name).ToList()
-				.ForEach(x => Console.WriteLine(x.Name + " (" + x.ID + " " + x.Version + ")"));
+				.ForEach(x => {
+					if (printId)
+						Console.WriteLine(x.ID);
+					else
+						Console.WriteLine(x.Name + " (" + x.ID + " " + x.Version + ")");
+				});
 		}
 
 		private string getPackageDescription(string dir, string name) {
