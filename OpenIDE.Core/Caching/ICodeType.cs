@@ -15,6 +15,8 @@ namespace OpenIDE.Core.Caching
         string JSON { get; }
 
 		bool TypeSearch { get; }
+
+		bool Is(ICodeReference reference);
 	}
 	
 	public class CodeReference : ICodeReference
@@ -59,6 +61,22 @@ namespace OpenIDE.Core.Caching
 		{
 			TypeSearch = true;
 			return this;
+		}
+
+		public bool Is(ICodeReference compare)
+		{
+			return
+				Language == compare.Language &&
+				Type == compare.Type &&
+				File == compare.File &&
+				Signature == compare.Signature &&
+				Parent == compare.Parent &&
+				Name == compare.Name &&
+				Scope == compare.Scope &&
+				Line == compare.Line &&
+				Column == compare.Column &&
+				JSON == compare.JSON &&
+				TypeSearch == compare.TypeSearch;
 		}
 	}
 

@@ -165,14 +165,15 @@ namespace OpenIDE.CodeEngine.Core.Caching
 		public void Add(ICodeReference reference)
 		{
 			lock (_codeReferences) {
-				_codeReferences.Add(reference);
+				add(reference);
 			}
 		}
 
 		public void Add(IEnumerable<ICodeReference> references)
 		{
 			lock (_codeReferences) {
-				_codeReferences.AddRange(references);
+				foreach (var reference in references)
+					add(reference);
 			}
 		}
 
@@ -181,6 +182,13 @@ namespace OpenIDE.CodeEngine.Core.Caching
 			lock (_signatureReferences) {
 				_signatureReferences.Add(reference);
 			}
+		}
+
+		private void add(ICodeReference reference)
+		{
+			if (_codeReferences.Any(x => x.Is(reference)))
+				return;
+			_codeReferences.Add(reference);
 		}
 		
 		private int nameSort(string name, string signature, string filename, string compareString)
