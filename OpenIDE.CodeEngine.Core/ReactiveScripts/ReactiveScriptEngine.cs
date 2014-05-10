@@ -42,12 +42,14 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 
 		public void Handle(string message)
 		{
+			Logger.Write("Waiting for reactive script lock for "+message);
 			lock (_scripts)
 			{
 				var touchState = _touchHandler.Handle(message);
 				if (touchState != ScriptTouchEvents.None) {
 					handleScriptTouched(message, touchState);
                 }
+                Logger.Write("Running affected scripts");
 				_scripts
 					.Where(x => 
 						!_pausedScripts.Contains(x.Name) &&
