@@ -22,7 +22,9 @@ namespace OpenIDE.Arguments.Handlers
 					Command,
 					"Creates, lists, activates and removes profiles. A profile contains scripts and configuration");
 
-				usage.Add("list", "Lists available profiles");
+				usage
+					.Add("list", "Lists profiles information raw")
+						.Add("paths", "Lists valid profile paths in prioritized order");
 
 				var activate = usage.Add("load", "Loads a profile");
 				var name = activate.Add("NAME", "Profile name");
@@ -57,8 +59,12 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments) {
 			var args = getArgs(arguments);
-			if (args.Arguments.Length == 1 && args.Arguments[0] == "list")
+			if (args.Arguments.Length == 0)
 				listProfiles();
+			else if (args.Arguments.Length == 1 && args.Arguments[0] == "list")
+				listProfilesRaw();
+			else if (args.Arguments.Length == 2 && args.Arguments[0] == "list" && args.Arguments[1] == "paths")
+				listProfilePaths();
 			else if (args.Arguments.Length == 2 && args.Arguments[0] == "init")
 				createProfile(args);
 			else if (args.Arguments.Length == 2 && args.Arguments[0] == "rm")
@@ -74,8 +80,6 @@ namespace OpenIDE.Arguments.Handlers
 		private Args getArgs(string[] arguments) {
 			var args = new Args();
 			args.Arguments = arguments.Where(x => !x.StartsWith("-")).ToArray();
-			if (args.Arguments.Length == 0)
-				args.Arguments = new[] { "list" };
 			args.IsGlobal = 
 				arguments.Contains("-g") ||
 				arguments.Contains("--global");
@@ -107,6 +111,32 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			
 			Console.WriteLine();
+		}
+
+		private void listProfilesRaw() {
+			var profileLocator = new ProfileLocator(Environment.CurrentDirectory);
+			Console.WriteLine("active-global|" + profileLocator.GetActiveGlobalProfile()+"|"+profileLocator.GetGlobalProfilePath(profileLocator.GetActiveGlobalProfile()));
+			Console.WriteLine("active-local|" + profileLocator.GetActiveLocalProfile()+"|"+profileLocator.GetLocalProfilePath(profileLocator.GetActiveLocalProfile()));
+			var globalProfiles = 
+				profileLocator.GetProfilesForPath(
+					profileLocator.GetGlobalProfilesRoot());
+			globalProfiles.Insert(0, "default");
+			globalProfiles.ForEach(x => Console.WriteLine("global|"+x+"|"+profileLocator.GetGlobalProfilePath(x)));
+
+			if (Directory.Exists(profileLocator.GetLocalProfilesRoot())) {
+				var localProfiles = 
+				profileLocator.GetProfilesForPath(
+					profileLocator.GetLocalProfilesRoot());
+				localProfiles.Insert(0, "default");
+				localProfiles.ForEach(x => Console.WriteLine("local|"+x+"|"+profileLocator.GetLocalProfilePath(x)));
+			}
+		}
+
+		private void listProfilePaths() {
+			var profileLocator = new ProfileLocator(Environment.CurrentDirectory);
+			foreach (var path in profileLocator.GetPathsCurrentProfiles()) {
+				Console.WriteLine(path);
+			}
 		}
 
 		private void createProfile(Args args) {
