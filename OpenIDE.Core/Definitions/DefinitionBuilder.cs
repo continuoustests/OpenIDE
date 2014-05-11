@@ -76,14 +76,18 @@ namespace OpenIDE.Core.Definitions
 		}
 
 		public void Build() {
+			Build(true);
+		}
+
+		public void Build(bool updateDefinitions) {
 			_cache = new DefinitionCache();
 			var profiles = new ProfileLocator(_token);
 
-			mergeBuiltInCommands(profiles);
+			mergeBuiltInCommands(updateDefinitions, profiles);
 			// Reverse paths to handle global first then local
 			var paths = profiles.GetPathsCurrentProfiles().Reverse().ToArray();
 			foreach (var path in paths)
-				mergeExternalCommands(path);
+				mergeExternalCommands(updateDefinitions, path);
 
 			// Add default language
 			if (_defaultLanguage != null) {
@@ -100,34 +104,38 @@ namespace OpenIDE.Core.Definitions
 			}
 		}
 
-		private void mergeBuiltInCommands(ProfileLocator profiles) {
+		private void mergeBuiltInCommands(bool updateDefinitions, ProfileLocator profiles) {
 			var builtInFile = Path.Combine(profiles.AppRootPath, "oi-definitions.json");
 			var builtInCache = new DefinitionCache();
 			if (File.Exists(builtInFile)) {
 				builtInCache = appendDefinitions(builtInFile);
 				var updated = builtInCache.GetOldestItem();
-				if (updated != null && fileTime(System.Reflection.Assembly.GetExecutingAssembly().Location) > updated.Updated)
+				if (updateDefinitions && updated != null && fileTime(System.Reflection.Assembly.GetExecutingAssembly().Location) > updated.Updated)
 					builtInCache = writeBuiltInCommands(builtInFile, profiles);
 			} else {
-				Logger.Write("Could not find definition file: " + builtInFile);
-				builtInCache = writeBuiltInCommands(builtInFile, profiles);
+				if (updateDefinitions) {
+					Logger.Write("Could not find definition file: " + builtInFile);
+					builtInCache = writeBuiltInCommands(builtInFile, profiles);
+				}
 			}
 			_cache.Merge(_enabledLanguages, builtInCache);
 		}
 
-		private void mergeExternalCommands(string path) {
+		private void mergeExternalCommands(bool updateDefinitions, string path) {
 			Logger.Write("Merging path " + path);
 			var localCache = new DefinitionCache();
 			var file = Path.Combine(path, "oi-definitions.json");
 			if (File.Exists(file)) {
 				localCache = appendDefinitions(file);
-				if (cacheIsOutOfDate(file, localCache)) {
+				if (updateDefinitions && cacheIsOutOfDate(file, localCache)) {
 					Logger.Write("Definition file was out of date, updating " + file);
 					localCache = buildDefinitions(file);
 				}
 			} else {
-				Logger.Write("Could not find definition file: " + file);
-				localCache = buildDefinitions(file);
+				if (updateDefinitions) {
+					Logger.Write("Could not find definition file: " + file);
+					localCache = buildDefinitions(file);
+				}
 			}
 			
 			_cache.Merge(_enabledLanguages, localCache);
@@ -363,7 +371,6 @@ namespace OpenIDE.Core.Definitions
 				var rawLocations = cache.GetLocations(DefinitionCacheItemType.Language);
 				locations = replacePlaceholderLanguages(languagePath, rawLocations);
 				var languages = _languages(languagePath).Select(x => x.FullPath).ToList();
-				languages = addPlaceholderLanguages(languagePath, languages);
 				if (languages.Any(x => !locations.Contains(x))) {
 					Logger.Write("New language has been added");
 					if (Logger.IsEnabled) {
@@ -377,6 +384,7 @@ namespace OpenIDE.Core.Definitions
 					return true;
 				}
 
+				languages = addPlaceholderLanguages(languagePath, languages);
 				foreach (var language in languages) {
 					if (isUpdated(language, cache))
 						return true;
@@ -442,15 +450,13 @@ namespace OpenIDE.Core.Definitions
 
 		private bool isUpdated(string file, DefinitionCache cache) {
 			var oldest = cache.GetOldestItem(file);
-			// This might be null on language placeholders
-			if (oldest == null)
-				return false;
+			// This will be null on language placeholders
+			if (oldest == null) {
+				oldest = cache.GetOldestItem();
+				if (oldest == null)
+					return true;
+			}
 			var updated = oldest.Updated;
-			// This is a hack to check placeholder languages naturally
-			// the language file for a placeholder language will not
-			// exist
-			if (!File.Exists(file))
-				return false;
 			var filetime = fileTime(file);
 			if (filetime > updated) {
 				Logger.Write("Oldest is {0} {1} for {2}", updated.ToShortDateString(), updated.ToLongTimeString(), file);

@@ -319,6 +319,7 @@ namespace OpenIDE.Core.Packaging
 			backupDirectoryTo(Path.Combine(source, "scripts"), destination);
 			backupDirectoryTo(Path.Combine(source, "snippets"), destination);
 			backupDirectoryTo(Path.Combine(source, "preserved-data"), destination);
+			backupDirectoryTo(Path.Combine(source, "state"), destination);
 		}
 
 		private void backupDirectoryTo(string source, string destinationRoot) {

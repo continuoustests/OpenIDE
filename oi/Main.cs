@@ -22,6 +22,9 @@ namespace oi
 	{
 		private const string PROFILE = "--profile=";
 		private const string GLOBAL_PROFILE = "--global-profile=";
+		private const string FORCE_SKIP_DEFINITION_REBUILD = "--skip-definition-rebuild";
+
+		private static bool _rebuildDefinitions = true;
 
 		public static void Main(string[] args)
 		{
@@ -36,7 +39,7 @@ namespace oi
 			Logger.Write("Getting definition builder");
 			var builder = Bootstrapper.GetDefinitionBuilder(); 
 			Logger.Write("Building definitions");
-			builder.Build();
+			builder.Build(_rebuildDefinitions);
 			
 			Logger.Write("Parsing arguments");
 			args = Bootstrapper.Settings.Parse(args);
@@ -76,6 +79,8 @@ namespace oi
 				} else if (arg.StartsWith(GLOBAL_PROFILE)) {
 					ProfileLocator.ActiveGlobalProfile =
 						arg.Substring(GLOBAL_PROFILE.Length, arg.Length - GLOBAL_PROFILE.Length);
+				} else if (arg == FORCE_SKIP_DEFINITION_REBUILD) {
+					_rebuildDefinitions = false;
 				} else {
 					newArgs.Add(arg);
 				}
@@ -110,6 +115,7 @@ namespace oi
 				Console.WriteLine("\t[--enabled.languages=LANGUAGE_LIST] : Force command to run using specified languages");
 				Console.WriteLine("\t[--logging] : Enables logging to console");
 				Console.WriteLine("\t[--raw] : Prints raw output");
+				Console.WriteLine("\t[--skip-definition-rebuild] : Forces the system not to rebuild command definitions");
 				Console.WriteLine();
 			}
 			definitions
