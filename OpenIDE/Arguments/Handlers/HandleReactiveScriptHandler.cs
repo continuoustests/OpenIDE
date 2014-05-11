@@ -38,6 +38,18 @@ namespace OpenIDE.Arguments.Handlers
 					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
 
 				usage
+					.Add("pause", "Pauses an avtive reactive script")
+					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
+
+				usage
+					.Add("resume", "Resumes a paused reactive script")
+					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
+
+				usage
+					.Add("restart", "Restarts a reactive script running as a service")
+					.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global");
+
+				usage
 					.Add("repl", "Continuously tests the specified script")
 						.Add("SCRIPT-NAME", "Reactive script name. Local are picked over global")
 							.Add("EVENT", "Event to test the script with");
@@ -57,6 +69,9 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new EditReactiveScriptHandler(_dispatch, _locator, _token));
 			_handlers.Add(new DeleteReactiveScriptHandler(_locator, _token));
 			_handlers.Add(new TestReactiveScriptHandler(_dispatch, _locator, _token));
+			_handlers.Add(new PauseReactiveScriptHandler(_dispatch, _locator, _token));
+			_handlers.Add(new ResumeReactiveScriptHandler(_dispatch, _locator, _token));
+			_handlers.Add(new RestartReactiveScriptHandler(_dispatch, _locator, _token));
 		}
 
 		public void Execute(string[] args)

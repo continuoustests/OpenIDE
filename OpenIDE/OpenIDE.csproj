@@ -129,6 +129,9 @@
     <Compile Include="Arguments\Handlers\TestReactiveScriptHandler.cs" />
     <Compile Include="Arguments\Handlers\CodeEnginePublishHandler.cs" />
     <Compile Include="Arguments\Handlers\OutputListener.cs" />
+    <Compile Include="Arguments\Handlers\PauseReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\ResumeReactiveScriptHandler.cs" />
+    <Compile Include="Arguments\Handlers\RestartReactiveScriptHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

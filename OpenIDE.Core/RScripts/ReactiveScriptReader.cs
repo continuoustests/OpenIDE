@@ -128,10 +128,18 @@ namespace OpenIDE.Core.RScripts
 		private List<string> getLanguagePaths() {
 			var orderedProfilePaths = new List<string>();
 			var profiles = new ProfileLocator(_keyPath);
-			orderedProfilePaths.Add(Path.Combine(profiles.GetGlobalProfilePath("default"), "languages"));
-			orderedProfilePaths.Add(Path.Combine(profiles.GetGlobalProfilePath(profiles.GetActiveGlobalProfile()), "languages"));
-			orderedProfilePaths.Add(Path.Combine(profiles.GetLocalProfilePath("default"), "languages"));
-			orderedProfilePaths.Add(Path.Combine(profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile()), "languages"));
+			var profilePath = profiles.GetGlobalProfilePath("default");
+			if (profilePath != null)
+				orderedProfilePaths.Add(Path.Combine(profilePath, "languages"));
+			profilePath = profiles.GetGlobalProfilePath(profiles.GetActiveGlobalProfile());
+			if (profilePath != null)
+				orderedProfilePaths.Add(Path.Combine(profilePath, "languages"));
+			profilePath = profiles.GetLocalProfilePath("default");
+			if (profilePath != null)
+				orderedProfilePaths.Add(Path.Combine(profilePath, "languages"));
+			profilePath = profiles.GetLocalProfilePath(profiles.GetActiveLocalProfile());
+			if (profilePath != null)
+				orderedProfilePaths.Add(Path.Combine(profilePath, "languages"));
 
 			var paths = new List<string>();
 			foreach (var plugin in _pluginLocator().Locate())

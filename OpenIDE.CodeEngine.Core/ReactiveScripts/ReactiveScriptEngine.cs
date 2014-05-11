@@ -64,6 +64,8 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 				return "unknown";
 			else if (_pausedScripts.Contains(name))
 				return "paused";
+			else if (_scripts.Any(x => x.Name == name && x.IsServiceRunning))
+				return "ready-service";
 			else
 				return "ready";
 		}
@@ -88,7 +90,17 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
                 Logger.Write("No rscript found. Exiting");
 				return;
             }
-			if (type == ScriptTouchEvents.Changed || type == ScriptTouchEvents.Added) {
+            if (type == ScriptTouchEvents.Pause) {
+            	script.Shutdown();
+            	if (!_pausedScripts.Contains(script.Name))
+            		_pausedScripts.Add(script.Name);
+            }
+            if (type == ScriptTouchEvents.Resume) {
+            	_pausedScripts.Remove(script.Name);
+            	if (script.IsService && !script.IsServiceRunning)
+					script.StartService();
+            }
+			if (type == ScriptTouchEvents.Changed || type == ScriptTouchEvents.Added || type == ScriptTouchEvents.Restart) {
                 Logger.Write("Reloading / adding existing rscript");
 				removeScript(path);
 				_scripts.Add(script);

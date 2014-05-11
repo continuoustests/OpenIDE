@@ -9,7 +9,10 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		None,
 		Added,
 		Changed,
-		Removed
+		Removed,
+		Pause,
+		Resume,
+		Restart
 	}
 
 	public class ScriptTouchHandler
@@ -39,6 +42,27 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 				message,
 				"'codemodel' 'raw-filesystem-change-filedeleted' '",
 				ScriptTouchEvents.Removed);
+			if (result != ScriptTouchEvents.None)
+				return result;
+
+			result = parseMessage(
+				message,
+				"'reactive-script-pause' '",
+				ScriptTouchEvents.Pause);
+			if (result != ScriptTouchEvents.None)
+				return result;
+
+			result = parseMessage(
+				message,
+				"'reactive-script-resume' '",
+				ScriptTouchEvents.Resume);
+			if (result != ScriptTouchEvents.None)
+				return result;
+
+			result = parseMessage(
+				message,
+				"'reactive-script-restart' '",
+				ScriptTouchEvents.Restart);
 			if (result != ScriptTouchEvents.None)
 				return result;
 

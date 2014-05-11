@@ -40,6 +40,8 @@ namespace OpenIDE.Core.RScripts
 
 		public bool IsService { get { return _keepAlive; } }
 
+		public bool IsServiceRunning { get; private set; }
+
 		public string File { get { return _file; } }
 
 		public ReactiveScript(string file, string keyPath, Action<string,string> outputDispatcher, Action<string> dispatch)
@@ -67,6 +69,7 @@ namespace OpenIDE.Core.RScripts
 
 		public void StartService()
 		{
+			IsServiceRunning = true;
 			_serviceThread = new Thread(startService);
 			_serviceThread.Start();
 		}
@@ -154,6 +157,7 @@ namespace OpenIDE.Core.RScripts
 					Logger.Write(ex);
 				}
 			}
+			IsServiceRunning = false;
 		}
 
 		private void startService()
