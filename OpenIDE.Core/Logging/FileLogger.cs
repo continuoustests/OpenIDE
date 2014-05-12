@@ -8,6 +8,8 @@ namespace OpenIDE.Core.Logging
 	{
 		private string _file;
 		private object _padlock = new object();
+		private long _lastLogItem = 0;
+		private long _start = 0;
 
 		public FileLogger(string filePath)
 		{
@@ -40,9 +42,23 @@ namespace OpenIDE.Core.Logging
 		{
 			lock (_padlock) {
 				try {
+					if (_start == 0) {
+						_start = DateTime.Now.Ticks;
+						_lastLogItem = _start;
+					}
+					var fromLast = DateTime.Now.Ticks - _lastLogItem;
+					_lastLogItem = _lastLogItem + fromLast;
+					var total = DateTime.Now.Ticks - _start;
 					using (var writer = new StreamWriter(_file, true))
 					{
-						writer.WriteLine(message);	
+						writer.WriteLine(
+							string.Format(
+								"{0},{1} - {2}",
+								Math.Round((new TimeSpan(total)).TotalMilliseconds, 0),
+								Math.Round((new TimeSpan(fromLast)).TotalMilliseconds),
+								message
+							)
+						);	
 					}
 				} catch {
 				}
