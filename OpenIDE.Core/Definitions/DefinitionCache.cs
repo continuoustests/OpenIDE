@@ -263,7 +263,7 @@ namespace OpenIDE.Core.Definitions
 					new DefinitionCacheItem(_parameterAppender) {
 							Type = type,
 							Location = location,
-							Updated = updated, 
+							Updated = updated,
 							Required = required,
 							Override = ovrride,
 							Name = name,
@@ -277,6 +277,11 @@ namespace OpenIDE.Core.Definitions
 
 		public void OverrideItem(DefinitionCacheItem item) {
 			var wasOverridden = false;
+			// If a script is overriding/appending as  alanguage script make it a language script
+			if (Type == DefinitionCacheItemType.Language || Type == DefinitionCacheItemType.LanguageScript) {
+				if (item.Type == DefinitionCacheItemType.Script)
+					item.Type = DefinitionCacheItemType.LanguageScript;
+			}
 			for (int i = 0; i < _parameters.Count; i++) {
 				if (_parameters[i].Name == item.Name) {
 					item.Original = _parameters[i];
