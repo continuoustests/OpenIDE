@@ -248,6 +248,11 @@ namespace CoreExtensions
             else
                 command = lnk.LinkCommand;
 
+            // This is a terrible hack, shame on me!!!!!!!
+            // If get command definitions don't mess with arguments
+            if (args.Count() == 2 && args.ElementAt(1) == "get-command-definitions")
+                return false;
+
             var originalArguments = arguments;
             foreach (var replacement in replacements)
                 originalArguments = originalArguments.Replace(replacement.Key, "");
