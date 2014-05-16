@@ -33,9 +33,17 @@ namespace OpenIDE.CodeEngine
 			if (!Directory.Exists(path) && !File.Exists(path))
 				return;
 
-			var endpoint = Bootstrapper.GetEndpoint(path, enabledLanguages);		
-			if (!runForm(endpoint, defaultLanguage))
-				startEngine(endpoint);
+			var endpoint = Bootstrapper.GetEndpoint(path, enabledLanguages);
+			var reader = new ConfigReader(path);
+			var fallbackmode = reader.Get("oi.fallbackmode") != "disabled";
+			if (fallbackmode) {
+				Logger.Write("Starting code engine with fallback mode");
+				if (!runForm(endpoint, defaultLanguage))
+					startEngine(endpoint);
+			} else {
+				Logger.Write("Starting code engine");
+				startEngineNoX(endpoint);
+			}
 			Bootstrapper.Shutdown();
 		}
 
@@ -66,6 +74,27 @@ namespace OpenIDE.CodeEngine
             endpoint.Start();
             while (endpoint.IsAlive)
                 Thread.Sleep(100);
+            Logger.Write("Shutting down");
+        }
+
+        private static void startEngineNoX(CommandEndpoint endpoint)
+        {
+        	Logger.Write("Application initialized");
+        	var shutdown = false;
+            var editorHasExisted = false;
+            endpoint.AddHandler((message, cache, editor) => {
+            	if (message.Message == "shutdown")
+					shutdown = true;
+            });
+            endpoint.Start();
+            while (!shutdown) {
+                var isAlive = endpoint.IsAlive;
+                if (isAlive)
+                    editorHasExisted = true;
+                if (editorHasExisted && !isAlive)
+                    break;
+                Thread.Sleep(100);
+            }
             Logger.Write("Shutting down");
         }
 	}

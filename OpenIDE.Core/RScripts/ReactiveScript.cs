@@ -138,6 +138,7 @@ namespace OpenIDE.Core.RScripts
 							new KeyValuePair<string,string>("{global-profile}", "\"" + _globalProfileName + "\""),
 							new KeyValuePair<string,string>("{local-profile}", "\"" + _localProfileName + "\"")
 						});
+	            	Logger.Write("RScript completed");
 	            }
 				catch (Exception ex)
 				{

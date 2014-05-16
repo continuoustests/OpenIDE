@@ -52,6 +52,7 @@ namespace OpenIDE.Core.Integration
                     _outputDispatcher(_eventPrefix, "error|" + m);
             } else {
                 if (m.StartsWith(cmdText)) {
+                    Logger.Write("Handling command "+m);
                     var toDispatch = m.Substring(cmdText.Length, m.Length - cmdText.Length);
                     var args = toDispatch.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
                     if (args.Length > 1 && args[0] == "editor") {
