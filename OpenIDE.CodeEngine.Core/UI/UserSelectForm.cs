@@ -9,21 +9,34 @@ namespace OpenIDE.CodeEngine.Core.UI
 {
     public class UserSelectForm : Form
     {
+        class Item
+        {
+            public string Key { get; set; }
+            public string Value { get; set; }
+        }
+
         private bool _onSelectCalled = false;
-        private List<string> _items = new List<string>();
+        private List<Item> _items = new List<Item>();
         private Action<string> _onSelect;
 
-        public UserSelectForm(IEnumerable<string> items, Action<string> onSelect) {
+        public UserSelectForm(IEnumerable<string> items, IEnumerable<string> keys, Action<string> onSelect) {
             initialize();
             _onSelect = onSelect;
-            _items.AddRange(items);
+            for (int i = 0; i < items.Count(); i++) {
+                _items.Add(new Item() {
+                    Key = keys.ElementAt(i),
+                    Value = items.ElementAt(i),
+                });
+            }
             populateList(_items);
         }
 
-        void populateList(IEnumerable<string> items) {
+        void populateList(IEnumerable<Item> items) {
             informationList.Items.Clear();
-            foreach (var item in items)
-                informationList.Items.Add(item);
+            foreach (var item in items) {
+                var listItem = informationList.Items.Add(item.Value);
+                listItem.Tag = item.Key;
+            }
             if (informationList.Items.Count > 0)
                 informationList.Items[0].Selected = true;
         }
@@ -36,7 +49,7 @@ namespace OpenIDE.CodeEngine.Core.UI
 
         void HandleTextBoxSearchhandleTextChanged(object sender, System.EventArgs e)
         {
-            populateList(_items.Where(x => x.ToLower().Contains(textBoxSearch.Text.ToLower().Trim())));
+            populateList(_items.Where(x => x.Value.ToLower().Contains(textBoxSearch.Text.ToLower().Trim())));
         }
 
         void HandleTextBoxSearchhandleKeyDown(object sender, KeyEventArgs e)
@@ -45,7 +58,7 @@ namespace OpenIDE.CodeEngine.Core.UI
             {
                 if (informationList.SelectedItems.Count != 1)
                     return;
-                _onSelect(informationList.SelectedItems[0].Text);
+                _onSelect(informationList.SelectedItems[0].Tag.ToString());
                 _onSelectCalled = true;
                 Close();
             }

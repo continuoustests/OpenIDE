@@ -6,6 +6,7 @@ using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
@@ -213,9 +214,23 @@ namespace OpenIDE.CodeEngine
                 {
                     try {
                         var args = new CommandStringParser().Parse(message.Message).ToArray();
-                        var form = new UserSelectForm(args[3].Split(new[] {','}), (item) => {
+                        var items = new List<string>();
+                        var keys = new List<string>();
+                        foreach (var item in args[3].Split(new[] {','})) {
+                            var chunks = item.Split(new[] {"||"}, StringSplitOptions.None);
+                            if (chunks.Length > 1) {
+                                keys.Add(chunks[0]);
+                                items.Add(chunks[1]);
+                            } else {
+                                keys.Add(item);
+                                items.Add(item);
+                            }
+                        }
+                        var form = new UserSelectForm(items, keys, (item) => {
                             if (item != null)
                                 _endpoint.PublishEvent("user-selected '" + args[2] + "' '"  + item + "'");
+                            else
+                                _endpoint.PublishEvent("user-selected '" + args[2] + "' 'user-cancelled'");
                             editor.SetFocus();
                         });
                         form.Show(this);
@@ -227,21 +242,30 @@ namespace OpenIDE.CodeEngine
 
         private void userInput(MessageArgs message, Editor editor)
         {
+            Logger.Write("Getting state for userinput fallback");
             var state = new ConfigReader(_endpoint.Token).Get("oi.userinput.ui.fallback");
+            Logger.Write("State is "+state);
             if (state == "disabled")
                 return;
             _ctx.Post((s) =>
                 {
+                    Logger.Write("Launching user input form");
                     try {
                         var args = new CommandStringParser().Parse(message.Message).ToArray();
-                        var form = new UserInputForm(args[3], (item) => {
+                        var defaultValue = "";
+                        if (args.Length > 3)
+                            defaultValue = args[3];
+                        var form = new UserInputForm(defaultValue, (item) => {
                             if (item != null)
-                                _endpoint.PublishEvent("user-input '" + args[2] + "' '"  + item + "'");
+                                _endpoint.PublishEvent("user-inputted '" + args[2] + "' '"  + item + "'");
+                            else
+                                _endpoint.PublishEvent("user-inputted '" + args[2] + "' 'user-cancelled'");
                             editor.SetFocus();
                         });
                         form.Show(this);
                         setToForeground(form);
-                    } catch {
+                    } catch (Exception ex) {
+                        Logger.Write(ex);
                     }
                 }, null);
         }
