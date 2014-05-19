@@ -16,12 +16,7 @@ namespace OpenIDE.Core.FileSystem
 
         public static string GetTempFileName()
         {
-            var rnd = new Random();
-            var path = Path.Combine(GetTempPath(), "tmp" + rnd.Next().ToString("x") + ".tmp");
-            while (File.Exists(path)) {
-                path = Path.Combine(GetTempPath(), "tmp" + rnd.Next().ToString("x") + ".tmp");
-            }
-            return path;
+            return Path.GetTempFileName();
         }
 
 		public string[] GetFiles(string path, string searchPattern)

@@ -359,12 +359,7 @@ namespace OpenIDE.EventListener
 
         public static string GetTempFileName()
         {
-            var rnd = new Random();
-            var path = Path.Combine(GetTempDir(), "tmp" + rnd.Next().ToString("x") + ".tmp");
-            while (File.Exists(path)) {
-                path = Path.Combine(GetTempDir(), "tmp" + rnd.Next().ToString("x") + ".tmp");
-            }
-            return path;
+            return Path.GetTempFileName();
         }
     }
 
