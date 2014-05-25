@@ -115,6 +115,8 @@ namespace OpenIDE.CodeEngine
 				memberLookup(message, editor);
             if (message.Message.StartsWith("user-select \"unsupported\" "))
                 userSelect(message, editor);
+            if (message.Message.StartsWith("user-select-at-caret \"unsupported\" "))
+                userSelect(message, editor);
             if (message.Message.StartsWith("user-input \"unsupported\" "))
                 userInput(message, editor);
 			if (message.Message == "shutdown")
@@ -226,11 +228,14 @@ namespace OpenIDE.CodeEngine
                                 items.Add(item);
                             }
                         }
+                        var command = "user-selected";
+                        if (message.Message.StartsWith("user-select-at-caret "))
+                            command = "user-selected-at-caret";
                         var form = new UserSelectForm(items, keys, (item) => {
                             if (item != null)
-                                _endpoint.PublishEvent("user-selected '" + args[2] + "' '"  + item + "'");
+                                _endpoint.PublishEvent(command+" '" + args[2] + "' '"  + item + "'");
                             else
-                                _endpoint.PublishEvent("user-selected '" + args[2] + "' 'user-cancelled'");
+                                _endpoint.PublishEvent(command+" '" + args[2] + "' 'user-cancelled'");
                             editor.SetFocus();
                         });
                         form.Show(this);

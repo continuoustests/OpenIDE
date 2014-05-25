@@ -42,8 +42,11 @@ namespace oipckmngr
 		private static void writeSource(string source, string origin) {
 			var json = new Source();
 			json.Origin = origin;
-			foreach (var package in Directory.GetFiles(Path.GetDirectoryName(source), "*.oipkg")) {
-				json.AddPackage(package);
+			foreach (var package in Directory.GetFiles(Path.GetDirectoryName(source), "*.*")) {
+				if (package.EndsWith(".oipkg"))
+					json.AddPackage(package);
+				else if (package.EndsWith(".meta"))
+					json.AddMetaPackage(package);
 			}
 
 			File.WriteAllText(
@@ -76,6 +79,21 @@ namespace oipckmngr
 					});
 		}
 
+		public void AddMetaPackage(string packageFile) {
+			var package = readMetaPackage(packageFile);
+			if (package == null)
+				return;
+			Packages.Add(
+				new PackageItem() {
+						ID = package.Id,
+						OS = package.OS,
+						Version = package.Version,
+						Name = package.Name,
+						Description = package.Description,
+						Package = Path.GetFileName(packageFile)
+					});
+		}
+
 		private Package readPackage(string packageFile) {
 			Package package = null;
 			var tempPath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString());
@@ -88,6 +106,15 @@ namespace oipckmngr
 				Directory.Delete(tempPath, true);
 			}
 			return package;
+		}
+
+		private MetaPackage readMetaPackage(string packageFile) {
+			try {
+				return MetaPackage.Read(packageFile);
+			} catch {
+				Console.WriteLine("Failed to read meta package: " + Path.GetFileName(packageFile));
+				return null;
+			}
 		}
 
 		private Package getInstallPackage(string source, string tempPath) {

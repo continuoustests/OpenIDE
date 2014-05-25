@@ -38,7 +38,7 @@ namespace OpenIDE.Core.Packaging
 					return new FetchedPackage(Path.GetFullPath(source), false);
 				var package = new SourceLocator(_token, _sourcePrioritization).GetPackage(source);
 				if (package != null) {
-					source = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString() + ".oipkg");
+					source = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString() + Path.GetFileName(package.Package));
 					if (download(package.Package, source))
 						return new FetchedPackage(source, true);
 				}
@@ -63,7 +63,6 @@ namespace OpenIDE.Core.Packaging
 
 		public bool Download(string source, string destination) {
 			try {
-				_dispatch(string.Format("Downloading {0} ...", source));
 				if (File.Exists(source)) {
 					File.Copy(source, destination, true);
 					return true;

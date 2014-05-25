@@ -42,15 +42,23 @@ namespace OpenIDE.Core.Packaging
 			install(packageToken, null);
 		}
 
+		public bool Install(string packageToken, string[] acceptedVersions) {
+			return install(packageToken, acceptedVersions);
+		}
+
 		private bool install(string packageToken, string[] acceptedVersions) {
 			var installType = "package";
-			if (acceptedVersions != null)
-				installType = "dependency";
-			_dispatch("installing " + installType + " " + packageToken);
+			if (acceptedVersions == null) // if not it's a dependency
+				_dispatch("installing " + installType + " " + packageToken);
 			var source = _packageFetcher.Fetch(packageToken);
 			if (source == null || !File.Exists(source.Package)) {
 				_dispatch("error|could not find package " + packageToken);
 				return false;
+			}
+
+			if (isMetaPackage(source.Package)) {
+				installMetaPackage(source);
+				return true;
 			}
 
 			string activeProfile = null;
@@ -86,7 +94,7 @@ namespace OpenIDE.Core.Packaging
 										return false;
 									}
 								}
-								_dispatch(string.Format("package {0} ({1}) is already installed", package.ID, package.Version));
+								_dispatch(string.Format("skipping {0} ({1}) already installed", package.ID, package.Version));
 							} else {
 								_dispatch(string.Format("error|the package with the command {0} conflicts with the package you are trying to install", command));
 							}
@@ -152,6 +160,23 @@ namespace OpenIDE.Core.Packaging
 			var isGlobal = profiles.IsGlobal(package.File);
 			removePackage(package, Path.GetDirectoryName(Path.GetDirectoryName(package.File)), isGlobal);
 			_dispatch(string.Format("Removed package {0}", package.Signature));
+		}
+
+		private bool isMetaPackage(string source) {
+			return source.EndsWith(".meta");
+		}
+
+		private void installMetaPackage(PackageFetcher.FetchedPackage source) {
+			var package = MetaPackage.Read(source.Package);
+			if (package == null) {
+				_dispatch("error|Invalid meta package");
+				return;
+			}
+			foreach (var pckg in package.Packages) {
+				install(pckg.Id, new[] {pckg.Version});
+			}
+			if (source.IsTemporaryPackage)
+				File.Delete(source.Package);
 		}
 		
 		private bool prepareForAction(string source, Func<Package,string> destinatinoPathLocator, Func<ActionParameters,bool> actionHandler) {

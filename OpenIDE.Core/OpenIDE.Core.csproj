@@ -120,6 +120,7 @@
     <Compile Include="Snippets\SnippetLocator.cs" />
     <Compile Include="EventEndpointIntegrarion\EventEndpointLocator.cs" />
     <Compile Include="OutputEndpointIntegration\OutputEndpointLocator.cs" />
+    <Compile Include="Packaging\MetaPackage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\SnippetForm.resx">

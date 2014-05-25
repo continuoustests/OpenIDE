@@ -37,6 +37,8 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("[-n]", "Only print package id");
 				usage.Add("init", "Initialize package for script or rscript")
 					.Add("NAME", "Name of the script/rscript to create package for");
+				usage.Add("new-metapackage", "Creates a metapackage file")
+					.Add("NAME", "The name of the metapackage you want to create");
 				usage.Add("read", "reads package contents")
 					.Add("SOURCE", "Ex. .OpenIDE/scripts/myscript, name or package.json");
 				usage.Add("build", "Builds package")
@@ -93,6 +95,8 @@ namespace OpenIDE.Arguments.Handlers
 			}
 			if (arguments.Length == 2 && arguments[0] == "init")
 				init(arguments[1]);
+			if (arguments.Length == 2 && arguments[0] == "new-metapackage")
+				newMetaPackage(arguments[1]);
 			if (arguments.Length == 2 && arguments[0] == "read")
 				read(arguments[1]);
 			if (new[] {2,3}.Contains(arguments.Length) && arguments[0] == "build")
@@ -149,6 +153,13 @@ namespace OpenIDE.Arguments.Handlers
 				File.WriteAllText(packageFile, getPackageDescription(dir, name));
 			_dispatch("event|builtin package initialized \"" + packageFile + "\"");
 			_dispatch("command|editor goto \"" + packageFile + "|0|0\"");
+		}
+
+		private void newMetaPackage(string name) {
+			var path = Path.Combine(_token, name + ".meta");
+			if (!File.Exists(path))
+				File.WriteAllText(path, getMetPackage(name));
+			_dispatch("command|editor goto \""+path+"|1|1\"");
 		}
 
 		private void read(string source) {
@@ -242,6 +253,33 @@ namespace OpenIDE.Arguments.Handlers
 				});
 		}
 
+		private string getMetPackage(string name) {
+			var os = "linux";
+			if (OS.IsOSX)
+				os = "osx";
+			if (OS.IsWindows)
+				os = "windows";
+			var NL = Environment.NewLine;
+			var package =
+				"{" + NL +
+				"    \"#Comment\": \"# is used here to comment out optional fields\"," + NL +
+				"    \"#Comment\": \"supported os options are linux, osx and windows\"," + NL +
+				"    \"os\": [\"" + os + "\"]," + NL +
+				"    \"id\": \"{0}\"," + NL +
+				"    \"version\": \"v1.0\"," + NL +
+				"    \"name\": \"{0}\"," + NL +
+				"    \"description\": \"{0} package\"," + NL +
+				"    \"packages\": [" + NL +
+				"        {" + NL +
+				"            \"id\": \"package id\"," + NL +
+				"            \"version\": \"v1.0\"" + NL +
+				"        }" + NL +
+				"    ]" + NL +
+				"}";
+			return package
+				.Replace("{0}", name);
+		}
+
 		private string getPackageDescription(string dir, string name) {
 			var os = "linux";
 			if (OS.IsOSX)
@@ -253,34 +291,34 @@ namespace OpenIDE.Arguments.Handlers
 			var language = getLanguage(type, dir);
 			var languageText = "";
 			if (language != null)
-				languageText = "\t\"language\": \"" + language + "\"," + NL;
+				languageText = "    \"language\": \"" + language + "\"," + NL;
 			var package = 
 					"{" + NL +
-					"\t\"#Comment\": \"# is used here to comment out optional fields\"," + NL +
-					"\t\"#Comment\": \"supported os options are linux, osx and windows\"," + NL +
-					"\t\"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
-					"\t\"os\": [\"" + os + "\"]," + NL +
-					"\t\"target\": \"{1}\"," + NL +
+					"    \"#Comment\": \"# is used here to comment out optional fields\"," + NL +
+					"    \"#Comment\": \"supported os options are linux, osx and windows\"," + NL +
+					"    \"#Comment\": \"pre and post install actions accepts only OpenIDE non edior commands\"," + NL +
+					"    \"os\": [\"" + os + "\"]," + NL +
+					"    \"target\": \"{1}\"," + NL +
 					languageText +
-					"\t\"id\": \"{0}\"," + NL +
-					"\t\"version\": \"v1.0\"," + NL +
-					"\t\"command\": \"{0}\"," + NL +
-					"\t\"name\": \"{0}\"," + NL +
-					"\t\"description\": \"{0} {1} package\"," + NL +
-					"\t\"#config-prefix\": \"{0}.\"," + NL +
-					"\t\"#pre-install-actions\": []," + NL +
-					"\t\"#post-install-actions\": []," + NL +
-					"\t\"#pre-uninstall-actions\": []," + NL +
-					"\t\"#post-uninstall-actions\": []," + NL +
-					"\t\"#dependencies\": [" + NL +
-					"\t\t\t{" + NL +
-					"\t\t\t\t\"id\": \"package id\"," + NL +
-					"\t\t\t\t\"versions\":" + NL +
-					"\t\t\t\t[" + NL +
-					"\t\t\t\t\t\"v1.0\"" + NL +
-					"\t\t\t\t]" + NL +
-					"\t\t\t}" + NL +
-					"\t\t]" + NL +
+					"    \"id\": \"{0}\"," + NL +
+					"    \"version\": \"v1.0\"," + NL +
+					"    \"command\": \"{0}\"," + NL +
+					"    \"name\": \"{0}\"," + NL +
+					"    \"description\": \"{0} {1} package\"," + NL +
+					"    \"#config-prefix\": \"{0}.\"," + NL +
+					"    \"#pre-install-actions\": []," + NL +
+					"    \"#post-install-actions\": []," + NL +
+					"    \"#pre-uninstall-actions\": []," + NL +
+					"    \"#post-uninstall-actions\": []," + NL +
+					"    \"#dependencies\": [" + NL +
+					"        {" + NL +
+					"            \"id\": \"package id\"," + NL +
+					"            \"versions\":" + NL +
+					"            [" + NL +
+					"                \"v1.0\"" + NL +
+					"            ]" + NL +
+					"        }" + NL +
+					"    ]" + NL +
 					"}";
 			return package
 						.Replace("{0}", name)
@@ -472,6 +510,7 @@ namespace OpenIDE.Arguments.Handlers
 					return;
 				}
 				foreach (var source in sources) {
+					_dispatch("downloading "+source.Origin);
 					if (!download(source.Origin, source.Path))
 						printError("Failed to download source file " + source.Origin);
 					else
@@ -492,7 +531,7 @@ namespace OpenIDE.Arguments.Handlers
 					_dispatch("Packages in " +  source.Name);
 					var sourcePackages = source.Packages.Where(x => x.OS.Contains(os)).OrderBy(x => x.Name);
 					foreach (var package in sourcePackages)
-						_dispatch("\t" + package.ToString());
+						_dispatch("    " + package.ToString());
 				}
 			}
 		}

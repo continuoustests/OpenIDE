@@ -44,6 +44,7 @@
     <Compile Include="Definitions\DefinitionCacheReaderTests.cs" />
     <Compile Include="Definitions\DefinitionCacheWriterTests.cs" />
     <Compile Include="Definitions\DefinitionCacheTests.cs" />
+    <Compile Include="Packaging\MetaPackageTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
