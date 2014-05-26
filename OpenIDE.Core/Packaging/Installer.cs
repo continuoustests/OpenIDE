@@ -39,17 +39,16 @@ namespace OpenIDE.Core.Packaging
 		}
 
 		public void Install(string packageToken) {
+			_dispatch("installing package " + packageToken);
 			install(packageToken, null);
 		}
 
 		public bool Install(string packageToken, string[] acceptedVersions) {
+			_dispatch("installing package " + packageToken);
 			return install(packageToken, acceptedVersions);
 		}
 
 		private bool install(string packageToken, string[] acceptedVersions) {
-			var installType = "package";
-			if (acceptedVersions == null) // if not it's a dependency
-				_dispatch("installing " + installType + " " + packageToken);
 			var source = _packageFetcher.Fetch(packageToken);
 			if (source == null || !File.Exists(source.Package)) {
 				_dispatch("error|could not find package " + packageToken);
@@ -94,7 +93,7 @@ namespace OpenIDE.Core.Packaging
 										return false;
 									}
 								}
-								_dispatch(string.Format("skipping {0} ({1}) already installed", package.ID, package.Version));
+								Logger.Write(string.Format("skipping {0} ({1}) already installed", package.ID, package.Version));
 							} else {
 								_dispatch(string.Format("error|the package with the command {0} conflicts with the package you are trying to install", command));
 							}
@@ -173,7 +172,10 @@ namespace OpenIDE.Core.Packaging
 				return;
 			}
 			foreach (var pckg in package.Packages) {
-				install(pckg.Id, new[] {pckg.Version});
+				string[] versions = null;
+				if (pckg.Version != null)
+					versions = new[] {pckg.Version};
+				install(pckg.Id, versions);
 			}
 			if (source.IsTemporaryPackage)
 				File.Delete(source.Package);
@@ -503,11 +505,14 @@ namespace OpenIDE.Core.Packaging
 
 		private Package getInstallPackage(string source, string tempPath) {
 			new PackageExtractor().Extract(source, tempPath);
+			var dirs = Directory.GetDirectories(tempPath);
+			if (dirs.Length == 0)
+				return null;
 			var pkgFile =
 				Path.Combine(
 					Path.Combine(
 						tempPath,
-						Path.GetFileName(Directory.GetDirectories(tempPath)[0])),
+						Path.GetFileName(dirs[0])),
 					"package.json");
 			return Package.Read(pkgFile);
 		}

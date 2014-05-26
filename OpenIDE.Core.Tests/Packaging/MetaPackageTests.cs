@@ -27,7 +27,7 @@ namespace OpenIDE.Core.Tests.Packaging
             Assert.That(package.Packages[0].Id, Is.EqualTo("package1"));
             Assert.That(package.Packages[0].Version, Is.EqualTo("v1.0"));
             Assert.That(package.Packages[1].Id, Is.EqualTo("package2"));
-            Assert.That(package.Packages[1].Version, Is.EqualTo("any"));
+            Assert.That(package.Packages[1].Version, Is.Null);
         }
 
         [Test]
@@ -51,8 +51,7 @@ namespace OpenIDE.Core.Tests.Packaging
             w("             \"version\": \"v1.0\"");
             w("         },");
             w("         {");
-            w("             \"id\": \"package2\",");
-            w("             \"version\": \"any\"");
+            w("             \"id\": \"package2\"");
             w("         }");
             w("    ]");
             w("}");

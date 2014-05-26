@@ -57,11 +57,14 @@ namespace OpenIDE.Core.Packaging
             var packages = new List<MetaPackage.Package>();
             if (data["packages"] != null) {
                     data["packages"].Children().ToList()
-                        .ForEach(x => 
+                        .ForEach(x =>  {
+                            var id = x["id"].ToString();
+                            string version = null;
+                            if (x["version"] != null)
+                                version = x["version"].ToString();
                             packages.Add(
-                                new MetaPackage.Package(
-                                    x["id"].ToString(),
-                                    x["version"].ToString())));
+                                new MetaPackage.Package(id, version));
+                        });
             }
             Packages = packages.ToArray();
         }
