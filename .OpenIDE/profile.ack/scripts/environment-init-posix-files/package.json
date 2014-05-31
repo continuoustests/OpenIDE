@@ -1,0 +1,26 @@
+{
+    "#Comment": "# is used here to comment out optional fields",
+    "#Comment": "supported os options are linux, osx and windows",
+    "#Comment": "pre and post install actions accepts only OpenIDE non edior commands",
+    "os": ["linux","osx"],
+    "target": "script",
+    "id": "environment-init-posix",
+    "version": "v1.0",
+    "command": "environment-init-posix",
+    "name": "Environment Init POSIX",
+    "description": "Inisializes a unix based system",
+    "#config-prefix": "environment-init-posix.",
+    "#pre-install-actions": [],
+    "#post-install-actions": [],
+    "#pre-uninstall-actions": [],
+    "#post-uninstall-actions": [],
+    "#dependencies": [
+        {
+            "id": "package id",
+            "versions":
+            [
+                "v1.0"
+            ]
+        }
+    ]
+}

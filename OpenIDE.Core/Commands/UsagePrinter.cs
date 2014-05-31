@@ -37,6 +37,8 @@ namespace OpenIDE.Core.Commands
 
 		public static void PrintDefinitionsAligned(IEnumerable<DefinitionCacheItem> items)
 		{
+			if (items.Count() == 0)
+				return;
 			var maxLength = items.Max(x => x.Name.Length);
 			foreach (var item in items) {
 				var name = item.Name;
@@ -49,6 +51,8 @@ namespace OpenIDE.Core.Commands
 
 		public static void PrintDefinitionNames(IEnumerable<DefinitionCacheItem> items)
 		{
+			if (items.Count() == 0)
+				return;
 			foreach (var item in items) {
 				var name = item.Name;
 				if (!item.Required)

@@ -96,12 +96,12 @@ namespace OpenIDE.Arguments.Handlers
 
 				if (!_environment.HasEditorEngine(_rootPath)) {
 					if (!_environment.StartEditorEngine(args, _rootPath)) {
-						Console.WriteLine("Could not launch editor " + args[0]);
+						Logger.Write("Could not launch editor " + args[0]);
 						return;
 					}
 				}
 				if (!_environment.HasEditorEngine(_rootPath)) {
-					Console.WriteLine("Could not launch editor " + args[0]);
+					Logger.Write("Could not launch editor " + args[0]);
 					return;
 				}
 				if (!_environment.IsRunning(_rootPath))
