@@ -22,6 +22,7 @@ namespace OpenIDE.Core.Config
 			// Get from local profile
 			var localProfile = _locator.GetActiveLocalProfile();
 			var path = _locator.GetLocalProfilePath(localProfile);
+			keys = mergeKeys(path, keys);
 
 			// Get from local default profile
 			if (localProfile != "default") {

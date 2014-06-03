@@ -173,7 +173,7 @@ namespace OpenIDE.Core.Profiles
 
 		private string getActiveProfile(string rootPath) {
 			if (rootPath == null)
-				return "default";
+				return null;
 			var active = Path.Combine(rootPath, "active.profile");
 			if (File.Exists(active)) {
 				var name = File.ReadAllText(active)

@@ -359,13 +359,15 @@ namespace OpenIDE.Core.Packaging
 			Action<string,string> copyAll = (src, dest) => {};
 			copyAll = (src, dest) => {
 				foreach (var dir in Directory.GetDirectories(src)) {
-					var destDir = Path.Combine(dest, Path.GetFileName(source));
+					var destDir = Path.Combine(dest, Path.GetFileName(dir));
 					if (!Directory.Exists(destDir))
 						Directory.CreateDirectory(destDir);
 					copyAll(dir, destDir);
 				}
-				foreach (var file in Directory.GetFiles(source))
-					File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), true);
+				foreach (var file in Directory.GetFiles(src)) {
+					Logger.Write("copying "+Path.Combine(dest, Path.GetFileName(file)));
+					File.Copy(file, Path.Combine(dest, Path.GetFileName(file)), true);
+				}
 			};
 			copyAll(source, destination);
 		}
