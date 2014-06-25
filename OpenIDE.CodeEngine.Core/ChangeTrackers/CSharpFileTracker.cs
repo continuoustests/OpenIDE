@@ -28,7 +28,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			ICacheBuilder cache,
 			ICrawlResult crawlReader,
 			PluginLocator pluginLocator,
-			EventEndpoint eventDispatcher)
+			EventEndpoint eventDispatcher,
+			string[] ignoreDirectories)
 		{
 			_cache = cache;
 			_crawlReader = crawlReader;
@@ -36,6 +37,8 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			Logger.Write("Setting up file trackers");
 			Logger.Write("Setting up token file trackers");
 			_tracker = new FileChangeTracker((x) => {
+					if (x.Path.StartsWith(Path.Combine(path, ".OpenIDE")))
+						return;
 					_eventDispatcher.Send(
 						"codemodel raw-filesystem-change-" +
 						x.Type.ToString().ToLower() +
@@ -65,19 +68,19 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 				Logger.Write("Added plugin " + x.GetLanguage());
 			}
 			Logger.Write("Starting tracker for {0}", path);
-			_tracker.Start(path, getFilter(), handleChanges);
+			_tracker.Start(path, getFilter(), handleChanges, ignoreDirectories);
 			var locator = new ProfileLocator(path);
 			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
 				var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
 				if (Directory.Exists(profilePath)) {
 					Logger.Write("Starting tracker for {0}", profilePath);
-					_localTracker.Start(profilePath, getFilter(), handleChanges);
+					_localTracker.Start(profilePath, getFilter(), handleChanges, ignoreDirectories);
 				}
 			}
 			var globalPath = locator.GetGlobalProfilePath(locator.GetActiveGlobalProfile());
 			if (Directory.Exists(globalPath)) {
 				Logger.Write("Starting tracker for {0}", globalPath);
-				_globalTracker.Start(globalPath, getFilter(), handleChanges);
+				_globalTracker.Start(globalPath, getFilter(), handleChanges, ignoreDirectories);
 			}
 		}
 

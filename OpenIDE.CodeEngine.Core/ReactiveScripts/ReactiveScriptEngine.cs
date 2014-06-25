@@ -54,7 +54,11 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 					.Where(x => 
 						!_pausedScripts.Contains(x.Name) &&
 						x.ReactsTo(message)).ToList()
-					.ForEach(x => x.Run(message));
+					.ForEach(x => {
+						Logger.Write("Running reactive script: "+x.Name);
+						x.Run(message);
+					});
+                Logger.Write("Running affected scripts - Done");
 			}
 		}
 
@@ -87,7 +91,8 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 			// Read script and dispatch errors
 			var script = _reader.ReadScript(path, true);
 			if (script == null) {
-                Logger.Write("No rscript found. Exiting");
+                Logger.Write("No "+path+" rscript found or script crashed. exiting..");
+                removeScript(path);
 				return;
             }
             if (type == ScriptTouchEvents.Pause) {

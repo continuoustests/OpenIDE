@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using NUnit.Framework;
 using OpenIDE.Core.FileSystem;
 
@@ -24,6 +25,7 @@ namespace OpenIDE.Core.Tests.FileSystem
 		[Test]
 		public void When_passed_a_link_it_reads_link() {
 			var lnk = OiLnkReader.Read(getJSON());
+			Assert.That(lnk.Preparer, Is.EqualTo(toOSPath("application-files/compile.py")));
 			Assert.That(lnk.LinkCommand, Is.EqualTo(toOSPath("path/to/my/application")));
 			Assert.That(lnk.LinkArguments, Is.EqualTo("{args}"));
 		}
@@ -86,7 +88,28 @@ namespace OpenIDE.Core.Tests.FileSystem
 		}
 
 		private string getJSON() {
-			return "{ \"#Comment\" : \"Handlers are command arguments and stdout writelines\", \"handlers\" : [ { \"handler\" : { \"arguments\" : [ \"arg1\", \"arg2\" ] , \"responses\" : [ \"My script\" ] } } ], \"link\" : { \"executable\" : \"path/to/my/application\", \"params\" : \"{args}\", \"#Comment\" : \"Valid: {run-location} {global-profile} {local-profile} {args}\" } }";
+			var sb = new StringBuilder();
+			Action<string> a = (line) => {
+				sb.AppendLine(line);
+			};
+			a("{");
+			a("    \"#Comment\" : \"Handlers are command arguments and stdout writelines\",");
+			a("	   \"handlers\" : [");
+			a("        { ");
+			a("            \"handler\" : {");
+			a(" 		       \"arguments\" : [ \"arg1\", \"arg2\" ],");
+			a(" 			   \"responses\" : [ \"My script\" ]");
+			a(" 			}");
+			a(" 	   }");
+			a("    ],");
+			a("    \"link\" : {");
+			a("		   \"preparer\": \"application-files/compile.py\",");
+			a("        \"executable\" : \"path/to/my/application\",");
+			a(" 	   \"params\" : \"{args}\",");
+			a(" 	   \"#Comment\" : \"Valid: {run-location} {global-profile} {local-profile} {args}\" ");
+			a("	   }");
+			a("}");
+			return sb.ToString();
 		}
 	}
 }

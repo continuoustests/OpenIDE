@@ -27,6 +27,7 @@ namespace OpenIDE.Core.Config
 			addOption("oi.fallbackmode", "Whether UI fallback mode (user-select..) is enabled/disabled. Default enabled.");
 			addOption("oi.userselect.ui.fallback", "Whether the builtin user select window is enabled/disabled. Default enabled.");
 			addOption("oi.userinput.ui.fallback", "Whether the builtin user input window is enabled/disabled. Default enabled.");
+			addOption("oi.ignore.directories", "Directory ignored by the OpenIDE change tracking.");
 			foreach (var path in _paths) {
 				if (!Directory.Exists(path))
 					continue;

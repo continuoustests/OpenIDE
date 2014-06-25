@@ -8,6 +8,9 @@
         }
     ],
     "link": {
+        "#Comment": "The preparer can only be a relative path to -files dir",
+        "#preparer": "For instance a compiler. Only run on get-command-definitions",
+
         "executable": "path/to/my/application",
         "params": "{args}",
         "#Comment": "Valid: {run-location} {global-profile} {local-profile} {args}",

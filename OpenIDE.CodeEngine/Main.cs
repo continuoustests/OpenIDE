@@ -34,7 +34,7 @@ namespace OpenIDE.CodeEngine
 				return;
 
 			var endpoint = Bootstrapper.GetEndpoint(path, enabledLanguages);
-			var reader = new ConfigReader(path);
+            var reader = new ConfigReader(path);
 			var fallbackmode = reader.Get("oi.fallbackmode") != "disabled";
 			if (fallbackmode) {
 				Logger.Write("Starting code engine with fallback mode");

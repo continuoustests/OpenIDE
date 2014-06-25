@@ -229,8 +229,46 @@ namespace CoreExtensions
                                         KeyValuePair<string,string>[] replacements) {
             if (Path.GetExtension(command) != ".oilnk")
                 return false;
+            var fileDir = Path.GetDirectoryName(command);
             var args = new CommandStringParser(' ').Parse(arguments);
             var lnk = OiLnkReader.Read(File.ReadAllText(command));
+
+            if ((args.Count() == 2 && args.ElementAt(1) == "get-command-definitions") || (args.Count() == 1 && args.ElementAt(0) == "reactive-script-reacts-to")) {
+                // Run preparer if exists
+                if (lnk.Preparer != null) {
+                    var preparerArgs = new CommandStringParser(' ').Parse(lnk.Preparer);
+                    if (preparerArgs.Count() > 0) {
+                        var preparerFile = Path.Combine(fileDir, Path.GetFileNameWithoutExtension(command)+"-files", preparerArgs.ElementAt(0));
+                        var preparerArguments = "";
+                        if (preparerArgs.Count() > 1)
+                            preparerArguments = new CommandStringParser(' ').GetArgumentString(preparerArgs.Skip(1).ToArray());
+                        Logger.Write("Running preparer: "+preparerFile);
+                        if (File.Exists(preparerFile)) {
+                            string[] errors;
+                            var output = new Process()
+                                .QueryAll(preparerFile, preparerArguments, false, workingDir, out errors);
+                            var hasErrors = false;
+                            foreach (var line in output) {
+                                if (line.StartsWith("error|")) {
+                                    onRecievedLine(true, line.Substring(6, line.Length-6));
+                                    hasErrors = true;
+                                }
+                            }
+                            foreach (var line in errors) {
+                                if (line.Trim().Length > 0) {
+                                    onRecievedLine(true, line);
+                                    hasErrors = true;
+                                }
+                            }
+                            if (hasErrors)
+                                return true;
+                        }
+                    }
+                } else {
+                    Logger.Write("No preparer registered");
+                }
+            }
+
             foreach (var handler in lnk.Handlers) {
                 if (handler.Matches(args.ToArray())) {
                     handler.WriteResponses((line) => onRecievedLine(false, line));
@@ -240,7 +278,6 @@ namespace CoreExtensions
             if (lnk.LinkCommand == null)
                 return true;
             
-            var fileDir = Path.GetDirectoryName(command);
             if (fileDir != null && File.Exists(Path.Combine(fileDir, lnk.LinkCommand)))
                 command = Path.Combine(fileDir, lnk.LinkCommand);
             else if (File.Exists(Path.Combine(workingDir, lnk.LinkCommand)))
@@ -250,8 +287,13 @@ namespace CoreExtensions
 
             // This is a terrible hack, shame on me!!!!!!!
             // If get command definitions don't mess with arguments
-            if (args.Count() == 2 && args.ElementAt(1) == "get-command-definitions")
+            if (
+                (args.Count() == 2 && args.ElementAt(1) == "get-command-definitions") ||
+                (args.Count() == 1 && args.ElementAt(0) == "reactive-script-reacts-to")
+            )
+            {
                 return false;
+            }
 
             var originalArguments = arguments;
             foreach (var replacement in replacements)

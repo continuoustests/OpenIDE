@@ -53,12 +53,13 @@ namespace OpenIDE.Core.Definitions
 
 		public void Merge(string[] enabledLanguages, DefinitionCache cache) {
 			foreach (var definition in cache.Definitions) {
+				Logger.Write("merging "+definition.Name+" having override "+definition.Override.ToString());
 				// Skip not enabled languages
 				// We can handle this on merge as
 				// 1. Writing / updating definition files happens before merge
 				// 2. The first part being written to the cache is builtin 
 				//    which contains no languages
-				if (definition.Type == DefinitionCacheItemType.Language && !enabledLanguages.Contains(definition.Name))
+				if (!definition.Override && definition.Type == DefinitionCacheItemType.Language && !enabledLanguages.Contains(definition.Name))
 					continue;
 				if (definition.Override)
 					overrideItem(definition);
@@ -166,6 +167,7 @@ namespace OpenIDE.Core.Definitions
 				return;
 			var childItem = item.Parameters[0];
 			if (!childItem.Override) {
+				Logger.Write("Found and overrides command with "+item.Name);
 				existing.OverrideItem(childItem);
 				return;
 			}

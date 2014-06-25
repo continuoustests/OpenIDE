@@ -28,10 +28,14 @@ namespace OpenIDE.Core.RScripts
 		private Process _service;
 		private Thread _serviceThread;
 
+		public static string GetName(string path) {
+			return Path.GetFileNameWithoutExtension(path);
+		}
+
 		public string Name {
 			get {
 				if (_name == null)
-					_name = Path.GetFileNameWithoutExtension(_file);
+					_name = GetName(_file);
 				return _name;
 			}
 		}
@@ -218,7 +222,7 @@ namespace OpenIDE.Core.RScripts
 							if (error) {
 								_isFaulted = true;
 								if (_dispatchErrors)
-		            				internalDispatch("rscript-" + Name + " error|" + m);
+		            				_outputDispatcher("rscript-"+Name, m.StartsWith("error|") ? m : "error|"+m);
 								Logger.Write(
 									"Failed running reactive script with reactive-script-reacts-to: " +
 									_file);

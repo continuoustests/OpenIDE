@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Collections.Generic;
 using System.IO;
 using FSWatcher;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 	{
 		private string _watchPath;
 		private string[] _patterns;
+		private HashSet<string> _ignoreDirectories = new HashSet<string>();
 		private Thread _changeHandlerThread;
 		private Watcher _watcher;
 		private Stack<Change> _buffer = new Stack<Change>();
@@ -23,13 +25,15 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			_rawHandler = rawHandler;
 		}
 		
-		public void Start(string path, string pattern, Action<Stack<Change>> changeHandler)
+		public void Start(string path, string pattern, Action<Stack<Change>> changeHandler, string[] ignoreDirectories)
 		{
 			_watchPath = path;
 			_patterns = pattern
 				.Replace("*", "")
 				.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 			_changeHandler = changeHandler;
+			_ignoreDirectories = new HashSet<string>();
+			ignoreDirectories.ToList().ForEach(x => _ignoreDirectories.Add(x));
 			_changeHandlerThread = new Thread(startChangeHandler);
 			_changeHandlerThread.Start();
 			start();
@@ -59,6 +63,9 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		
 		private void WatcherChangeHandler(ChangeType type, string path)
         {
+        	if (_ignoreDirectories.Any(x => path.StartsWith(x)))
+        		return;
+        	
 			var change = new Change(type, path);
 			_rawHandler(change);
 			

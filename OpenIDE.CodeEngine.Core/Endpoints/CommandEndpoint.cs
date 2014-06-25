@@ -124,7 +124,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 		
 		private void writeInstanceInfo()
 		{
-			string key = _keyPath;
 			var path = Path.Combine(FS.GetTempPath(), "OpenIDE.CodeEngine");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);

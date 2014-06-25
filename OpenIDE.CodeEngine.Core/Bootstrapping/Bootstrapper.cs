@@ -1,24 +1,25 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Reflection;
-using System.Collections.Generic;
+using System.Threading;
+using CoreExtensions;
 using OpenIDE.CodeEngine.Core.Caching;
-using OpenIDE.CodeEngine.Core.Handlers;
+using OpenIDE.CodeEngine.Core.ChangeTrackers;
+using OpenIDE.CodeEngine.Core.EditorEngine;
 using OpenIDE.CodeEngine.Core.Endpoints;
 using OpenIDE.CodeEngine.Core.Endpoints.Tcp;
-using OpenIDE.CodeEngine.Core.ChangeTrackers;
-using OpenIDE.Core.Configs;
-using OpenIDE.Core.Commands;
-using OpenIDE.Core.Logging;
-using OpenIDE.CodeEngine.Core.EditorEngine;
+using OpenIDE.CodeEngine.Core.Handlers;
 using OpenIDE.Core.Caching;
-using OpenIDE.Core.Profiles;
-using OpenIDE.Core.Language;
+using OpenIDE.Core.Commands;
+using OpenIDE.Core.Config;
+using OpenIDE.Core.Configs;
 using OpenIDE.Core.Integration;
+using OpenIDE.Core.Language;
+using OpenIDE.Core.Logging;
+using OpenIDE.Core.Profiles;
 using OpenIDE.Core.Windowing;
-using CoreExtensions;
 
 
 namespace OpenIDE.CodeEngine.Core.Bootstrapping
@@ -38,6 +39,7 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 		public static CommandEndpoint GetEndpoint(string path, string[] enabledLanguages)
 		{
 			_path = path;
+			var reader = new ConfigReader(_path);
 			_interpreters = new Interpreters(_path);
 			ProcessExtensions.GetInterpreter = 
 				(file) => {
@@ -73,12 +75,26 @@ namespace OpenIDE.CodeEngine.Core.Bootstrapping
 			Logger.Write("Creating plugin file tracker");
 			_tracker = new PluginFileTracker();
 			Logger.Write("Starting plugin file tracker");
+			var ignoreDirSetting = reader.Get("oi.ignore.directories");
+			var ignoreDirectories = new string[] {};
+			if (ignoreDirSetting != null) {
+				ignoreDirectories = ignoreDirSetting
+					.Split(new[] {','})
+					.Select(x => {
+						if (Path.IsPathRooted(x)) {
+							return x;
+						}
+						return Path.Combine(_path, x);
+					})
+					.ToArray();
+			}
 			_tracker.Start(
 				_path,
 				_cache,
 				_cache,
 				_pluginLocator,
-				_eventEndpoint);
+				_eventEndpoint,
+				ignoreDirectories);
 			Logger.Write("Plugin file tracker started");
 
             _endpoint = new CommandEndpoint(_path, _cache, _eventEndpoint);

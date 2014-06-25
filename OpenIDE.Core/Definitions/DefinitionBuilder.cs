@@ -219,7 +219,11 @@ namespace OpenIDE.Core.Definitions
 				var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
 				foreach (var scriptFile in languageScripts) {
 					Logger.Write("Script " + scriptFile);
-					var script  = new Script(_token, _workingDirectory, scriptFile);
+					var script  = new Script(_token, _workingDirectory, scriptFile)
+						.SetUsageDispatcher((msg) => {
+							if (msg.StartsWith("error|"))
+								printError(msg);
+						});
 					var usages = script.Usages; // Description is built when fetching usages
 					var scriptItem = item.Append(
 						DefinitionCacheItemType.LanguageScript,
@@ -253,7 +257,11 @@ namespace OpenIDE.Core.Definitions
 				var languageScripts = new ScriptFilter().GetScripts(languageScriptPath);
 				foreach (var scriptFile in languageScripts) {
 					Logger.Write("Script " + scriptFile);
-					var script  = new Script(_token, _workingDirectory, scriptFile);
+					var script  = new Script(_token, _workingDirectory, scriptFile)
+						.SetUsageDispatcher((msg) => {
+							if (msg.StartsWith("error|"))
+								printError(msg);
+						});
 					var usages = script.Usages; // Description is built when fetching usages
 					var scriptItem = item.Append(
 						DefinitionCacheItemType.LanguageScript,
@@ -273,7 +281,11 @@ namespace OpenIDE.Core.Definitions
 			var scripts = new ScriptFilter().GetScripts(scriptPath);
 			foreach (var scriptFile in scripts) {
 				Logger.Write("Adding script " + scriptPath);
-				var script  = new Script(_token, _workingDirectory, scriptFile);
+				var script  = new Script(_token, _workingDirectory, scriptFile)
+					.SetUsageDispatcher((msg) => {
+						if (msg.StartsWith("error|"))
+							printError(msg);
+					});
 				var usages = script.Usages; // Description is built when fetching usages
 				var item = cache.Add(
 					DefinitionCacheItemType.Script,
@@ -288,6 +300,13 @@ namespace OpenIDE.Core.Definitions
 
 			writeCache(dir, cache);
 			return cache;
+		}
+
+		private void printError(string msg) {
+			var error = msg.Substring(6, msg.Length-6);
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine(error);
+			Console.ResetColor();
 		}
 
 		private void add(DefinitionCache cache, DefinitionCacheItem item, IEnumerable<DefinitionCacheItem> parameters) {
@@ -312,10 +331,11 @@ namespace OpenIDE.Core.Definitions
 
 		private void add(DefinitionCache cache, DefinitionCacheItem item, IEnumerable<BaseCommandHandlerParameter> parameters) {
 			foreach (var parameter in parameters) {
-				if (parameter.Override)
+				if (parameter.Override) {
 					overrideCommand(cache, item, parameter);
-				else
+				} else {
 					add(cache, item, parameter);
+				}
 			}
 		}
 

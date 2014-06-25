@@ -37,10 +37,13 @@ namespace OpenIDE.Core.FileSystem
 			try {
 				var data = JObject.Parse(json);
 				var handlers = getHandlers(data);
+				string preparer = null;
 				string command = null;
 				string parameters = null;
 				var link = data["link"];
 				if (link != null) {
+					if (link["preparer"] != null)
+						preparer = link["preparer"].ToString();
 					command = link["executable"].ToString();
 					parameters = link["params"].ToString();
 					if (Environment.OSVersion.Platform != PlatformID.MacOSX && Environment.OSVersion.Platform != PlatformID.Unix) {
@@ -50,7 +53,8 @@ namespace OpenIDE.Core.FileSystem
 				return new OiLnkReader(
 					handlers.ToArray(),
 					command,
-					parameters);
+					parameters,
+					preparer);
 			} catch {
 				return null;
 			}
@@ -68,8 +72,9 @@ namespace OpenIDE.Core.FileSystem
 			return handlers.ToArray();
 		}
 
-		public OiLnkReader(Handler[] handlers, string executable, string parameters) {
+		public OiLnkReader(Handler[] handlers, string executable, string parameters, string preparer) {
 			Handlers = handlers;
+			Preparer = preparer;
 			LinkCommand = executable;
 			LinkArguments = parameters;
 		}
@@ -77,5 +82,6 @@ namespace OpenIDE.Core.FileSystem
 		public Handler[] Handlers { get; private set; }
 		public string LinkCommand { get; private set; }
 		public string LinkArguments { get; private set; }
+		public string Preparer { get; private set; }
 	}
 }

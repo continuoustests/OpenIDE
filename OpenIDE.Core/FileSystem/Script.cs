@@ -22,6 +22,7 @@ namespace OpenIDE.Core.FileSystem
 		private string _globalProfileName;
 		private bool _isRunning;
 		private Action<string> _writer = (msg) => {};
+		private Action<string> _usageDispatcher = (msg) => {};
 
 		public IEnumerable<BaseCommandHandlerParameter> Usages { get { return getUsages(); } }
 
@@ -39,6 +40,12 @@ namespace OpenIDE.Core.FileSystem
 			var profiles = new ProfileLocator(_token);
 			_globalProfileName = profiles.GetActiveGlobalProfile();
 			_localProfileName = profiles.GetActiveLocalProfile();
+		}
+
+		public Script SetUsageDispatcher(Action<string> usageDispatcher)
+		{
+			_usageDispatcher = usageDispatcher;
+			return this;
 		}
 
 		public void Write(string message)
@@ -111,14 +118,22 @@ namespace OpenIDE.Core.FileSystem
 		
 		private string getUsage()
 		{
-			return ToSingleLine("get-command-definitions");
+			return ToSingleLine("get-command-definitions", _usageDispatcher);
 		}
 
 		private string ToSingleLine(string arguments)
 		{
+			return ToSingleLine(arguments, (s) => {});
+		}
+
+		private string ToSingleLine(string arguments, Action<string> onLine)
+		{
 			var sb = new StringBuilder();
 			run(arguments,
-				(line) => sb.Append(line.Replace(Environment.NewLine, " ")),
+				(line) => {
+					onLine(line);
+					sb.Append(line.Replace(Environment.NewLine, " "));
+				},
 				new KeyValuePair<string,string>[] {});
 			return sb.ToString();
 		}

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using OpenIDE.Core.Logging;
 
@@ -80,6 +81,10 @@ namespace OpenIDE.CodeEngine.Core.ReactiveScripts
 		private ScriptTouchEvents parseMessage(string message, string addedPattern, ScriptTouchEvents type) {
 			foreach (var path in _rscriptPaths) {
 				if (message.StartsWith(addedPattern + path)) {
+					var scriptRoot = Path.GetDirectoryName(GetPath(message));
+					// Only accept scripts in rscript root folder
+					if (scriptRoot != path)
+						continue;
 					return type;
 				}
 			}
