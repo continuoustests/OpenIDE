@@ -135,6 +135,9 @@ namespace OpenIDE.Arguments.Handlers
 			{
 				if (instance == null)
 					return;
+				var editor = _editorFactory.GetInstance(_rootPath);
+				if (editor != null)
+					Console.WriteLine("There is already an editor session running at this location. Run 'oi environment' for more information.");
 				instance.Run(arguments);
 			}
 		}
