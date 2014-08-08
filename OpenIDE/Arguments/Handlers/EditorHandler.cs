@@ -116,17 +116,15 @@ namespace OpenIDE.Arguments.Handlers
 					file = arguments[1];
 				Console.WriteLine(instance.GetDirtyFiles(file));
 			}
-			else if (arguments[0] == "get-caret")
+			else if (arguments.Length == 1 && arguments[0] == "get-caret")
 			{
 				Console.WriteLine(instance.GetCaret());
 			}
-			else if (arguments[0] == "user-select")
+			else if (arguments.Length == 3 && arguments[0] == "user-select")
 			{
-				if (arguments.Length < 3)
-					return;
 				instance.UserSelect(arguments[1], arguments[2]);
 			}
-			else if (arguments[0] == "user-input")
+			else if (arguments.Length >= 2 && arguments[0] == "user-input")
 			{
 				var defaultvalue = "";
 				if (arguments.Length > 2)
