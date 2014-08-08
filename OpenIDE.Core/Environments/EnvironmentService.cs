@@ -35,16 +35,19 @@ namespace OpenIDE.Core.Environments
 
 		public bool IsRunning(string token)
 		{
+			token = fixPath(token);
 			return _codeEnginelocator.GetInstance(token) != null;
 		}
 
 		public bool HasEditorEngine(string token)
 		{
+			token = fixPath(token);
 			return _editorLocator.GetInstance(token) != null;
 		}
 
 		public void Start(string token)
 		{
+			token = fixPath(token);
 			var appdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			Logger.Write("Initializing code engine");
 			initCodeEngine(token, appdir);
@@ -65,6 +68,7 @@ namespace OpenIDE.Core.Environments
 
 		public bool StartEditorEngine(IEnumerable<string> editorAndArguments, string token)
 		{
+			token = fixPath(token);
 			Logger.Write ("Starting instance");
 			writeStartArguments(editorAndArguments);
 			var instance = startInstance(token);
@@ -75,6 +79,7 @@ namespace OpenIDE.Core.Environments
 
 		public void Shutdown(string token)
 		{
+			token = fixPath(token);
 			var codeEngine = _codeEnginelocator.GetInstance(token);
 			if (codeEngine != null)
 				codeEngine.Shutdown();
@@ -83,6 +88,12 @@ namespace OpenIDE.Core.Environments
 				return;
 			var process = Process.GetProcessById(instance.ProcessID);
 			process.Kill();
+		}
+
+		private string fixPath(string path) {
+			if (path.Contains(":"))
+				return path.ToLower();
+			return path;
 		}
 
 		private void writeStartArguments (IEnumerable<string> args)

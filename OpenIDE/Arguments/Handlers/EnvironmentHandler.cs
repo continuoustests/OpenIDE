@@ -10,6 +10,7 @@ namespace OpenIDE.Arguments.Handlers
 {
 	class EnvironmentHandler : ICommandHandler
 	{
+		private string _token;
 		private Action<string> _dispatch;
 		private EnvironmentService _environment;
 		private ICodeEngineLocator _locator;
@@ -24,7 +25,7 @@ namespace OpenIDE.Arguments.Handlers
 					"Lists and manages OpenIDE evironments");
 				usage
 					.Add("details", "Displays details about a running environment")
-						.Add("KEY", "The environment key path");
+						.Add("[KEY]", "The environment key path");
 				usage.Add("start", "Starts OpenIDE for the current path (no editor engine)");
 				return usage;
 			}
@@ -32,7 +33,8 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "environment"; } }
 
-		public EnvironmentHandler(Action<string> dispatch, ICodeEngineLocator locator, ILocateEditorEngine editorLocator, EnvironmentService environment) {
+		public EnvironmentHandler(string token, Action<string> dispatch, ICodeEngineLocator locator, ILocateEditorEngine editorLocator, EnvironmentService environment) {
+			_token = token;
 			_dispatch = dispatch;
 			_locator = locator;
 			_editorLocator = editorLocator;
@@ -42,8 +44,12 @@ namespace OpenIDE.Arguments.Handlers
 		public void Execute(string[] arguments) {
 			if (arguments.Length == 0)
 				list();
-			if (arguments.Length == 2 && arguments[0] == "details")
-				details(arguments[1]);
+			if (arguments.Length >= 1 && arguments[0] == "details") {
+				var token = _token;
+				if (arguments.Length == 2)
+					token = arguments[1];
+				details(token);
+			}
 			if (arguments.Length == 1 && arguments[0] == "start")
 				_environment.Start(Environment.CurrentDirectory);
 		}

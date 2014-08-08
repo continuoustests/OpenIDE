@@ -31,7 +31,7 @@ namespace OpenIDE.Bootstrapping
 					Assembly.GetExecutingAssembly().Location),
 					getDefaultHandlers,
 					getLanguageHandlers);
-			_interpreters = new Interpreters(Environment.CurrentDirectory);
+			_interpreters = new Interpreters(Settings.RootPath);
 			ProcessExtensions.GetInterpreter = 
 				(file) => {
 						return _interpreters
@@ -83,10 +83,10 @@ namespace OpenIDE.Bootstrapping
 		{
 			_path = path;
 			SourcePrioritization = new string[] {};
-			var locator = new ProfileLocator(Environment.CurrentDirectory);
+			var locator = new ProfileLocator(fixPath(Environment.CurrentDirectory));
 			RootPath = locator.GetLocalProfilePath("default");
 			if (RootPath == null)
-				RootPath = Directory.GetCurrentDirectory();
+				RootPath = fixPath(Directory.GetCurrentDirectory());
 			else
 				RootPath = System.IO.Path.GetDirectoryName(RootPath);
 			var reader = new ConfigReader(RootPath);
@@ -110,6 +110,13 @@ namespace OpenIDE.Bootstrapping
 				.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(x => x.Trim())
 				.ToArray();
+		}
+
+		private string fixPath(string path)
+		{
+			if (path.Contains(":"))
+				return path.ToLower();
+			return path;
 		}
 
 		public string[] Parse(string[] args)
