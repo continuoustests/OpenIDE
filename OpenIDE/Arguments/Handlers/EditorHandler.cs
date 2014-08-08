@@ -20,6 +20,7 @@ namespace OpenIDE.Arguments.Handlers
 		private string _rootPath;
 		private OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine _editorFactory;
 		private EnvironmentService _environment;
+		private Action<string> _dispatch;
 
 		public CommandHandlerParameter Usage {
 			get {
@@ -60,11 +61,12 @@ namespace OpenIDE.Arguments.Handlers
 
 		public string Command { get { return "editor"; } }
 		
-		public EditorHandler(string rootPath, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, EnvironmentService environment)
+		public EditorHandler(string rootPath, OpenIDE.Core.EditorEngineIntegration.ILocateEditorEngine editorFactory, EnvironmentService environment, Action<string> dispatch)
 		{
 			_rootPath = rootPath;
 			_editorFactory = editorFactory;
 			_environment = environment;
+			_dispatch = dispatch;
 		}
 		
 		public void Execute(string[] arguments)
@@ -94,6 +96,17 @@ namespace OpenIDE.Arguments.Handlers
 						.GetStartingWith("editor." + editorName)
 						.Select(x => "--" + x.Key + "=" + x.Value));
 
+				// A bit of a hack but if we find a configuration called executable for the editor
+				// if the path is rooted (avvoids checking for files in PATH) display a warning
+				// if it does not exist.
+				var executableSetting = configReader.Get("editor." + editorName + ".executable");
+				if (executableSetting != null) {
+					if (Path.IsPathRooted(executableSetting)) {
+						if (!File.Exists(executableSetting))
+							_dispatch("warning|The configured path for the " + editorName + " editor does not exist: " + executableSetting);
+					}
+				}
+
 				if (!_environment.HasEditorEngine(_rootPath)) {
 					if (!_environment.StartEditorEngine(args, _rootPath)) {
 						Logger.Write("Could not launch editor " + args[0]);
@@ -104,8 +117,9 @@ namespace OpenIDE.Arguments.Handlers
 					Logger.Write("Could not launch editor " + args[0]);
 					return;
 				}
-				if (!_environment.IsRunning(_rootPath))
+				if (!_environment.IsRunning(_rootPath)) {
 					_environment.Start(_rootPath);
+				}
 			}
 			else if (arguments.Length >= 1 && arguments[0] == "get-dirty-files")
 			{
