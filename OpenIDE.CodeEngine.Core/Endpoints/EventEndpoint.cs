@@ -38,6 +38,10 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			_dispatch = dispatch;
 		}
 
+		public void WriteOutput(string publisher, string message) {
+			_outputEndpoint.Send(publisher, message);
+		}
+
 		private void dispatch(string message) {
 			message = _commandParser.GetArgumentString(_commandParser.Parse(message).ToArray(), "'");
 			Logger.Write("Event dispatching: " + message);

@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="UI\UserInputForm.cs" />
     <Compile Include="Endpoints\OutputEndpoint.cs" />
+    <Compile Include="Handlers\WriteOutputHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

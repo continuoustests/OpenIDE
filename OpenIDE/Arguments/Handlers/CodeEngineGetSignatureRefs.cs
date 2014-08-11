@@ -41,6 +41,7 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new MemberLookupHandler(_codeEngineFactory));
 			_handlers.Add(new GoToDefinitionHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEnginePublishHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineOutputWriteHandler(_codeEngineFactory));
 		}
 
 		public string Command { get { return "codemodel"; } }
