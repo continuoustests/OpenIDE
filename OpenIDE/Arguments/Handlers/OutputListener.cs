@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -21,6 +22,7 @@ namespace OpenIDE.Arguments.Handlers
                     Command,
                     "Listens to and prints output from the environment");
                 usage.Add("PUBLISHER", "Name of the publisher to listen for");
+                usage.Add("[-f]", "Keep listening even if the environment shuts down");
                 return usage;
             }
         }
@@ -33,6 +35,7 @@ namespace OpenIDE.Arguments.Handlers
         }
 
         public void Execute(string[] arguments) {
+            var follow = shouldFollow(ref arguments);
             Action<string,string> printer = (publisher, message) => {
                 _dispatch(publisher+": "+message);
             };
@@ -48,10 +51,21 @@ namespace OpenIDE.Arguments.Handlers
                 };
             }
             var client = new OutputClient(_token, printer);
-            client.Connect();
-            while (client.IsConnected) {
-                Thread.Sleep(100);
+            while (true) {
+                client.Connect();
+                while (client.IsConnected) {
+                    Thread.Sleep(100);
+                }
+                if (!follow)
+                    break;
+                Thread.Sleep(1000);
             }
+        }
+
+        private bool shouldFollow(ref string[] args) {
+            var follow = args.Contains("-f");
+            args = args.Where(x => x != "-f").ToArray();
+            return follow;
         }
     }
 }
