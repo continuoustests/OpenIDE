@@ -23,6 +23,7 @@ namespace OpenIDE.Core.Language
 		private bool _isQuerying = false;
 		private Action<string> _responseDispatcher = (m) => {};
 		private string _crawlFileTypes = null;
+		private static Random _rnd = new Random();
 
 		public string FullPath { get { return _path; } }
 
@@ -107,8 +108,17 @@ namespace OpenIDE.Core.Language
 
 		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived)
 		{
-			var file = FS.GetTempFileName();
-			File.WriteAllLines(file, filesAndFolders.ToArray());
+			var toCrawl = filesAndFolders.ToArray();
+			var filename = "openide-crawl-"+ DateTime.Now.Ticks.ToString() + "-" + _rnd.Next(1,10000).ToString();
+			var file = Path.Combine(FS.GetTempPath(), filename);
+
+			using (var stream = new FileStream(file, FileMode.Create)) {
+				using (var writer = new StreamWriter(stream)) {
+					foreach (var line in toCrawl) {
+						writer.WriteLine(line);
+					}
+				}
+			}
 			run(string.Format("crawl-source \"{0}\"", file), onLineReceived);
 			File.Delete(file);
 		}
