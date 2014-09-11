@@ -66,7 +66,7 @@ namespace OpenIDE.CodeEngine.Core.Caching
 						var matchPos = -1;
 						var full = x.File.ToLower() + x.Signature.ToLower();
 						foreach (var search in names) {
-							var pos = search.LastIndexOf(search.ToLower());
+							var pos = full.LastIndexOf(search.ToLower());
 							if (pos == -1)
 								return false;
 							if (pos < matchPos)
