@@ -51,14 +51,23 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		
 		private void start()
 		{
-			_watcher = new Watcher(
-				_watchPath,
-				(dir) => WatcherChangeHandler(ChangeType.DirectoryCreated, dir),
-				(dir) => WatcherChangeHandler(ChangeType.DirectoryDeleted, dir),
-				(file) => WatcherChangeHandler(ChangeType.FileCreated, file),
-				(file) => WatcherChangeHandler(ChangeType.FileChanged, file),
-				(file) => WatcherChangeHandler(ChangeType.FileDeleted, file));
-			_watcher.Watch();
+			var keepWatching = true;
+			while (keepWatching) {
+				try {
+					keepWatching = false;
+					_watcher = new Watcher(
+						_watchPath,
+						(dir) => WatcherChangeHandler(ChangeType.DirectoryCreated, dir),
+						(dir) => WatcherChangeHandler(ChangeType.DirectoryDeleted, dir),
+						(file) => WatcherChangeHandler(ChangeType.FileCreated, file),
+						(file) => WatcherChangeHandler(ChangeType.FileChanged, file),
+						(file) => WatcherChangeHandler(ChangeType.FileDeleted, file));
+					_watcher.Watch();
+				} catch (Exception ex) {
+					Logger.Write(ex);
+					keepWatching = true;
+				}
+			}
 		}
 		
 		private void WatcherChangeHandler(ChangeType type, string path)
