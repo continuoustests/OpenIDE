@@ -59,9 +59,12 @@ namespace OpenIDE.Core.EditorEngineIntegration
 			send(command);
 		}
 		
-		public void GoTo(string file, int line, int column)
+		public void GoTo(string file, int line, int column, string window)
 		{
-			send(string.Format("goto {0}|{1}|{2}", file, line, column));
+			if (window == null)
+				send(string.Format("goto {0}|{1}|{2}", file, line, column));
+			else
+				send(string.Format("goto {0}|{1}|{2}|{3}", file, line, column, window));
 		}
 		
 		public void SetFocus()
@@ -94,6 +97,20 @@ namespace OpenIDE.Core.EditorEngineIntegration
 				return "";
 			}
 			var query = "get-caret";
+			var reply = client.Request(query);
+			client.Disconnect();
+			return reply;
+		}
+
+		public string GetWindows()
+		{
+			var client = _clientFactory.Invoke();
+			client.Connect(Port, (s) => {});
+			if (!client.IsConnected) {
+				Logger.Write("Editor is not connected.");
+				return "";
+			}
+			var query = "get-windows";
 			var reply = client.Request(query);
 			client.Disconnect();
 			return reply;

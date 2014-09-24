@@ -75,7 +75,7 @@ namespace OpenIDE.Arguments.Handlers
 			var editor = _editorEngineFactory.GetInstance(Environment.CurrentDirectory);
 			if (editor == null)
 				return;
-			editor.GoTo(signature.File, signature.Line, signature.Column);
+			editor.GoTo(signature.File, signature.Line, signature.Column, null);
 		}
 	}
 

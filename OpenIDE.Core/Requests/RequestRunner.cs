@@ -48,6 +48,8 @@ namespace OpenIDE.Core.Requests
                 request = () => editor.GetDirtyFiles(editorCmd.Replace("get-dirty-files", "").Trim());
             else if (editorCmd == "get-caret")
                 request = () => editor.GetCaret();
+            else if (editorCmd == "get-windows")
+                request = () => editor.GetWindows();
             if (request != null) {
                 var content = request();
                 response.Add(content);

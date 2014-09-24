@@ -31,7 +31,7 @@ namespace OpenIDE.Arguments.Handlers
 					"Initializes the environment by staring the editor, code model and editor engine");
 				usage.Add("PLUGIN_NAME", "The name of the plugin to launch");
 				usage.Add("goto", "Open file on spesific line and column")
-					.Add("FILE|LINE|COLUMN", "| separated filepath, line and column");
+					.Add("FILE|LINE|COLUMN[|WINDOW]", "| separated filepath, line and column");
 				usage.Add("setfocus", "Sets focus to the editor");
 				usage.Add("insert", "Inserts a chunk of text to a spesific position in a file")
 					.Add("CONTENT_FILE", "File containing the text you want to insert")
@@ -55,6 +55,7 @@ namespace OpenIDE.Arguments.Handlers
 				usage.Add("user-input", "Presents the user with an input dialog")
 					.Add("ID", "Identifier string to look for in the responding user-inputted event")
 						.Add("[DEFAULT]", "The default value for the user");
+				usage.Add("get-windows", "Gets available windows in editor");
 				return usage;
 			}
 		}
@@ -144,6 +145,10 @@ namespace OpenIDE.Arguments.Handlers
 				if (arguments.Length > 2)
 					defaultvalue = arguments[2];
 				instance.UserInput(arguments[1], defaultvalue);
+			}
+			else if (arguments.Length == 1 && arguments[0] == "get-windows")
+			{
+				Console.WriteLine(instance.GetWindows());
 			}
 			else
 			{
