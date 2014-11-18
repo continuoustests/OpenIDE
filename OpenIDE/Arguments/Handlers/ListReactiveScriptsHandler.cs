@@ -48,12 +48,13 @@ namespace OpenIDE.Arguments.Handlers
 					Console.WriteLine(script.Name);
 				return;
 			}
-			var instance = _codeEngineLocator.GetInstance(_token);
-			foreach (var script in scripts) {
-				var status = "unavailable";
-				if (instance != null)
-					status = instance.GetRScriptState(script.Name);
-				Console.WriteLine(script.Name + " (" + status + ")");
+			using (var instance = _codeEngineLocator.GetInstance(_token)) {
+				foreach (var script in scripts) {
+					var status = "unavailable";
+					if (instance != null)
+						status = instance.GetRScriptState(script.Name);
+					Console.WriteLine(script.Name + " (" + status + ")");
+				}
 			}
 		}
 	}

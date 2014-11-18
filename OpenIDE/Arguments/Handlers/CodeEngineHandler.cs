@@ -33,13 +33,14 @@ namespace OpenIDE.Arguments.Handlers
 		
 		public void Execute (string[] arguments)
 		{
-			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null)
-				return;
-			if (arguments.Length == 0)
-				instance.GoToType();
-			else
-				consoleSearch(instance, arguments[0]);
+			using (var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory)) {
+				if (instance == null)
+					return;
+				if (arguments.Length == 0)
+					instance.GoToType();
+				else
+					consoleSearch(instance, arguments[0]);
+			}
 		}
 
 		private void consoleSearch(Instance instance, string search)

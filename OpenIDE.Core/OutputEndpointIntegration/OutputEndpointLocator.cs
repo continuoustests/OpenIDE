@@ -8,7 +8,7 @@ using OpenIDE.Core.FileSystem;
 
 namespace OpenIDE.Core.OutputEndpointIntegration
 {
-    public class OutputClient
+    public class OutputClient : IDisposable
     {
         private Action<string,string> _handler;
         private string _path = null;
@@ -35,10 +35,16 @@ namespace OpenIDE.Core.OutputEndpointIntegration
 
         public void Connect()
         {
-            if (_client != null &&_client.IsConnected)
+            if (_client != null && _client.IsConnected)
                 _client.Disconnect();
             _client = null;
             isConnected();
+        }
+
+        public void Dispose()
+        {
+            if (_client != null && _client.IsConnected)
+                _client.Disconnect();
         }
 
         private bool isConnected()

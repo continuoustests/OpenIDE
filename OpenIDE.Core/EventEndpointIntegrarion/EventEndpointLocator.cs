@@ -8,7 +8,7 @@ using OpenIDE.Core.FileSystem;
 
 namespace OpenIDE.Core.EventEndpointIntegrarion
 {
-    public class EventClient
+    public class EventClient : IDisposable
     {
         private Action<string> _handler;
         private string _path = null;
@@ -39,6 +39,13 @@ namespace OpenIDE.Core.EventEndpointIntegrarion
                 _client.Disconnect();
             _client = null;
             isConnected();
+        }
+
+        public void Dispose()
+        {
+            if (_client != null && _client.IsConnected)
+                _client.Disconnect();
+            _client = null;
         }
 
         public void Send(string message)

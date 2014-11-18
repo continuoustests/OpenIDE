@@ -61,30 +61,29 @@ namespace OpenIDE.Arguments.Handlers
             var name = "rscript-" + Path.GetFileNameWithoutExtension(script.File);
             var hash = 0;
             try {
-                var output = new OutputClient(_token, (publisher, msg) => {
-                    if (name == publisher)
-                        _dispatch(msg);
-                });
-                output.Connect();
-                var proc = new Process();
-                proc.Query(
-                    Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe")),
-                    "",
-                    false,
-                    _token,
-                    (error, s) => {
-                        if (s == match1 || s == match2) {
-                            var newHas = File.ReadAllText(script.File).GetHashCode();
-                            if (newHas != hash) {
-                                hash = newHas;
-                                Thread.Sleep(200);
-                                _dispatch("");
-                                _dispatch("Triggering reactive script:");
-                                _dispatch("event|"+arguments[1]);
+                using (var output = new OutputClient(_token, (publisher, msg) => { if (name == publisher) _dispatch(msg); }))
+                {
+                    output.Connect();
+                    var proc = new Process();
+                    proc.Query(
+                        Path.Combine(root, Path.Combine("EventListener", "OpenIDE.EventListener.exe")),
+                        "",
+                        false,
+                        _token,
+                        (error, s) => {
+                            if (s == match1 || s == match2) {
+                                var newHas = File.ReadAllText(script.File).GetHashCode();
+                                if (newHas != hash) {
+                                    hash = newHas;
+                                    Thread.Sleep(200);
+                                    _dispatch("");
+                                    _dispatch("Triggering reactive script:");
+                                    _dispatch("event|"+arguments[1]);
+                                }
                             }
                         }
-                    }
-                );
+                    );
+                }
             } catch (Exception ex) {
                 Logger.Write(ex);
             }

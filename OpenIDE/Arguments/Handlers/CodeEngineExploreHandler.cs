@@ -28,10 +28,11 @@ namespace OpenIDE.Arguments.Handlers
 		public void Execute (string[] arguments)
 		{
 			Console.WriteLine("Handling explore");
-			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null)
-				return;
-			instance.Explore();
+			using (var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory)) {
+				if (instance == null)
+					return;
+				instance.Explore();
+			}
 		}
 	}
 }

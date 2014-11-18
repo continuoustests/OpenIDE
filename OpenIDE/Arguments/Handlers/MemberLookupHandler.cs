@@ -29,10 +29,11 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute(string[] arguments)
 		{
-			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null)
-				return;
-			instance.MemberLookup(arguments);
+			using (var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory)) {
+				if (instance == null)
+					return;
+				instance.MemberLookup(arguments);
+			}
 		}
 	}
 }

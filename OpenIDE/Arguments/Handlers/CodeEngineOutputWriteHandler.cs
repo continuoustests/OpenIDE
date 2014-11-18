@@ -31,12 +31,13 @@ namespace OpenIDE.Arguments.Handlers
         
         public void Execute (string[] arguments)
         {
-            var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
-            if (instance == null)
-                return;
-            if (arguments.Length != 2)
-                return;
-            instance.Send("write-output \"" + arguments[0] + "\" \"" + arguments[1] + "\"");
+            using (var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory)) {
+                if (instance == null)
+                    return;
+                if (arguments.Length != 2)
+                    return;
+                instance.Send("write-output \"" + arguments[0] + "\" \"" + arguments[1] + "\"");
+            }
         }
     }
 }

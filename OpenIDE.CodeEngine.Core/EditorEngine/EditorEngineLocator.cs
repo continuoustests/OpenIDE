@@ -10,7 +10,7 @@ using OpenIDE.Core.Logging;
 
 namespace OpenIDE.CodeEngine.Core.EditorEngine
 {
-	public class Editor
+	public class Editor : IDisposable
 	{
 		private string _path = null;
 		private SocketClient _client = null;
@@ -33,6 +33,13 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 				_client.Disconnect();
 			_client = null;
 			isConnected();
+		}
+
+		public void Dispose()
+		{
+			if (_client != null && _client.IsConnected)
+				_client.Disconnect();
+			_client = null;
 		}
 		
 		public void GoTo(string file, int line, int column)

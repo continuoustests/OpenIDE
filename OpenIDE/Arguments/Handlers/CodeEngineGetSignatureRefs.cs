@@ -196,15 +196,16 @@ namespace OpenIDE.Arguments.Handlers
 		
 		public void Execute (string[] arguments)
 		{
-			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null)
-				return;
-			var args = "";
-			if (arguments.Length == 1)
-				args = arguments[0];
-			else
-				args = new CommandStringParser().GetArgumentString(arguments);
-			run(instance, args);
+			using (var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory)) {
+				if (instance == null)
+					return;
+				var args = "";
+				if (arguments.Length == 1)
+					args = arguments[0];
+				else
+					args = new CommandStringParser().GetArgumentString(arguments);
+				run(instance, args);
+			}
 		}
 
 		protected virtual void usageAppender(BaseCommandHandlerParameter query)

@@ -80,9 +80,10 @@ namespace OpenIDE.Core.Environments
 		public void Shutdown(string token)
 		{
 			token = fixPath(token);
-			var codeEngine = _codeEnginelocator.GetInstance(token);
-			if (codeEngine != null)
-				codeEngine.Shutdown();
+			using (var codeEngine = _codeEnginelocator.GetInstance(token)) {
+				if (codeEngine != null)
+					codeEngine.Shutdown();
+			}
 			var instance = _editorLocator.GetInstance(token);
 			if (instance == null)
 				return;

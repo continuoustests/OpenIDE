@@ -40,12 +40,13 @@ namespace OpenIDE.Arguments.Handlers
 
 		public void Execute (string[] arguments)
 		{
-			var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory);
-			if (instance == null)
-				return;
-			if (arguments.Length < 3)
-				return;
-			instance.SnippetComplete(arguments);
+			using (var instance = _codeEngineFactory.GetInstance(Environment.CurrentDirectory)) {
+				if (instance == null)
+					return;
+				if (arguments.Length < 3)
+					return;
+				instance.SnippetComplete(arguments);
+			}
 		}
 	}
 }
