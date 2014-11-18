@@ -135,18 +135,23 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 			if (extension == null)
 				return;
 			
-			_eventDispatcher.Send(
-				"codemodel filesystem-change-" +
-				file.Type.ToString().ToLower() +
-				" \"" + file.Path + "\"");
-			
-			_plugins.ForEach(x =>
-				{
-					if (x.Supports(extension) && !x.FilesToHandle.Contains(file.Path))
-						x.FilesToHandle.Add(file.Path);
-			 	});
+			try {
+				_eventDispatcher.Send(
+					"codemodel filesystem-change-" +
+					file.Type.ToString().ToLower() +
+					" \"" + file.Path + "\"");
+				
+				_plugins.ForEach(x =>
+					{
+						if (x.Supports(extension) && !x.FilesToHandle.Contains(file.Path))
+							x.FilesToHandle.Add(file.Path);
+				 	});
 
-			_eventDispatcher.Send("codemodel file-crawled \"" + file.Path + "\"");
+				_eventDispatcher.Send("codemodel file-crawled \"" + file.Path + "\"");
+			} catch (Exception ex) {
+				Logger.Write("Failed while handling file system changes. CodeModel may be out of sync");
+				Logger.Write(ex);
+			}
 		}
 
 		public void Dispose()
