@@ -4,7 +4,6 @@ using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using FSWatcher;
-using System.Collections.Generic;
 using OpenIDE.CodeEngine.Core.Caching;
 using OpenIDE.Core.Logging;
 namespace OpenIDE.CodeEngine.Core.ChangeTrackers

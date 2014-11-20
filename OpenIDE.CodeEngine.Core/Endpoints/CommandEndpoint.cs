@@ -120,6 +120,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 			if (File.Exists(_instanceFile)) {
 				File.Delete(_instanceFile);
 			}
+			_server.Stop();
 		}
 		
 		private void writeInstanceInfo()

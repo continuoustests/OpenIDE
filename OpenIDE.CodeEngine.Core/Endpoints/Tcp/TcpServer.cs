@@ -5,20 +5,33 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Linq;
+using System.Threading;
+
 namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
 {
-	public class TcpServer
+	public class TcpServer : IDisposable
 	{
 		class Client
 		{
 			public Guid ID { get; private set; }
 			public NetworkStream Stream { get; private set; }
+            public Socket Socket { get; set; }
 
-			public Client(NetworkStream stream)
+			public Client(Socket socket)
 			{
 				ID = Guid.NewGuid();
-				Stream = stream;
+                Socket = socket;
+				Stream = new NetworkStream(socket);
 			}
+
+            public  bool IsConnected()
+            {
+                try {
+                    return !(Socket.Poll(1, SelectMode.SelectRead) && Socket.Available == 0);
+                } catch (SocketException) {
+                    return false;
+                }
+            }
 		}
 
 		private Socket _listener = null;
@@ -27,6 +40,8 @@ namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
 		private MemoryStream _readBuffer = new MemoryStream();
 		private int _currentPort = 0;
 		private string _messageTermination = null;
+        private bool _isAlive = true;
+        private DateTime _nextClientCleanup = DateTime.Now.AddSeconds(10);
 		
 		public event EventHandler ClientConnected;
 		public event EventHandler<MessageArgs> IncomingMessage;
@@ -51,6 +66,23 @@ namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
             _listener.Listen(1);
             _listener.BeginAccept(new AsyncCallback(AcceptCallback), _listener);
 		}
+
+        public void Stop()
+        {
+            _isAlive = false;
+        }
+
+        public void Dispose()
+        {
+            Stop();
+        }
+
+        private void cleanupClients()
+        {
+            lock (_clients) {
+                _clients.RemoveAll(x => !x.IsConnected());
+            }
+        }
 		
 		private void AcceptCallback(IAsyncResult result)
         {
@@ -58,7 +90,7 @@ namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
             try
             {
                 var client = listener.EndAccept(result);
-                var clientStream = new Client(new NetworkStream(client));
+                var clientStream = new Client(client);
                 lock (_clients)
                 {
                     _clients.Add(clientStream);
@@ -73,6 +105,11 @@ namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
             finally
             {
                 listener.BeginAccept(new AsyncCallback(AcceptCallback), listener);
+            }
+            if (_nextClientCleanup < DateTime.Now) {
+                var cleanupThread = new Thread(cleanupClients);
+                cleanupThread.Start();
+                _nextClientCleanup = DateTime.Now.AddSeconds(10);
             }
         }
 		

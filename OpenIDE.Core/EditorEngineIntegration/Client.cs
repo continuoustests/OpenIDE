@@ -77,7 +77,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
             try
             {
                 var x = stream.EndRead(result);
-                if(x == 0) Reconnect(0);
+                if(x == 0 && IsConnected) Reconnect(0);
                 for (var i = 0; i < x;i++)
                 {
                     if (_buffer[i] == 0)
@@ -98,7 +98,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
             }
             catch
             {
-                Reconnect(0);
+                if (IsConnected) Reconnect(0);
             }
         }
 
@@ -174,7 +174,7 @@ namespace OpenIDE.Core.EditorEngineIntegration
             }
             catch
             {
-				Reconnect(0);
+				if (IsConnected) Reconnect(0);
             }
         }
 

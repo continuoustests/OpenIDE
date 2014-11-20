@@ -27,9 +27,14 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		public Instance GetInstance(string path)
 		{
 			var instances = getInstances();
-			return instances.Where(x => path.StartsWith(x.Key) && canConnectTo(x))
+			return instances.Where(x => isSameInstance(x.Key, path) && canConnectTo(x))
 				.OrderByDescending(x => x.Key.Length)
 				.FirstOrDefault();
+		}
+
+		private bool isSameInstance(string running, string suggested)
+		{
+			return running == suggested || suggested.StartsWith(running+Path.DirectorySeparatorChar.ToString());
 		}
 		
 		private IEnumerable<Instance> getInstances()
