@@ -41,7 +41,7 @@ namespace OpenIDE.Arguments.Handlers
 				if (publisher == lastPublisher) {
 					_dispatch(message);
 				} else {
-					_dispatch(publisher+Environment.NewLine+message);
+					_dispatch(publisher+":"+Environment.NewLine+message);
 				}
 				lastPublisher = publisher;
             };
