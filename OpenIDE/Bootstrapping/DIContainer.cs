@@ -162,6 +162,8 @@ namespace OpenIDE.Bootstrapping
 				printError(command);
 			} else if (isWarning(command)) {
 				printWarning(command);
+			} else if (isColorized(command)) {
+				printColorized(command);
 			} else if (isCommand(command) || isEvent(command)) {
 				lock (_commandProcessLock) {
 					_commandsInProcessing++;
@@ -257,7 +259,7 @@ namespace OpenIDE.Bootstrapping
 		private bool isWarning(string command)
 		{
 			return command.Trim().StartsWith("warning|");
-		}
+		}	
 
 		private void printWarning(string command)
 		{
@@ -270,6 +272,34 @@ namespace OpenIDE.Bootstrapping
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(command.Substring(start, command.Length - start));
 			Console.ResetColor();
+		}
+
+		private bool isColorized(string command)
+		{
+			var trimmed = command.Trim(); 
+			return trimmed.Length > 6 && trimmed.StartsWith("color|") && trimmed.IndexOf("|", 6) > 0;
+		}
+
+		private void printColorized(string command)
+		{
+			if (_settings.RawOutput) {
+				Console.WriteLine(command);
+				return;
+			}
+			var commentTag = "color|";
+			var start = command.IndexOf(commentTag) + commentTag.Length;
+			var end = command.IndexOf("|", start);
+			if (end > start) {
+				var color = command.Substring(start, end - start);
+				ConsoleColor clr;
+				if (Enum.TryParse<ConsoleColor>(color, out clr)) {
+					Console.ForegroundColor = clr;
+				}
+				Console.WriteLine(command.Substring(end + 1, command.Length - (end + 1)));
+				Console.ResetColor();
+			} else {
+				Console.WriteLine(command.Substring(start, command.Length - start));
+			}
 		}
 		
 		public ILocateEditorEngine ILocateEditorEngine()

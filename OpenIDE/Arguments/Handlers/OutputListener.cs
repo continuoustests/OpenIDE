@@ -41,7 +41,9 @@ namespace OpenIDE.Arguments.Handlers
 				if (publisher == lastPublisher) {
 					_dispatch(message);
 				} else {
-					_dispatch(publisher+":"+Environment.NewLine+message);
+					//_dispatch("color|Whtie|"+publisher+":");
+					_dispatch(publisher+":");
+					_dispatch(Environment.NewLine+message);
 				}
 				lastPublisher = publisher;
             };
