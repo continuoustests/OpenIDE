@@ -36,8 +36,14 @@ namespace OpenIDE.Arguments.Handlers
 
         public void Execute(string[] arguments) {
             var follow = shouldFollow(ref arguments);
+			string lastPublisher = null;
             Action<string,string> printer = (publisher, message) => {
-                _dispatch(publisher+": "+message);
+				if (publisher == lastPublisher) {
+					_dispatch(message);
+				} else {
+					_dispatch(publisher+Environment.NewLine+message);
+				}
+				lastPublisher = publisher;
             };
             if (arguments.Length == 1) {
                 var matcher = new Regex(
