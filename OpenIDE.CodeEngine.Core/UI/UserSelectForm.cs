@@ -33,9 +33,13 @@ namespace OpenIDE.CodeEngine.Core.UI
 
         void populateList(IEnumerable<Item> items) {
             informationList.Items.Clear();
+            var populatedCount = 0;
             foreach (var item in items) {
                 var listItem = informationList.Items.Add(item.Value);
                 listItem.Tag = item.Key;
+                populatedCount++;
+                if (populatedCount > 50)
+                    break;
             }
             if (informationList.Items.Count > 0)
                 informationList.Items[0].Selected = true;

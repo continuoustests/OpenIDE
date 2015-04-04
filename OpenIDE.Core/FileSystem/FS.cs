@@ -21,7 +21,12 @@ namespace OpenIDE.Core.FileSystem
 
 		public string[] GetFiles(string path, string searchPattern)
         {
-            return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);
+            return GetFiles(path, searchPattern, SearchOption.AllDirectories);
+        }
+
+        public string[] GetFiles(string path, string searchPattern, SearchOption option)
+        {
+            return Directory.GetFiles(path, searchPattern, option);
         }
 
 		public string[] ReadLines(string path)

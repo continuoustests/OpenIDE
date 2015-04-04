@@ -42,6 +42,11 @@ namespace OpenIDE.Arguments.Handlers
 			_handlers.Add(new GoToDefinitionHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEnginePublishHandler(_codeEngineFactory));
 			_handlers.Add(new CodeEngineOutputWriteHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineQueryTokenPathHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineQueryTokenEndpointHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineQueryTokenEventEndpointHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineQueryTokenOutputEndpointHandler(_codeEngineFactory));
+			_handlers.Add(new CodeEngineQueryTokenEditorEndpointHandler(_codeEngineFactory));
 		}
 
 		public string Command { get { return "codemodel"; } }
@@ -169,6 +174,116 @@ namespace OpenIDE.Arguments.Handlers
 			query.Add("[LIMIT]", "Maximum records to return");
 		}
 	}
+
+    class CodeEngineQueryTokenPathHandler : CodeEngineQueryHandler
+    {
+        private string _name = "get-token-path";
+        protected override string _commandDescription { get { return  "Queries for token path"; } }
+		protected override string _queryDescription { get { return  "Token path"; } }
+		protected override string _command { get { return  _name; } }
+
+		protected override void run(Instance instance, string args) {
+			Console.WriteLine(instance.Query(_name+" "+args));
+		}
+		
+		public CodeEngineQueryTokenPathHandler(ICodeEngineLocator codeEngineFactory)
+		{
+			_codeEngineFactory = codeEngineFactory;
+		}
+
+        protected override void usageAppender(BaseCommandHandlerParameter query)
+		{
+            query.Rebrand("HINT", "Token path hint file/directory");
+		}
+    }
+
+    class CodeEngineQueryTokenEndpointHandler : CodeEngineQueryHandler
+    {
+        private string _name = "get-token-endpoint";
+        protected override string _commandDescription { get { return  "Queries for token endpoint"; } }
+		protected override string _queryDescription { get { return  "Token endpoint"; } }
+		protected override string _command { get { return  _name; } }
+
+		protected override void run(Instance instance, string args) {
+			Console.WriteLine(instance.Query(_name+" "+args));
+		}
+		
+		public CodeEngineQueryTokenEndpointHandler(ICodeEngineLocator codeEngineFactory)
+		{
+			_codeEngineFactory = codeEngineFactory;
+		}
+
+        protected override void usageAppender(BaseCommandHandlerParameter query)
+		{
+            query.Rebrand("HINT", "Token path hint file/directory");
+		}
+    }
+
+    class CodeEngineQueryTokenEventEndpointHandler : CodeEngineQueryHandler
+    {
+        private string _name = "get-token-event-endpoint";
+        protected override string _commandDescription { get { return  "Queries for token event endpoint"; } }
+		protected override string _queryDescription { get { return  "Token event endpoint"; } }
+		protected override string _command { get { return  _name; } }
+
+		protected override void run(Instance instance, string args) {
+			Console.WriteLine(instance.Query(_name+" "+args));
+		}
+		
+		public CodeEngineQueryTokenEventEndpointHandler(ICodeEngineLocator codeEngineFactory)
+		{
+			_codeEngineFactory = codeEngineFactory;
+		}
+
+        protected override void usageAppender(BaseCommandHandlerParameter query)
+		{
+            query.Rebrand("HINT", "Token path hint file/directory");
+		}
+    }
+
+    class CodeEngineQueryTokenOutputEndpointHandler : CodeEngineQueryHandler
+    {
+        private string _name = "get-token-output-endpoint";
+        protected override string _commandDescription { get { return  "Queries for token output endpoint"; } }
+		protected override string _queryDescription { get { return  "Token output endpoint"; } }
+		protected override string _command { get { return  _name; } }
+
+		protected override void run(Instance instance, string args) {
+			Console.WriteLine(instance.Query(_name+" "+args));
+		}
+		
+		public CodeEngineQueryTokenOutputEndpointHandler(ICodeEngineLocator codeEngineFactory)
+		{
+			_codeEngineFactory = codeEngineFactory;
+		}
+
+        protected override void usageAppender(BaseCommandHandlerParameter query)
+		{
+            query.Rebrand("HINT", "Token path hint file/directory");
+		}
+    }
+
+    class CodeEngineQueryTokenEditorEndpointHandler : CodeEngineQueryHandler
+    {
+        private string _name = "get-token-editor-endpoint";
+        protected override string _commandDescription { get { return  "Queries for token editor endpoint"; } }
+		protected override string _queryDescription { get { return  "Token editor endpoint"; } }
+		protected override string _command { get { return  _name; } }
+
+		protected override void run(Instance instance, string args) {
+			Console.WriteLine(instance.Query(_name+" "+args));
+		}
+		
+		public CodeEngineQueryTokenEditorEndpointHandler(ICodeEngineLocator codeEngineFactory)
+		{
+			_codeEngineFactory = codeEngineFactory;
+		}
+
+        protected override void usageAppender(BaseCommandHandlerParameter query)
+		{
+            query.Rebrand("HINT", "Token path hint file/directory");
+		}
+    }
 	
 	abstract class CodeEngineQueryHandler : ICommandHandler
 	{

@@ -44,10 +44,12 @@ namespace OpenIDE.EventIntegration
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			var dir = Path.Combine(FS.GetTempPath(), "OpenIDE.CodeEngine");
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
+            var filename = string.Format("*.OpenIDE.CodeEngine.{0}.pid", user);
+			var dir = FS.GetTempPath();
 			if (Directory.Exists(dir))
 			{
-				foreach (var file in Directory.GetFiles(dir, "*.pid"))
+				foreach (var file in Directory.GetFiles(dir, filename))
 				{
 					var instance = Instance.Get(file, File.ReadAllLines(file));
 					if (instance != null) {
@@ -95,7 +97,8 @@ namespace OpenIDE.EventIntegration
 				if (lines.Length != 2)
 					return null;
 				int processID;
-				if (!int.TryParse(Path.GetFileNameWithoutExtension(file), out processID))
+                var pid = Path.GetFileName(file).Substring(0, Path.GetFileName(file).IndexOf("."));
+				if (!int.TryParse(pid, out processID))
 					return null;
 				int port;
 				if (!int.TryParse(lines[1], out port))

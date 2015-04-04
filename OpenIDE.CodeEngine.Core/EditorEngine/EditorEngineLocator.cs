@@ -114,10 +114,12 @@ namespace OpenIDE.CodeEngine.Core.EditorEngine
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			var dir = Path.Combine(FS.GetTempPath(), "EditorEngine");
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
+            var filename = string.Format("*.EditorEngine.{0}.pid", user);
+			var dir = FS.GetTempPath();
 			if (Directory.Exists(dir))
 			{
-				foreach (var file in Directory.GetFiles(dir, "*.pid"))
+				foreach (var file in Directory.GetFiles(dir, filename))
 				{
 					Instance instance;
 					try {

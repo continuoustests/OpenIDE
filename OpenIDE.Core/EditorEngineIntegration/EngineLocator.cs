@@ -39,10 +39,12 @@ namespace OpenIDE.Core.EditorEngineIntegration
 		
 		private IEnumerable<Instance> getInstances()
 		{
-			var dir = Path.Combine(FS.GetTempPath(), "EditorEngine");
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
+            var filename = string.Format("*.EditorEngine.{0}.pid", user);
+			var dir = FS.GetTempPath();
 			if (_fs.DirectoryExists(dir))
 			{
-				foreach (var file in _fs.GetFiles(dir, "*.pid"))
+				foreach (var file in _fs.GetFiles(dir, filename, SearchOption.TopDirectoryOnly))
 				{
 					Instance instance;
 					try {

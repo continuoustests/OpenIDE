@@ -18,21 +18,27 @@ namespace OpenIDE.Core.Language
 
 		public BaseCommandHandlerParameter(string name, string description)
 		{
-			Name = name.Replace("[", "").Replace("]", "");
-			_description = description;
-			setNameProperties(name);
-			Type = CommandType.SubParameter;
-			_parameters = new List<BaseCommandHandlerParameter>();
+            Rebrand(name, description);
 		}
 
 		public BaseCommandHandlerParameter(string name, string description, CommandType type)
 		{
-			Name = name.Replace("[", "").Replace("]", "");
+			Rebrand(name, description, type);
+		}
+
+        public void Rebrand(string name, string description)
+        {
+            Rebrand(name, description, CommandType.SubParameter);
+        }
+
+        public void Rebrand(string name, string description, CommandType type)
+        {
+            Name = name.Replace("[", "").Replace("]", "");
 			_description = description;
 			setNameProperties(name);
 			Type = type;
 			_parameters = new List<BaseCommandHandlerParameter>();
-		}
+        }
 
 		public BaseCommandHandlerParameter Add(string name, string description)
 		{

@@ -25,7 +25,7 @@ namespace OpenIDE.Arguments.Handlers
 					"Lists and manages OpenIDE evironments");
 				usage
 					.Add("details", "Displays details about a running environment")
-						.Add("[KEY]", "The environment key path");
+						.Add("[TOKEN]", "The environment token path");
 				usage.Add("start", "Starts OpenIDE for the current path (no editor engine)");
 				return usage;
 			}
@@ -64,7 +64,7 @@ namespace OpenIDE.Arguments.Handlers
 			var instance = _locator.GetInstances().FirstOrDefault(x => matchPath(key, x.Key));
 			if (instance == null)
 				return;
-			_dispatch("Key:    " + instance.Key);
+			_dispatch("Token:  " + instance.Key);
 			_dispatch(string.Format("Engine: Pid {0} @ 127.0.0.1:{1}", instance.ProcessID, instance.Port));
 			var events = new OpenIDE.Core.EventEndpointIntegrarion.EventClient(key).GetInstance();
 			if (events != null) {

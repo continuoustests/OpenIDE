@@ -454,10 +454,12 @@ namespace EventStuff
 		
 		private IEnumerable<Instance> getInstances(string path)
 		{
-			var dir = Path.Combine(Path.GetTempPath(), "OpenIDE.Events");
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
+            var filename = string.Format("*.OpenIDE.Events.{0}.pid", user);
+			var dir = Path.GetTempPath();
 			if (Directory.Exists(dir))
 			{
-				foreach (var file in Directory.GetFiles(dir, "*.pid"))
+				foreach (var file in Directory.GetFiles(dir, filename))
 				{
 					var instance = Instance.Get(file, File.ReadAllLines(file));
 					if (instance != null)

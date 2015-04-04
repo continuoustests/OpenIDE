@@ -68,7 +68,8 @@ namespace OpenIDE.Core.CodeEngineIntegration
 			if (lines.Length != 2)
 				return null;
 			int processID;
-			if (!int.TryParse(Path.GetFileNameWithoutExtension(file), out processID))
+            var pid = Path.GetFileName(file).Substring(0, Path.GetFileName(file).IndexOf("."));
+			if (!int.TryParse(pid, out processID))
 				return null;
 			int port;
 			if (!int.TryParse(lines[1], out port))

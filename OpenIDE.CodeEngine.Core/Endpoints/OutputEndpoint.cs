@@ -34,10 +34,9 @@ namespace OpenIDE.CodeEngine.Core.Endpoints
 
         private void writeInstanceInfo()
         {
-            var path = Path.Combine(FS.GetTempPath(), "OpenIDE.Output");
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            _instanceFile = Path.Combine(path, string.Format("{0}.pid", Process.GetCurrentProcess().Id));
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
+            var filename = string.Format("{0}.OpenIDE.Output.{1}.pid", Process.GetCurrentProcess().Id, user);
+            _instanceFile = Path.Combine(FS.GetTempPath(), filename);
             var sb = new StringBuilder();
             sb.AppendLine(_token);
             sb.AppendLine(_server.Port.ToString());

@@ -45,10 +45,12 @@ namespace OpenIDE.Core.CodeEngineIntegration
 		
 		private IEnumerable<Instance> getInstances()
 		{
-			var dir = Path.Combine(FS.GetTempPath(), "OpenIDE.CodeEngine");
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
+            var filename = string.Format("*.OpenIDE.CodeEngine.{0}.pid", user);
+			var dir = FS.GetTempPath();
 			if (_fs.DirectoryExists(dir))
 			{
-				foreach (var file in _fs.GetFiles(dir, "*.pid"))
+				foreach (var file in _fs.GetFiles(dir, filename, SearchOption.TopDirectoryOnly))
 				{
 					var instance = Instance.Get(ClientFactory, file, _fs.ReadLines(file));
 					if (instance != null)
