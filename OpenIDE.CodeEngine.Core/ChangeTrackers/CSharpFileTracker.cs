@@ -66,12 +66,16 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 				_cache.Plugins.Add(
 					new CachedPlugin(x.GetLanguage(), plugin.Patterns));
 				Logger.Write("Added plugin " + x.GetLanguage());
-			}
-			Logger.Write("Starting tracker for {0}", path);
-			_tracker.Start(path, getFilter(), handleChanges, ignoreDirectories);
+			}	
 			var locator = new ProfileLocator(path);
+            var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
+			if (Directory.Exists(profilePath)) {
+                Logger.Write("Starting tracker for {0}", path);
+                _tracker.Start(path, getFilter(), handleChanges, ignoreDirectories);
+            } else {
+                Logger.Write("No local configuration point so not starting file tracker");
+            }
 			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
-				var profilePath = locator.GetLocalProfilePath(locator.GetActiveLocalProfile());
 				if (Directory.Exists(profilePath)) {
 					Logger.Write("Starting tracker for {0}", profilePath);
 					_localTracker.Start(profilePath, getFilter(), handleChanges, ignoreDirectories);
