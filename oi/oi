@@ -1,4 +1,10 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ -f $SCRIPT_DIR/.OpenIDE/prerun.sh ]; then
+    $SCRIPT_DIR/.OpenIDE/prerun.sh "$@"
+fi
 mono $SCRIPT_DIR/oi.exe "$@"
+if [ -f $SCRIPT_DIR/.OpenIDE/postrun.sh ]; then
+    $SCRIPT_DIR/.OpenIDE/postrun.sh "$@"
+fi
