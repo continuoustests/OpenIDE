@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<editor>
+	<launch>
+		<executable></executable>
+		<parameters></parameters>
+	</launch>
+	<alive>
+		<executable>ps</executable>
+		<parameters>-Af</parameters>
+		<text_to_look_for>--name Emacs-OpenIDE1</text_to_look_for>
+	</alive>
+	<goto>
+		<executable>emacsclient</executable>
+		<parameters>-n +{1}:{2} "{0}"</parameters>
+	</goto>
+	<setfocus>
+		<executable></executable>
+		<parameters></parameters>
+	</setfocus>
+</editor>

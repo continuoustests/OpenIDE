@@ -3,3 +3,5 @@ editor.sublime.project|Relative / Full path to sublime project
 editor.vim.executable|Path to vim executable
 editor.vim.port|Port to run netbeans endpoint on
 editor.vim.headless|If set to true it will expect you to start the vim instance
+editor.emacs.executable|Path to emacs executable
+editor.emacs.port|Path to emacs plugin port
