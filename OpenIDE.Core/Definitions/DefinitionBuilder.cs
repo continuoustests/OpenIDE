@@ -399,9 +399,17 @@ namespace OpenIDE.Core.Definitions
 					}
 					return true;
 				}
-				if (locations.Any(x => !languages.Any(y => y == x))) {
-					Logger.Write("Language has been removed");
-					return true;
+                var removedLangs = locations.Where(x => !languages.Any(y => y == x));
+				if (removedLangs.Count() > 0) {
+                    foreach (var rmLang in removedLangs) {
+                        Logger.Write("Language {0} removed?", rmLang);
+                        if (!File.Exists(rmLang)) {
+                            Logger.Write("Language {0} has been removed", rmLang);
+                            return true;
+                        } else {
+                            Logger.Write("found language {0} on disk, continuing", rmLang);
+                        }
+                    }
 				}
 
 				languages = addPlaceholderLanguages(languagePath, languages);

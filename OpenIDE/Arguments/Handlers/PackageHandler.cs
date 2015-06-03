@@ -243,7 +243,13 @@ namespace OpenIDE.Arguments.Handlers
 		}
 
 		private void printPackages(IEnumerable<Package> packages, bool printId) {
-			packages
+            var distinct = new List<Package>();
+            packages.ToList().ForEach(x => {
+                if (!distinct.Any(y => y.ID == x.ID)) {
+                    distinct.Add(x);
+                }
+            });
+			distinct
 				.OrderBy(x => x.Name).ToList()
 				.ForEach(x => {
 					if (printId)
