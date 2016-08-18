@@ -193,9 +193,13 @@ namespace OpenIDE.CodeEngine.Core.ChangeTrackers
 		{
 			if (FilesToHandle.Count == 0)
 				return;
-			cacheHandler.SetLanguage(Plugin.GetLanguage());
-			Plugin.Crawl(FilesToHandle, (line) => cacheHandler.Handle(line));
-			FilesToHandle.Clear();
+            try {
+                cacheHandler.SetLanguage(Plugin.GetLanguage());
+                Plugin.Crawl(FilesToHandle, (line) => cacheHandler.Handle(line));
+                FilesToHandle.Clear();
+            } catch (Exception ex) {
+                Logger.Write(ex);
+            }
 		}
 	}
 }
