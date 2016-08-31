@@ -55,10 +55,7 @@ namespace OpenIDE.Core.Packaging
 
 	public class FileFetcher
 	{
-		private Action<string> _dispatch;
-
 		public FileFetcher(Action<string> dispatch) {
-			_dispatch = dispatch;
 		}
 
 		public bool Download(string source, string destination) {

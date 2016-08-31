@@ -18,7 +18,6 @@ namespace OpenIDE.Tests.EditorEngineIntegration
 		[SetUp]
 		public void Setup()
 		{
-            int a = 3;
             var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace(Path.DirectorySeparatorChar.ToString(), "-");
             _filepattern = string.Format("*.EditorEngine.{0}.pid", user);
 			_client = MockRepository.GenerateMock<IClient>();

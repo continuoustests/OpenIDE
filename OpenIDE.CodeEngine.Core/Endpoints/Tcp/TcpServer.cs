@@ -40,7 +40,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
 		private MemoryStream _readBuffer = new MemoryStream();
 		private int _currentPort = 0;
 		private string _messageTermination = null;
-        private bool _isAlive = true;
         private DateTime _nextClientCleanup = DateTime.Now.AddSeconds(10);
 		
 		public event EventHandler ClientConnected;
@@ -69,7 +68,6 @@ namespace OpenIDE.CodeEngine.Core.Endpoints.Tcp
 
         public void Stop()
         {
-            _isAlive = false;
         }
 
         public void Dispose()

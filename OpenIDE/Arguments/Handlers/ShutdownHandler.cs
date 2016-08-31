@@ -12,7 +12,6 @@ namespace OpenIDE.Arguments.Handlers
 	class ShutdownHandler : ICommandHandler
 	{
 		private string _rootPath;
-		private Action<string> _dispatch;
 		private EnvironmentService _environment;
 
 		public CommandHandlerParameter Usage {
@@ -31,7 +30,6 @@ namespace OpenIDE.Arguments.Handlers
 
 		public ShutdownHandler(string rootPath, Action<string> dispatch, EnvironmentService environment) {
 			_rootPath = rootPath;
-			_dispatch = dispatch;
 			_environment = environment;
 		}
 

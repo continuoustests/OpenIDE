@@ -13,10 +13,7 @@ namespace OpenIDE
 {
 	public class CommandRunner
 	{
-		private Action<string> _eventDispatcher;
-
 		public CommandRunner(Action<string> eventDispatcher) {
-			_eventDispatcher = eventDispatcher;
 		}
 
 		public bool Run(DefinitionCacheItem cmd, IEnumerable<string> args) {

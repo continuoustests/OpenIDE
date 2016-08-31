@@ -18,7 +18,6 @@ namespace OpenIDE.CodeEngine.Core.UI
 		private ITypeCache _cache;
 		private Action<string, int, int> _action;
 		private Action _cancelAction;
-		private DateTime _lastSearch = DateTime.Now;
         private bool _runSearch = false;
         private Queue<string> _searchTerms = new Queue<string>();
         private System.Threading.Thread _searchThread;

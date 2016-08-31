@@ -185,7 +185,6 @@ namespace OpenIDE.Core.Definitions
 			
 			// Add languages
 			var languagePath = Path.Combine(dir, "languages");
-			LanguagePlugin defaultLanguage = null;
 			foreach (var language in _languages(languagePath)) {
 				var item = cache.Add(
 					DefinitionCacheItemType.Language,

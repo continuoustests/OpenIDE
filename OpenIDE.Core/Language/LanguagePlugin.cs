@@ -107,20 +107,32 @@ namespace OpenIDE.Core.Language
 		}
 
 		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived)
-		{
-			var toCrawl = filesAndFolders.ToArray();
-			var filename = "openide-crawl-"+ DateTime.Now.Ticks.ToString() + "-" + _rnd.Next(1,10000).ToString();
-			var file = Path.Combine(FS.GetTempPath(), filename);
+        {
+            Crawl(filesAndFolders, onLineReceived, 0);
+        }
 
-			using (var stream = new FileStream(file, FileMode.Create)) {
-				using (var writer = new StreamWriter(stream)) {
-					foreach (var line in toCrawl) {
-						writer.WriteLine(line);
-					}
-				}
-			}
-			run(string.Format("crawl-source \"{0}\"", file), onLineReceived);
-			File.Delete(file);
+		public void Crawl(IEnumerable<string> filesAndFolders, Action<string> onLineReceived, int retryCount)
+		{
+            if (retryCount > 10) return;
+            try {
+                var toCrawl = filesAndFolders.ToArray();
+                var filename = "openide-crawl-"+ DateTime.Now.Ticks.ToString() + "-" + _rnd.Next(1,10000).ToString();
+                var file = Path.Combine(FS.GetTempPath(), filename);
+
+                using (var stream = new FileStream(file, FileMode.Create)) {
+                    using (var writer = new StreamWriter(stream)) {
+                        foreach (var line in toCrawl) {
+                            writer.WriteLine(line);
+                        }
+                    }
+                }
+                run(string.Format("crawl-source \"{0}\"", file), onLineReceived);
+                File.Delete(file);
+            } catch (Exception ex) {
+                Logger.Write("Failed to crawl files retrying (" + retryCount.ToString() + ")");
+                Logger.Write(ex);
+                Crawl(filesAndFolders, onLineReceived, retryCount + 1);
+            }
 		}
 
 		public SignatureLocation SignatureFromPosition(FilePosition position)
