@@ -95,7 +95,7 @@ namespace OpenIDE.Bootstrapping
 					new ProcessStartHandler(),
 
 					new EventListener(_settings.RootPath),
-					new OutputListener(_settings.RootPath, dispatchMessage),
+					new OutputListener(_settings.RootPath, dispatchMessage, ICodeEngineLocator()),
 
 					new PackageHandler(_settings.RootPath, _settings.SourcePrioritization, dispatchMessage, PluginLocator),
 
